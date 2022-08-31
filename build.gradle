@@ -13,9 +13,11 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
 
+    runtimeOnly 'com.h2database:h2'
+}
 test {
     useJUnitPlatform()
 }

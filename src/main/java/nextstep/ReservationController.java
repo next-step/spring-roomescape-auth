@@ -1,17 +1,22 @@
 package nextstep;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class ReservationController {
-    public List<Reservation> reservations = new ArrayList<>();
+    public final JdbcTemplate jdbcTemplate;
+
+    public ReservationController(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @PostMapping("/reservations")
     public ResponseEntity addReservation(@RequestBody ReservationRequest reservationRequest) {
@@ -20,25 +25,30 @@ public class ReservationController {
                 LocalTime.parse(reservationRequest.getTime() + ":00"),
                 reservationRequest.getName()
         );
-        reservations.add(reservation);
+
+        String sql = "INSERT INTO reservation (date, time, name) VALUES (?, ?, ?);";
+        jdbcTemplate.update(sql, Date.valueOf(reservation.getDate()), Time.valueOf(reservation.getTime()), reservation.getName());
+
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/reservations")
     public ResponseEntity showReservations(@RequestParam String date) {
-        List<Reservation> result = reservations.stream()
-                .filter(it -> it.getDate().isEqual(LocalDate.parse(date)))
-                .collect(Collectors.toList());
+        String sql = "SELECT date, time, name from reservation where date = ?;";
+        List<Reservation> result = jdbcTemplate.query(sql,
+                (resultSet, rowNum) -> new Reservation(
+                        resultSet.getDate("date").toLocalDate(),
+                        resultSet.getTime("time").toLocalTime(),
+                        resultSet.getString("name")
+                ), Date.valueOf(date));
+
         return ResponseEntity.ok().body(result);
     }
 
     @DeleteMapping("/reservations")
     public ResponseEntity deleteReservation(@RequestParam String date, @RequestParam String time) {
-        reservations.stream()
-                .filter(it -> it.getDate().isEqual(LocalDate.parse(date)) && it.getTime().equals(LocalTime.parse(time + ":00")))
-                .findFirst()
-                .ifPresent(reservations::remove);
+        jdbcTemplate.update("DELETE FROM reservation where date = ? and time = ?;", Date.valueOf(date), Time.valueOf(time + ":00"));
 
         return ResponseEntity.noContent().build();
     }
