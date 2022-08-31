@@ -33,4 +33,9 @@ public class ReservationController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity onException() {
+        return ResponseEntity.badRequest().build();
+    }
 }

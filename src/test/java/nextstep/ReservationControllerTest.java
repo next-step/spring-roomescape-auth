@@ -38,6 +38,22 @@ class ReservationControllerTest {
     }
 
     @Test
+    void addReservationAlreadyExisted() throws Exception {
+        addReservation();
+        ReservationRequest request = new ReservationRequest(
+                "2022-08-11",
+                "13:00",
+                "name"
+        );
+        String content = new ObjectMapper().writeValueAsString(request);
+        mockMvc.perform(post("/reservations")
+                        .content(content)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print());
+    }
+
+    @Test
     void showReservations() throws Exception {
         addReservation();
         mockMvc.perform(get("/reservations")

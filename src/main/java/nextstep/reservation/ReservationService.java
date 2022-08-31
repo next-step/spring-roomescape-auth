@@ -15,13 +15,18 @@ public class ReservationService {
     }
 
     public void create(ReservationRequest reservationRequest) {
-        Reservation reservation = new Reservation(
+        Reservation reservation = reservationDao.findByDateAndTime(reservationRequest.getDate(), reservationRequest.getTime());
+        if (reservation != null) {
+            throw new RuntimeException();
+        }
+
+        Reservation newReservation = new Reservation(
                 LocalDate.parse(reservationRequest.getDate()),
                 LocalTime.parse(reservationRequest.getTime() + ":00"),
                 reservationRequest.getName()
         );
 
-        reservationDao.save(reservation);
+        reservationDao.save(newReservation);
     }
 
     public List<Reservation> readByDate(String date) {
@@ -29,6 +34,11 @@ public class ReservationService {
     }
 
     public void delete(String date, String time) {
+        Reservation reservation = reservationDao.findByDateAndTime(date, time);
+        if (reservation != null) {
+            throw new RuntimeException();
+        }
+
         reservationDao.deleteByDateAndTime(date, time);
     }
 }

@@ -31,6 +31,20 @@ public class ReservationDao {
                 ), Date.valueOf(date));
     }
 
+    public Reservation findByDateAndTime(String date, String time) {
+        String sql = "SELECT date, time, name from reservation where date = ? and time = ?;";
+        try {
+            return jdbcTemplate.queryForObject(sql,
+                    (resultSet, rowNum) -> new Reservation(
+                            resultSet.getDate("date").toLocalDate(),
+                            resultSet.getTime("time").toLocalTime(),
+                            resultSet.getString("name")
+                    ), Date.valueOf(date), Time.valueOf(time + ":00"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public void deleteByDateAndTime(String date, String time) {
         jdbcTemplate.update("DELETE FROM reservation where date = ? and time = ?;", Date.valueOf(date), Time.valueOf(time + ":00"));
     }
