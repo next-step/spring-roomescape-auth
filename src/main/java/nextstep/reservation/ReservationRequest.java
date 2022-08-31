@@ -1,4 +1,4 @@
-package nextstep;
+package nextstep.reservation;
 
 public class ReservationRequest {
     private String date;
