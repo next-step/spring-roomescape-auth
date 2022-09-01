@@ -14,7 +14,7 @@ public class ReservationService {
         this.reservationDao = reservationDao;
     }
 
-    public void create(ReservationRequest reservationRequest) {
+    public Long create(ReservationRequest reservationRequest) {
         Reservation reservation = reservationDao.findByDateAndTime(reservationRequest.getDate(), reservationRequest.getTime());
         if (reservation != null) {
             throw new RuntimeException();
@@ -26,7 +26,7 @@ public class ReservationService {
                 reservationRequest.getName()
         );
 
-        reservationDao.save(newReservation);
+        return reservationDao.save(newReservation);
     }
 
     public List<Reservation> readByDate(String date) {
@@ -35,7 +35,7 @@ public class ReservationService {
 
     public void delete(String date, String time) {
         Reservation reservation = reservationDao.findByDateAndTime(date, time);
-        if (reservation != null) {
+        if (reservation == null) {
             throw new RuntimeException();
         }
 

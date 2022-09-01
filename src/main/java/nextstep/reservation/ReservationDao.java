@@ -1,9 +1,12 @@
 package nextstep.reservation;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.Time;
 import java.util.List;
 
@@ -16,9 +19,20 @@ public class ReservationDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void save(Reservation reservation) {
+    public Long save(Reservation reservation) {
         String sql = "INSERT INTO reservation (date, time, name) VALUES (?, ?, ?);";
-        jdbcTemplate.update(sql, Date.valueOf(reservation.getDate()), Time.valueOf(reservation.getTime()), reservation.getName());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
+            ps.setDate(1, Date.valueOf(reservation.getDate()));
+            ps.setTime(2, Time.valueOf(reservation.getTime()));
+            ps.setString(3, reservation.getName());
+            return ps;
+
+        }, keyHolder);
+
+        return keyHolder.getKey().longValue();
     }
 
     public List<Reservation> findByDate(String date) {

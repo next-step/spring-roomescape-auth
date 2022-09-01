@@ -3,6 +3,7 @@ package nextstep.reservation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -17,8 +18,8 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity createReservation(@RequestBody ReservationRequest reservationRequest) {
-        reservationService.create(reservationRequest);
-        return ResponseEntity.ok().build();
+        Long id = reservationService.create(reservationRequest);
+        return ResponseEntity.created(URI.create("/reservations/" + id)).build();
     }
 
     @GetMapping
