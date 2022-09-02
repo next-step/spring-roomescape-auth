@@ -1,4 +1,4 @@
-package nextstep;
+package nextstep.reservation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.reservation.ReservationRequest;
