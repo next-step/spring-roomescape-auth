@@ -1,5 +1,6 @@
 package nextstep.reservation;
 
+import nextstep.theme.Theme;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -20,14 +21,15 @@ public class ReservationDao {
     }
 
     public Long save(Reservation reservation) {
-        String sql = "INSERT INTO reservation (date, time, name) VALUES (?, ?, ?);";
+        String sql = "INSERT INTO reservation (theme_id, date, time, name) VALUES (?, ?, ?, ?);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-            ps.setDate(1, Date.valueOf(reservation.getDate()));
-            ps.setTime(2, Time.valueOf(reservation.getTime()));
-            ps.setString(3, reservation.getName());
+            ps.setLong(1, reservation.getTheme().getId());
+            ps.setDate(2, Date.valueOf(reservation.getDate()));
+            ps.setTime(3, Time.valueOf(reservation.getTime()));
+            ps.setString(4, reservation.getName());
             return ps;
 
         }, keyHolder);
@@ -36,23 +38,44 @@ public class ReservationDao {
     }
 
     public List<Reservation> findByDate(String date) {
-        String sql = "SELECT date, time, name from reservation where date = ?;";
+        String sql = "SELECT r.id, r.date, r.time, r.name, t.id, t.name, t.desc, t.price " +
+                "from reservation as r " +
+                "join theme as t on r.theme_id = t.id " +
+                "where date = ?;";
+
         return jdbcTemplate.query(sql,
                 (resultSet, rowNum) -> new Reservation(
-                        resultSet.getDate("date").toLocalDate(),
-                        resultSet.getTime("time").toLocalTime(),
-                        resultSet.getString("name")
+                        resultSet.getLong("r.id"),
+                        new Theme(
+                                resultSet.getLong("t.id"),
+                                resultSet.getString("t.name"),
+                                resultSet.getString("t.desc"),
+                                resultSet.getInt("t.price")
+                        ),
+                        resultSet.getDate("r.date").toLocalDate(),
+                        resultSet.getTime("r.time").toLocalTime(),
+                        resultSet.getString("r.name")
                 ), Date.valueOf(date));
     }
 
     public Reservation findByDateAndTime(String date, String time) {
-        String sql = "SELECT date, time, name from reservation where date = ? and time = ?;";
+        String sql = "SELECT r.id, r.date, r.time, r.name, t.id, t.name, t.desc, t.price " +
+                "from reservation as r " +
+                "join theme as t on r.theme_id = t.id " +
+                "where date = ? and time = ?;";
         try {
             return jdbcTemplate.queryForObject(sql,
                     (resultSet, rowNum) -> new Reservation(
-                            resultSet.getDate("date").toLocalDate(),
-                            resultSet.getTime("time").toLocalTime(),
-                            resultSet.getString("name")
+                            resultSet.getLong("r.id"),
+                            new Theme(
+                                    resultSet.getLong("t.id"),
+                                    resultSet.getString("t.name"),
+                                    resultSet.getString("t.desc"),
+                                    resultSet.getInt("t.price")
+                            ),
+                            resultSet.getDate("r.date").toLocalDate(),
+                            resultSet.getTime("r.time").toLocalTime(),
+                            resultSet.getString("r.name")
                     ), Date.valueOf(date), Time.valueOf(time + ":00"));
         } catch (Exception e) {
             return null;
@@ -60,6 +83,7 @@ public class ReservationDao {
     }
 
     public void deleteByDateAndTime(String date, String time) {
-        jdbcTemplate.update("DELETE FROM reservation where date = ? and time = ?;", Date.valueOf(date), Time.valueOf(time + ":00"));
+        String sql = "DELETE FROM reservation where date = ? and time = ?;";
+        jdbcTemplate.update(sql, Date.valueOf(date), Time.valueOf(time + ":00"));
     }
 }

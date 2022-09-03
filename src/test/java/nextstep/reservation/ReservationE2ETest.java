@@ -1,7 +1,8 @@
 package nextstep.reservation;
 
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
+import nextstep.theme.ThemeRequest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,11 +21,25 @@ class ReservationE2ETest {
     public static final String TIME = "13:00";
     public static final String NAME = "name";
 
-    private ReservationRequest request;
+    private static ReservationRequest request;
+    private static Long themeId;
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void beforeAll() {
+        ThemeRequest body = new ThemeRequest("테마이름", "테마설명", 22000);
+        var response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+                .when().post("/themes")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract();
+        String[] locations = response.header("Location").split("/");
+        themeId = Long.parseLong(locations[locations.length - 1]);
+
         request = new ReservationRequest(
+                themeId,
                 DATE,
                 TIME,
                 NAME
