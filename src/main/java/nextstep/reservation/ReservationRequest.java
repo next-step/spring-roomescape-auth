@@ -1,28 +1,16 @@
 package nextstep.reservation;
 
 public class ReservationRequest {
-    private Long themeId;
-    private String date;
-    private String time;
+    private Long scheduleId;
     private String name;
 
-    public ReservationRequest(Long themeId, String date, String time, String name) {
-        this.themeId = themeId;
-        this.date = date;
-        this.time = time;
+    public ReservationRequest(Long scheduleId, String name) {
+        this.scheduleId = scheduleId;
         this.name = name;
     }
 
-    public Long getThemeId() {
-        return themeId;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public String getTime() {
-        return time;
+    public Long getScheduleId() {
+        return scheduleId;
     }
 
     public String getName() {

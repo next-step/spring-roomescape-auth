@@ -76,7 +76,7 @@ public class ScheduleDao {
                 ), themeId, Date.valueOf(LocalDate.parse(date)));
     }
 
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         jdbcTemplate.update("DELETE FROM schedule where id = ?;", id);
     }
 

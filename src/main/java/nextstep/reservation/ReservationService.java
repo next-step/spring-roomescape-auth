@@ -1,52 +1,54 @@
 package nextstep.reservation;
 
+import nextstep.schedule.Schedule;
+import nextstep.schedule.ScheduleDao;
 import nextstep.support.DuplicateEntityException;
-import nextstep.theme.Theme;
 import nextstep.theme.ThemeDao;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
 public class ReservationService {
     public final ReservationDao reservationDao;
     public final ThemeDao themeDao;
+    public final ScheduleDao scheduleDao;
 
-    public ReservationService(ReservationDao reservationDao, ThemeDao themeDao) {
+    public ReservationService(ReservationDao reservationDao, ThemeDao themeDao, ScheduleDao scheduleDao) {
         this.reservationDao = reservationDao;
         this.themeDao = themeDao;
+        this.scheduleDao = scheduleDao;
     }
 
     public Long create(ReservationRequest reservationRequest) {
-        Reservation reservation = reservationDao.findByDateAndTime(reservationRequest.getDate(), reservationRequest.getTime());
+        Schedule schedule = scheduleDao.findById(reservationRequest.getScheduleId());
+        if (schedule == null) {
+            throw new NullPointerException();
+        }
+
+        Reservation reservation = reservationDao.findByScheduleId(schedule.getId());
         if (reservation != null) {
             throw new DuplicateEntityException();
         }
 
-        Theme theme = themeDao.findById(reservationRequest.getThemeId());
-
         Reservation newReservation = new Reservation(
-                theme,
-                LocalDate.parse(reservationRequest.getDate()),
-                LocalTime.parse(reservationRequest.getTime() + ":00"),
+                schedule,
                 reservationRequest.getName()
         );
 
         return reservationDao.save(newReservation);
     }
 
-    public List<Reservation> readByDate(String date) {
-        return reservationDao.findByDate(date);
+    public List<Reservation> findAllByThemeIdAndDate(Long themeId, String date) {
+        return reservationDao.findAllByThemeIdAndDate(themeId, date);
     }
 
-    public void delete(String date, String time) {
-        Reservation reservation = reservationDao.findByDateAndTime(date, time);
+    public void deleteById(Long id) {
+        Reservation reservation = reservationDao.findById(id);
         if (reservation == null) {
             throw new NullPointerException();
         }
 
-        reservationDao.deleteByDateAndTime(date, time);
+        reservationDao.deleteById(id);
     }
 }

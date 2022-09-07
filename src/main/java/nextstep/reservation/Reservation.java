@@ -1,29 +1,20 @@
 package nextstep.reservation;
 
-import nextstep.theme.Theme;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
+import nextstep.schedule.Schedule;
 
 public class Reservation {
     private Long id;
-    private Theme theme;
-    private LocalDate date;
-    private LocalTime time;
+    private Schedule schedule;
     private String name;
 
-    public Reservation(Long id, Theme theme, LocalDate date, LocalTime time, String name) {
-        this.id = id;
-        this.theme = theme;
-        this.date = date;
-        this.time = time;
+    public Reservation(Schedule schedule, String name) {
+        this.schedule = schedule;
         this.name = name;
     }
 
-    public Reservation(Theme theme, LocalDate date, LocalTime time, String name) {
-        this.theme = theme;
-        this.date = date;
-        this.time = time;
+    public Reservation(Long id, Schedule schedule, String name) {
+        this.id = id;
+        this.schedule = schedule;
         this.name = name;
     }
 
@@ -31,16 +22,8 @@ public class Reservation {
         return id;
     }
 
-    public Theme getTheme() {
-        return theme;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public LocalTime getTime() {
-        return time;
+    public Schedule getSchedule() {
+        return schedule;
     }
 
     public String getName() {

@@ -23,14 +23,14 @@ public class ReservationController {
     }
 
     @GetMapping
-    public ResponseEntity readReservations(@RequestParam String date) {
-        List<Reservation> results = reservationService.readByDate(date);
+    public ResponseEntity readReservations(@RequestParam Long themeId, @RequestParam String date) {
+        List<Reservation> results = reservationService.findAllByThemeIdAndDate(themeId, date);
         return ResponseEntity.ok().body(results);
     }
 
-    @DeleteMapping
-    public ResponseEntity deleteReservation(@RequestParam String date, @RequestParam String time) {
-        reservationService.delete(date, time);
+    @DeleteMapping("/id")
+    public ResponseEntity deleteReservation(@PathVariable Long id) {
+        reservationService.deleteById(id);
 
         return ResponseEntity.noContent().build();
     }
