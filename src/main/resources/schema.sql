@@ -16,3 +16,12 @@ CREATE TABLE theme
     price int,
     primary key (id)
 );
+
+CREATE TABLE schedule
+(
+    id       bigint not null auto_increment,
+    theme_id bigint not null,
+    date     date   not null,
+    time     time   not null,
+    primary key (id)
+);
