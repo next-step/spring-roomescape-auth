@@ -10,6 +10,9 @@ public class ScheduleRequest {
     private String date;
     private String time;
 
+    public ScheduleRequest() {
+    }
+
     public ScheduleRequest(Long themeId, String date, String time) {
         this.themeId = themeId;
         this.date = date;

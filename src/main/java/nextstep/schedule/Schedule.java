@@ -11,6 +11,9 @@ public class Schedule {
     private LocalDate date;
     private LocalTime time;
 
+    public Schedule() {
+    }
+
     public Schedule(Long id, Theme theme, LocalDate date, LocalTime time) {
         this.id = id;
         this.theme = theme;

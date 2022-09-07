@@ -1,8 +1,11 @@
 package nextstep.reservation;
 
 import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
+import nextstep.schedule.ScheduleRequest;
 import nextstep.theme.ThemeRequest;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,27 +24,37 @@ class ReservationE2ETest {
     public static final String TIME = "13:00";
     public static final String NAME = "name";
 
-    private static ReservationRequest request;
-    private static Long themeId;
+    private ReservationRequest request;
+    private Long themeId;
+    private Long scheduleId;
 
-    @BeforeAll
-    static void beforeAll() {
-        ThemeRequest body = new ThemeRequest("테마이름", "테마설명", 22000);
+    @BeforeEach
+    void setUp() {
+        ThemeRequest themeRequest = new ThemeRequest("테마이름", "테마설명", 22000);
         var response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
+                .body(themeRequest)
                 .when().post("/themes")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
-        String[] locations = response.header("Location").split("/");
-        themeId = Long.parseLong(locations[locations.length - 1]);
+        String[] themeLocation = response.header("Location").split("/");
+        themeId = Long.parseLong(themeLocation[themeLocation.length - 1]);
+
+        ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, "2022-08-11", "13:00");
+        RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(scheduleRequest)
+                .when().post("/schedules")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value());
+        String[] scheduleLocation = response.header("Location").split("/");
+        scheduleId = Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
 
         request = new ReservationRequest(
-                themeId,
-                DATE,
-                TIME,
+                scheduleId,
                 NAME
         );
     }
@@ -67,6 +80,7 @@ class ReservationE2ETest {
 
         var response = RestAssured
                 .given().log().all()
+                .param("themeId", themeId)
                 .param("date", DATE)
                 .when().get("/reservations")
                 .then().log().all()
@@ -79,13 +93,11 @@ class ReservationE2ETest {
     @DisplayName("예약을 삭제한다")
     @Test
     void delete() {
-        createReservation();
+        var reservation = createReservation();
 
         var response = RestAssured
                 .given().log().all()
-                .param("date", DATE)
-                .param("time", TIME)
-                .when().delete("/reservations")
+                .when().delete(reservation.header("Location"))
                 .then().log().all()
                 .extract();
 
@@ -113,6 +125,7 @@ class ReservationE2ETest {
     void showEmptyReservations() {
         var response = RestAssured
                 .given().log().all()
+                .param("themeId", themeId)
                 .param("date", DATE)
                 .when().get("/reservations")
                 .then().log().all()
@@ -127,21 +140,20 @@ class ReservationE2ETest {
     void createNotExistReservation() {
         var response = RestAssured
                 .given().log().all()
-                .param("date", DATE)
-                .param("time", TIME)
-                .when().delete("/reservations")
+                .when().delete("/reservations/1")
                 .then().log().all()
                 .extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
-    private void createReservation() {
-        RestAssured
+    private ExtractableResponse<Response> createReservation() {
+        return RestAssured
                 .given().log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/reservations")
-                .then().log().all();
+                .then().log().all()
+                .extract();
     }
 }

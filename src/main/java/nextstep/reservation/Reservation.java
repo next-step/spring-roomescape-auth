@@ -7,6 +7,9 @@ public class Reservation {
     private Schedule schedule;
     private String name;
 
+    public Reservation() {
+    }
+
     public Reservation(Schedule schedule, String name) {
         this.schedule = schedule;
         this.name = name;
