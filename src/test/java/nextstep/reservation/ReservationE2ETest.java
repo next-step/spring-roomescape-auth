@@ -33,7 +33,7 @@ class ReservationE2ETest {
     @BeforeEach
     void setUp() {
         ThemeRequest themeRequest = new ThemeRequest("테마이름", "테마설명", 22000);
-        var response = RestAssured
+        var themeResponse = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(themeRequest)
@@ -41,30 +41,32 @@ class ReservationE2ETest {
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
-        String[] themeLocation = response.header("Location").split("/");
+        String[] themeLocation = themeResponse.header("Location").split("/");
         themeId = Long.parseLong(themeLocation[themeLocation.length - 1]);
 
         ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, DATE, TIME);
-        RestAssured
+        var scheduleResponse = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(scheduleRequest)
                 .when().post("/schedules")
                 .then().log().all()
-                .statusCode(HttpStatus.CREATED.value());
-        String[] scheduleLocation = response.header("Location").split("/");
+                .statusCode(HttpStatus.CREATED.value())
+                .extract();
+        String[] scheduleLocation = scheduleResponse.header("Location").split("/");
         scheduleId = Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
 
         MemberRequest body = new MemberRequest("username", "password", "name", "010-1234-5678");
-        RestAssured
+        var memberResponse = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(body)
                 .when().post("/members")
                 .then().log().all()
-                .statusCode(HttpStatus.CREATED.value());
+                .statusCode(HttpStatus.CREATED.value())
+                .extract();
 
-        String[] memberLocation = response.header("Location").split("/");
+        String[] memberLocation = memberResponse.header("Location").split("/");
         memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
 
         request = new ReservationRequest(
