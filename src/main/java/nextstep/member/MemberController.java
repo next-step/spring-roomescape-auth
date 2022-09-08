@@ -1,10 +1,7 @@
 package nextstep.member;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -21,5 +18,12 @@ public class MemberController {
     public ResponseEntity createMember(@RequestBody MemberRequest memberRequest) {
         Long id = memberService.create(memberRequest);
         return ResponseEntity.created(URI.create("/members/" + id)).build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity me() {
+        Long id = 1L;
+        Member member = memberService.findById(id);
+        return ResponseEntity.ok(member);
     }
 }
