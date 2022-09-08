@@ -1,6 +1,8 @@
 package nextstep.schedule;
 
 import io.restassured.RestAssured;
+import nextstep.theme.ThemeRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,16 +10,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 
-import static nextstep.theme.ThemeE2ETest.createTheme;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class ScheduleE2ETest {
+
+    private Long themeId;
+
+    @BeforeEach
+    void setUp() {
+        ThemeRequest themeRequest = new ThemeRequest("테마이름", "테마설명", 22000);
+        var response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(themeRequest)
+                .when().post("/themes")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract();
+        String[] themeLocation = response.header("Location").split("/");
+        themeId = Long.parseLong(themeLocation[themeLocation.length - 1]);
+    }
+
     @DisplayName("스케줄을 생성한다")
     @Test
     public void createSchedule() {
-        Long themeId = createTheme();
         ScheduleRequest body = new ScheduleRequest(themeId, "2022-08-11", "13:00");
         RestAssured
                 .given().log().all()
@@ -31,7 +49,6 @@ public class ScheduleE2ETest {
     @DisplayName("스케줄을 조회한다")
     @Test
     public void showSchedules() {
-        Long themeId = createTheme();
         requestCreateSchedule();
 
         var response = RestAssured

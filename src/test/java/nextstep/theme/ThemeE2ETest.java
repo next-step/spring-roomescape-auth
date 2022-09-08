@@ -55,7 +55,7 @@ public class ThemeE2ETest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
-    public static Long createTheme() {
+    public Long createTheme() {
         ThemeRequest body = new ThemeRequest("테마이름", "테마설명", 22000);
         String location = RestAssured
                 .given().log().all()

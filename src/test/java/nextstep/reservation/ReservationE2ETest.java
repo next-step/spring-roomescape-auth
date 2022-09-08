@@ -42,7 +42,7 @@ class ReservationE2ETest {
         String[] themeLocation = response.header("Location").split("/");
         themeId = Long.parseLong(themeLocation[themeLocation.length - 1]);
 
-        ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, "2022-08-11", "13:00");
+        ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, DATE, TIME);
         RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
