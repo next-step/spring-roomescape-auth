@@ -1,6 +1,7 @@
 package nextstep.theme;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,13 @@ public class ThemeDao {
     public ThemeDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
+    private final RowMapper<Theme> rowMapper = (resultSet, rowNum) -> new Theme(
+            resultSet.getLong("id"),
+            resultSet.getString("name"),
+            resultSet.getString("desc"),
+            resultSet.getInt("price")
+    );
 
     public Long save(Theme theme) {
         String sql = "INSERT INTO theme (name, desc, price) VALUES (?, ?, ?);";
@@ -34,24 +42,12 @@ public class ThemeDao {
 
     public Theme findById(Long id) {
         String sql = "SELECT id, name, desc, price from theme where id = ?;";
-        return jdbcTemplate.queryForObject(sql,
-                (resultSet, rowNum) -> new Theme(
-                        resultSet.getLong("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("desc"),
-                        resultSet.getInt("price")
-                ), id);
+        return jdbcTemplate.queryForObject(sql, rowMapper, id);
     }
 
     public List<Theme> findAll() {
         String sql = "SELECT id, name, desc, price from theme;";
-        return jdbcTemplate.query(sql,
-                (resultSet, rowNum) -> new Theme(
-                        resultSet.getLong("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("desc"),
-                        resultSet.getInt("price")
-                ));
+        return jdbcTemplate.query(sql, rowMapper);
     }
 
     public void delete(Long id) {
