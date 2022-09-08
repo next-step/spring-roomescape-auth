@@ -3,6 +3,7 @@ package nextstep.reservation;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import nextstep.member.MemberRequest;
 import nextstep.schedule.ScheduleRequest;
 import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,7 @@ class ReservationE2ETest {
     private ReservationRequest request;
     private Long themeId;
     private Long scheduleId;
+    private Long memberId;
 
     @BeforeEach
     void setUp() {
@@ -53,9 +55,21 @@ class ReservationE2ETest {
         String[] scheduleLocation = response.header("Location").split("/");
         scheduleId = Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
 
+        MemberRequest body = new MemberRequest("username", "password", "name", "010-1234-5678");
+        RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+                .when().post("/members")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value());
+
+        String[] memberLocation = response.header("Location").split("/");
+        memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
+
         request = new ReservationRequest(
                 scheduleId,
-                NAME
+                memberId
         );
     }
 
