@@ -26,4 +26,8 @@ public class LoginService {
 
         return new TokenResponse(accessToken);
     }
+
+    public Long extractPrincipal(String credential) {
+        return Long.parseLong(jwtTokenProvider.getPrincipal(credential));
+    }
 }

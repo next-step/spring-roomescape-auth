@@ -1,5 +1,7 @@
 package nextstep.member;
 
+import nextstep.auth.LoginService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,9 +11,11 @@ import java.net.URI;
 @RequestMapping("/members")
 public class MemberController {
     private MemberService memberService;
+    private LoginService loginService;
 
-    public MemberController(MemberService memberService) {
+    public MemberController(MemberService memberService, LoginService loginService) {
         this.memberService = memberService;
+        this.loginService = loginService;
     }
 
     @PostMapping
@@ -21,8 +25,9 @@ public class MemberController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity me() {
-        Long id = 1L;
+    public ResponseEntity me(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+        String credential = authorization.split(" ")[1];
+        Long id = loginService.extractPrincipal(credential);
         Member member = memberService.findById(id);
         return ResponseEntity.ok(member);
     }
