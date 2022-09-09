@@ -69,6 +69,7 @@ public class MemberE2ETest {
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        assertThat(response.as(Member.class)).isNotNull();
+        Member member = response.as(Member.class);
+        assertThat(member.getUsername()).isNotNull();
     }
 }
