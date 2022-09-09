@@ -4,8 +4,6 @@ import nextstep.member.Member;
 import nextstep.member.MemberDao;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-
 @Service
 public class LoginService {
     private MemberDao memberDao;
@@ -22,7 +20,7 @@ public class LoginService {
             throw new AuthenticationException();
         }
 
-        String accessToken = jwtTokenProvider.createToken(member.getId() + "", Collections.emptyList());
+        String accessToken = jwtTokenProvider.createToken(member.getId() + "", member.getRole());
 
         return new TokenResponse(accessToken);
     }

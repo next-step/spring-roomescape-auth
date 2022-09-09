@@ -41,7 +41,8 @@ public class ReservationDao {
                     resultSet.getString("member.username"),
                     resultSet.getString("member.password"),
                     resultSet.getString("member.name"),
-                    resultSet.getString("member.phone")
+                    resultSet.getString("member.phone"),
+                    resultSet.getString("member.role")
             )
     );
 
@@ -65,7 +66,7 @@ public class ReservationDao {
                 "reservation.id, reservation.schedule_id, reservation.member_id, " +
                 "schedule.id, schedule.theme_id, schedule.date, schedule.time, " +
                 "theme.id, theme.name, theme.desc, theme.price, " +
-                "member.id, member.username, member.password, member.name, member.phone " +
+                "member.id, member.username, member.password, member.name, member.phone, member.role " +
                 "from reservation " +
                 "inner join schedule on reservation.schedule_id = schedule.id " +
                 "inner join theme on schedule.theme_id = theme.id " +
@@ -80,7 +81,7 @@ public class ReservationDao {
                 "reservation.id, reservation.schedule_id, reservation.member_id, " +
                 "schedule.id, schedule.theme_id, schedule.date, schedule.time, " +
                 "theme.id, theme.name, theme.desc, theme.price, " +
-                "member.id, member.username, member.password, member.name, member.phone " +
+                "member.id, member.username, member.password, member.name, member.phone, member.role " +
                 "from reservation " +
                 "inner join schedule on reservation.schedule_id = schedule.id " +
                 "inner join theme on schedule.theme_id = theme.id " +
@@ -98,7 +99,7 @@ public class ReservationDao {
                 "reservation.id, reservation.schedule_id, reservation.member_id, " +
                 "schedule.id, schedule.theme_id, schedule.date, schedule.time, " +
                 "theme.id, theme.name, theme.desc, theme.price, " +
-                "member.id, member.username, member.password, member.name, member.phone " +
+                "member.id, member.username, member.password, member.name, member.phone, member.role " +
                 "from reservation " +
                 "inner join schedule on reservation.schedule_id = schedule.id " +
                 "inner join theme on schedule.theme_id = theme.id " +
