@@ -18,11 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class MemberE2ETest {
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+
     @DisplayName("멤버를 생성한다")
     @Test
     void create() {
         // given
-        MemberRequest request = new MemberRequest("user1", "password", "name", "010-1234-5678", "ADMIN");
+        MemberRequest request = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678", "ADMIN");
 
         // when
         ExtractableResponse<Response> response = createMember(request);
@@ -35,7 +38,7 @@ class MemberE2ETest {
     @Test
     void failToCreate() {
         // given
-        MemberRequest request = new MemberRequest("user2", "password", "name", "010-1234-5678", "ADMIN");
+        MemberRequest request = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678", "ADMIN");
         createMember(request);
 
         // when
@@ -52,7 +55,7 @@ class MemberE2ETest {
     @Test
     void showMe() {
         // given
-        MemberRequest request = new MemberRequest("user3", "password", "name", "010-1234-5678", "ADMIN");
+        MemberRequest request = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678", "ADMIN");
         createMember(request);
         String token = login().as(TokenResponse.class).getAccessToken();
 
@@ -97,7 +100,7 @@ class MemberE2ETest {
     }
 
     private ExtractableResponse<Response> login() {
-        TokenRequest request = new TokenRequest("user3", "password");
+        TokenRequest request = new TokenRequest(USERNAME, PASSWORD);
 
         return RestAssured
                 .given().log().all()
