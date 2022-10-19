@@ -17,7 +17,7 @@ public class LoginService {
     public TokenResponse createToken(TokenRequest tokenRequest) {
         Member member = memberDao.findByUsername(tokenRequest.getUsername());
         if (member == null || member.checkWrongPassword(tokenRequest.getPassword())) {
-            throw new AuthenticationException();
+            throw new AuthenticationException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
         String accessToken = jwtTokenProvider.createToken(member.getId() + "", member.getRole());
