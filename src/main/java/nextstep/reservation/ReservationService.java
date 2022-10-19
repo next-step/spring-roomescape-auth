@@ -28,16 +28,16 @@ public class ReservationService {
 
     public Long create(Member member, ReservationRequest reservationRequest) {
         if (member == null) {
-            throw new AuthenticationException();
+            throw new AuthenticationException("로그인 후 이용가능합니다.");
         }
         Schedule schedule = scheduleDao.findById(reservationRequest.getScheduleId());
         if (schedule == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("존재하지 않는 스케줄입니다.");
         }
 
         List<Reservation> reservation = reservationDao.findByScheduleId(schedule.getId());
         if (!reservation.isEmpty()) {
-            throw new DuplicateEntityException();
+            throw new DuplicateEntityException("동시간대에 이미 예약이 존재합니다.");
         }
 
         Reservation newReservation = new Reservation(
@@ -60,11 +60,11 @@ public class ReservationService {
     public void deleteById(Member member, Long id) {
         Reservation reservation = reservationDao.findById(id);
         if (reservation == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("존재하지 않는 예약입니다.");
         }
 
         if (!reservation.sameMember(member)) {
-            throw new AuthenticationException();
+            throw new AuthenticationException("해당 예약에 대한 권한이 없습니다.");
         }
 
         reservationDao.deleteById(id);
