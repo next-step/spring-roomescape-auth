@@ -1,7 +1,10 @@
 package nextstep.auth;
 
 import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import nextstep.member.MemberRequest;
+import nextstep.support.ErrorResponse;
 import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class AuthE2ETest {
+class AuthE2ETest {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     private Long memberId;
@@ -34,21 +37,60 @@ public class AuthE2ETest {
 
     @DisplayName("토큰을 생성한다")
     @Test
-    public void create() {
-        TokenRequest body = new TokenRequest(USERNAME, PASSWORD);
-        var response = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().post("/login/token")
-                .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract();
+    void create() {
+        // given
+        TokenRequest request = new TokenRequest(USERNAME, PASSWORD);
 
-        assertThat(response.as(TokenResponse.class)).isNotNull();
+        // when
+        ExtractableResponse<Response> response = login(request);
+        TokenResponse tokenResponse = response.as(TokenResponse.class);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(tokenResponse.getAccessToken()).isNotNull();
     }
 
-//    @DisplayName("테마 목록을 조회한다")
+    @DisplayName("잘못된 아이디 입력 시, 예외를 반환한다.")
+    @Test
+    void wrongUsername() {
+        // given
+        TokenRequest request = new TokenRequest("wrong_username", PASSWORD);
+
+        // when
+        ExtractableResponse<Response> response = login(request);
+        ErrorResponse errorResponse = response.as(ErrorResponse.class);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+        assertThat(errorResponse.getMessage()).isEqualTo("아이디 또는 비밀번호가 일치하지 않습니다.");
+    }
+
+    @DisplayName("잘못된 비밀번호 입력 시, 예외를 반환한다.")
+    @Test
+    void wrongPassword() {
+        // given
+        TokenRequest request = new TokenRequest(USERNAME, "wrong_password");
+
+        // when
+        ExtractableResponse<Response> response = login(request);
+        ErrorResponse errorResponse = response.as(ErrorResponse.class);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+        assertThat(errorResponse.getMessage()).isEqualTo("아이디 또는 비밀번호가 일치하지 않습니다.");
+    }
+
+    private ExtractableResponse<Response> login(TokenRequest request) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(request)
+                .when().post("/login/token")
+                .then().log().all()
+                .extract();
+    }
+
+    //    @DisplayName("테마 목록을 조회한다")
 //    @Test
 //    public void showThemes() {
 //        createTheme();
