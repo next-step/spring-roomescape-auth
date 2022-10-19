@@ -52,4 +52,9 @@ public class MemberDao {
         String sql = "SELECT id, username, password, name, phone, role from member where username = ?;";
         return jdbcTemplate.queryForObject(sql, rowMapper, username);
     }
+
+    public boolean existsByUsername(String username) {
+        String sql = "SELECT COUNT(*) from member where username = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, username) > 0;
+    }
 }
