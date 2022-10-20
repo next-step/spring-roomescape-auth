@@ -10,7 +10,7 @@ import java.sql.PreparedStatement;
 
 @Component
 public class MemberDao {
-    public final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public MemberDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -49,5 +49,10 @@ public class MemberDao {
     public Member findByUsername(String username) {
         String sql = "SELECT id, username, password, name, phone from member where username = ?;";
         return jdbcTemplate.queryForObject(sql, rowMapper, username);
+    }
+
+    public boolean existsByUsername(String username) {
+        String sql = "SELECT COUNT(*) from member where username = ?;";
+        return jdbcTemplate.queryForObject(sql, Integer.class, username) > 0;
     }
 }

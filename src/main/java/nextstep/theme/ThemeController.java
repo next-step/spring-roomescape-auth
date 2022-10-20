@@ -9,7 +9,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/themes")
 public class ThemeController {
-    private ThemeService themeService;
+    private final ThemeService themeService;
 
     public ThemeController(ThemeService themeService) {
         this.themeService = themeService;
@@ -30,7 +30,6 @@ public class ThemeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTheme(@PathVariable Long id) {
         themeService.delete(id);
-
         return ResponseEntity.noContent().build();
     }
 }
