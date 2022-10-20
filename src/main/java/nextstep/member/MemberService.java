@@ -19,6 +19,16 @@ public class MemberService {
     }
 
     public Member findById(Long id) {
-        return memberDao.findById(id);
+        try {
+            return memberDao.findById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new AuthenticationException("존재하지 않는 계정입니다.");
+        }
+    }
+
+    private void checkUsernameAvailable(String username) {
+        if (memberDao.existsByUsername(username)) {
+            throw new DuplicateEntityException("이미 사용중인 username 입니다.");
+        }
     }
 }
