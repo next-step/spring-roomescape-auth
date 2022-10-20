@@ -15,7 +15,7 @@ import java.util.List;
 
 @Component
 public class ScheduleDao {
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public ScheduleDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -70,5 +70,4 @@ public class ScheduleDao {
     public void deleteById(Long id) {
         jdbcTemplate.update("DELETE FROM schedule where id = ?;", id);
     }
-
 }

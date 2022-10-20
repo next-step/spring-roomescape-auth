@@ -8,8 +8,8 @@ import java.util.List;
 
 @Service
 public class ScheduleService {
-    private ScheduleDao scheduleDao;
-    private ThemeDao themeDao;
+    private final ScheduleDao scheduleDao;
+    private final ThemeDao themeDao;
 
     public ScheduleService(ScheduleDao scheduleDao, ThemeDao themeDao) {
         this.scheduleDao = scheduleDao;

@@ -15,8 +15,7 @@ import java.util.List;
 
 @Component
 public class ReservationDao {
-
-    public final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public ReservationDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

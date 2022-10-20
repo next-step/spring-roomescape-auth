@@ -17,7 +17,6 @@ public class ReservationService {
     private final ReservationDao reservationDao;
     private final ThemeDao themeDao;
     private final ScheduleDao scheduleDao;
-
     private final MemberDao memberDao;
 
     public ReservationService(ReservationDao reservationDao, ThemeDao themeDao, ScheduleDao scheduleDao, MemberDao memberDao) {
@@ -34,22 +33,6 @@ public class ReservationService {
 
         Reservation newReservation = new Reservation(schedule, member);
         return reservationDao.save(newReservation);
-    }
-
-    private Schedule findSchedule(Long scheduleId) {
-        try {
-            return scheduleDao.findById(scheduleId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NullPointerException("존재하지 않는 스케줄입니다.");
-        }
-    }
-
-    private Member findMember(Long memberId) {
-        try {
-            return memberDao.findById(memberId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NullPointerException("존재하지 않는 멤버입니다.");
-        }
     }
 
     private void checkReservationAvailable(Long scheduleId) {
@@ -81,6 +64,22 @@ public class ReservationService {
     private void checkMyReservation(Reservation reservation, Member member) {
         if (!reservation.isMine(member)) {
             throw new AuthenticationException("해당 예약에 대한 권한이 없습니다");
+        }
+    }
+
+    private Schedule findSchedule(Long scheduleId) {
+        try {
+            return scheduleDao.findById(scheduleId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NullPointerException("존재하지 않는 스케줄입니다.");
+        }
+    }
+
+    private Member findMember(Long memberId) {
+        try {
+            return memberDao.findById(memberId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NullPointerException("존재하지 않는 멤버입니다.");
         }
     }
 
