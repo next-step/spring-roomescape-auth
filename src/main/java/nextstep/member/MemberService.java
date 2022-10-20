@@ -1,5 +1,8 @@
 package nextstep.member;
 
+import nextstep.auth.AuthenticationException;
+import nextstep.support.DuplicateEntityException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +14,7 @@ public class MemberService {
     }
 
     public Long create(MemberRequest memberRequest) {
+        checkUsernameAvailable(memberRequest.getUsername());
         return memberDao.save(memberRequest.toEntity());
     }
 
