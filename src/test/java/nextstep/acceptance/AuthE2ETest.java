@@ -1,8 +1,8 @@
 package nextstep.acceptance;
 
 import io.restassured.RestAssured;
-import nextstep.auth.TokenRequest;
-import nextstep.auth.TokenResponse;
+import nextstep.presentation.dto.auth.AuthRequest;
+import nextstep.presentation.dto.auth.AuthResponse;
 import nextstep.presentation.dto.member.MemberRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,8 @@ class AuthE2ETest {
     @DisplayName("토큰을 생성한다")
     @Test
     void create() {
-        TokenRequest body = new TokenRequest(USERNAME, PASSWORD);
+        AuthRequest body = new AuthRequest(USERNAME, PASSWORD);
+
         var response = RestAssured
             .given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -46,7 +47,7 @@ class AuthE2ETest {
             .statusCode(HttpStatus.OK.value())
             .extract();
 
-        Assertions.assertThat(response.as(TokenResponse.class)).isNotNull();
+        Assertions.assertThat(response.as(AuthResponse.class)).isNotNull();
     }
 
 //    @DisplayName("테마 목록을 조회한다")
