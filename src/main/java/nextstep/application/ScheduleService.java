@@ -5,11 +5,11 @@ import java.util.stream.Collectors;
 import nextstep.domain.Schedule;
 import nextstep.domain.repository.ScheduleRepository;
 import nextstep.exception.ScheduleException;
-import nextstep.presentation.dto.ReservationRequest;
-import nextstep.presentation.dto.ReservationResponse;
-import nextstep.presentation.dto.ScheduleRequest;
-import nextstep.presentation.dto.ScheduleResponse;
-import nextstep.presentation.dto.ThemeResponse;
+import nextstep.presentation.dto.reservation.ReservationRequest;
+import nextstep.presentation.dto.reservation.ReservationResponse;
+import nextstep.presentation.dto.schedule.ScheduleRequest;
+import nextstep.presentation.dto.schedule.ScheduleResponse;
+import nextstep.presentation.dto.theme.ThemeResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import nextstep.domain.Theme;
 import nextstep.domain.repository.ThemeRepository;
 import nextstep.exception.ThemeException;
-import nextstep.presentation.dto.ThemeRequest;
-import nextstep.presentation.dto.ThemeResponse;
+import nextstep.presentation.dto.theme.ThemeRequest;
+import nextstep.presentation.dto.theme.ThemeResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,4 +1,6 @@
-package nextstep.presentation.dto;
+package nextstep.presentation.dto.schedule;
+
+import nextstep.presentation.dto.theme.ThemeResponse;
 
 public class ScheduleResponse {
 

@@ -3,7 +3,7 @@ package nextstep.acceptance;
 import io.restassured.RestAssured;
 import nextstep.auth.TokenRequest;
 import nextstep.auth.TokenResponse;
-import nextstep.presentation.dto.MemberRequest;
+import nextstep.presentation.dto.member.MemberRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

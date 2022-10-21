@@ -1,7 +1,7 @@
 package nextstep.presentation;
 
 import nextstep.domain.Member;
-import nextstep.presentation.dto.MemberRequest;
+import nextstep.presentation.dto.member.MemberRequest;
 import nextstep.application.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

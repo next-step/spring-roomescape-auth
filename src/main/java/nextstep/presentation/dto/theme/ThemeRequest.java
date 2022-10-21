@@ -1,4 +1,4 @@
-package nextstep.presentation.dto;
+package nextstep.presentation.dto.theme;
 
 public class ThemeRequest {
 

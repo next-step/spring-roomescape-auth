@@ -2,7 +2,7 @@ package nextstep.application;
 
 import nextstep.domain.Member;
 import nextstep.infrastructure.MemberDao;
-import nextstep.presentation.dto.MemberRequest;
+import nextstep.presentation.dto.member.MemberRequest;
 import org.springframework.stereotype.Service;
 
 @Service

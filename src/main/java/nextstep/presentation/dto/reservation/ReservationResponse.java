@@ -1,4 +1,4 @@
-package nextstep.presentation.dto;
+package nextstep.presentation.dto.reservation;
 
 public class ReservationResponse {
 

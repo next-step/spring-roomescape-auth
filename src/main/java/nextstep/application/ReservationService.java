@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import nextstep.domain.Reservation;
 import nextstep.domain.repository.ReservationRepository;
 import nextstep.exception.ReservationException;
-import nextstep.presentation.dto.ReservationRequest;
-import nextstep.presentation.dto.ReservationResponse;
+import nextstep.presentation.dto.reservation.ReservationRequest;
+import nextstep.presentation.dto.reservation.ReservationResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,14 +1,14 @@
-package nextstep.auth;
+package nextstep.presentation.dto.auth;
 
-public class TokenRequest {
+public class AuthRequest {
 
     private String username;
     private String password;
 
-    public TokenRequest() {
+    private AuthRequest() {
     }
 
-    public TokenRequest(String username, String password) {
+    public AuthRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }
