@@ -1,11 +1,16 @@
 package nextstep.domain;
 
 public class Member {
+
     private Long id;
     private String username;
     private String password;
     private String name;
     private String phone;
+
+    public Member(String username, String password, String name, String phone) {
+        this(null, username, password, name, phone);
+    }
 
     public Member(Long id, String username, String password, String name, String phone) {
         this.id = id;
@@ -15,11 +20,7 @@ public class Member {
         this.phone = phone;
     }
 
-    public Member(String username, String password, String name, String phone) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.phone = phone;
+    private Member() {
     }
 
     public Long getId() {

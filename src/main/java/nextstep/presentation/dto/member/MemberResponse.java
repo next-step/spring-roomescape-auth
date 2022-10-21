@@ -1,20 +1,35 @@
 package nextstep.presentation.dto.member;
 
-public class MemberRequest {
+public class MemberResponse {
 
+    private Long id;
     private String username;
     private String password;
     private String name;
     private String phone;
+    private String role;
 
-    private MemberRequest() {
+    private MemberResponse() {
     }
 
-    public MemberRequest(String username, String password, String name, String phone) {
+    public MemberResponse(
+        Long id,
+        String username,
+        String password,
+        String name,
+        String phone,
+        String role
+    ) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.name = name;
         this.phone = phone;
+        this.role = role;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -31,5 +46,9 @@ public class MemberRequest {
 
     public String getPhone() {
         return phone;
+    }
+
+    public String getRole() {
+        return role;
     }
 }

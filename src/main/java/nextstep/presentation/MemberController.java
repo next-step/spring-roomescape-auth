@@ -1,32 +1,35 @@
 package nextstep.presentation;
 
-import nextstep.domain.Member;
-import nextstep.presentation.dto.member.MemberRequest;
-import nextstep.application.MemberService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
+import nextstep.application.MemberService;
+import nextstep.presentation.dto.member.MemberRequest;
+import nextstep.presentation.dto.member.MemberResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/members")
 public class MemberController {
-    private MemberService memberService;
+
+    private final MemberService memberService;
 
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
     }
 
     @PostMapping
-    public ResponseEntity createMember(@RequestBody MemberRequest memberRequest) {
+    public ResponseEntity<Void> createMember(@RequestBody MemberRequest memberRequest) {
         Long id = memberService.create(memberRequest);
         return ResponseEntity.created(URI.create("/members/" + id)).build();
     }
 
     @GetMapping("/me")
-    public ResponseEntity me() {
-        Long id = 1L;
-        Member member = memberService.findById(id);
-        return ResponseEntity.ok(member);
+    public ResponseEntity<MemberResponse> me() {
+        MemberResponse response = memberService.findById(1L);
+        return ResponseEntity.ok(response);
     }
 }
