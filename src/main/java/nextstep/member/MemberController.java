@@ -1,17 +1,27 @@
 package nextstep.member;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
+import nextstep.auth.AuthenticationException;
+import nextstep.jwt.JwtTokenProvider;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/members")
 public class MemberController {
-    private MemberService memberService;
 
-    public MemberController(MemberService memberService) {
+    private MemberService memberService;
+    private JwtTokenProvider jwtTokenProvider;
+
+    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
         this.memberService = memberService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping
@@ -21,9 +31,14 @@ public class MemberController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity me() {
-        Long id = 1L;
-        Member member = memberService.findById(id);
-        return ResponseEntity.ok(member);
+    public ResponseEntity<Member> me(@RequestHeader(HttpHeaders.AUTHORIZATION) String bearerToken) {
+        if (bearerToken == null || !bearerToken.contains("Bearer")) {
+            throw new AuthenticationException();
+        }
+        String token = bearerToken.replace("Bearer ", "").trim();
+        String username = jwtTokenProvider.getPrincipal(token);
+        return ResponseEntity.ok(
+            memberService.findByUsername(username)
+        );
     }
 }

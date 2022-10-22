@@ -29,7 +29,7 @@ public class AuthController {
             throw new AuthenticationException();
         }
         return new TokenResponse(
-            jwtTokenProvider.createToken(username, Collections.singletonList("user"))
+            jwtTokenProvider.createToken(username, Collections.singletonList("USER"))
         );
     }
 }
