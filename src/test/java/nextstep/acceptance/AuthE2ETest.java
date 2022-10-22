@@ -1,9 +1,9 @@
 package nextstep.acceptance;
 
 import io.restassured.RestAssured;
-import nextstep.presentation.dto.auth.AuthRequest;
-import nextstep.presentation.dto.auth.AuthResponse;
-import nextstep.presentation.dto.member.MemberRequest;
+import nextstep.application.dto.auth.AuthRequest;
+import nextstep.application.dto.auth.AuthResponse;
+import nextstep.application.dto.member.MemberRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

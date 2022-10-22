@@ -5,14 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import nextstep.application.ReservationService;
-import nextstep.application.ScheduleService;
-import nextstep.application.ThemeService;
-import nextstep.exception.ScheduleException;
-import nextstep.presentation.dto.schedule.ScheduleRequest;
-import nextstep.presentation.dto.schedule.ScheduleResponse;
-import nextstep.presentation.dto.theme.ThemeRequest;
-import nextstep.presentation.dto.theme.ThemeResponse;
+import nextstep.application.dto.schedule.ScheduleRequest;
+import nextstep.application.dto.schedule.ScheduleResponse;
+import nextstep.application.dto.theme.ThemeRequest;
+import nextstep.application.dto.theme.ThemeResponse;
+import nextstep.application.service.reservation.ReservationCommandService;
+import nextstep.application.service.schedule.ScheduleCommandService;
+import nextstep.application.service.schedule.ScheduleQueryService;
+import nextstep.application.service.theme.ThemeCommandService;
+import nextstep.common.exception.ScheduleException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,19 +24,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ScheduleServiceTest {
 
     @Autowired
-    private ThemeService themeService;
+    private ReservationCommandService reservationCommandService;
 
     @Autowired
-    private ReservationService reservationService;
+    private ScheduleCommandService scheduleCommandService;
 
     @Autowired
-    private ScheduleService scheduleService;
+    private ScheduleQueryService scheduleQueryService;
+
+    @Autowired
+    private ThemeCommandService themeCommandService;
 
     @AfterEach
     void tearDown() {
-        reservationService.cancelAll();
-        scheduleService.cancelAll();
-        themeService.deleteAll();
+        reservationCommandService.cancelAll();
+        scheduleCommandService.cancelAll();
+        themeCommandService.deleteAll();
     }
 
     @DisplayName("테마별 스케줄을 생성한다.")
@@ -43,12 +47,12 @@ class ScheduleServiceTest {
     void make() {
         // given
         ThemeRequest themeRequest = new ThemeRequest("열쇠공이", "열쇠공이의 이중생활", 25000);
-        Long themeId = themeService.create(themeRequest);
+        Long themeId = themeCommandService.create(themeRequest);
 
         ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, "2022-08-11", "16:00");
 
         // when
-        Long scheduleId = scheduleService.make(scheduleRequest);
+        Long scheduleId = scheduleCommandService.make(scheduleRequest);
 
         // then
         assertThat(scheduleId).isNotNull();
@@ -59,12 +63,12 @@ class ScheduleServiceTest {
     void checkAll() {
         // given
         ThemeRequest themeRequest = new ThemeRequest("열쇠공이", "열쇠공이의 이중생활", 25000);
-        Long themeId = themeService.create(themeRequest);
+        Long themeId = themeCommandService.create(themeRequest);
 
         ScheduleRequest scheduleRequest1 = new ScheduleRequest(themeId, "2022-08-11", "16:00");
         ScheduleRequest scheduleRequest2 = new ScheduleRequest(themeId, "2022-08-11", "20:00");
-        scheduleService.make(scheduleRequest1);
-        scheduleService.make(scheduleRequest2);
+        scheduleCommandService.make(scheduleRequest1);
+        scheduleCommandService.make(scheduleRequest2);
 
         ThemeResponse themeResponse = new ThemeResponse(null, "열쇠공이", "열쇠공이의 이중생활", 25000);
         List<ScheduleResponse> expected = List.of(
@@ -73,7 +77,7 @@ class ScheduleServiceTest {
         );
 
         // when
-        List<ScheduleResponse> responses = scheduleService.checkAll(themeId, "2022-08-11");
+        List<ScheduleResponse> responses = scheduleQueryService.checkAll(themeId, "2022-08-11");
 
         // then
         assertThat(responses).hasSize(2);
@@ -88,16 +92,16 @@ class ScheduleServiceTest {
     void cancel_success() {
         // given
         ThemeRequest themeRequest = new ThemeRequest("열쇠공이", "열쇠공이의 이중생활", 25000);
-        Long themeId = themeService.create(themeRequest);
+        Long themeId = themeCommandService.create(themeRequest);
 
         ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, "2022-08-11", "16:00");
-        Long scheduleId = scheduleService.make(scheduleRequest);
+        Long scheduleId = scheduleCommandService.make(scheduleRequest);
 
-        reservationService.cancelAll();
+        reservationCommandService.cancelAll();
 
         // when
         // then
-        assertThatCode(() -> scheduleService.cancel(scheduleId)).doesNotThrowAnyException();
+        assertThatCode(() -> scheduleCommandService.cancel(scheduleId)).doesNotThrowAnyException();
     }
 
     @DisplayName("예약과 관련 있는 스케줄은 삭제할 수 없다.")
@@ -105,14 +109,14 @@ class ScheduleServiceTest {
     void cancel_fail1() {
         // given
         ThemeRequest themeRequest = new ThemeRequest("열쇠공이", "열쇠공이의 이중생활", 25000);
-        Long themeId = themeService.create(themeRequest);
+        Long themeId = themeCommandService.create(themeRequest);
 
         ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, "2022-08-11", "16:00");
-        Long scheduleId = scheduleService.make(scheduleRequest);
+        Long scheduleId = scheduleCommandService.make(scheduleRequest);
 
         // when
         // then
-        assertThatThrownBy(() -> scheduleService.cancel(scheduleId))
+        assertThatThrownBy(() -> scheduleCommandService.cancel(scheduleId))
             .isInstanceOf(ScheduleException.class)
             .hasMessage("스케줄을 삭제할 수 없습니다.");
     }
@@ -123,7 +127,7 @@ class ScheduleServiceTest {
         // given
         // when
         // then
-        assertThatThrownBy(() -> scheduleService.cancel(Long.MAX_VALUE))
+        assertThatThrownBy(() -> scheduleCommandService.cancel(Long.MAX_VALUE))
             .isInstanceOf(ScheduleException.class)
             .hasMessage("존재하지 않는 스케줄입니다.");
     }

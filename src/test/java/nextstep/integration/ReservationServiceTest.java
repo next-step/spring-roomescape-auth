@@ -5,10 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import nextstep.application.ReservationService;
-import nextstep.exception.ReservationException;
-import nextstep.presentation.dto.reservation.ReservationRequest;
-import nextstep.presentation.dto.reservation.ReservationResponse;
+import nextstep.application.service.reservation.ReservationCommandService;
+import nextstep.application.service.reservation.ReservationQueryService;
+import nextstep.application.dto.reservation.ReservationRequest;
+import nextstep.application.dto.reservation.ReservationResponse;
+import nextstep.common.exception.ReservationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,17 +21,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ReservationServiceTest {
 
     @Autowired
-    private ReservationService reservationService;
+    private ReservationCommandService reservationCommandService;
+
+    @Autowired
+    private ReservationQueryService reservationQueryService;
+
 
     @BeforeEach
     void setUp() {
         ReservationRequest request = new ReservationRequest("2022-08-11", "13:00", "dani");
-        reservationService.make(request);
+        reservationCommandService.make(request);
     }
 
     @AfterEach
     void tearDown() {
-        reservationService.cancelAll();
+        reservationCommandService.cancelAll();
     }
 
     @DisplayName("예약을 생성한다.")
@@ -40,7 +45,7 @@ class ReservationServiceTest {
         ReservationRequest request = new ReservationRequest("2022-08-11", "14:00", "dani");
 
         // when
-        Long reservationId = reservationService.make(request);
+        Long reservationId = reservationCommandService.make(request);
 
         // then
         assertThat(reservationId).isNotNull();
@@ -54,7 +59,7 @@ class ReservationServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> reservationService.make(request))
+        assertThatThrownBy(() -> reservationCommandService.make(request))
             .isInstanceOf(ReservationException.class)
             .hasMessageContaining("이미 예약이 차있습니다.");
     }
@@ -63,7 +68,7 @@ class ReservationServiceTest {
     @Test
     void exist_true() {
         // given
-        Long reservationId = reservationService.checkAll("2022-08-11").stream()
+        Long reservationId = reservationQueryService.checkAll("2022-08-11").stream()
             .filter(reservation -> "13:00".equals(reservation.getTime()))
             .findFirst()
             .map(ReservationResponse::getId)
@@ -71,7 +76,7 @@ class ReservationServiceTest {
 
         // when
         // then
-        assertThat(reservationService.exist(reservationId)).isTrue();
+        assertThat(reservationQueryService.exist(reservationId)).isTrue();
     }
 
     @DisplayName("예약 유무를 확인한다. - 없음")
@@ -80,7 +85,7 @@ class ReservationServiceTest {
         // given
         // when
         // then
-        assertThat(reservationService.exist(Long.MAX_VALUE)).isFalse();
+        assertThat(reservationQueryService.exist(Long.MAX_VALUE)).isFalse();
     }
 
     @DisplayName("예약 목록을 조회한다.")
@@ -88,7 +93,7 @@ class ReservationServiceTest {
     void checkAll() {
         // given
         ReservationRequest request = new ReservationRequest("2022-08-11", "14:00", "dani");
-        reservationService.make(request);
+        reservationCommandService.make(request);
 
         List<ReservationResponse> expected = List.of(
             new ReservationResponse(null, "2022-08-11", "13:00", "dani"),
@@ -96,7 +101,7 @@ class ReservationServiceTest {
         );
 
         // when
-        List<ReservationResponse> responses = reservationService.checkAll("2022-08-11");
+        List<ReservationResponse> responses = reservationQueryService.checkAll("2022-08-11");
 
         // then
         assertThat(responses)
@@ -109,10 +114,10 @@ class ReservationServiceTest {
     @Test
     void checkAll_empty() {
         // given
-        reservationService.cancel("2022-08-11", "13:00");
+        reservationCommandService.cancel("2022-08-11", "13:00");
 
         // when
-        List<ReservationResponse> responses = reservationService.checkAll("2022-08-11");
+        List<ReservationResponse> responses = reservationQueryService.checkAll("2022-08-11");
 
         // then
         assertThat(responses).isEmpty();
@@ -124,7 +129,7 @@ class ReservationServiceTest {
         // given
         // when
         // then
-        assertThatCode(() -> reservationService.cancel("2022-08-11", "13:00"))
+        assertThatCode(() -> reservationCommandService.cancel("2022-08-11", "13:00"))
             .doesNotThrowAnyException();
     }
 
@@ -134,7 +139,7 @@ class ReservationServiceTest {
         // given
         // when
         // then
-        assertThatThrownBy(() -> reservationService.cancel("2022-08-12", "13:00"))
+        assertThatThrownBy(() -> reservationCommandService.cancel("2022-08-12", "13:00"))
             .isInstanceOf(ReservationException.class)
             .hasMessage("존재하는 예약이 없어 예약을 취소할 수 없습니다.");
     }

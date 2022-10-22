@@ -5,10 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import nextstep.application.ThemeService;
-import nextstep.exception.ThemeException;
-import nextstep.presentation.dto.theme.ThemeRequest;
-import nextstep.presentation.dto.theme.ThemeResponse;
+import nextstep.application.service.theme.ThemeCommandService;
+import nextstep.application.service.theme.ThemeQueryService;
+import nextstep.application.dto.theme.ThemeRequest;
+import nextstep.application.dto.theme.ThemeResponse;
+import nextstep.common.exception.ThemeException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,17 +21,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ThemeServiceTest {
 
     @Autowired
-    private ThemeService themeService;
+    private ThemeCommandService themeCommandService;
+
+    @Autowired
+    private ThemeQueryService themeQueryService;
 
     @BeforeEach
     void setUp() {
         ThemeRequest request = new ThemeRequest("열쇠공이", "열쇠공의 이중생활", 25000);
-        themeService.create(request);
+        themeCommandService.create(request);
     }
 
     @AfterEach
     void tearDown() {
-        themeService.deleteAll();
+        themeCommandService.deleteAll();
     }
 
     @DisplayName("테마를 생성한다.")
@@ -40,7 +44,7 @@ class ThemeServiceTest {
         ThemeRequest request = new ThemeRequest("해리포터", "헤르미온느와 마법 수업", 30000);
 
         // when
-        Long themeId = themeService.create(request);
+        Long themeId = themeCommandService.create(request);
 
         // then
         assertThat(themeId).isNotNull();
@@ -54,7 +58,7 @@ class ThemeServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> themeService.create(request))
+        assertThatThrownBy(() -> themeCommandService.create(request))
             .isInstanceOf(ThemeException.class)
             .hasMessage("열쇠공이는(은) 이미 존재하는 테마입니다.");
     }
@@ -64,7 +68,7 @@ class ThemeServiceTest {
     void checkAll() {
         // given
         ThemeRequest request = new ThemeRequest("해리포터", "헤리미온느와 마법 수업", 30000);
-        themeService.create(request);
+        themeCommandService.create(request);
 
         List<ThemeResponse> expected = List.of(
             new ThemeResponse(null, "열쇠공이", "열쇠공의 이중생활", 25000),
@@ -72,7 +76,7 @@ class ThemeServiceTest {
         );
 
         // when
-        List<ThemeResponse> responses = themeService.checkAll();
+        List<ThemeResponse> responses = themeQueryService.checkAll();
 
         // then
         assertThat(responses)
@@ -85,7 +89,7 @@ class ThemeServiceTest {
     @Test
     void delete() {
         // given
-        Long themeId = themeService.checkAll().stream()
+        Long themeId = themeQueryService.checkAll().stream()
             .filter(it -> "열쇠공이".equals(it.getName()))
             .findFirst()
             .map(ThemeResponse::getId)
@@ -93,6 +97,6 @@ class ThemeServiceTest {
 
         // when
         // then
-        assertThatCode(() -> themeService.delete(themeId)).doesNotThrowAnyException();
+        assertThatCode(() -> themeCommandService.delete(themeId)).doesNotThrowAnyException();
     }
 }

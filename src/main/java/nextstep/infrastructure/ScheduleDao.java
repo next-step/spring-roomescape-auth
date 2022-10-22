@@ -33,7 +33,7 @@ public class ScheduleDao implements ScheduleRepository {
     }
 
     @Override
-    public Optional<Schedule> findByReservationId(Long reservationId) {
+    public Optional<Schedule> findByReservation(Long reservationId) {
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(
                 "select id, themeId, reservationId from schedule where reservationId = ?",
@@ -46,7 +46,7 @@ public class ScheduleDao implements ScheduleRepository {
     }
 
     @Override
-    public Optional<Schedule> findByScheduleId(Long id) {
+    public Optional<Schedule> findBySchedule(Long id) {
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(
                 "select id, themeId, reservationId from schedule where id = ?",
