@@ -6,6 +6,7 @@ import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +20,9 @@ public class AuthE2ETest {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     private Long memberId;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void setUp() {
@@ -45,7 +49,9 @@ public class AuthE2ETest {
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        assertThat(response.as(TokenResponse.class)).isNotNull();
+        TokenResponse tokenResponse = response.as(TokenResponse.class);
+        assertThat(tokenResponse).isNotNull();
+        assertThat(jwtTokenProvider.validateToken(tokenResponse.accessToken)).isTrue();
     }
 
     @DisplayName("테마 목록을 조회한다")
