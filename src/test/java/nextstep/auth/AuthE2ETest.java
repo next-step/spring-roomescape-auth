@@ -54,6 +54,20 @@ public class AuthE2ETest {
         assertThat(jwtTokenProvider.validateToken(tokenResponse.accessToken)).isTrue();
     }
 
+    @DisplayName("인증 정보에 오류가 있으면 토큰을 생성에 실패한다.")
+    @Test
+    public void createWithInvalidPassword() {
+        TokenRequest body = new TokenRequest(USERNAME, "invalid password");
+        RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(body)
+            .when().post("/login/token")
+            .then().log().all()
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
+            .extract();
+    }
+
     @DisplayName("테마 목록을 조회한다")
     @Test
     public void showThemes() {
