@@ -1,6 +1,7 @@
 package nextstep.auth;
 
 import java.util.Collections;
+import nextstep.jwt.JwtTokenProvider;
 import nextstep.member.Member;
 import nextstep.member.MemberService;
 import org.springframework.web.bind.annotation.PostMapping;
