@@ -1,28 +1,28 @@
 package nextstep.member;
 
-public class Member {
+public class MemberResponse {
     private Long id;
     private String username;
     private String password;
     private String name;
     private String phone;
-    private String role;
 
-    public Member(Long id, String username, String password, String name, String phone, String role) {
+    public MemberResponse(Long id, String username, String password, String name, String phone) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.name = name;
         this.phone = phone;
-        this.role = role;
     }
 
-    public Member(String username, String password, String name, String phone, String role) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.phone = phone;
-        this.role = role;
+    public static MemberResponse of(Member member) {
+        return new MemberResponse(
+            member.getId(),
+            member.getUsername(),
+            member.getPassword(),
+            member.getName(),
+            member.getPhone()
+        );
     }
 
     public Long getId() {
@@ -43,13 +43,5 @@ public class Member {
 
     public String getPhone() {
         return phone;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public boolean checkPassword(String password) {
-        return this.password.equals(password);
     }
 }
