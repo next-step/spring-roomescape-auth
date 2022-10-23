@@ -42,9 +42,4 @@ public class ReservationController {
 
         return ResponseEntity.noContent().build();
     }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity onException(Exception e) {
-        return ResponseEntity.badRequest().build();
-    }
 }

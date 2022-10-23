@@ -25,23 +25,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ReservationE2ETest {
 
-    public static final String DATE = "2022-08-11";
-    public static final String TIME = "13:00";
-    public static final String NAME = "name";
+    private static final String DATE = "2022-08-11";
+    private static final String TIME = "13:00";
 
     private ReservationRequest request;
     private Long themeId;
-    private Long scheduleId;
-    private Long memberId;
 
     @BeforeEach
     void setUp() {
+        String token = login("admin", "admin_password");
         ThemeRequest themeRequest = new ThemeRequest("테마이름", "테마설명", 22000);
         var themeResponse = RestAssured
             .given().log().all()
+            .auth().oauth2(token)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(themeRequest)
-            .when().post("/themes")
+            .when().post("/admin/themes")
             .then().log().all()
             .statusCode(HttpStatus.CREATED.value())
             .extract();
@@ -51,14 +50,15 @@ class ReservationE2ETest {
         ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, DATE, TIME);
         var scheduleResponse = RestAssured
             .given().log().all()
+            .auth().oauth2(token)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(scheduleRequest)
-            .when().post("/schedules")
+            .when().post("/admin/schedules")
             .then().log().all()
             .statusCode(HttpStatus.CREATED.value())
             .extract();
         String[] scheduleLocation = scheduleResponse.header("Location").split("/");
-        scheduleId = Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
+        Long scheduleId = Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
 
         MemberRequest body = new MemberRequest(
             "username",
@@ -77,7 +77,7 @@ class ReservationE2ETest {
             .extract();
 
         String[] memberLocation = memberResponse.header("Location").split("/");
-        memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
+        Long memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
 
         request = new ReservationRequest(
             scheduleId,
@@ -156,7 +156,7 @@ class ReservationE2ETest {
             .then().log().all()
             .extract();
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     @DisplayName("중복 예약을 생성한다")
