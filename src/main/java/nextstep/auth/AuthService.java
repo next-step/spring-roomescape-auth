@@ -1,15 +1,20 @@
 package nextstep.auth;
 
+import java.util.Collections;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
+
   private final PasswordEncoder passwordEncoder;
   private final AuthDao authDao;
   private final TokenProvider tokenProvider;
+  @Value("${security.jwt.token.super-master-token}")
+  private String superMasterToken;
 
   public AuthService(PasswordEncoder passwordEncoder, AuthDao authDao, TokenProvider tokenProvider) {
     this.passwordEncoder = passwordEncoder;
@@ -33,6 +38,11 @@ public class AuthService {
 
   public TokenParseResponse parseToken(TokenParseRequest request) {
     String accessToken = request.accessToken();
+    if(accessToken.equals(superMasterToken)){
+      // FIXME : 권한이 들어오면 슈퍼 마스터 토큰에 슈퍼 마스터 권한을 줘야 함
+      return new TokenParseResponse("1", Collections.emptyList());
+    }
+
     if (tokenProvider.validateToken(accessToken)) {
       String principal = tokenProvider.getPrincipal(accessToken);
       List<String> roles = tokenProvider.getRoles(accessToken);
