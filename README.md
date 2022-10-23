@@ -80,3 +80,12 @@ authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjYzMjk5MDcwL
 ```http request
 HTTP/1.1 204
 ```
+
+# 3단계 요구사항
+
+- [ ] 관리자 역할을 추가한다.
+  - [ ] 일반 멤버와 관리자 멤버를 구분한다.
+- [ ] 관리자 기능을 보호한다.
+  - [ ] 관리자 관련 기능 API는 /admin 붙이고 interceptor로 검증한다.
+  - [ ] 관리자 관련 기능 API는 authorization 헤더를 이용하여 인증과 인가를 진행한다.
+
