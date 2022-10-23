@@ -51,9 +51,9 @@ Content-Type: application/json
 
 - [ ] 예약하기, 예약취소 개선
   - [ ] 아래의 API 설계에 맞춰 API 스펙을 변경한다.
-  - [ ] 비로그인 사용자는 예약이 불가능하다.
+  - [x] 비로그인 사용자는 예약이 불가능하다.
   - [ ] 자신의 예약이 아닌 경우 예약 취소가 불가능하다.
-  - [ ] HandlerMethodArgumentResolver를 활용한다.
+  - [x] HandlerMethodArgumentResolver를 활용한다.
 
 ### API
 * 예약 생성

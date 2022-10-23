@@ -3,6 +3,8 @@ package nextstep.reservation;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import nextstep.auth.AuthE2ETest;
+import nextstep.member.MemberE2ETest;
 import nextstep.member.MemberRequest;
 import nextstep.schedule.ScheduleRequest;
 import nextstep.theme.ThemeRequest;
@@ -78,8 +80,14 @@ class ReservationE2ETest {
     @DisplayName("예약을 생성한다")
     @Test
     void create() {
+        String userName = "Gomding";
+        String password = "q1w2e3r4";
+        MemberE2ETest.회원가입_한다(userName, password);
+        String token = AuthE2ETest.로그인_한다(userName, password);
+
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer " + token)
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/reservations")
