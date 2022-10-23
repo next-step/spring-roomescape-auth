@@ -1,19 +1,25 @@
 package nextstep.auth;
 
+import java.util.List;
+
 public class TokenRequest {
-    private String username;
-    private String password;
+    private String subject;
+    private List<String> roles;
 
-    public TokenRequest(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public TokenRequest(Long subject, List<String> roles) {
+        this(String.valueOf(subject), roles);
     }
 
-    public String getUsername() {
-        return username;
+    public TokenRequest(String subject, List<String> roles) {
+        this.subject = subject;
+        this.roles = roles;
     }
 
-    public String getPassword() {
-        return password;
+    public String getSubject() {
+        return subject;
+    }
+
+    public List<String> getRoles() {
+        return roles;
     }
 }

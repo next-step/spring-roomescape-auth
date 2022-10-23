@@ -8,20 +8,26 @@ public class AuthService {
 
   private final PasswordEncoder passwordEncoder;
   private final AuthDao authDao;
+  private final TokenProvider tokenProvider;
 
-  public AuthService(PasswordEncoder passwordEncoder, AuthDao authDao) {
+  public AuthService(PasswordEncoder passwordEncoder, AuthDao authDao, TokenProvider tokenProvider) {
     this.passwordEncoder = passwordEncoder;
     this.authDao = authDao;
+    this.tokenProvider = tokenProvider;
   }
 
   public Long createPassword(PasswordCreateRequest req) {
     return authDao.save(req.toEntity(passwordEncoder::encode));
   }
 
-  public boolean checkPassword(PasswordCheckRequest req) {
-    String encrypted = passwordEncoder.encode(req.rawPassword());
+  public PasswordCheckResponse checkPassword(PasswordCheckRequest req) {
     Password password = authDao.findById(req.id());
-    return password.isSame(encrypted);
+    boolean matches = passwordEncoder.matches(req.rawPassword(), password.value());
+    return new PasswordCheckResponse(matches);
+  }
+
+  public TokenResponse createToken(TokenRequest tokenRequest) {
+    return new TokenResponse(tokenProvider.createToken(tokenRequest.getSubject(), tokenRequest.getRoles()));
   }
 
 }

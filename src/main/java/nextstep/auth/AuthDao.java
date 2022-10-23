@@ -36,7 +36,7 @@ public class AuthDao {
   }
 
   public Password findById(Long id) {
-    String sql = "SELECT id, password from member where id = ?;";
+    String sql = "SELECT id, password from password where id = ?;";
     return jdbcTemplate.queryForObject(sql, rowMapper, id);
   }
 }

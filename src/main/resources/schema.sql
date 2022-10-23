@@ -37,6 +37,6 @@ CREATE TABLE member
 CREATE TABLE password
 (
     id       bigint      not null auto_increment,
-    password varchar(20) not null,
+    password varchar(100) not null,
     primary key (id)
 );

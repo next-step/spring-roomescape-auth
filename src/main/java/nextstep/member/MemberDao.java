@@ -25,7 +25,7 @@ public class MemberDao {
     );
 
     public Long save(Member member) {
-        String sql = "INSERT INTO member (username, password, name, phone) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO member (username, password_id, name, phone) VALUES (?, ?, ?, ?);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -42,12 +42,12 @@ public class MemberDao {
     }
 
     public Member findById(Long id) {
-        String sql = "SELECT id, username, password, name, phone from member where id = ?;";
+        String sql = "SELECT id, username, password_id, name, phone from member where id = ?;";
         return jdbcTemplate.queryForObject(sql, rowMapper, id);
     }
 
     public Member findByUsername(String username) {
-        String sql = "SELECT id, username, password, name, phone from member where username = ?;";
+        String sql = "SELECT id, username, password_id, name, phone from member where username = ?;";
         return jdbcTemplate.queryForObject(sql, rowMapper, username);
     }
 }

@@ -8,12 +8,13 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class JwtTokenProvider {
+public class JwtTokenProvider implements TokenProvider {
     @Value("${security.jwt.token.secret-key}")
     private String secretKey;
     @Value("${security.jwt.token.expire-length}")
     private long validityInMilliseconds;
 
+    @Override
     public String createToken(String principal, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(principal);
         Date now = new Date();
@@ -28,14 +29,17 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    @Override
     public String getPrincipal(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
+    @Override
     public List<String> getRoles(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("roles", List.class);
     }
 
+    @Override
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
