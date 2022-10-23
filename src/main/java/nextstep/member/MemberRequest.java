@@ -1,5 +1,7 @@
 package nextstep.member;
 
+import java.util.List;
+
 public class MemberRequest {
     private String username;
     private String password;
@@ -29,7 +31,8 @@ public class MemberRequest {
         return phone;
     }
 
-    public Member toEntity() {
-        return new Member(username, password, name, phone);
+    public Member toEntity(Long passwordId) {
+        // FIXME : 유저 권한 하드코딩
+        return new Member(username, passwordId, name, phone, List.of(MemberRole.USER));
     }
 }

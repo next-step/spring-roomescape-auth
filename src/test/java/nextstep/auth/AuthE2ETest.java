@@ -1,11 +1,16 @@
 package nextstep.auth;
 
 import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
+import nextstep.member.LoginRequest;
+import nextstep.member.Member;
 import nextstep.member.MemberRequest;
 import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,8 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AuthE2ETest {
     public static final String USERNAME = "username";
-    public static final String PASSWORD = "password";
+    public static final String PASSWORD = "value";
     private Long memberId;
+    @Value("${security.jwt.token.super-master-token}")
+    private String superMasterToken;
 
     @BeforeEach
     void setUp() {
@@ -35,17 +42,63 @@ public class AuthE2ETest {
     @DisplayName("토큰을 생성한다")
     @Test
     public void create() {
-        TokenRequest body = new TokenRequest(USERNAME, PASSWORD);
-        var response = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().post("/login/token")
-                .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract();
+        LoginRequest body = new LoginRequest(USERNAME, PASSWORD);
+        var response = createToken(body);
 
-        assertThat(response.as(TokenResponse.class)).isNotNull();
+        assertThat(response).isNotNull();
+    }
+
+    @DisplayName("폭풍해킹 시도")
+    @Test
+    public void admin() {
+        LoginRequest body = new LoginRequest(USERNAME, PASSWORD);
+        var token = createToken(body);
+
+        String accessToken = token.accessToken();
+
+        ExtractableResponse<Response> response = RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", "Bearer %s".formatted(accessToken))
+            .when().get("/admin")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract();
+
+        assertThat(response).isNotNull();
+
+    }
+
+    private TokenResponse createToken(LoginRequest loginRequest) {
+        var response = RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(loginRequest)
+            .when().post("/login/token")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract();
+
+        return response.as(TokenResponse.class);
+    }
+
+    @DisplayName("내 토큰에 도청장치")
+    @Test
+    public void memberMe() {
+        LoginRequest body = new LoginRequest(USERNAME, PASSWORD);
+        var token = createToken(body);
+        String accessToken = token.accessToken();
+
+        ExtractableResponse<Response> response = RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(new TokenParseRequest(accessToken))
+            .when().get("/members/me")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract();
+
+        assertThat(response.as(Member.class)).isNotNull();
     }
 
     @DisplayName("테마 목록을 조회한다")

@@ -1,5 +1,6 @@
 package nextstep.reservation;
 
+import nextstep.member.Member;
 import nextstep.schedule.Schedule;
 import nextstep.schedule.ScheduleDao;
 import nextstep.support.DuplicateEntityException;
@@ -21,7 +22,7 @@ public class ReservationService {
         this.scheduleDao = scheduleDao;
     }
 
-    public Long create(ReservationRequest reservationRequest) {
+    public Long create(ReservationRequest reservationRequest, Member member) {
         Schedule schedule = scheduleDao.findById(reservationRequest.getScheduleId());
         if (schedule == null) {
             throw new NullPointerException();
@@ -34,7 +35,7 @@ public class ReservationService {
 
         Reservation newReservation = new Reservation(
                 schedule,
-                reservationRequest.getName()
+                member
         );
 
         return reservationDao.save(newReservation);
@@ -49,12 +50,21 @@ public class ReservationService {
         return reservationDao.findAllByThemeIdAndDate(themeId, date);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Member member) {
         Reservation reservation = reservationDao.findById(id);
+
         if (reservation == null) {
             throw new NullPointerException();
         }
 
+        if (NotAdminAndNotMine(member, reservation)) {
+            throw new IllegalStateException("내 예약만 삭제할 수 있습니다.");
+        }
+
         reservationDao.deleteById(id);
+    }
+
+    private boolean NotAdminAndNotMine(Member member, Reservation reservation) {
+        return !reservation.getMember().equals(member) && !member.isAdmin();
     }
 }

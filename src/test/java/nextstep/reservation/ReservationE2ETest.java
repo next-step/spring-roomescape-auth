@@ -9,6 +9,7 @@ import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +30,8 @@ class ReservationE2ETest {
     private Long themeId;
     private Long scheduleId;
     private Long memberId;
+    @Value("${security.jwt.token.super-master-token}")
+    private String superMasterToken;
 
     @BeforeEach
     void setUp() {
@@ -56,7 +59,7 @@ class ReservationE2ETest {
         String[] scheduleLocation = scheduleResponse.header("Location").split("/");
         scheduleId = Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
 
-        MemberRequest body = new MemberRequest("username", "password", "name", "010-1234-5678");
+        MemberRequest body = new MemberRequest("username", "value", "name", "010-1234-5678");
         var memberResponse = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -70,8 +73,7 @@ class ReservationE2ETest {
         memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
 
         request = new ReservationRequest(
-                scheduleId,
-                null
+                scheduleId
         );
     }
 
@@ -82,6 +84,7 @@ class ReservationE2ETest {
                 .given().log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer %s".formatted(superMasterToken))
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
@@ -113,6 +116,7 @@ class ReservationE2ETest {
 
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer %s".formatted(superMasterToken))
                 .when().delete(reservation.header("Location"))
                 .then().log().all()
                 .extract();
@@ -156,6 +160,7 @@ class ReservationE2ETest {
     void createNotExistReservation() {
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer %s".formatted(superMasterToken))
                 .when().delete("/reservations/1")
                 .then().log().all()
                 .extract();
@@ -168,6 +173,7 @@ class ReservationE2ETest {
                 .given().log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer %s".formatted(superMasterToken))
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
