@@ -1,10 +1,17 @@
 package nextstep.reservation;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
+import nextstep.auth.AuthMember;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/reservations")
@@ -17,7 +24,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity createReservation(@RequestBody ReservationRequest reservationRequest) {
+    public ResponseEntity createReservation(AuthMember authMember, @RequestBody ReservationRequest reservationRequest) {
         Long id = reservationService.create(reservationRequest);
         return ResponseEntity.created(URI.create("/reservations/" + id)).build();
     }
@@ -33,10 +40,5 @@ public class ReservationController {
         reservationService.deleteById(id);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity onException(Exception e) {
-        return ResponseEntity.badRequest().build();
     }
 }
