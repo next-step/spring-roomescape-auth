@@ -1,4 +1,4 @@
-package nextstep.auth;
+package nextstep.auth.jwt;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,12 +28,9 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getPrincipal(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    public List<String> getRoles(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("roles", List.class);
+    public TokenBody getTokenBody(String token) {
+        Claims body = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        return new TokenBody(body.getSubject(), body.get("roles", List.class));
     }
 
     public boolean validateToken(String token) {
@@ -43,6 +40,24 @@ public class JwtTokenProvider {
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             return false;
+        }
+    }
+
+    public static class TokenBody {
+        private final String body;
+        private final List<String> roles;
+
+        public TokenBody(String body, List<String> roles) {
+            this.body = body;
+            this.roles = roles;
+        }
+
+        public String getBody() {
+            return body;
+        }
+
+        public List<String> getRoles() {
+            return roles;
         }
     }
 }
