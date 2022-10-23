@@ -9,4 +9,4 @@
   - [ ] API 스펙을 변경한다 
   - [ ] 비로그인 사용자는 예약이 불가능하다
   - [ ] 자신의 예약이 아닌 경우 예약 취소가 불가능하다
-- [ ] `HandlerMethodArgumentResolver` 를 이용한다 
+- [x] `HandlerMethodArgumentResolver` 를 이용한다 

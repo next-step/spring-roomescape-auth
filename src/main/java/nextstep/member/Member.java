@@ -1,5 +1,7 @@
 package nextstep.member;
 
+import nextstep.auth.AuthMember;
+
 public class Member {
     private Long id;
     private String username;
@@ -22,6 +24,10 @@ public class Member {
 
     public Member(String username, String password, String name, String phone, String role) {
         this(null, username, password, name, phone, role);
+    }
+
+    public AuthMember toAuthMember() {
+        return new AuthMember(id, username, name, phone, role);
     }
 
     public static Member createUser(String username, String password, String name, String phone) {
