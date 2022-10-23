@@ -1,10 +1,13 @@
 package nextstep.reservation;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 import nextstep.auth.AuthenticationException;
 import nextstep.schedule.Schedule;
 
 public class Reservation {
+
     private Long id;
     private Schedule schedule;
     private Long memberId;
@@ -36,6 +39,18 @@ public class Reservation {
 
     public Schedule getSchedule() {
         return schedule;
+    }
+
+    public String getThemeName() {
+        return schedule.getThemeName();
+    }
+
+    public LocalDate getScheduleDate() {
+        return schedule.getDate();
+    }
+
+    public LocalTime getScheduleTime() {
+        return schedule.getTime();
     }
 
     public Long getMemberId() {
