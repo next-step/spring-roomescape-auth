@@ -1,5 +1,6 @@
 package nextstep.member;
 
+import static nextstep.member.MemberRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.RestAssured;
@@ -19,7 +20,7 @@ public class ThemeE2ETest {
     @DisplayName("멤버를 생성한다")
     @Test
     public void create() {
-        MemberRequest body = new MemberRequest("username", "password", "name", "010-1234-5678", "developer");
+        MemberRequest body = new MemberRequest("username", "password", "name", "010-1234-5678", USER);
         RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +48,7 @@ public class ThemeE2ETest {
     }
 
     private void createMember(String username, String password) {
-        MemberRequest body = new MemberRequest(username, password, "name", "010-1234-5678", "developer");
+        MemberRequest body = new MemberRequest(username, password, "name", "010-1234-5678", USER);
         RestAssured
             .given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)

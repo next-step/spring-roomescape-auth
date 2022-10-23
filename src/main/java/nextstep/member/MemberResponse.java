@@ -7,7 +7,7 @@ public class MemberResponse {
     private final String password;
     private final String name;
     private final String phone;
-    private final String role;
+    private final MemberRole role;
 
     public MemberResponse(
         Long id,
@@ -15,7 +15,7 @@ public class MemberResponse {
         String password,
         String name,
         String phone,
-        String role
+        MemberRole role
     ) {
         this.id = id;
         this.username = username;
@@ -56,7 +56,7 @@ public class MemberResponse {
         return phone;
     }
 
-    public String getRole() {
+    public MemberRole getRole() {
         return role;
     }
 }

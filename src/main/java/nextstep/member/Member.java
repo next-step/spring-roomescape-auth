@@ -6,12 +6,12 @@ public class Member {
     private String password;
     private String name;
     private String phone;
-    private String role;
+    private MemberRole role;
 
     protected Member() {
     }
 
-    public Member(String username, String password, String name, String phone, String role) {
+    public Member(String username, String password, String name, String phone, MemberRole role) {
         this(null, username, password, name, phone, role);
     }
 
@@ -21,7 +21,7 @@ public class Member {
         String password,
         String name,
         String phone,
-        String role
+        MemberRole role
     ) {
         this.id = id;
         this.username = username;
@@ -57,7 +57,7 @@ public class Member {
         return phone;
     }
 
-    public String getRole() {
+    public MemberRole getRole() {
         return role;
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
+import static nextstep.member.MemberRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -64,7 +65,7 @@ class ReservationE2ETest {
             "password",
             "name",
             "010-1234-5678",
-            "developer"
+            USER
         );
         var memberResponse = RestAssured
             .given().log().all()
@@ -224,7 +225,7 @@ class ReservationE2ETest {
             password,
             "name",
             "010-1234-5678",
-            "developer"
+            USER
         );
         RestAssured
             .given().log().all()
