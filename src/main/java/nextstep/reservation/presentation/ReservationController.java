@@ -1,7 +1,9 @@
-package nextstep.reservation;
+package nextstep.reservation.presentation;
 
 import nextstep.auth.resolver.AuthenticationPrincipal;
 import nextstep.auth.resolver.LoginUser;
+import nextstep.reservation.Reservation;
+import nextstep.reservation.ReservationService;
 import nextstep.reservation.presentation.dto.ReservationRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

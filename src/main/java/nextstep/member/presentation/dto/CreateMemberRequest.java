@@ -2,6 +2,8 @@ package nextstep.member.presentation.dto;
 
 import nextstep.member.Member;
 
+import java.util.List;
+
 public class CreateMemberRequest {
     private String username;
     private String password;
@@ -31,7 +33,7 @@ public class CreateMemberRequest {
         return phone;
     }
 
-    public Member toEntity(String uuid) {
-        return new Member(username, password, name, phone, uuid);
+    public Member toEntity(String uuid, List<String> roles) {
+        return new Member(username, password, name, phone, uuid, roles);
     }
 }

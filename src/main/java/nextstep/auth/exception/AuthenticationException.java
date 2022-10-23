@@ -9,7 +9,7 @@ public class AuthenticationException extends RuntimeException {
     }
 
     public enum Status {
-        WRONG_USERNAME, WRONG_PASSWORD
+        WRONG_USERNAME, WRONG_PASSWORD, NO_AUTHORITY
     }
 
     public Status getStatus() {

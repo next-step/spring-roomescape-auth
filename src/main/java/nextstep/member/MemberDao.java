@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Component
@@ -24,11 +25,12 @@ public class MemberDao {
             resultSet.getString("password"),
             resultSet.getString("name"),
             resultSet.getString("phone"),
-            resultSet.getString("uuid")
+            resultSet.getString("uuid"),
+            Arrays.stream(resultSet.getString("roles").split(",")).toList()
     );
 
     public Long save(Member member) {
-        String sql = "INSERT INTO member (username, password, name, phone, uuid) VALUES (?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO member (username, password, name, phone, uuid, roles) VALUES (?, ?, ?, ?, ?, ?);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -37,7 +39,8 @@ public class MemberDao {
             ps.setString(2, member.getPassword());
             ps.setString(3, member.getName());
             ps.setString(4, member.getPhone());
-            ps.setString(5, member.getPhone());
+            ps.setString(5, member.getUuid());
+            ps.setString(6, String.join(",", member.getRoles()));
             return ps;
 
         }, keyHolder);

@@ -6,8 +6,6 @@ import nextstep.member.Member;
 import nextstep.member.MemberDao;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static nextstep.auth.exception.AuthenticationException.Status;
 
 @Service
@@ -26,6 +24,6 @@ public class AuthService {
         if (member.checkWrongPassword(password)) {
             throw new AuthenticationException(Status.WRONG_PASSWORD);
         }
-        return jwtTokenProvider.createToken(member.getUuid(), List.of("USER"));
+        return jwtTokenProvider.createToken(member.getUuid(), member.getRoles());
     }
 }

@@ -16,7 +16,7 @@ public class LoginUser {
     }
 
     public enum Authority {
-        USER, ANONYMOUS
+        USER, ANONYMOUS, ADMIN
     }
 
     public LoginUser(String memberUuid, List<Authority> roles) {
