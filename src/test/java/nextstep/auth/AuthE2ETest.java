@@ -58,7 +58,7 @@ public class AuthE2ETest {
         return response.as(TokenResponse.class);
     }
 
-    @DisplayName("토큰 뿜뿜")
+    @DisplayName("내 토큰에 도청장치")
     @Test
     public void memberMe() {
         LoginRequest body = new LoginRequest(USERNAME, PASSWORD);
