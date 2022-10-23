@@ -38,6 +38,14 @@ public class Member {
         return new Member(username, password, name, phone, "ADMIN");
     }
 
+    public boolean checkWrongPassword(String password) {
+        return !this.password.equals(password);
+    }
+
+    public boolean hasAdminRole() {
+        return "ADMIN".equals(role);
+    }
+
     public Long getId() {
         return id;
     }
@@ -60,9 +68,5 @@ public class Member {
 
     public String getRole() {
         return role;
-    }
-
-    public boolean checkWrongPassword(String password) {
-        return !this.password.equals(password);
     }
 }

@@ -1,5 +1,7 @@
 package nextstep.reservation;
 
+import static nextstep.dataloader.AdminMemberLoader.ADMIN_PASSWORD;
+import static nextstep.dataloader.AdminMemberLoader.ADMIN_USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.RestAssured;
@@ -33,12 +35,27 @@ class ReservationE2ETest {
     private Long scheduleId;
     private Long memberId;
     private String accessToken;
+    private String adminToken;
 
     @BeforeEach
     void setUp() {
+        adminToken = RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(
+                new TokenRequest(ADMIN_USERNAME, ADMIN_PASSWORD)
+            )
+            .when().post("/login/token")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract()
+            .as(TokenResponse.class)
+            .accessToken;
+
         ThemeRequest themeRequest = new ThemeRequest("테마이름", "테마설명", 22000);
         var themeResponse = RestAssured
             .given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(themeRequest)
             .when().post("/admin/themes")
@@ -51,6 +68,7 @@ class ReservationE2ETest {
         ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, DATE, TIME);
         var scheduleResponse = RestAssured
             .given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(scheduleRequest)
             .when().post("/admin/schedules")

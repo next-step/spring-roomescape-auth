@@ -28,7 +28,7 @@ public class AuthController {
             throw new AuthenticationException();
         }
         return new TokenResponse(
-            jwtTokenProvider.createToken(username, Collections.singletonList("USER"))
+            jwtTokenProvider.createToken(username, Collections.singletonList(member.getRole()))
         );
     }
 }

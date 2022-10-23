@@ -5,10 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.restassured.RestAssured;
 import nextstep.auth.TokenRequest;
 import nextstep.auth.TokenResponse;
-import nextstep.auth.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,9 +19,6 @@ public class MemberE2ETest {
 
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
 
     @DisplayName("멤버를 생성한다")
     @Test
