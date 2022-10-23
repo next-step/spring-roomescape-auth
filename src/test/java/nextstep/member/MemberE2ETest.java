@@ -36,7 +36,6 @@ public class MemberE2ETest {
         String userName = "Gomding";
         String password = "q1w2e3r4";
 
-        회원가입_한다("Gomding123", "q1w2e3r4123");
         회원가입_한다(userName, password);
         String token = 로그인_한다(userName, password);
 
