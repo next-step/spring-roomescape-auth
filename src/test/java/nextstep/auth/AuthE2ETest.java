@@ -40,7 +40,7 @@ public class AuthE2ETest {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(body)
-                .when().post("/login/token")
+                .when().post("/login")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .extract();
