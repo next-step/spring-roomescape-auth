@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.List;
 
 @Controller
-@RequestMapping("/themes")
+@RequestMapping("/admin/themes")
 public class ThemeController {
     private final ThemeQueryService themeQueryService;
     private final ThemeCommandService themeCommandService;

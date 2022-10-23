@@ -9,6 +9,8 @@ import nextstep.common.BusinessException;
 import nextstep.domain.member.Member;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Service
 public class AuthMemberService {
     private final JwtTokenProvider jwtTokenProvider;
@@ -21,13 +23,15 @@ public class AuthMemberService {
 
     public TokenResponse login(TokenRequest request) {
         Member member = validate(request);
-        String token = jwtTokenProvider.createToken(member.getId().toString(), null);
+        String token = jwtTokenProvider.createToken(member.getId().toString(), member.getRoles().stream()
+                .map(Enum::name)
+                .collect(Collectors.toList()));
         return new TokenResponse(token);
     }
 
     private Member validate(TokenRequest request) {
         MemberEntity memberEntity = memberDao.findByUsername(request.getUsername()).orElseThrow(()->
-                new BusinessException(""));
+                new BusinessException("해당 유저가 존재하지 않습니다."));
 
         Member member = memberEntity.fromThis();
         member.validatePassword(request.getPassword());

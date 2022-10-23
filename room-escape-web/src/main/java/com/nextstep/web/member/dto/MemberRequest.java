@@ -1,7 +1,7 @@
 package com.nextstep.web.member.dto;
 
 import com.nextstep.web.member.repository.entity.MemberEntity;
-import nextstep.domain.member.Member;
+import nextstep.domain.member.Role;
 
 public class MemberRequest {
     private String username;
@@ -33,6 +33,6 @@ public class MemberRequest {
     }
 
     public MemberEntity toEntity() {
-        return new MemberEntity(username, password, name, phone);
+        return new MemberEntity(null, username, password, name, phone, Role.USER.name());
     }
 }

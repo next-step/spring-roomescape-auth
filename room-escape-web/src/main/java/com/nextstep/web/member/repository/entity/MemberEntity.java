@@ -3,6 +3,12 @@ package com.nextstep.web.member.repository.entity;
 import lombok.Getter;
 import nextstep.domain.Identity;
 import nextstep.domain.member.Member;
+import nextstep.domain.member.Role;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class MemberEntity {
@@ -11,17 +17,15 @@ public class MemberEntity {
     private String password;
     private String name;
     private String phone;
+    private String role;
 
-    public MemberEntity(String username, String password, String name, String phone) {
-        new MemberEntity(null, username, password, name, phone);
-    }
-
-    public MemberEntity(Long id, String username, String password, String name, String phone) {
+    public MemberEntity(Long id, String username, String password, String name, String phone, String role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.name = name;
         this.phone = phone;
+        this.role = role;
     }
 
     public Member fromThis() {
@@ -29,6 +33,8 @@ public class MemberEntity {
                 username,
                 password,
                 name,
-                phone);
+                phone, Arrays.asList(role.split(",")).stream()
+                .map(Role::valueOf)
+                .collect(Collectors.toList()));
     }
 }
