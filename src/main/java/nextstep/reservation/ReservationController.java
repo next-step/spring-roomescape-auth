@@ -38,7 +38,7 @@ public class ReservationController {
         @PathVariable Long id,
         @LoginMemberPrincipal LoginMember loginMember
     ) {
-        reservationService.deleteById(id);
+        reservationService.deleteById(id, loginMember.getId());
 
         return ResponseEntity.noContent().build();
     }

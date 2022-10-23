@@ -29,9 +29,4 @@ public class LoginService {
         }
         return member;
     }
-
-    public Member findMemberByToken(String token) {
-        Long id = Long.parseLong(jwtTokenProvider.getPrincipal(token));
-        return memberDao.findById(id);
-    }
 }

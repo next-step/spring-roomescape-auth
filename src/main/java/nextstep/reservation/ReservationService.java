@@ -50,12 +50,12 @@ public class ReservationService {
         return reservationDao.findAllByThemeIdAndDate(themeId, date);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Long memberId) {
         Reservation reservation = reservationDao.findById(id);
         if (reservation == null) {
             throw new NullPointerException();
         }
-
+        reservation.validateOwner(memberId);
         reservationDao.deleteById(id);
     }
 }

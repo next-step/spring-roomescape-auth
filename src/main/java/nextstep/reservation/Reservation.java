@@ -1,5 +1,7 @@
 package nextstep.reservation;
 
+import java.util.Objects;
+import nextstep.auth.AuthenticationException;
 import nextstep.schedule.Schedule;
 
 public class Reservation {
@@ -20,6 +22,12 @@ public class Reservation {
         this.schedule = schedule;
         this.memberId = memberId;
         this.name = name;
+    }
+
+    public void validateOwner(Long memberId) {
+        if (!Objects.equals(this.memberId, memberId)) {
+            throw new AuthenticationException();
+        }
     }
 
     public Long getId() {
