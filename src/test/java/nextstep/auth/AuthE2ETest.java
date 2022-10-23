@@ -2,10 +2,10 @@ package nextstep.auth;
 
 import io.restassured.RestAssured;
 import nextstep.member.MemberRequest;
-import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,9 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AuthE2ETest {
-    public static final String USERNAME = "username";
-    public static final String PASSWORD = "password";
-    private Long memberId;
+
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void setUp() {
@@ -45,48 +48,22 @@ public class AuthE2ETest {
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        assertThat(response.as(TokenResponse.class)).isNotNull();
+        TokenResponse tokenResponse = response.as(TokenResponse.class);
+        assertThat(tokenResponse).isNotNull();
+        assertThat(jwtTokenProvider.validateToken(tokenResponse.accessToken)).isTrue();
     }
 
-    @DisplayName("테마 목록을 조회한다")
+    @DisplayName("인증 정보에 오류가 있으면 토큰을 생성에 실패한다.")
     @Test
-    public void showThemes() {
-        createTheme();
-
-        var response = RestAssured
-                .given().log().all()
-                .param("date", "2022-08-11")
-                .when().get("/themes")
-                .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract();
-        assertThat(response.jsonPath().getList(".").size()).isEqualTo(1);
-    }
-
-    @DisplayName("테마를 삭제한다")
-    @Test
-    void delete() {
-        Long id = createTheme();
-
-        var response = RestAssured
-                .given().log().all()
-                .when().delete("/themes/" + id)
-                .then().log().all()
-                .extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-    }
-
-    public Long createTheme() {
-        ThemeRequest body = new ThemeRequest("테마이름", "테마설명", 22000);
-        String location = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().post("/themes")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().header("Location");
-        return Long.parseLong(location.split("/")[2]);
+    public void createWithInvalidPassword() {
+        TokenRequest body = new TokenRequest(USERNAME, "invalid password");
+        RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(body)
+            .when().post("/login/token")
+            .then().log().all()
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
+            .extract();
     }
 }

@@ -3,7 +3,7 @@ CREATE TABLE RESERVATION
     id          bigint not null auto_increment,
     schedule_id bigint not null,
     name        varchar(20),
-    primary key (id)
+    member_id bigint not null
 );
 
 CREATE TABLE theme
@@ -31,5 +31,6 @@ CREATE TABLE member
     password varchar(20) not null,
     name     varchar(20) not null,
     phone    varchar(20) not null,
+    role    varchar(20) not null,
     primary key (id)
 );

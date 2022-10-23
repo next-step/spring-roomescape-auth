@@ -1,25 +1,49 @@
 package nextstep.member;
 
+import nextstep.auth.AuthMember;
+
 public class Member {
     private Long id;
     private String username;
     private String password;
     private String name;
     private String phone;
+    private String role;
 
-    public Member(Long id, String username, String password, String name, String phone) {
+    protected Member() {
+    }
+
+    public Member(Long id, String username, String password, String name, String phone, String role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.name = name;
         this.phone = phone;
+        this.role = role;
     }
 
-    public Member(String username, String password, String name, String phone) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.phone = phone;
+    public Member(String username, String password, String name, String phone, String role) {
+        this(null, username, password, name, phone, role);
+    }
+
+    public AuthMember toAuthMember() {
+        return new AuthMember(id, username, name, phone, role);
+    }
+
+    public static Member createUser(String username, String password, String name, String phone) {
+        return new Member(username, password, name, phone, "USER");
+    }
+
+    public static Member createAdmin(String username, String password, String name, String phone) {
+        return new Member(username, password, name, phone, "ADMIN");
+    }
+
+    public boolean checkWrongPassword(String password) {
+        return !this.password.equals(password);
+    }
+
+    public boolean hasAdminRole() {
+        return "ADMIN".equals(role);
     }
 
     public Long getId() {
@@ -42,7 +66,7 @@ public class Member {
         return phone;
     }
 
-    public boolean checkWrongPassword(String password) {
-        return !this.password.equals(password);
+    public String getRole() {
+        return role;
     }
 }
