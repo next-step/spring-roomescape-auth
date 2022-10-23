@@ -1,6 +1,6 @@
 package nextstep.domain.service;
 
-import java.util.Optional;
+import java.util.List;
 import nextstep.common.exception.ScheduleException;
 import nextstep.domain.Schedule;
 import nextstep.domain.repository.ScheduleRepository;
@@ -15,18 +15,13 @@ public class ScheduleDomainService {
         this.scheduleRepository = scheduleRepository;
     }
 
-    public Optional<Schedule> findOptionalBySchedule(Long id) {
-        return scheduleRepository.findBySchedule(id);
-    }
-
-    public Schedule findByReservation(Long id) {
-        return scheduleRepository.findByReservation(id)
+    public Schedule findBy(Long themeId, String date, String time) {
+        return scheduleRepository.findBy(themeId, date, time)
             .orElseThrow(() -> new ScheduleException("존재하지 않는 스케줄입니다."));
     }
 
-    public Schedule findBy(Long themeId, Long reservationId) {
-        return scheduleRepository.findBy(themeId, reservationId)
-            .orElseThrow(() -> new ScheduleException("존재하지 않는 스케줄입니다."));
+    public List<Schedule> findAllBy(Long themeId, String date) {
+        return scheduleRepository.findAllBy(themeId, date);
     }
 
     public void save(Schedule schedule) {

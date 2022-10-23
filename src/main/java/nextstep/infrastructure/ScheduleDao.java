@@ -1,5 +1,8 @@
 package nextstep.infrastructure;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 import nextstep.domain.Schedule;
 import nextstep.domain.repository.ScheduleRepository;
@@ -20,25 +23,29 @@ public class ScheduleDao implements ScheduleRepository {
     private final RowMapper<Schedule> schedule = (rs, rowNum) -> new Schedule(
         rs.getLong("id"),
         rs.getLong("themeId"),
-        rs.getLong("reservationId")
+        rs.getString("date"),
+        rs.getString("time")
     );
 
     @Override
     public void save(Schedule schedule) {
         jdbcTemplate.update(
-            "insert into schedule (themeId, reservationId) values (?, ?)",
+            "insert into schedule (themeId, date, time) values (?, ?, ?)",
             schedule.getThemeId(),
-            schedule.getReservationId()
+            schedule.getDate(),
+            schedule.getTime()
         );
     }
 
     @Override
-    public Optional<Schedule> findByReservation(Long reservationId) {
+    public Optional<Schedule> findBy(Long id, String date, String time) {
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(
-                "select id, themeId, reservationId from schedule where reservationId = ?",
+                "select id, themeId, date, time from schedule where id = ? and date = ? and time = ?",
                 schedule,
-                reservationId
+                id,
+                LocalDate.parse(date),
+                LocalTime.parse(time)
             ));
         } catch (IncorrectResultSizeDataAccessException e) {
             return Optional.empty();
@@ -46,30 +53,13 @@ public class ScheduleDao implements ScheduleRepository {
     }
 
     @Override
-    public Optional<Schedule> findBySchedule(Long id) {
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(
-                "select id, themeId, reservationId from schedule where id = ?",
-                schedule,
-                id
-            ));
-        } catch (IncorrectResultSizeDataAccessException e) {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public Optional<Schedule> findBy(Long themeId, Long reservationId) {
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(
-                "select id, themeId, reservationId from schedule where themeId = ? and reservationId = ?",
-                schedule,
-                themeId,
-                reservationId
-            ));
-        } catch (IncorrectResultSizeDataAccessException e) {
-            return Optional.empty();
-        }
+    public List<Schedule> findAllBy(Long themeId, String date) {
+        return jdbcTemplate.query(
+            "select id, themeId, date, time from schedule where themeId = ? and date = ?",
+            schedule,
+            themeId,
+            LocalDate.parse(date)
+        );
     }
 
     @Override

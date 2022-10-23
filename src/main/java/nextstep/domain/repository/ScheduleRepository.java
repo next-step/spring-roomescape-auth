@@ -1,5 +1,6 @@
 package nextstep.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import nextstep.domain.Schedule;
 
@@ -7,11 +8,9 @@ public interface ScheduleRepository {
 
     void save(Schedule schedule);
 
-    Optional<Schedule> findByReservation(Long id);
+    Optional<Schedule> findBy(Long id, String date, String time);
 
-    Optional<Schedule> findBySchedule(Long id);
-
-    Optional<Schedule> findBy(Long themeId, Long reservationId);
+    List<Schedule> findAllBy(Long themeId, String date);
 
     void delete(Long id);
 
