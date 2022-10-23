@@ -35,6 +35,10 @@ public class Schedule {
         return theme;
     }
 
+    public String getThemeName() {
+        return theme.getName();
+    }
+
     public LocalDate getDate() {
         return date;
     }

@@ -22,29 +22,31 @@ public class ReservationDao {
     }
 
     private final RowMapper<Reservation> rowMapper = (resultSet, rowNum) -> new Reservation(
-            resultSet.getLong("reservation.id"),
-            new Schedule(
-                    resultSet.getLong("schedule.id"),
-                    new Theme(
-                            resultSet.getLong("theme.id"),
-                            resultSet.getString("theme.name"),
-                            resultSet.getString("theme.desc"),
-                            resultSet.getInt("theme.price")
-                    ),
-                    resultSet.getDate("schedule.date").toLocalDate(),
-                    resultSet.getTime("schedule.time").toLocalTime()
+        resultSet.getLong("reservation.id"),
+        new Schedule(
+            resultSet.getLong("schedule.id"),
+            new Theme(
+                resultSet.getLong("theme.id"),
+                resultSet.getString("theme.name"),
+                resultSet.getString("theme.desc"),
+                resultSet.getInt("theme.price")
             ),
-            resultSet.getString("reservation.name")
+            resultSet.getDate("schedule.date").toLocalDate(),
+            resultSet.getTime("schedule.time").toLocalTime()
+        ),
+        resultSet.getLong("reservation.member_id"),
+        resultSet.getString("reservation.name")
     );
 
     public Long save(Reservation reservation) {
-        String sql = "INSERT INTO reservation (schedule_id, name) VALUES (?, ?);";
+        String sql = "INSERT INTO reservation (schedule_id, member_id, name) VALUES (?, ?, ?);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
             ps.setLong(1, reservation.getSchedule().getId());
-            ps.setString(2, reservation.getName());
+            ps.setLong(2, reservation.getMemberId());
+            ps.setString(3, reservation.getName());
             return ps;
 
         }, keyHolder);
@@ -53,7 +55,7 @@ public class ReservationDao {
     }
 
     public List<Reservation> findAllByThemeIdAndDate(Long themeId, String date) {
-        String sql = "SELECT reservation.id, reservation.schedule_id, reservation.name, schedule.id, schedule.theme_id, schedule.date, schedule.time, theme.id, theme.name, theme.desc, theme.price " +
+        String sql = "SELECT reservation.id, reservation.schedule_id, reservation.name, reservation.member_id, schedule.id, schedule.theme_id, schedule.date, schedule.time, theme.id, theme.name, theme.desc, theme.price " +
                 "from reservation " +
                 "inner join schedule on reservation.schedule_id = schedule.id " +
                 "inner join theme on schedule.theme_id = theme.id " +
@@ -63,7 +65,7 @@ public class ReservationDao {
     }
 
     public Reservation findById(Long id) {
-        String sql = "SELECT reservation.id, reservation.schedule_id, reservation.name, schedule.id, schedule.theme_id, schedule.date, schedule.time, theme.id, theme.name, theme.desc, theme.price " +
+        String sql = "SELECT reservation.id, reservation.schedule_id, reservation.name, reservation.member_id, schedule.id, schedule.theme_id, schedule.date, schedule.time, theme.id, theme.name, theme.desc, theme.price " +
                 "from reservation " +
                 "inner join schedule on reservation.schedule_id = schedule.id " +
                 "inner join theme on schedule.theme_id = theme.id " +
@@ -76,7 +78,7 @@ public class ReservationDao {
     }
 
     public List<Reservation> findByScheduleId(Long id) {
-        String sql = "SELECT reservation.id, reservation.schedule_id, reservation.name, schedule.id, schedule.theme_id, schedule.date, schedule.time, theme.id, theme.name, theme.desc, theme.price " +
+        String sql = "SELECT reservation.id, reservation.schedule_id, reservation.name, reservation.member_id, schedule.id, schedule.theme_id, schedule.date, schedule.time, theme.id, theme.name, theme.desc, theme.price " +
                 "from reservation " +
                 "inner join schedule on reservation.schedule_id = schedule.id " +
                 "inner join theme on schedule.theme_id = theme.id " +
@@ -87,6 +89,16 @@ public class ReservationDao {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public List<Reservation> findAllByMemberId(Long memberId) {
+        String sql = "SELECT reservation.id, reservation.schedule_id, reservation.name, reservation.member_id, schedule.id, schedule.theme_id, schedule.date, schedule.time, theme.id, theme.name, theme.desc, theme.price " +
+            "from reservation " +
+            "inner join schedule on reservation.schedule_id = schedule.id " +
+            "inner join theme on schedule.theme_id = theme.id " +
+            "where member_id = ?;";
+
+        return jdbcTemplate.query(sql, rowMapper, memberId);
     }
 
     public void deleteById(Long id) {

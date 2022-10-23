@@ -1,21 +1,15 @@
 package nextstep.member;
 
-public class Member {
-    private Long id;
-    private String username;
-    private String password;
-    private String name;
-    private String phone;
-    private MemberRole role;
+public class MemberResponse {
 
-    protected Member() {
-    }
+    private final Long id;
+    private final String username;
+    private final String password;
+    private final String name;
+    private final String phone;
+    private final MemberRole role;
 
-    public Member(String username, String password, String name, String phone, MemberRole role) {
-        this(null, username, password, name, phone, role);
-    }
-
-    public Member(
+    public MemberResponse(
         Long id,
         String username,
         String password,
@@ -31,10 +25,15 @@ public class Member {
         this.role = role;
     }
 
-    public void checkWrongPassword(String password) {
-        if (!this.password.equals(password)) {
-            throw new IllegalArgumentException("사용자의 비밀번호가 올바르지 않습니다.");
-        }
+    public static MemberResponse from(Member member) {
+        return new MemberResponse(
+            member.getId(),
+            member.getUsername(),
+            member.getPassword(),
+            member.getName(),
+            member.getPhone(),
+            member.getRole()
+        );
     }
 
     public Long getId() {
