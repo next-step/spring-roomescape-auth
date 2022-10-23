@@ -73,16 +73,7 @@ class ReservationE2ETest {
         String[] memberLocation = memberResponse.header("Location").split("/");
         memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
 
-        accessToken = RestAssured
-            .given().log().all()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(new TokenRequest("username", "password"))
-            .when().post("/login/token")
-            .then().log().all()
-            .statusCode(HttpStatus.OK.value())
-            .extract()
-            .as(TokenResponse.class)
-            .accessToken;
+        accessToken = login("username", "password");
 
         request = new ReservationRequest(
             scheduleId,
@@ -136,20 +127,6 @@ class ReservationE2ETest {
         assertThat(reservations.size()).isEqualTo(1);
     }
 
-    @DisplayName("예약을 삭제한다")
-    @Test
-    void delete() {
-        var reservation = createReservation();
-
-        var response = RestAssured
-            .given().log().all()
-            .when().delete(reservation.header("Location"))
-            .then().log().all()
-            .extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-    }
-
     @DisplayName("중복 예약을 생성한다")
     @Test
     void createDuplicateReservation() {
@@ -182,11 +159,67 @@ class ReservationE2ETest {
         assertThat(reservations.size()).isEqualTo(0);
     }
 
+    @DisplayName("예약을 삭제한다")
+    @Test
+    void delete() {
+        var reservation = createReservation();
+
+        var response = RestAssured
+            .given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            .when().delete(reservation.header("Location"))
+            .then().log().all()
+            .extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+    }
+
+    @DisplayName("없는 예약을 삭제한다")
+    @Test
+    void deleteNotExistReservation() {
+        var response = RestAssured
+            .given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            .when().delete("/reservations/1")
+            .then().log().all()
+            .extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("다른 사람의 예약을 삭제한다")
+    @Test
+    void deleteSomeoneReservation() {
+        // given
+        MemberRequest body = new MemberRequest("someone", "패스워드", "누군가", "010-8765-4321");
+        var memberResponse = RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(body)
+            .when().post("/members")
+            .then().log().all()
+            .statusCode(HttpStatus.CREATED.value())
+            .extract();
+
+        String someoneToken = login("someone", "패스워드");
+
+        // when, then
+        var response = RestAssured
+            .given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + someoneToken)
+            .when().delete("/reservations/1")
+            .then().log().all()
+            .extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    }
+
     @DisplayName("없는 예약을 삭제한다")
     @Test
     void createNotExistReservation() {
         var response = RestAssured
             .given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             .when().delete("/reservations/1")
             .then().log().all()
             .extract();
@@ -203,5 +236,18 @@ class ReservationE2ETest {
             .when().post("/reservations")
             .then().log().all()
             .extract();
+    }
+
+    private String login(String username, String password) {
+        return RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(new TokenRequest(username, password))
+            .when().post("/login/token")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract()
+            .as(TokenResponse.class)
+            .accessToken;
     }
 }

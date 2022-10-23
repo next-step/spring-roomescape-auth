@@ -2,7 +2,9 @@ package nextstep.reservation;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import nextstep.auth.AuthMember;
+import nextstep.support.AuthorizationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,9 +38,11 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteReservation(@PathVariable Long id) {
+    public ResponseEntity deleteReservation(AuthMember authMember, @PathVariable Long id) {
+        if (!Objects.equals(authMember.getId(), id)) {
+            throw new AuthorizationException();
+        }
         reservationService.deleteById(id);
-
         return ResponseEntity.noContent().build();
     }
 }
