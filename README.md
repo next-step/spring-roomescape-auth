@@ -18,4 +18,4 @@
   - [ ] 내 예약만 예약을 취소할 수 있다. 내 예약이 아니면 예약을 취소할 수 없다.
 
 ### 프로그래밍 요구사항
-- [ ] `HandlerMethodArgumentResolver`를 활용한다.
+- [x] `HandlerMethodArgumentResolver`를 활용한다.

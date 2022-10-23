@@ -1,7 +1,8 @@
 package nextstep.application.controller.member;
 
 import java.net.URI;
-import javax.servlet.http.HttpServletRequest;
+import nextstep.application.controller.auth.Auth;
+import nextstep.application.controller.auth.LoginMember;
 import nextstep.application.dto.member.MemberRequest;
 import nextstep.application.dto.member.MemberResponse;
 import nextstep.application.service.member.MemberCommandService;
@@ -35,13 +36,12 @@ public class MemberController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<MemberResponse> me(HttpServletRequest request) {
-        MemberResponse response = memberQueryService.findBy(memberId(request));
+    public ResponseEntity<MemberResponse> me(@Auth LoginMember loginMember) {
+        MemberResponse response = memberQueryService.findBy(memberId(loginMember));
         return ResponseEntity.ok(response);
     }
 
-    private Long memberId(HttpServletRequest request) {
-        String principal = (String) request.getAttribute("principal");
-        return Long.valueOf(principal);
+    private Long memberId(LoginMember loginMember) {
+        return Long.valueOf(loginMember.getPrincipal());
     }
 }

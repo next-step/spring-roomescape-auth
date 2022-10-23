@@ -1,25 +1,26 @@
 package nextstep.config;
 
-import nextstep.application.controller.auth.AuthInterceptor;
+import java.util.List;
+import nextstep.application.controller.auth.AuthArgumentResolver;
+import nextstep.application.controller.auth.AuthExtractor;
+import nextstep.application.service.auth.JwtTokenProvider;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final AuthInterceptor authInterceptor;
+    private final AuthExtractor authExtractor;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public WebConfig(AuthInterceptor authInterceptor) {
-        this.authInterceptor = authInterceptor;
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry interceptorRegistry) {
-        interceptorRegistry
-            .addInterceptor(authInterceptor)
-            .addPathPatterns("/members/me");
+    public WebConfig(
+        AuthExtractor authExtractor,
+        JwtTokenProvider jwtTokenProvider
+    ) {
+        this.authExtractor = authExtractor;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -28,5 +29,10 @@ public class WebConfig implements WebMvcConfigurer {
             .addMapping("/**")
             .allowedMethods("*")
             .allowedOriginPatterns("*");
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new AuthArgumentResolver(authExtractor, jwtTokenProvider));
     }
 }
