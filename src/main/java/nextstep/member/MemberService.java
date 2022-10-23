@@ -20,6 +20,10 @@ public class MemberService {
     return memberDao.save(memberRequest.toEntity(passwordId));
   }
 
+  public Member findById(String id) {
+    return findById(Long.valueOf(id));
+  }
+
   public Member findById(Long id) {
     return memberDao.findById(id);
   }

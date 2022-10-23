@@ -1,7 +1,10 @@
 package nextstep.auth;
 
 import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import nextstep.member.LoginRequest;
+import nextstep.member.Member;
 import nextstep.member.MemberRequest;
 import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,16 +40,41 @@ public class AuthE2ETest {
     @Test
     public void create() {
         LoginRequest body = new LoginRequest(USERNAME, PASSWORD);
-        var response = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().post("/login/token")
-                .then().log().all()
-                .statusCode(HttpStatus.OK.value())
-                .extract();
+        var response = createToken(body);
 
-        assertThat(response.as(TokenResponse.class)).isNotNull();
+        assertThat(response).isNotNull();
+    }
+
+    private TokenResponse createToken(LoginRequest loginRequest) {
+        var response = RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(loginRequest)
+            .when().post("/login/token")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract();
+
+        return response.as(TokenResponse.class);
+    }
+
+    @DisplayName("토큰 뿜뿜")
+    @Test
+    public void memberMe() {
+        LoginRequest body = new LoginRequest(USERNAME, PASSWORD);
+        var token = createToken(body);
+        String accessToken = token.accessToken();
+
+        ExtractableResponse<Response> response = RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(new TokenParseRequest(accessToken))
+            .when().get("/members/me")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract();
+
+        assertThat(response.as(Member.class)).isNotNull();
     }
 
     @DisplayName("테마 목록을 조회한다")

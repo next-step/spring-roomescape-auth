@@ -1,5 +1,6 @@
 package nextstep.auth;
 
+import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,4 +31,14 @@ public class AuthService {
     return new TokenResponse(tokenProvider.createToken(tokenRequest.getSubject(), tokenRequest.getRoles()));
   }
 
+  public TokenParseResponse parseToken(TokenParseRequest request) {
+    String accessToken = request.accessToken();
+    if (tokenProvider.validateToken(accessToken)) {
+      String principal = tokenProvider.getPrincipal(accessToken);
+      List<String> roles = tokenProvider.getRoles(accessToken);
+      return new TokenParseResponse(principal, roles);
+    }
+
+    throw new IllegalArgumentException("\"다름\"이 아니라 \"틀림\" 입니다.");
+  }
 }
