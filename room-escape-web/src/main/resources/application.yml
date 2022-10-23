@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/room-escape
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+
+security:
+  jwt:
+    token:
+      secret-key: learning-test-spring
+      expire-length: 3600000
