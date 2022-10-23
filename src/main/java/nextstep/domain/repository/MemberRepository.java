@@ -1,12 +1,15 @@
 package nextstep.domain.repository;
 
+import java.util.Optional;
 import nextstep.domain.Member;
 
 public interface MemberRepository {
 
     Long save(Member member);
 
-    Member findById(Long id);
+    Optional<Member> findBy(Long id);
 
-    Member findByUsername(String username);
+    Optional<Member> findBy(String username);
+
+    void deleteAll();
 }

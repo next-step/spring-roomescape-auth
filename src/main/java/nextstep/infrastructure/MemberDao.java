@@ -1,8 +1,12 @@
 package nextstep.infrastructure;
 
 import java.sql.PreparedStatement;
+import java.util.Optional;
+import nextstep.common.Role;
+import nextstep.common.exception.MemberException;
 import nextstep.domain.Member;
 import nextstep.domain.repository.MemberRepository;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -23,11 +27,13 @@ public class MemberDao implements MemberRepository {
         resultSet.getString("username"),
         resultSet.getString("password"),
         resultSet.getString("name"),
-        resultSet.getString("phone")
+        resultSet.getString("phone"),
+        Role.valueOf(resultSet.getString("role"))
     );
 
+    @Override
     public Long save(Member member) {
-        String sql = "INSERT INTO member (username, password, name, phone) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO member (username, password, name, phone, role) VALUES (?, ?, ?, ?, ?);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -37,20 +43,44 @@ public class MemberDao implements MemberRepository {
             ps.setString(2, member.getPassword());
             ps.setString(3, member.getName());
             ps.setString(4, member.getPhone());
+            ps.setString(5, member.getRole().name());
 
             return ps;
         }, keyHolder);
 
-        return keyHolder.getKey().longValue();
+        return Optional.ofNullable(keyHolder.getKey())
+            .map(Number::longValue)
+            .orElseThrow(() -> new MemberException("사용자를 저장할 수 없습니다. DB를 확인해주세요."));
     }
 
-    public Member findById(Long id) {
-        String sql = "SELECT id, username, password, name, phone from member where id = ?;";
-        return jdbcTemplate.queryForObject(sql, member, id);
+    @Override
+    public Optional<Member> findBy(Long id) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(
+                "SELECT id, username, password, name, phone, role FROM member WHERE id = ?",
+                member,
+                id
+            ));
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
-    public Member findByUsername(String username) {
-        String sql = "SELECT id, username, password, name, phone from member where username = ?;";
-        return jdbcTemplate.queryForObject(sql, member, username);
+    @Override
+    public Optional<Member> findBy(String username) {
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(
+                "SELECT id, username, password, name, phone, role FROM member WHERE username = ?",
+                member,
+                username
+            ));
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        jdbcTemplate.update("DELETE FROM member");
     }
 }

@@ -1,5 +1,7 @@
 package nextstep.application.dto.member;
 
+import nextstep.common.Role;
+
 public class MemberResponse {
 
     private Long id;
@@ -7,7 +9,7 @@ public class MemberResponse {
     private String password;
     private String name;
     private String phone;
-    private String role;
+    private Role role;
 
     private MemberResponse() {
     }
@@ -18,7 +20,7 @@ public class MemberResponse {
         String password,
         String name,
         String phone,
-        String role
+        Role role
     ) {
         this.id = id;
         this.username = username;
@@ -48,7 +50,7 @@ public class MemberResponse {
         return phone;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 }
