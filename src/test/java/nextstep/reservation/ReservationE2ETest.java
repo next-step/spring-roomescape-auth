@@ -9,6 +9,7 @@ import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +30,8 @@ class ReservationE2ETest {
     private Long themeId;
     private Long scheduleId;
     private Long memberId;
+    @Value("${security.jwt.token.super-master-token}")
+    private String superMasterToken;
 
     @BeforeEach
     void setUp() {
@@ -70,8 +73,7 @@ class ReservationE2ETest {
         memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
 
         request = new ReservationRequest(
-                scheduleId,
-                null
+                scheduleId
         );
     }
 
@@ -82,6 +84,7 @@ class ReservationE2ETest {
                 .given().log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer %s".formatted(superMasterToken))
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
@@ -168,6 +171,7 @@ class ReservationE2ETest {
                 .given().log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer %s".formatted(superMasterToken))
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
