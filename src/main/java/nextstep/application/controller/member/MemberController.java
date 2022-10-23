@@ -1,4 +1,4 @@
-package nextstep.application.controller;
+package nextstep.application.controller.member;
 
 import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +36,12 @@ public class MemberController {
 
     @GetMapping("/me")
     public ResponseEntity<MemberResponse> me(HttpServletRequest request) {
-        MemberResponse response = memberQueryService.findBy(1L);
+        MemberResponse response = memberQueryService.findBy(memberId(request));
         return ResponseEntity.ok(response);
+    }
+
+    private Long memberId(HttpServletRequest request) {
+        String principal = (String) request.getAttribute("principal");
+        return Long.valueOf(principal);
     }
 }

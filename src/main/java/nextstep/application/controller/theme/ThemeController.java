@@ -1,4 +1,4 @@
-package nextstep.application.controller;
+package nextstep.application.controller.theme;
 
 import java.net.URI;
 import java.util.List;

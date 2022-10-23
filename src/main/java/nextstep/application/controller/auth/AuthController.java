@@ -1,4 +1,4 @@
-package nextstep.application.controller;
+package nextstep.application.controller.auth;
 
 import nextstep.application.dto.auth.AuthRequest;
 import nextstep.application.dto.auth.AuthResponse;
