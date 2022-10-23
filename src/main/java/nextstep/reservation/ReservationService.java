@@ -57,10 +57,14 @@ public class ReservationService {
             throw new NullPointerException();
         }
 
-        if (!reservation.getMember().equals(member)) {
+        if (NotAdminAndNotMine(member, reservation)) {
             throw new IllegalStateException("내 예약만 삭제할 수 있습니다.");
         }
 
         reservationDao.deleteById(id);
+    }
+
+    private boolean NotAdminAndNotMine(Member member, Reservation reservation) {
+        return !reservation.getMember().equals(member) && !member.isAdmin();
     }
 }

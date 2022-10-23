@@ -84,4 +84,8 @@ public class Member {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
+    public boolean isAdmin() {
+        return roles.contains(MemberRole.ADMIN);
+    }
 }
