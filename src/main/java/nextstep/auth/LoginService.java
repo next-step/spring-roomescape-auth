@@ -20,7 +20,7 @@ public class LoginService {
         if (member.checkWrongPassword(tokenRequest.getPassword())) {
             throw new AuthenticationException("비밀번호가 일치하지 않습니다.");
         }
-        String token = jwtTokenProvider.createToken(member.getId().toString());
+        String token = jwtTokenProvider.createToken(member.getId().toString(), member.getRole());
         return new TokenResponse(token);
     }
 
