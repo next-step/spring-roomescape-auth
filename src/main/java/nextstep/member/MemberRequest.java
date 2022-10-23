@@ -29,7 +29,7 @@ public class MemberRequest {
         return phone;
     }
 
-    public Member toEntity() {
-        return new Member(username, password, name, phone);
+    public Member toUser() {
+        return Member.createUser(username, password, name, phone);
     }
 }
