@@ -57,7 +57,7 @@ public class ReservationService {
             throw new NullPointerException();
         }
 
-        if (reservation.getMember().equals(member)) {
+        if (!reservation.getMember().equals(member)) {
             throw new IllegalStateException("내 예약만 삭제할 수 있습니다.");
         }
 

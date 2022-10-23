@@ -26,17 +26,25 @@ CREATE TABLE schedule
 
 CREATE TABLE member
 (
-    id       bigint      not null auto_increment,
-    username varchar(20) not null,
-    password_id bigint not null,
-    name     varchar(20) not null,
-    phone    varchar(20) not null,
+    id          bigint      not null auto_increment,
+    username    varchar(20) not null,
+    password_id bigint      not null,
+    name        varchar(20) not null,
+    phone       varchar(20) not null,
     primary key (id)
 );
 
 CREATE TABLE password
 (
-    id       bigint      not null auto_increment,
+    id       bigint       not null auto_increment,
     password varchar(100) not null,
+    primary key (id)
+);
+
+CREATE TABLE member_role
+(
+    id        bigint       not null auto_increment,
+    member_id bigint       not null,
+    member_role    varchar(20)  not null,
     primary key (id)
 );

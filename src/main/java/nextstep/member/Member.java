@@ -1,24 +1,37 @@
 package nextstep.member;
 
+import java.util.List;
+
 public class Member {
     private Long id;
     private String username;
     private Long passwordId;
     private String name;
     private String phone;
+    private List<MemberRole> roles;
 
     private Member() {
     }
 
-    public Member(Long id, String username, Long passwordId, String name, String phone) {
+    public Member(Long id, String username, Long passwordId, String name, String phone, List<MemberRole> roles) {
         this.id = id;
         this.username = username;
         this.passwordId = passwordId;
         this.name = name;
         this.phone = phone;
+        this.roles = roles;
     }
 
-    public Member(String username, Long passwordId, String name, String phone) {
+    public Member(String username, Long passwordId, String name, String phone, List<MemberRole> roles) {
+        this.username = username;
+        this.passwordId = passwordId;
+        this.name = name;
+        this.phone = phone;
+        this.roles = roles;
+    }
+
+    public Member(Long id, String username, Long passwordId, String name, String phone) {
+        this.id = id;
         this.username = username;
         this.passwordId = passwordId;
         this.name = name;
@@ -43,6 +56,14 @@ public class Member {
 
     public String getPhone() {
         return phone;
+    }
+
+    public List<MemberRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<MemberRole> roles) {
+        this.roles = roles;
     }
 
     @Override

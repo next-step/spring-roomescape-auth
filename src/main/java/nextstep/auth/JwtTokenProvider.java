@@ -1,6 +1,8 @@
 package nextstep.auth;
 
 import io.jsonwebtoken.*;
+import java.util.stream.Collectors;
+import nextstep.member.MemberRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,16 +17,19 @@ public class JwtTokenProvider implements TokenProvider {
     private long validityInMilliseconds;
 
     @Override
-    public String createToken(String principal, List<String> roles) {
+    public String createToken(String principal, List<MemberRole> roles) {
         Claims claims = Jwts.claims().setSubject(principal);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
+        List<String> roleNames = roles.stream()
+            .map(MemberRole::name)
+            .toList();
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .claim("roles", roles)
+                .claim("roles", roleNames)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }

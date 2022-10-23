@@ -2,6 +2,7 @@ package nextstep.auth;
 
 import java.util.Collections;
 import java.util.List;
+import nextstep.member.MemberRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,14 +40,13 @@ public class AuthService {
   public TokenParseResponse parseToken(TokenParseRequest request) {
     String accessToken = request.accessToken();
     if(accessToken.equals(superMasterToken)){
-      // FIXME : 권한이 들어오면 슈퍼 마스터 토큰에 슈퍼 마스터 권한을 줘야 함
-      return new TokenParseResponse("1", Collections.emptyList());
+      return new TokenParseResponse("1", List.of(MemberRole.ADMIN, MemberRole.USER));
     }
 
     if (tokenProvider.validateToken(accessToken)) {
       String principal = tokenProvider.getPrincipal(accessToken);
       List<String> roles = tokenProvider.getRoles(accessToken);
-      return new TokenParseResponse(principal, roles);
+      return new TokenParseResponse(principal, MemberRole.valueOf(roles));
     }
 
     throw new IllegalArgumentException("\"다름\"이 아니라 \"틀림\" 입니다.");

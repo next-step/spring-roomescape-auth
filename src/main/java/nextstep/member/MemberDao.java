@@ -1,5 +1,6 @@
 package nextstep.member;
 
+import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -38,7 +39,15 @@ public class MemberDao {
 
         }, keyHolder);
 
-        return keyHolder.getKey().longValue();
+        long memberId = keyHolder.getKey().longValue();
+
+        String roleSql = "INSERT INTO member_role (member_id, member_role) VALUES (?, ?);";
+        List<MemberRole> roles = member.getRoles();
+        roles.forEach(
+            role -> jdbcTemplate.update(roleSql, memberId, role.name())
+        );
+
+        return memberId;
     }
 
     public Member findById(Long id) {
@@ -49,5 +58,11 @@ public class MemberDao {
     public Member findByUsername(String username) {
         String sql = "SELECT id, username, password_id, name, phone from member where username = ?;";
         return jdbcTemplate.queryForObject(sql, rowMapper, username);
+    }
+
+    public List<MemberRole> findMemberRoleByMemberId(Long memberId) {
+        String sql = "SELECT member_role FROM member_role WHERE member_id = ?;";
+        List<MemberRole> roles = jdbcTemplate.query(sql, (rs, rowNum) -> MemberRole.valueOf(rs.getString("member_role")), memberId);
+        return roles;
     }
 }

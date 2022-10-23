@@ -1,10 +1,11 @@
 package nextstep.auth;
 
 import java.util.List;
+import nextstep.member.MemberRole;
 
 public interface TokenProvider {
 
-  String createToken(String principal, List<String> roles);
+  String createToken(String principal, List<MemberRole> roles);
 
   String getPrincipal(String token);
 

@@ -24,8 +24,7 @@ public class LoginService {
         loginRequest.getPassword());
 
     if (authService.checkPassword(challenge).success()) {
-      // FIXME : Role 이 추가 될 시 역할을 넘기도록 리팩토링 할 것
-      return authService.createToken(new TokenRequest(user.getId(), Collections.emptyList()));
+      return authService.createToken(new TokenRequest(user.getId(), user.getRoles()));
     }
 
     throw new IllegalArgumentException();

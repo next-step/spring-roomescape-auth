@@ -116,6 +116,7 @@ class ReservationE2ETest {
 
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer %s".formatted(superMasterToken))
                 .when().delete(reservation.header("Location"))
                 .then().log().all()
                 .extract();
@@ -159,6 +160,7 @@ class ReservationE2ETest {
     void createNotExistReservation() {
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer %s".formatted(superMasterToken))
                 .when().delete("/reservations/1")
                 .then().log().all()
                 .extract();

@@ -1,5 +1,6 @@
 package nextstep.member;
 
+import java.util.List;
 import nextstep.auth.AuthService;
 import nextstep.auth.PasswordCreateRequest;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,11 @@ public class MemberService {
   }
 
   public Member findById(Long id) {
-    return memberDao.findById(id);
+    Member member = memberDao.findById(id);
+    List<MemberRole> roles = memberDao.findMemberRoleByMemberId(id);
+    member.setRoles(roles);
+
+    return member;
   }
 
   public Member findByUsername(String name) {
