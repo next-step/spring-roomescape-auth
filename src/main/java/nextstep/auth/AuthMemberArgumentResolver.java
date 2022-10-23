@@ -1,7 +1,6 @@
 package nextstep.auth;
 
 import javax.servlet.http.HttpServletRequest;
-import nextstep.jwt.JwtTokenProvider;
 import nextstep.member.Member;
 import nextstep.member.MemberService;
 import org.springframework.core.MethodParameter;

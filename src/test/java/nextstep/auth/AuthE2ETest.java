@@ -1,7 +1,6 @@
 package nextstep.auth;
 
 import io.restassured.RestAssured;
-import nextstep.jwt.JwtTokenProvider;
 import nextstep.member.MemberRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
