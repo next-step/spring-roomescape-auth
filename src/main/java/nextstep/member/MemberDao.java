@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 
 @Component
 public class MemberDao {
+
     public final JdbcTemplate jdbcTemplate;
 
     public MemberDao(JdbcTemplate jdbcTemplate) {
@@ -17,15 +18,16 @@ public class MemberDao {
     }
 
     private final RowMapper<Member> rowMapper = (resultSet, rowNum) -> new Member(
-            resultSet.getLong("id"),
-            resultSet.getString("username"),
-            resultSet.getString("password"),
-            resultSet.getString("name"),
-            resultSet.getString("phone")
+        resultSet.getLong("id"),
+        resultSet.getString("username"),
+        resultSet.getString("password"),
+        resultSet.getString("name"),
+        resultSet.getString("phone"),
+        resultSet.getString("role")
     );
 
     public Long save(Member member) {
-        String sql = "INSERT INTO member (username, password, name, phone) VALUES (?, ?, ?, ?);";
+        String sql = "INSERT INTO member (username, password, name, phone, role) VALUES (?, ?, ?, ?, ?);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -34,6 +36,8 @@ public class MemberDao {
             ps.setString(2, member.getPassword());
             ps.setString(3, member.getName());
             ps.setString(4, member.getPhone());
+            ps.setString(5, member.getRole());
+
             return ps;
 
         }, keyHolder);

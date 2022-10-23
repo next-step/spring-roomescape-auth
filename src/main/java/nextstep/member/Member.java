@@ -6,20 +6,35 @@ public class Member {
     private String password;
     private String name;
     private String phone;
+    private String role;
 
-    public Member(Long id, String username, String password, String name, String phone) {
+    protected Member() {
+    }
+
+    public Member(String username, String password, String name, String phone, String role) {
+        this(null, username, password, name, phone, role);
+    }
+
+    public Member(
+        Long id,
+        String username,
+        String password,
+        String name,
+        String phone,
+        String role
+    ) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.name = name;
         this.phone = phone;
+        this.role = role;
     }
 
-    public Member(String username, String password, String name, String phone) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.phone = phone;
+    public void checkWrongPassword(String password) {
+        if (!this.password.equals(password)) {
+            throw new IllegalArgumentException("사용자의 비밀번호가 올바르지 않습니다.");
+        }
     }
 
     public Long getId() {
@@ -42,7 +57,7 @@ public class Member {
         return phone;
     }
 
-    public boolean checkWrongPassword(String password) {
-        return !this.password.equals(password);
+    public String getRole() {
+        return role;
     }
 }
