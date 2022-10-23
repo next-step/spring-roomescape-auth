@@ -1,5 +1,9 @@
 package nextstep.reservation;
 
+import nextstep.auth.resolver.AuthenticationPrincipal;
+import nextstep.auth.resolver.LoginUser;
+import nextstep.reservation.presentation.dto.ReservationRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +21,15 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity createReservation(@RequestBody ReservationRequest reservationRequest) {
-        Long id = reservationService.create(reservationRequest);
-        return ResponseEntity.created(URI.create("/reservations/" + id)).build();
+    public ResponseEntity<?> createReservation(@AuthenticationPrincipal LoginUser loginUser, @RequestBody ReservationRequest reservationRequest) {
+        return loginUser.act(ResponseEntity.class)
+            .ifAnonymous(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build())
+            .ifUser(uuid -> {
+                Long id = reservationService.create(reservationRequest, uuid);
+                return ResponseEntity.created(URI.create("/reservations/" + id)).build();
+            })
+            .getResult();
+
     }
 
     @GetMapping
@@ -29,10 +39,18 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteReservation(@PathVariable Long id) {
-        reservationService.deleteById(id);
-
-        return ResponseEntity.noContent().build();
+    public ResponseEntity deleteReservation(@AuthenticationPrincipal LoginUser loginUser, @PathVariable Long id) {
+        return loginUser.act(ResponseEntity.class)
+            .ifAnonymous(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build())
+            .ifUser(uuid -> {
+                try {
+                    reservationService.deleteById(id, uuid);
+                    return ResponseEntity.noContent().build();
+                } catch (IllegalArgumentException e) {
+                    return ResponseEntity.badRequest().body(e.getMessage());
+                }
+            })
+            .getResult();
     }
 
     @ExceptionHandler(Exception.class)

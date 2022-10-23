@@ -1,22 +1,16 @@
-package nextstep.reservation;
+package nextstep.reservation.presentation.dto;
 
 public class ReservationRequest {
     private Long scheduleId;
-    private String name;
 
     public ReservationRequest() {
     }
 
-    public ReservationRequest(Long scheduleId, String name) {
+    public ReservationRequest(Long scheduleId) {
         this.scheduleId = scheduleId;
-        this.name = name;
     }
 
     public Long getScheduleId() {
         return scheduleId;
-    }
-
-    public String getName() {
-        return name;
     }
 }

@@ -30,7 +30,7 @@ public class MemberController {
     public ResponseEntity<?> me(@AuthenticationPrincipal LoginUser loginUser) {
         return loginUser.act(ResponseEntity.class)
             .ifAnonymous(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build())
-            .ifNotAnonymous(uuid -> ResponseEntity.ok(MemberInfoResponse.from(memberService.findByUuid(uuid))))
+            .ifUser(uuid -> ResponseEntity.ok(MemberInfoResponse.from(memberService.findByUuid(uuid))))
             .getResult();
     }
 }

@@ -16,15 +16,7 @@ public class LoginUser {
     }
 
     public enum Authority {
-        USER, ADMIN, ANONYMOUS;
-
-        public boolean isMember() {
-            return USER.equals(this);
-        }
-
-        public boolean isAnonymous() {
-            return ANONYMOUS.equals(this);
-        }
+        USER, ANONYMOUS
     }
 
     public LoginUser(String memberUuid, List<Authority> roles) {
@@ -34,6 +26,26 @@ public class LoginUser {
 
     public <T> UserAction<T> act(Class<T> returnType) {
         return new UserAction<>(this);
+    }
+
+    public boolean isAnonymous() {
+        return CollectionUtils.isEmpty(roles) || roles.contains(Authority.ANONYMOUS);
+    }
+
+    public boolean isUser() {
+        return !CollectionUtils.isEmpty(roles) && roles.contains(Authority.USER);
+    }
+
+    public <T extends Throwable> LoginUser throwIfAnonymous(Supplier<? extends T> supplier)
+        throws T {
+        if (isAnonymous()) {
+            throw supplier.get();
+        }
+        return this;
+    }
+
+    public String getMemberUuid() {
+        return memberUuid;
     }
 
     public static class UserAction<T> {
@@ -58,46 +70,8 @@ public class LoginUser {
             return this;
         }
 
-        public UserAction<T> ifAdmin(Function<String, T> function) {
-            if (loginUser.isAdmin()) {
-                this.returnValue = function.apply(loginUser.getMemberUuid());
-            }
-            return this;
-        }
-
-        public UserAction<T> ifNotAnonymous(Function<String, T> function) {
-            if (!loginUser.isAnonymous()) {
-                this.returnValue = function.apply(loginUser.getMemberUuid());
-            }
-            return this;
-        }
-
         public T getResult() {
             return returnValue;
         }
-    }
-
-    public boolean isAnonymous() {
-        return CollectionUtils.isEmpty(roles) || roles.contains(Authority.ANONYMOUS);
-    }
-
-    public boolean isUser() {
-        return !CollectionUtils.isEmpty(roles) && roles.contains(Authority.USER);
-    }
-
-    public boolean isAdmin() {
-        return !CollectionUtils.isEmpty(roles) && roles.contains(Authority.ADMIN);
-    }
-
-    public <T extends Throwable> LoginUser throwIfAnonymous(Supplier<? extends T> supplier)
-        throws T {
-        if (isAnonymous()) {
-            throw supplier.get();
-        }
-        return this;
-    }
-
-    public String getMemberUuid() {
-        return memberUuid;
     }
 }
