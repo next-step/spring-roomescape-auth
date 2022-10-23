@@ -191,6 +191,7 @@ class ReservationE2ETest {
     @Test
     void deleteSomeoneReservation() {
         // given
+        var reservation = createReservation();
         MemberRequest body = new MemberRequest("someone", "패스워드", "누군가", "010-8765-4321");
         var memberResponse = RestAssured
             .given().log().all()
