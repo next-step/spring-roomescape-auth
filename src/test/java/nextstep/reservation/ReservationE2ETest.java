@@ -210,7 +210,7 @@ class ReservationE2ETest {
     void deleteReservationOfOthers() {
         // given
         createReservation();
-        MemberRequest memberRequest = new MemberRequest("other_user", PASSWORD, "name", "010-1234-5678");
+        MemberRequest memberRequest = new MemberRequest("other_user", PASSWORD, "name", "010-1234-5678", "ADMIN");
         RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

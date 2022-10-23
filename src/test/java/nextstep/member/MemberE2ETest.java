@@ -25,7 +25,7 @@ class MemberE2ETest {
     @Test
     void create() {
         // given
-        MemberRequest request = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678");
+        MemberRequest request = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678", "ADMIN");
 
         // when
         ExtractableResponse<Response> response = createMember(request);
@@ -38,7 +38,7 @@ class MemberE2ETest {
     @Test
     void failToCreate() {
         // given
-        MemberRequest request = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678");
+        MemberRequest request = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678", "ADMIN");
         createMember(request);
 
         // when
@@ -55,7 +55,7 @@ class MemberE2ETest {
     @Test
     void showMe() {
         // given
-        MemberRequest request = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678");
+        MemberRequest request = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678", "ADMIN");
         createMember(request);
         String token = login().as(TokenResponse.class).getAccessToken();
 
