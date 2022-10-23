@@ -44,4 +44,23 @@ public class Member {
     public String getPhone() {
         return phone;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Member)) {
+            return false;
+        }
+
+        Member member = (Member) o;
+
+        return id != null ? id.equals(member.id) : member.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

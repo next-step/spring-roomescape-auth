@@ -35,7 +35,7 @@ public class ReservationService {
 
         Reservation newReservation = new Reservation(
                 schedule,
-                member.getName()
+                member
         );
 
         return reservationDao.save(newReservation);
@@ -57,7 +57,7 @@ public class ReservationService {
             throw new NullPointerException();
         }
 
-        if (reservation.getName().equals(member.getName())) {
+        if (reservation.getMember().equals(member)) {
             throw new IllegalStateException("내 예약만 삭제할 수 있습니다.");
         }
 
