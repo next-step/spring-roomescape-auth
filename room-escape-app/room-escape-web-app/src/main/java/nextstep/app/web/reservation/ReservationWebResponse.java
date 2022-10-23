@@ -28,6 +28,10 @@ class ReservationWebResponse {
         return id;
     }
 
+    public Long getScheduleId() {
+        return scheduleId;
+    }
+
     public LocalDate getDate() {
         return date;
     }
