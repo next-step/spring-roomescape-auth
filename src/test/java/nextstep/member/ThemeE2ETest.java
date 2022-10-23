@@ -29,6 +29,23 @@ public class ThemeE2ETest {
                 .statusCode(HttpStatus.CREATED.value());
     }
 
+    @DisplayName("로그인 후 내 정보를 조회한다.")
+    @Test
+    void me() {
+        createMember("hyeon9mak", "123123");
+        String token = login("hyeon9mak", "123123");
+
+        MemberResponse response = RestAssured
+            .given().log().all()
+            .auth().oauth2(token)
+            .when().get("/members/me")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract().as(MemberResponse.class);
+
+        assertThat(response.getUsername()).isEqualTo("hyeon9mak");
+    }
+
     private void createMember(String username, String password) {
         MemberRequest body = new MemberRequest(username, password, "name", "010-1234-5678", "developer");
         RestAssured
@@ -52,23 +69,6 @@ public class ThemeE2ETest {
             .extract().as(TokenResponse.class);
 
         return response.accessToken;
-    }
-
-    @DisplayName("로그인 후 내 정보를 조회한다.")
-    @Test
-    void me() {
-        createMember("hyeon9mak", "123123");
-        String token = login("hyeon9mak", "123123");
-
-        MemberResponse response = RestAssured
-            .given().log().all()
-            .auth().oauth2(token)
-            .when().get("/members/me")
-            .then().log().all()
-            .statusCode(HttpStatus.OK.value())
-            .extract().as(MemberResponse.class);
-
-        assertThat(response.getUsername()).isEqualTo("hyeon9mak");
     }
 //
 //    @DisplayName("테마 목록을 조회한다")
