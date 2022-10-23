@@ -1,6 +1,7 @@
 package nextstep.auth;
 
 import io.jsonwebtoken.*;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import nextstep.member.MemberRole;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +22,13 @@ public class JwtTokenProvider implements TokenProvider {
         Claims claims = Jwts.claims().setSubject(principal);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
-        List<String> roleNames = roles.stream()
-            .map(MemberRole::name)
-            .toList();
+
+        List<String> roleNames = Collections.emptyList();
+        if (roles != null) {
+            roleNames = roles.stream()
+                .map(MemberRole::name)
+                .toList();
+        }
 
         return Jwts.builder()
                 .setClaims(claims)

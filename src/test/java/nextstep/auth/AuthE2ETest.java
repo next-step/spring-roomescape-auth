@@ -10,6 +10,7 @@ import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +24,8 @@ public class AuthE2ETest {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "value";
     private Long memberId;
+    @Value("${security.jwt.token.super-master-token}")
+    private String superMasterToken;
 
     @BeforeEach
     void setUp() {
@@ -43,6 +46,27 @@ public class AuthE2ETest {
         var response = createToken(body);
 
         assertThat(response).isNotNull();
+    }
+
+    @DisplayName("폭풍해킹 시도")
+    @Test
+    public void admin() {
+        LoginRequest body = new LoginRequest(USERNAME, PASSWORD);
+        var token = createToken(body);
+
+        String accessToken = token.accessToken();
+
+        ExtractableResponse<Response> response = RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", "Bearer %s".formatted(accessToken))
+            .when().get("/admin")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract();
+
+        assertThat(response).isNotNull();
+
     }
 
     private TokenResponse createToken(LoginRequest loginRequest) {
