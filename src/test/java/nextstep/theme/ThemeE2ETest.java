@@ -21,7 +21,7 @@ public class ThemeE2ETest {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(body)
-                .when().post("/themes")
+                .when().post("/admin/themes")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value());
     }
@@ -48,7 +48,7 @@ public class ThemeE2ETest {
 
         var response = RestAssured
                 .given().log().all()
-                .when().delete("/themes/" + id)
+                .when().delete("/admin/themes/" + id)
                 .then().log().all()
                 .extract();
 
@@ -61,7 +61,7 @@ public class ThemeE2ETest {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(body)
-                .when().post("/themes")
+                .when().post("/admin/themes")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().header("Location");

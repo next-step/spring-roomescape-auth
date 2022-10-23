@@ -34,6 +34,10 @@ public class Member {
         return new Member(username, password, name, phone, "USER");
     }
 
+    public static Member createAdmin(String username, String password, String name, String phone) {
+        return new Member(username, password, name, phone, "ADMIN");
+    }
+
     public Long getId() {
         return id;
     }

@@ -25,7 +25,7 @@ public class ScheduleE2ETest {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(themeRequest)
-                .when().post("/themes")
+                .when().post("/admin/themes")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
@@ -41,7 +41,7 @@ public class ScheduleE2ETest {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(body)
-                .when().post("/schedules")
+                .when().post("/admin/schedules")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value());
     }
@@ -70,7 +70,7 @@ public class ScheduleE2ETest {
 
         var response = RestAssured
                 .given().log().all()
-                .when().delete(location)
+                .when().delete("/admin" +  location)
                 .then().log().all()
                 .extract();
 
@@ -83,7 +83,7 @@ public class ScheduleE2ETest {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(body)
-                .when().post("/schedules")
+                .when().post("/admin/schedules")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract()
