@@ -19,7 +19,7 @@ public class MemberDao {
     private final RowMapper<Member> rowMapper = (resultSet, rowNum) -> new Member(
             resultSet.getLong("id"),
             resultSet.getString("username"),
-            resultSet.getString("password"),
+            resultSet.getLong("password_id"),
             resultSet.getString("name"),
             resultSet.getString("phone")
     );
@@ -31,7 +31,7 @@ public class MemberDao {
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
             ps.setString(1, member.getUsername());
-            ps.setString(2, member.getPassword());
+            ps.setLong(2, member.getPasswordId());
             ps.setString(3, member.getName());
             ps.setString(4, member.getPhone());
             return ps;

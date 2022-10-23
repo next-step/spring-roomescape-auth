@@ -3,21 +3,21 @@ package nextstep.member;
 public class Member {
     private Long id;
     private String username;
-    private String password;
+    private Long passwordId;
     private String name;
     private String phone;
 
-    public Member(Long id, String username, String password, String name, String phone) {
+    public Member(Long id, String username, Long passwordId, String name, String phone) {
         this.id = id;
         this.username = username;
-        this.password = password;
+        this.passwordId = passwordId;
         this.name = name;
         this.phone = phone;
     }
 
-    public Member(String username, String password, String name, String phone) {
+    public Member(String username, Long passwordId, String name, String phone) {
         this.username = username;
-        this.password = password;
+        this.passwordId = passwordId;
         this.name = name;
         this.phone = phone;
     }
@@ -30,8 +30,8 @@ public class Member {
         return username;
     }
 
-    public String getPassword() {
-        return password;
+    public Long getPasswordId() {
+        return passwordId;
     }
 
     public String getName() {
@@ -40,9 +40,5 @@ public class Member {
 
     public String getPhone() {
         return phone;
-    }
-
-    public boolean checkWrongPassword(String password) {
-        return !this.password.equals(password);
     }
 }

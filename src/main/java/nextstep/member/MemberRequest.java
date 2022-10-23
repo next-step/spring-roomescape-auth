@@ -29,7 +29,7 @@ public class MemberRequest {
         return phone;
     }
 
-    public Member toEntity() {
-        return new Member(username, password, name, phone);
+    public Member toEntity(Long passwordId) {
+        return new Member(username, passwordId, name, phone);
     }
 }
