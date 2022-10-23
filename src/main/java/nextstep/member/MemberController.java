@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 import nextstep.auth.LoginMember;
 import nextstep.auth.LoginMemberPrincipal;
+import nextstep.play.Play;
+import nextstep.play.PlayResponse;
 import nextstep.reservation.Reservation;
 import nextstep.reservation.ReservationResponse;
 import org.springframework.http.ResponseEntity;
@@ -40,5 +42,14 @@ public class MemberController {
             id, loginMember.getId()
         );
         return ResponseEntity.ok(ReservationResponse.of(reservations));
+    }
+
+    @GetMapping("/{id}/plays")
+    public ResponseEntity<List<PlayResponse>> getPlays(
+        @PathVariable Long id,
+        @LoginMemberPrincipal LoginMember loginMember
+    ) {
+        List<Play> plays = memberService.findAllPlaysByMemberId(id, loginMember.getId());
+        return ResponseEntity.ok(PlayResponse.of(plays));
     }
 }

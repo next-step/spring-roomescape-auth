@@ -4,11 +4,11 @@ import static nextstep.member.MemberRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import java.util.List;
 import nextstep.auth.TokenRequest;
 import nextstep.auth.TokenResponse;
+import nextstep.play.PlayRequest;
+import nextstep.play.PlayResponse;
 import nextstep.reservation.ReservationRequest;
 import nextstep.reservation.ReservationResponse;
 import nextstep.schedule.ScheduleRequest;
@@ -30,6 +30,7 @@ public class MemberE2ETest {
 
     private ReservationRequest request;
     private Long themeId;
+    private Long memberId;
 
     @BeforeEach
     void setUp() {
@@ -77,7 +78,7 @@ public class MemberE2ETest {
             .extract();
 
         String[] memberLocation = memberResponse.header("Location").split("/");
-        Long memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
+        memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
 
         request = new ReservationRequest(
             scheduleId,
@@ -133,6 +134,66 @@ public class MemberE2ETest {
         assertThat(responses).hasSize(1);
     }
 
+    @DisplayName("자신의 플레이 이력을 조회할 수 있다.")
+    @Test
+    void plays() {
+        String token = login("username", "password");
+        Long reservationId = createReservationWithToken(token);
+        PlayRequest playRequest = new PlayRequest(reservationId);
+        createPlay(token, playRequest);
+
+        List<PlayResponse> responses = RestAssured
+            .given().log().all()
+            .auth().oauth2(token)
+            .when().get("/members/" + memberId + "/plays")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract().jsonPath().getList(".", PlayResponse.class);
+
+        assertThat(responses).hasSize(1);
+    }
+
+    @DisplayName("삭제한 (숨겨진) 자신의 플레이 이력은 조회할 수 없다.")
+    @Test
+    void hiddenPlays() {
+        String token = login("username", "password");
+        Long reservationId = createReservationWithToken(token);
+        PlayRequest playRequest = new PlayRequest(reservationId);
+        Long playId = createPlay(token, playRequest);
+
+        RestAssured
+            .given().log().all()
+            .auth().oauth2(token)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(playRequest)
+            .when().delete("/plays/" + playId)
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value());
+
+        List<PlayResponse> responses = RestAssured
+            .given().log().all()
+            .auth().oauth2(token)
+            .when().get("/members/" + memberId + "/plays")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract().jsonPath().getList(".", PlayResponse.class);
+
+        assertThat(responses).hasSize(0);
+    }
+
+    private Long createPlay(String token, PlayRequest playRequest) {
+        return Long.valueOf(RestAssured
+            .given().log().all()
+            .auth().oauth2(token)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(playRequest)
+            .when().post("/plays")
+            .then().log().all()
+            .statusCode(HttpStatus.CREATED.value())
+            .extract().header("Location")
+            .split("/plays/")[1]);
+    }
+
     @DisplayName("자신이 아닌 다른 사람의 목록은 조회할 수 없다.")
     @Test
     void nonOwnerReservations() {
@@ -176,14 +237,15 @@ public class MemberE2ETest {
         return response.accessToken;
     }
 
-    private ExtractableResponse<Response> createReservationWithToken(String token) {
-        return RestAssured
+    private Long createReservationWithToken(String token) {
+        return Long.valueOf(RestAssured
             .given().log().all()
             .auth().oauth2(token)
             .body(request)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when().post("/reservations")
             .then().log().all()
-            .extract();
+            .extract().header("Location")
+            .split("/reservations/")[1]);
     }
 }
