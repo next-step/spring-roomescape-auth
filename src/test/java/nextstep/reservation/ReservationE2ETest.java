@@ -3,7 +3,10 @@ package nextstep.reservation;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import nextstep.member.MemberRequest;
+import nextstep.auth.presentation.dto.TokenRequest;
+import nextstep.auth.presentation.dto.TokenResponse;
+import nextstep.member.presentation.dto.CreateMemberRequest;
+import nextstep.reservation.presentation.dto.ReservationRequest;
 import nextstep.schedule.ScheduleRequest;
 import nextstep.theme.ThemeRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +32,7 @@ class ReservationE2ETest {
     private Long themeId;
     private Long scheduleId;
     private Long memberId;
+    private String accessToken;
 
     @BeforeEach
     void setUp() {
@@ -56,7 +60,7 @@ class ReservationE2ETest {
         String[] scheduleLocation = scheduleResponse.header("Location").split("/");
         scheduleId = Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
 
-        MemberRequest body = new MemberRequest("username", "password", "name", "010-1234-5678");
+        CreateMemberRequest body = new CreateMemberRequest("username", "password", "name", "010-1234-5678");
         var memberResponse = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -69,17 +73,27 @@ class ReservationE2ETest {
         String[] memberLocation = memberResponse.header("Location").split("/");
         memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
 
-        request = new ReservationRequest(
-                scheduleId,
-                null
-        );
+        accessToken = RestAssured
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(new TokenRequest(body.getUsername(), body.getPassword()))
+            .when().post("/login/token")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value())
+            .extract()
+            .as(TokenResponse.class)
+            .getAccessToken();
+
+        request = new ReservationRequest(scheduleId);
     }
 
     @DisplayName("예약을 생성한다")
     @Test
     void create() {
         var response = RestAssured
-                .given().log().all()
+                .given()
+                .header("authorization", "Bearer " + accessToken)
+                .log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/reservations")
@@ -112,7 +126,8 @@ class ReservationE2ETest {
         var reservation = createReservation();
 
         var response = RestAssured
-                .given().log().all()
+                .given().header("authorization", "Bearer " + accessToken)
+                .log().all()
                 .when().delete(reservation.header("Location"))
                 .then().log().all()
                 .extract();
@@ -126,7 +141,9 @@ class ReservationE2ETest {
         createReservation();
 
         var response = RestAssured
-                .given().log().all()
+                .given()
+                .header("authorization", "Bearer " + accessToken)
+                .log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/reservations")
@@ -155,7 +172,8 @@ class ReservationE2ETest {
     @Test
     void createNotExistReservation() {
         var response = RestAssured
-                .given().log().all()
+                .given().header("authorization", "Bearer " + accessToken)
+                .log().all()
                 .when().delete("/reservations/1")
                 .then().log().all()
                 .extract();
@@ -165,7 +183,8 @@ class ReservationE2ETest {
 
     private ExtractableResponse<Response> createReservation() {
         return RestAssured
-                .given().log().all()
+                .given().header("authorization", "Bearer " + accessToken)
+                .log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/reservations")
