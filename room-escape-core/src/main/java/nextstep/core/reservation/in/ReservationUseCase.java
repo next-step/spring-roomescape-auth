@@ -10,4 +10,6 @@ public interface ReservationUseCase {
     List<ReservationResponse> findAllByDate(LocalDate date);
 
     void deleteByDateAndTime(Long scheduleId, LocalDate date, LocalTime time);
+
+    void deleteById(Long reservationId);
 }

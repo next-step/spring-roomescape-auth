@@ -22,6 +22,10 @@ public class Reservation {
         this.name = name;
     }
 
+    public boolean isSameReservationId(Long id) {
+        return this.id.equals(id);
+    }
+
     public boolean isSameScheduleId(Long scheduleId) {
         return this.scheduleId.equals(scheduleId);
     }

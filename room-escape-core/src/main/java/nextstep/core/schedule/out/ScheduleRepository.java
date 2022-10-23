@@ -11,4 +11,6 @@ public interface ScheduleRepository {
     List<Schedule> findByThemeIdAndDate(Long themeId, LocalDate date);
 
     Boolean existsById(Long scheduleId);
+
+    void deleteById(Long scheduleId);
 }

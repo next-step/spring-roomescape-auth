@@ -49,13 +49,33 @@ public class ReservationInMemoryRepository implements ReservationRepository {
     }
 
     @Override
-    public boolean existsByScheduleIdAndDateAndTime(Long scheduleId, LocalDate date, LocalTime time) {
+    public boolean existsById(Long scheduleId, LocalDate date, LocalTime time) {
         Objects.requireNonNull(scheduleId);
         Objects.requireNonNull(date);
         Objects.requireNonNull(time);
 
         Optional<Reservation> reservation = RESERVATIONS.values().stream()
                 .filter(it -> it.isSameScheduleId(scheduleId) && it.isSameDate(date) && it.isSameTime(time))
+                .findFirst();
+        return reservation.isPresent();
+    }
+
+    @Override
+    public void deleteById(Long reservationId) {
+        Objects.requireNonNull(reservationId);
+
+        RESERVATIONS.values().stream()
+                .filter(it -> it.isSameReservationId(reservationId))
+                .map(Reservation::getId)
+                .forEach(RESERVATIONS::remove);
+    }
+
+    @Override
+    public boolean existsById(Long reservationId) {
+        Objects.requireNonNull(reservationId);
+
+        Optional<Reservation> reservation = RESERVATIONS.values().stream()
+                .filter(it -> it.isSameReservationId(reservationId))
                 .findFirst();
         return reservation.isPresent();
     }

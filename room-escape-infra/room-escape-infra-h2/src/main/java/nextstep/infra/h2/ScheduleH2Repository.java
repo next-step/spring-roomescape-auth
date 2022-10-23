@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class ScheduleH2Repository implements ScheduleRepository {
@@ -26,6 +27,8 @@ public class ScheduleH2Repository implements ScheduleRepository {
 
     @Override
     public Schedule save(Schedule schedule) {
+        Objects.requireNonNull(schedule);
+
         String query = "INSERT INTO schedules(theme_id, date, time) VALUES (?, ?, ?)";
         template.update(query, schedule.getThemeId(), schedule.getDate(), schedule.getTime());
 
@@ -35,17 +38,30 @@ public class ScheduleH2Repository implements ScheduleRepository {
 
     @Override
     public List<Schedule> findByThemeIdAndDate(Long themeId, LocalDate date) {
+        Objects.requireNonNull(themeId);
+        Objects.requireNonNull(date);
+
         String query = "SELECT * FROM schedules WHERE theme_id = ? AND date = ?";
         return template.query(query, ROW_MAPPER, themeId, date);
     }
 
     @Override
     public Boolean existsById(Long scheduleId) {
+        Objects.requireNonNull(scheduleId);
+
         String query = "SELECT schedules.id FROM schedules WHERE schedules.id = ?";
         try {
             return template.queryForObject(query, Boolean.class, scheduleId);
         } catch (EmptyResultDataAccessException e) {
             return Boolean.FALSE;
         }
+    }
+
+    @Override
+    public void deleteById(Long scheduleId) {
+        Objects.requireNonNull(scheduleId);
+
+        String query = "DELETE FROM schedules WHERE schedules.id = ?";
+        template.update(query, scheduleId);
     }
 }

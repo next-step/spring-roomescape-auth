@@ -36,13 +36,13 @@ public class ReservationService implements ReservationUseCase {
     }
 
     private void validateExistsSchedule(Long scheduleId) {
-        if (!scheduleService.existsById(scheduleId)) {
+        if (!scheduleService.exists(scheduleId)) {
             throw new IllegalArgumentException("스케줄이 존재하지 않습니다.");
         }
     }
 
     private void validateDuplicatedScheduleIdAndDateAndTime(ReservationCreateRequest request) {
-        if (repository.existsByScheduleIdAndDateAndTime(request.getScheduleId(), request.getDate(), request.getTime())) {
+        if (repository.existsById(request.getScheduleId(), request.getDate(), request.getTime())) {
             throw new IllegalArgumentException("동일한 날짜와 시간엔 예약할 수 없습니다.");
         }
     }
@@ -67,8 +67,22 @@ public class ReservationService implements ReservationUseCase {
         repository.deleteByDateAndTime(scheduleId, date, time);
     }
 
+    @Transactional
+    public void deleteById(Long reservationId) {
+        Objects.requireNonNull(reservationId);
+        validateExistsReservation(reservationId);
+
+        repository.deleteById(reservationId);
+    }
+
     private void validateExistsReservation(Long scheduleId, LocalDate date, LocalTime time) {
-        if (!repository.existsByScheduleIdAndDateAndTime(scheduleId, date, time)) {
+        if (!repository.existsById(scheduleId, date, time)) {
+            throw new IllegalArgumentException("해당 날짜와 시간에 예약이 존재하지 않습니다.");
+        }
+    }
+
+    private void validateExistsReservation(Long reservationId) {
+        if (!repository.existsById(reservationId)) {
             throw new IllegalArgumentException("해당 날짜와 시간에 예약이 존재하지 않습니다.");
         }
     }

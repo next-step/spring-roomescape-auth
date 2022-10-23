@@ -46,4 +46,10 @@ class ReservationController {
         useCase.deleteByDateAndTime(scheduleId, LocalDate.parse(date), LocalTime.parse(time));
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<Void> delete(@PathVariable Long reservationId) {
+        useCase.deleteById(reservationId);
+        return ResponseEntity.noContent().build();
+    }
 }

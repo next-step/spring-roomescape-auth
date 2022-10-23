@@ -41,7 +41,13 @@ public class ScheduleService implements ScheduleUseCase {
     }
 
     @Transactional(readOnly = true)
-    public boolean existsById(Long scheduleId) {
+    public boolean exists(Long scheduleId) {
         return repository.existsById(scheduleId);
+    }
+
+    @Transactional
+    public void delete(Long scheduleId) {
+        Objects.requireNonNull(scheduleId);
+        repository.deleteById(scheduleId);
     }
 }

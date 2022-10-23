@@ -57,7 +57,7 @@ public class ReservationH2Repository implements ReservationRepository {
     }
 
     @Override
-    public boolean existsByScheduleIdAndDateAndTime(Long scheduleId, LocalDate date, LocalTime time) {
+    public boolean existsById(Long scheduleId, LocalDate date, LocalTime time) {
         Objects.requireNonNull(scheduleId);
         Objects.requireNonNull(date);
         Objects.requireNonNull(time);
@@ -65,6 +65,26 @@ public class ReservationH2Repository implements ReservationRepository {
         String query = "SELECT reservation.id FROM reservation WHERE schedule_id = ? AND date = ? AND time = ?";
         try {
             return Boolean.TRUE.equals(template.queryForObject(query, Boolean.class, scheduleId, date, time));
+        } catch (EmptyResultDataAccessException e) {
+            return Boolean.FALSE;
+        }
+    }
+
+    @Override
+    public void deleteById(Long reservationId) {
+        Objects.requireNonNull(reservationId);
+
+        String query = "DELETE FROM reservation WHERE id = ?";
+        template.update(query, reservationId);
+    }
+
+    @Override
+    public boolean existsById(Long reservationId) {
+        Objects.requireNonNull(reservationId);
+
+        String query = "SELECT reservation.id FROM reservation WHERE id = ?";
+        try {
+            return Boolean.TRUE.equals(template.queryForObject(query, Boolean.class, reservationId));
         } catch (EmptyResultDataAccessException e) {
             return Boolean.FALSE;
         }

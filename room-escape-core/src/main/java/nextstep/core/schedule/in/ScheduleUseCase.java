@@ -8,5 +8,7 @@ public interface ScheduleUseCase {
 
     List<ScheduleResponse> list(Long themeId, LocalDate date);
 
-    boolean existsById(Long scheduleId);
+    boolean exists(Long scheduleId);
+
+    void delete(Long scheduleId);
 }

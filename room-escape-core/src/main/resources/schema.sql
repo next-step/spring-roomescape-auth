@@ -1,6 +1,7 @@
 drop table if exists reservation;
 drop table if exists themes;
 drop table if exists schedules;
+drop table if exists member;
 
 create table reservation
 (
@@ -33,5 +34,5 @@ create table member
     username varchar(20) not null comment '회원 아이디',
     password varchar(20) not null comment '회원 비밀번호',
     name     varchar(20) not null comment '회원 이름',
-    phone    varchar(20) not null comment '회원 전화번호',
-)
+    phone    varchar(20) not null comment '회원 전화번호'
+);

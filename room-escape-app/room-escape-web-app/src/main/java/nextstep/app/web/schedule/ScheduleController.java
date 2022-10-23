@@ -38,4 +38,10 @@ class ScheduleController {
                         .toList()
         );
     }
+
+    @DeleteMapping("/{scheduleId}")
+    public ResponseEntity<Void> deleteReservation(@PathVariable Long scheduleId) {
+        useCase.delete(scheduleId);
+        return ResponseEntity.noContent().build();
+    }
 }
