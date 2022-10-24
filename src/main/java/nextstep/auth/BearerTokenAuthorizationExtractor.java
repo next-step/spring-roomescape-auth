@@ -1,5 +1,6 @@
 package nextstep.auth;
 
+import java.util.Objects;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -11,7 +12,7 @@ public class BearerTokenAuthorizationExtractor implements AuthorizationExtractor
     @Override
     public String extract(NativeWebRequest webRequest) {
         final String authorization = webRequest.getHeader("Authorization");
-        if(!authorization.contains(SCHEME_TYPE)) {
+        if(Objects.isNull(authorization) || !authorization.contains(SCHEME_TYPE)) {
             throw new AuthenticationException("Invalid token");
         }
         final int tokenIndex = authorization.indexOf(SCHEME_TYPE) + SCHEME_TYPE.length() + 1;

@@ -1,8 +1,6 @@
 package nextstep.reservation;
 
 import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import nextstep.member.MemberRequest;
 import nextstep.schedule.ScheduleRequest;
 import nextstep.theme.ThemeRequest;
@@ -16,63 +14,43 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
+import static nextstep.utils.RequestFixture.*;
+import static nextstep.utils.Requests.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ReservationE2ETest {
+
     public static final String DATE = "2022-08-11";
-    public static final String TIME = "13:00";
-    public static final String NAME = "name";
 
     private ReservationRequest request;
     private Long themeId;
-    private Long scheduleId;
-    private Long memberId;
+    private String loginToken;
 
     @BeforeEach
     void setUp() {
-        ThemeRequest themeRequest = new ThemeRequest("테마이름", "테마설명", 22000);
-        var themeResponse = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(themeRequest)
-                .when().post("/themes")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract();
-        String[] themeLocation = themeResponse.header("Location").split("/");
-        themeId = Long.parseLong(themeLocation[themeLocation.length - 1]);
+        var memberRequest = memberRequest();
+        createMemberRequest(memberRequest);
+        loginToken = getLoginTokenRequest(tokenRequest(memberRequest));
 
-        ScheduleRequest scheduleRequest = new ScheduleRequest(themeId, DATE, TIME);
-        var scheduleResponse = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(scheduleRequest)
-                .when().post("/schedules")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract();
-        String[] scheduleLocation = scheduleResponse.header("Location").split("/");
-        scheduleId = Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
+        themeId = createTheme(themeRequest());
 
-        MemberRequest body = new MemberRequest("username", "password", "name", "010-1234-5678", "ADMIN");
-        var memberResponse = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().post("/members")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract();
+        var scheduleId = createSchedule(scheduleRequest(themeId, DATE));
+        request = reservationRequest(scheduleId);
+    }
 
-        String[] memberLocation = memberResponse.header("Location").split("/");
-        memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
-
-        request = new ReservationRequest(
-                scheduleId,
-                null
-        );
+    @DisplayName("로그인 없이는 예약을 생성할 수 없다")
+    @Test
+    void createWithoutLogin() {
+        var response = RestAssured
+            .given().log().all()
+            .body(request)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .when().post("/reservations")
+            .then().log().all()
+            .extract();
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     @DisplayName("예약을 생성한다")
@@ -80,19 +58,20 @@ class ReservationE2ETest {
     void create() {
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer " + loginToken)
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
-
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
 
     @DisplayName("예약을 조회한다")
     @Test
     void show() {
-        createReservation();
+
+        createReservationRequest(loginToken, request);
 
         var response = RestAssured
                 .given().log().all()
@@ -109,10 +88,11 @@ class ReservationE2ETest {
     @DisplayName("예약을 삭제한다")
     @Test
     void delete() {
-        var reservation = createReservation();
+        var reservation = createReservationRequest(loginToken, request);
 
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer " + loginToken)
                 .when().delete(reservation.header("Location"))
                 .then().log().all()
                 .extract();
@@ -120,19 +100,37 @@ class ReservationE2ETest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
+    @DisplayName("자신의 예약이 아닌 경우 예약 취소가 불가능하다.")
+    @Test
+    void deleteOthers() {
+        var reservation = createReservationRequest(loginToken, request);
+
+        var otherUser = memberRequest("otherUser");
+        createMemberRequest(otherUser);
+        var othersToken = getLoginTokenRequest(tokenRequest(otherUser));
+
+        var response = RestAssured
+            .given().log().all()
+            .header("Authorization", "Bearer " + othersToken)
+            .when().delete(reservation.header("Location"))
+            .then().log().all()
+            .extract();
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+    }
+
     @DisplayName("중복 예약을 생성한다")
     @Test
     void createDuplicateReservation() {
-        createReservation();
+        createReservationRequest(loginToken, request);
 
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer " + loginToken)
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
-
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
@@ -156,20 +154,10 @@ class ReservationE2ETest {
     void createNotExistReservation() {
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer " + loginToken)
                 .when().delete("/reservations/1")
                 .then().log().all()
                 .extract();
-
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    }
-
-    private ExtractableResponse<Response> createReservation() {
-        return RestAssured
-                .given().log().all()
-                .body(request)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().post("/reservations")
-                .then().log().all()
-                .extract();
     }
 }

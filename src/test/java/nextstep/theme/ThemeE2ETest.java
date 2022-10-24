@@ -8,15 +8,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 
+import static nextstep.utils.RequestFixture.themeRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class ThemeE2ETest {
+
     @DisplayName("테마를 생성한다")
     @Test
     public void create() {
-        ThemeRequest body = new ThemeRequest("테마이름", "테마설명", 22000);
+        ThemeRequest body = themeRequest();
         RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -56,7 +58,7 @@ public class ThemeE2ETest {
     }
 
     public Long createTheme() {
-        ThemeRequest body = new ThemeRequest("테마이름", "테마설명", 22000);
+        ThemeRequest body = themeRequest();
         String location = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

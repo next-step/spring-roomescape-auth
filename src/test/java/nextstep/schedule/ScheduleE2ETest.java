@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 
+import static nextstep.utils.RequestFixture.scheduleRequest;
+import static nextstep.utils.RequestFixture.themeRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -20,7 +22,7 @@ public class ScheduleE2ETest {
 
     @BeforeEach
     void setUp() {
-        ThemeRequest themeRequest = new ThemeRequest("테마이름", "테마설명", 22000);
+        ThemeRequest themeRequest = themeRequest();
         var response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -36,7 +38,7 @@ public class ScheduleE2ETest {
     @DisplayName("스케줄을 생성한다")
     @Test
     public void createSchedule() {
-        ScheduleRequest body = new ScheduleRequest(themeId, "2022-08-11", "13:00");
+        ScheduleRequest body = scheduleRequest();
         RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -78,7 +80,7 @@ public class ScheduleE2ETest {
     }
 
     public static String requestCreateSchedule() {
-        ScheduleRequest body = new ScheduleRequest(1L, "2022-08-11", "13:00");
+        ScheduleRequest body = scheduleRequest();
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
