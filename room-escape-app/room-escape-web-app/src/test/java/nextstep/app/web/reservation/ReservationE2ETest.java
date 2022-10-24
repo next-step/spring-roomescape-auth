@@ -76,7 +76,7 @@ class ReservationE2ETest {
         request = new ReservationCreateRequest(
                 LocalDate.parse(DATE),
                 LocalTime.parse(TIME),
-                "name",
+                NAME,
                 scheduleId
         );
     }
