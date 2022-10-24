@@ -1,4 +1,4 @@
-package nextstep.infrastructure;
+package nextstep.infrastructure.member;
 
 import java.sql.PreparedStatement;
 import java.util.Optional;

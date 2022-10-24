@@ -1,4 +1,4 @@
-package nextstep.infrastructure;
+package nextstep.infrastructure.theme;
 
 import java.util.List;
 import java.util.Optional;
