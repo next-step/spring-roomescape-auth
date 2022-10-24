@@ -1,7 +1,5 @@
 package nextstep.auth;
 
-import nextstep.member.Member;
-import nextstep.member.MemberDao;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,24 +9,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/login")
 public class AuthController {
-    private final JwtTokenProvider jwtTokenProvider;
-    private final MemberDao memberDao;
+    private final AuthService authService;
 
-    public AuthController(JwtTokenProvider jwtTokenProvider, MemberDao memberDao) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.memberDao = memberDao;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/token")
     public ResponseEntity<TokenResponse> login(@RequestBody TokenRequest request) {
-        Member member = memberDao.findByUsername(request.getUsername());
+        TokenResponse response = authService.createToken(request);
 
-        if (member == null || member.checkWrongPassword(request.getPassword())) {
-            throw new AuthenticationException();
-        }
-
-        String token = jwtTokenProvider.createToken(String.valueOf(member.getId()), member.getRoles());
-        TokenResponse response = new TokenResponse(token);
         return ResponseEntity.ok(response);
     }
 }

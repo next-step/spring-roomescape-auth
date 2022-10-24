@@ -11,16 +11,17 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthMemberResolver authMemberResolver;
 
-    public WebConfig(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
+    public WebConfig(AuthMemberResolver authMemberResolver) {
+        this.authMemberResolver = authMemberResolver;
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthMemberResolver(jwtTokenProvider));
+        resolvers.add(authMemberResolver);
     }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")

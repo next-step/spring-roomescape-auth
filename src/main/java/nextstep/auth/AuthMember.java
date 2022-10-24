@@ -1,7 +1,7 @@
 package nextstep.auth;
 
 public class AuthMember {
-    private Long id;
+    private final Long id;
 
     private AuthMember(Long id) {
         this.id = id;

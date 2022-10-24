@@ -5,6 +5,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import nextstep.auth.TokenRequest;
 import nextstep.auth.TokenResponse;
+import nextstep.support.ErrorResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,18 @@ public class MemberE2ETest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(member.getUsername()).isNotNull();
+    }
+
+    @DisplayName("잘못된 토큰으로 내 정보 조회 조회 시, 실패한다")
+    @Test
+    void failToFindMe() {
+        // given, when
+        ExtractableResponse<Response> response = findMember("Bearer empty");
+        ErrorResponse errorResponse = response.as(ErrorResponse.class);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+        assertThat(errorResponse.getMessage()).isEqualTo("인증에 실패하였습니다.");
     }
 
     private ExtractableResponse<Response> createMember(String username, String password, String name, String phone) {
