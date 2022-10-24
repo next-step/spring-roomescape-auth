@@ -3,6 +3,8 @@ package nextstep.reservation;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import nextstep.auth.AuthE2ETest;
+import nextstep.member.MemberE2ETest;
 import nextstep.member.MemberRequest;
 import nextstep.schedule.ScheduleRequest;
 import nextstep.theme.ThemeRequest;
@@ -10,12 +12,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
+import static nextstep.auth.AuthE2ETest.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -29,6 +33,8 @@ class ReservationE2ETest {
     private Long themeId;
     private Long scheduleId;
     private Long memberId;
+
+    private String token;
 
     @BeforeEach
     void setUp() {
@@ -73,13 +79,21 @@ class ReservationE2ETest {
                 scheduleId,
                 null
         );
+
+        token = 로그인_한다("username", "password");
     }
 
     @DisplayName("예약을 생성한다")
     @Test
     void create() {
+        String userName = "Gomding";
+        String password = "q1w2e3r4";
+        MemberE2ETest.회원가입_한다(userName, password);
+        String token = 로그인_한다(userName, password);
+
         var response = RestAssured
                 .given().log().all()
+                .header("Authorization", "Bearer " + token)
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/reservations")
@@ -92,7 +106,7 @@ class ReservationE2ETest {
     @DisplayName("예약을 조회한다")
     @Test
     void show() {
-        createReservation();
+        createReservation(token);
 
         var response = RestAssured
                 .given().log().all()
@@ -109,10 +123,11 @@ class ReservationE2ETest {
     @DisplayName("예약을 삭제한다")
     @Test
     void delete() {
-        var reservation = createReservation();
+        var reservation = createReservation(token);
 
         var response = RestAssured
                 .given().log().all()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .when().delete(reservation.header("Location"))
                 .then().log().all()
                 .extract();
@@ -123,7 +138,7 @@ class ReservationE2ETest {
     @DisplayName("중복 예약을 생성한다")
     @Test
     void createDuplicateReservation() {
-        createReservation();
+        createReservation(token);
 
         var response = RestAssured
                 .given().log().all()
@@ -163,9 +178,10 @@ class ReservationE2ETest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
-    private ExtractableResponse<Response> createReservation() {
+    private ExtractableResponse<Response> createReservation(String accessToken) {
         return RestAssured
                 .given().log().all()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/reservations")

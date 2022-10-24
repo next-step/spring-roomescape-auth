@@ -60,7 +60,7 @@ public class AuthE2ETest {
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .extract();
-        assertThat(response.jsonPath().getList(".").size()).isEqualTo(1);
+        assertThat(response.jsonPath().getList(".")).hasSize(1);
     }
 
     @DisplayName("테마를 삭제한다")
@@ -88,5 +88,19 @@ public class AuthE2ETest {
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().header("Location");
         return Long.parseLong(location.split("/")[2]);
+    }
+
+    public static String 로그인_한다(String userName, String password) {
+        TokenRequest body = new TokenRequest(userName, password);
+        var response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+                .when().post("/login/token")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract();
+
+        return response.body().jsonPath().get("accessToken");
     }
 }
