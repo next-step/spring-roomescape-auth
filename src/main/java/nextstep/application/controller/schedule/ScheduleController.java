@@ -7,7 +7,6 @@ import nextstep.application.dto.schedule.ScheduleResponse;
 import nextstep.application.service.schedule.ScheduleCommandService;
 import nextstep.application.service.schedule.ScheduleQueryService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,11 +42,5 @@ public class ScheduleController {
     ) {
         List<ScheduleResponse> responses = scheduleQueryService.checkAll(themeId, date);
         return ResponseEntity.ok(responses);
-    }
-
-    @DeleteMapping
-    public ResponseEntity<Void> cancel(@RequestParam Long id) {
-        scheduleCommandService.cancel(id);
-        return ResponseEntity.noContent().build();
     }
 }

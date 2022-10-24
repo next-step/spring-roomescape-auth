@@ -25,7 +25,7 @@ public class ScheduleCommandService {
         return scheduleDomainService.findBy(themeId, date, time).getId();
     }
 
-    public void cancel(Long id) {
+    public void delete(Long id) {
         scheduleDomainService.delete(id);
     }
 
