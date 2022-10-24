@@ -1,7 +1,10 @@
 package nextstep.member;
 
 import io.restassured.RestAssured;
-import nextstep.theme.ThemeRequest;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
+import nextstep.auth.TokenRequest;
+import nextstep.auth.TokenResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class ThemeE2ETest {
+public class MemberE2ETest {
+    private static final String USERNAME = "newwisdom";
+    private static final String PASSWORD = "123123";
+    private static final String NAME = "신지혜";
+    private static final String PHONE = "010-1234-5678";
+
     @DisplayName("멤버를 생성한다")
     @Test
     public void create() {
@@ -25,6 +33,56 @@ public class ThemeE2ETest {
                 .when().post("/members")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value());
+    }
+
+    @DisplayName("내 정보를 조회한다")
+    @Test
+    void showMe() {
+        // given
+        createMember(USERNAME, PASSWORD, NAME, PHONE);
+        String token = login(USERNAME, PASSWORD).as(TokenResponse.class).
+                getAccessToken();
+
+        // when
+        ExtractableResponse<Response> response = findMember(token);
+        Member member = response.as(Member.class);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(member.getUsername()).isNotNull();
+    }
+
+    private ExtractableResponse<Response> createMember(String username, String password, String name, String phone) {
+        MemberRequest request = new MemberRequest(username, password, "name", "010-1234-5678");
+
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(request)
+                .when().post("/members")
+                .then().log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> login(String username, String password) {
+        TokenRequest request = new TokenRequest(username, password);
+
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(request)
+                .when().post("/login/token")
+                .then().log().all()
+                .extract();
+    }
+
+    private ExtractableResponse<Response> findMember(String token) {
+        return RestAssured
+                .given().log().all()
+                .auth().oauth2(token)
+                .when().get("/members/me")
+                .then().log().all()
+                .extract();
     }
 //
 //    @DisplayName("테마 목록을 조회한다")
