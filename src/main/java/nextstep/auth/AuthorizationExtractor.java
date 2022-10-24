@@ -8,20 +8,14 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class AuthorizationExtractor {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    public AuthorizationExtractor() { }
 
-    public AuthorizationExtractor(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
-    public Long extractClaims(HttpServletRequest request) {
+    public String extractAccessToken(HttpServletRequest request) {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authorization == null || !(authorization.contains("Bearer"))) {
             throw new AuthenticationException();
         }
 
-        String token = authorization.replace("Bearer ", "").trim();
-        Long userId = Long.parseLong(jwtTokenProvider.getPrincipal(token));
-        return userId;
+        return authorization.replace("Bearer ", "").trim();
     }
 }

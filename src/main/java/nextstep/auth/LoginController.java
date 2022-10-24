@@ -30,7 +30,7 @@ public class LoginController {
             throw new AuthenticationException();
         }
 
-        String token = jwtTokenProvider.createToken(String.valueOf(member.getId()), Collections.emptyList());
+        String token = jwtTokenProvider.createToken(String.valueOf(member.getId()), member.getRole());
         TokenResponse response = new TokenResponse(token);
         return ResponseEntity.ok(response);
     }
