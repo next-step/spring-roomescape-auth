@@ -50,7 +50,7 @@ public class MemberDao implements MemberRepository {
 
         return Optional.ofNullable(keyHolder.getKey())
             .map(Number::longValue)
-            .orElseThrow(() -> new MemberException("사용자를 저장할 수 없습니다. DB를 확인해주세요."));
+            .orElseThrow(() -> new MemberException("사용자/관리자를 저장할 수 없습니다. DB를 확인해주세요."));
     }
 
     @Override
