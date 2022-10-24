@@ -74,9 +74,9 @@ class ReservationE2ETest {
         memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
 
         request = new ReservationCreateRequest(
-                LocalDate.now(),
-                LocalTime.now(),
-                null,
+                LocalDate.parse(DATE),
+                LocalTime.parse(TIME),
+                "name",
                 scheduleId
         );
     }
@@ -108,7 +108,7 @@ class ReservationE2ETest {
                 .then().log().all()
                 .extract();
 
-        List<Reservation> reservations = response.jsonPath().getList(".", Reservation.class);
+        List<ReservationWebResponse> reservations = response.jsonPath().getList(".", ReservationWebResponse.class);
         assertThat(reservations.size()).isEqualTo(1);
     }
 

@@ -6,10 +6,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 class ScheduleWebResponse {
-    private final Long id;
-    private final Long themeId;
-    private final LocalDate date;
-    private final LocalTime time;
+    private Long id;
+    private Long themeId;
+    private LocalDate date;
+    private LocalTime time;
+
+    private ScheduleWebResponse() {
+    }
 
     private ScheduleWebResponse(Long id, Long themeId, LocalDate date, LocalTime time) {
         this.id = id;

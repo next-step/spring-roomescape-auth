@@ -81,10 +81,13 @@ public class ReservationController {
                 System.out.println("예약 조회 할 날짜를 입력하세요.");
                 System.out.println();
 
+                System.out.println("스케줄 아이디를 입력해주세요.");
+                String scheduleId = scanner.nextLine();
+
                 System.out.println("날짜 (ex.2022-08-11)");
                 String date = scanner.nextLine();
 
-                repository.findAllByDate(LocalDate.parse(date))
+                repository.findAllByScheduleIdAndDate(Long.parseLong(scheduleId), LocalDate.parse(date))
                         .forEach(System.out::println);
             }
 

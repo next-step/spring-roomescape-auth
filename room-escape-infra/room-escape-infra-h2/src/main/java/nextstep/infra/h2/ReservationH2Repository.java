@@ -16,6 +16,7 @@ import java.util.Objects;
 public class ReservationH2Repository implements ReservationRepository {
     private static final RowMapper<Reservation> ROW_MAPPER = (resultSet, rowNum) -> new Reservation(
             resultSet.getLong("id"),
+            resultSet.getLong("schedule_id"),
             resultSet.getDate("date").toLocalDate(),
             resultSet.getTime("time").toLocalTime(),
             resultSet.getString("name")
@@ -35,15 +36,16 @@ public class ReservationH2Repository implements ReservationRepository {
         template.update(query, reservation.getScheduleId(), reservation.getDate(), reservation.getTime(), reservation.getName());
 
         Long id = template.queryForObject("SELECT last_insert_id()", Long.class);
-        return new Reservation(id, reservation.getDate(), reservation.getTime(), reservation.getName());
+        return new Reservation(id, reservation.getScheduleId(), reservation.getDate(), reservation.getTime(), reservation.getName());
     }
 
     @Override
-    public List<Reservation> findAllByDate(LocalDate date) {
+    public List<Reservation> findAllByScheduleIdAndDate(Long scheduleId, LocalDate date) {
+        Objects.requireNonNull(scheduleId);
         Objects.requireNonNull(date);
 
-        String query = "SELECT * FROM reservation WHERE date = ?";
-        return template.query(query, ROW_MAPPER, date);
+        String query = "SELECT * FROM reservation WHERE schedule_id = ? AND date = ?";
+        return template.query(query, ROW_MAPPER, scheduleId, date);
     }
 
     @Override

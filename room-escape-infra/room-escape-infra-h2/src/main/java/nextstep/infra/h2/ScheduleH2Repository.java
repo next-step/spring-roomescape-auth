@@ -37,7 +37,16 @@ public class ScheduleH2Repository implements ScheduleRepository {
     }
 
     @Override
-    public List<Schedule> findByThemeIdAndDate(Long themeId, LocalDate date) {
+    public Schedule findByThemeIdAndDate(Long themeId, LocalDate date) {
+        Objects.requireNonNull(themeId);
+        Objects.requireNonNull(date);
+
+        String query = "SELECT * FROM schedules WHERE theme_id = ? AND date = ?";
+        return template.queryForObject(query, ROW_MAPPER, themeId, date);
+    }
+
+    @Override
+    public List<Schedule> findAllByThemeIdAndDate(Long themeId, LocalDate date) {
         Objects.requireNonNull(themeId);
         Objects.requireNonNull(date);
 

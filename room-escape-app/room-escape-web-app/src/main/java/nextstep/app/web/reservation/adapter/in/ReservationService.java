@@ -6,6 +6,7 @@ import nextstep.core.reservation.in.ReservationCreateRequest;
 import nextstep.core.reservation.in.ReservationResponse;
 import nextstep.core.reservation.in.ReservationUseCase;
 import nextstep.core.reservation.out.ReservationRepository;
+import nextstep.core.schedule.in.ScheduleResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,17 +49,19 @@ public class ReservationService implements ReservationUseCase {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationResponse> findAllByDate(LocalDate date) {
+    public List<ReservationResponse> findReservations(Long themeId, LocalDate date) {
+        Objects.requireNonNull(themeId);
         Objects.requireNonNull(date);
 
-        return repository.findAllByDate(date)
+        ScheduleResponse schedule = scheduleService.findByThemeIdAndDate(themeId, date);
+        return repository.findAllByScheduleIdAndDate(schedule.getId(), date)
                 .stream()
                 .map(ReservationResponse::from)
                 .toList();
     }
 
     @Transactional
-    public void deleteByDateAndTime(Long scheduleId, LocalDate date, LocalTime time) {
+    public void delete(Long scheduleId, LocalDate date, LocalTime time) {
         Objects.requireNonNull(date);
         Objects.requireNonNull(time);
         validateExistsSchedule(scheduleId);
@@ -68,7 +71,7 @@ public class ReservationService implements ReservationUseCase {
     }
 
     @Transactional
-    public void deleteById(Long reservationId) {
+    public void delete(Long reservationId) {
         Objects.requireNonNull(reservationId);
         validateExistsReservation(reservationId);
 

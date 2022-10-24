@@ -7,9 +7,9 @@ import java.util.List;
 public interface ReservationUseCase {
     ReservationResponse create(ReservationCreateRequest request);
 
-    List<ReservationResponse> findAllByDate(LocalDate date);
+    List<ReservationResponse> findReservations(Long themeId, LocalDate date);
 
-    void deleteByDateAndTime(Long scheduleId, LocalDate date, LocalTime time);
+    void delete(Long scheduleId, LocalDate date, LocalTime time);
 
-    void deleteById(Long reservationId);
+    void delete(Long reservationId);
 }

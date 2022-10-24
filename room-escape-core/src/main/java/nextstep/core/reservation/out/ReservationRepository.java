@@ -9,7 +9,7 @@ import java.util.List;
 public interface ReservationRepository {
     Reservation save(Reservation reservation);
 
-    List<Reservation> findAllByDate(LocalDate date);
+    List<Reservation> findAllByScheduleIdAndDate(Long scheduleId, LocalDate date);
 
     void deleteByDateAndTime(Long scheduleId, LocalDate date, LocalTime time);
 

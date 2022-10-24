@@ -30,11 +30,20 @@ public class ScheduleService implements ScheduleUseCase {
     }
 
     @Transactional(readOnly = true)
+    public ScheduleResponse findByThemeIdAndDate(Long themeId, LocalDate date) {
+        Objects.requireNonNull(themeId);
+        Objects.requireNonNull(date);
+
+        Schedule schedule = repository.findByThemeIdAndDate(themeId, date);
+        return ScheduleResponse.from(schedule);
+    }
+
+    @Transactional(readOnly = true)
     public List<ScheduleResponse> list(Long themeId, LocalDate date) {
         Objects.requireNonNull(themeId);
         Objects.requireNonNull(date);
 
-        return repository.findByThemeIdAndDate(themeId, date)
+        return repository.findAllByThemeIdAndDate(themeId, date)
                 .stream()
                 .map(ScheduleResponse::from)
                 .toList();
@@ -42,6 +51,7 @@ public class ScheduleService implements ScheduleUseCase {
 
     @Transactional(readOnly = true)
     public boolean exists(Long scheduleId) {
+        Objects.requireNonNull(scheduleId);
         return repository.existsById(scheduleId);
     }
 

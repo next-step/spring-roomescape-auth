@@ -3,10 +3,13 @@ package nextstep.app.web.theme;
 import nextstep.core.theme.in.ThemeResponse;
 
 class ThemeWebResponse {
-    private final Long id;
-    private final String name;
-    private final String desc;
-    private final Long price;
+    private Long id;
+    private String name;
+    private String desc;
+    private Long price;
+
+    private ThemeWebResponse() {
+    }
 
     private ThemeWebResponse(Long id, String name, String desc, Long price) {
         this.id = id;

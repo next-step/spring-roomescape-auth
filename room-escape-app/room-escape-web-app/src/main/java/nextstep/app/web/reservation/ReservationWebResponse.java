@@ -6,11 +6,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 class ReservationWebResponse {
-    private final Long id;
-    private final Long scheduleId;
-    private final LocalDate date;
-    private final LocalTime time;
-    private final String name;
+    private Long id;
+    private Long scheduleId;
+    private LocalDate date;
+    private LocalTime time;
+    private String name;
+
+    private ReservationWebResponse() {
+    }
 
     private ReservationWebResponse(Long id, Long scheduleId, LocalDate date, LocalTime time, String name) {
         this.id = id;

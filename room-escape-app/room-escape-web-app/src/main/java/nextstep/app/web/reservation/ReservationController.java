@@ -28,8 +28,8 @@ class ReservationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReservationWebResponse>> list(@RequestParam String date) {
-        List<ReservationResponse> reservations = useCase.findAllByDate(LocalDate.parse(date));
+    public ResponseEntity<List<ReservationWebResponse>> list(@RequestParam Long themeId, @RequestParam String date) {
+        List<ReservationResponse> reservations = useCase.findReservations(themeId, LocalDate.parse(date));
         return ResponseEntity.ok(
                 reservations.stream()
                         .map(ReservationWebResponse::from)
@@ -43,13 +43,13 @@ class ReservationController {
             @RequestParam String date,
             @RequestParam String time
     ) {
-        useCase.deleteByDateAndTime(scheduleId, LocalDate.parse(date), LocalTime.parse(time));
+        useCase.delete(scheduleId, LocalDate.parse(date), LocalTime.parse(time));
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{reservationId}")
     public ResponseEntity<Void> delete(@PathVariable Long reservationId) {
-        useCase.deleteById(reservationId);
+        useCase.delete(reservationId);
         return ResponseEntity.noContent().build();
     }
 }

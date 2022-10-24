@@ -28,11 +28,12 @@ public class ReservationInMemoryRepository implements ReservationRepository {
     }
 
     @Override
-    public List<Reservation> findAllByDate(LocalDate date) {
+    public List<Reservation> findAllByScheduleIdAndDate(Long scheduleId, LocalDate date) {
+        Objects.requireNonNull(scheduleId);
         Objects.requireNonNull(date);
 
         return RESERVATIONS.values().stream()
-                .filter(it -> it.isSameDate(date))
+                .filter(it -> it.isSameScheduleId(scheduleId) && it.isSameDate(date))
                 .toList();
     }
 

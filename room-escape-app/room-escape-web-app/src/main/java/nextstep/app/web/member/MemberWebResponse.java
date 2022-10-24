@@ -3,11 +3,14 @@ package nextstep.app.web.member;
 import nextstep.core.member.in.MemberResponse;
 
 public class MemberWebResponse {
-    private final Long id;
-    private final String username;
-    private final String password;
-    private final String name;
-    private final String phone;
+    private Long id;
+    private String username;
+    private String password;
+    private String name;
+    private String phone;
+
+    private MemberWebResponse() {
+    }
 
     private MemberWebResponse(Long id, String username, String password, String name, String phone) {
         this.id = id;
