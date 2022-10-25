@@ -1,6 +1,10 @@
 package nextstep.auth;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +13,7 @@ import java.util.List;
 
 @Component
 public class JwtTokenProvider {
+    private static final String TOKEN_FORMAT = "Bearer ";
     @Value("${security.jwt.token.secret-key}")
     private String secretKey;
     @Value("${security.jwt.token.expire-length}")
@@ -29,6 +34,14 @@ public class JwtTokenProvider {
     }
 
     public String getPrincipal(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getPrincipalBy(String authorization) {
+        if (!authorization.startsWith(TOKEN_FORMAT)) {
+            throw new IllegalArgumentException("잘못된 토큰 형식입니다.");
+        }
+        String token = authorization.replace(TOKEN_FORMAT, "");
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
