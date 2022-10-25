@@ -43,6 +43,10 @@ public class Member {
     }
 
     public boolean checkWrongPassword(String password) {
-        return !this.password.equals(password);
+        return !checkRightPassword(password);
+    }
+
+    public boolean checkRightPassword(String password) {
+        return this.password.equals(password);
     }
 }
