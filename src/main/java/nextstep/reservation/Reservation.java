@@ -1,24 +1,25 @@
 package nextstep.reservation;
 
+import nextstep.member.Member;
 import nextstep.schedule.Schedule;
 
 public class Reservation {
     private Long id;
     private Schedule schedule;
-    private String name;
+    private Member member;
 
     public Reservation() {
     }
 
-    public Reservation(Schedule schedule, String name) {
+    public Reservation(Schedule schedule, Member member) {
         this.schedule = schedule;
-        this.name = name;
+        this.member = member;
     }
 
-    public Reservation(Long id, Schedule schedule, String name) {
+    public Reservation(Long id, Schedule schedule, Member member) {
         this.id = id;
         this.schedule = schedule;
-        this.name = name;
+        this.member = member;
     }
 
     public Long getId() {
@@ -29,7 +30,7 @@ public class Reservation {
         return schedule;
     }
 
-    public String getName() {
-        return name;
+    public Member getMember() {
+        return member;
     }
 }

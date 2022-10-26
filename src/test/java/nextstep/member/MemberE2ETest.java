@@ -65,7 +65,7 @@ public class MemberE2ETest {
         assertThat(errorResponse.getMessage()).isEqualTo("인증에 실패하였습니다.");
     }
 
-    private ExtractableResponse<Response> createMember(String username, String password, String name, String phone) {
+    public static ExtractableResponse<Response> createMember(String username, String password, String name, String phone) {
         MemberRequest request = new MemberRequest(username, password, "name", "010-1234-5678");
 
         return RestAssured
@@ -77,7 +77,7 @@ public class MemberE2ETest {
                 .extract();
     }
 
-    private ExtractableResponse<Response> login(String username, String password) {
+    public static ExtractableResponse<Response> login(String username, String password) {
         TokenRequest request = new TokenRequest(username, password);
 
         return RestAssured
