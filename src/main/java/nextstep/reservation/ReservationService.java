@@ -1,6 +1,6 @@
 package nextstep.reservation;
 
-import nextstep.auth.AuthMember;
+import nextstep.auth.AuthenticationException;
 import nextstep.member.Member;
 import nextstep.member.MemberDao;
 import nextstep.schedule.Schedule;
@@ -55,12 +55,21 @@ public class ReservationService {
         return reservationDao.findAllByThemeIdAndDate(themeId, date);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Long memberId) {
+        Member member = memberDao.findById(memberId);
         Reservation reservation = reservationDao.findById(id);
         if (reservation == null) {
             throw new NullPointerException();
         }
+        validateOwner(member, reservation);
 
         reservationDao.deleteById(id);
     }
+
+    private void validateOwner(Member member, Reservation reservation) {
+        if (!reservation.isOwner(member)) {
+            throw new AuthenticationException("자신의 예약이 아닌 경우 삭제할 수 없습니다.");
+        }
+    }
+
 }

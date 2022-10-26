@@ -3,6 +3,8 @@ package nextstep.reservation;
 import nextstep.member.Member;
 import nextstep.schedule.Schedule;
 
+import java.util.Objects;
+
 public class Reservation {
     private Long id;
     private Schedule schedule;
@@ -32,5 +34,9 @@ public class Reservation {
 
     public Member getMember() {
         return member;
+    }
+
+    public boolean isOwner(Member member) {
+        return Objects.equals(this.member.getId(), member.getId());
     }
 }
