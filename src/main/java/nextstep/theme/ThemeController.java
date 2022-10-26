@@ -1,7 +1,11 @@
 package nextstep.theme;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
@@ -25,12 +29,5 @@ public class ThemeController {
     public ResponseEntity<List<ThemeResponse>> showThemes() {
         List<ThemeResponse> results = themeService.findAll();
         return ResponseEntity.ok().body(results);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTheme(@PathVariable Long id) {
-        themeService.delete(id);
-
-        return ResponseEntity.noContent().build();
     }
 }

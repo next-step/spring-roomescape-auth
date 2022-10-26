@@ -63,20 +63,6 @@ public class ScheduleE2ETest {
         assertThat(response.jsonPath().getList(".").size()).isEqualTo(1);
     }
 
-    @DisplayName("예약을 삭제한다")
-    @Test
-    void delete() {
-        String location = requestCreateSchedule();
-
-        var response = RestAssured
-                .given().log().all()
-                .when().delete(location)
-                .then().log().all()
-                .extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-    }
-
     public static String requestCreateSchedule() {
         ScheduleRequest body = new ScheduleRequest(1L, "2022-08-11", "13:00");
         return RestAssured

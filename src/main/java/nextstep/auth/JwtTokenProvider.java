@@ -1,12 +1,15 @@
 package nextstep.auth;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import nextstep.member.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class JwtTokenProvider {
@@ -34,11 +37,13 @@ public class JwtTokenProvider {
     }
 
     public Role getRole(String token) {
-        return Jwts.parser()
+        String role = Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody()
-                .get("role", Role.class);
+                .get("role", String.class);
+
+        return Role.valueOf(role);
     }
 
     public boolean validateToken(String token) {

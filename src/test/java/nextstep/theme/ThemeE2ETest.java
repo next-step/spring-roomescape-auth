@@ -41,21 +41,8 @@ public class ThemeE2ETest {
         assertThat(response.jsonPath().getList(".").size()).isEqualTo(1);
     }
 
-    @DisplayName("테마를 삭제한다")
-    @Test
-    void delete() {
-        Long id = createTheme();
 
-        var response = RestAssured
-                .given().log().all()
-                .when().delete("/themes/" + id)
-                .then().log().all()
-                .extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-    }
-
-    public Long createTheme() {
+    public static Long createTheme() {
         ThemeRequest body = new ThemeRequest("테마이름", "테마설명", 22000);
         String location = RestAssured
                 .given().log().all()

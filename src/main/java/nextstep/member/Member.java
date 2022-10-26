@@ -1,7 +1,5 @@
 package nextstep.member;
 
-import java.util.List;
-
 public class Member {
     private Long id;
     private String username;
@@ -13,19 +11,12 @@ public class Member {
     protected Member() {
     }
 
-    public Member(Long id, String username, String password, String name, String phone) {
-        this.id = id;
+    public Member(String username, String password, String name, String phone, Role role) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.phone = phone;
-    }
-
-    public Member(String username, String password, String name, String phone) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.phone = phone;
+        this.role = role;
     }
 
     public Member(Long id, String username, String password, String name, String phone, Role role) {
@@ -64,4 +55,6 @@ public class Member {
     public boolean checkWrongPassword(String password) {
         return !this.password.equals(password);
     }
+
+    public static final Member ADMIN = new Member("admin", "123123", "신지혜", "101-0000-0000", Role.ADMIN);
 }

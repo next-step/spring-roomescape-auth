@@ -2,6 +2,7 @@ package nextstep.auth;
 
 import nextstep.member.Member;
 import nextstep.member.MemberDao;
+import nextstep.member.Role;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class AuthService {
         return new TokenResponse(token);
     }
 
-    public String parseToken(HttpServletRequest request) {
+    public String extractToken(HttpServletRequest request) {
         try {
             String header = request.getHeader(HttpHeaders.AUTHORIZATION);
             String token = header.replace(BEARER, "");
@@ -49,5 +50,9 @@ public class AuthService {
 
     public String getPrincipal(String token) {
         return jwtTokenProvider.getPrincipal(token);
+    }
+
+    public Role getRole(String token) {
+        return jwtTokenProvider.getRole(token);
     }
 }
