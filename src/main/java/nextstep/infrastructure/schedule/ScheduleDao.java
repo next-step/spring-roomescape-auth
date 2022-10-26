@@ -1,4 +1,4 @@
-package nextstep.infrastructure;
+package nextstep.infrastructure.schedule;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

@@ -1,4 +1,4 @@
-package nextstep.infrastructure;
+package nextstep.infrastructure.reservation;
 
 import java.util.Optional;
 import nextstep.domain.Reservation;

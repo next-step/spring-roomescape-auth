@@ -15,6 +15,10 @@ public class Member {
         this(null, username, password, name, phone, Role.USER);
     }
 
+    public Member(String username, String password, String name, String phone, Role role) {
+        this(null, username, password, name, phone, role);
+    }
+
     public Member(
         Long id,
         String username,

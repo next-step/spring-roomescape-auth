@@ -19,3 +19,19 @@
 
 ### 프로그래밍 요구사항
 - [x] `HandlerMethodArgumentResolver`를 활용한다.
+
+<br/>
+
+## 3단계
+
+### 기능 요구사항
+- 관리자 역할 추가
+  - [x] 사용자(`USER`)와 관리자(`ADMIN`)를 구분한다.
+- 관리자 기능 보호
+  - [x] 관리자와 관련된 API는 `/admin`을 붙인다.
+  - [x] `Interceptor`로 검증한다.
+  - [x] `HTTP Authorization header`를 이용하여 인증과 인가를 진행한다.
+
+### 프로그래밍 요구사항
+- 관리자를 등록하기보다 애플리케이션이 실행될 때 관리자가 추가되게 한다.
+  - [x] DataLoader
