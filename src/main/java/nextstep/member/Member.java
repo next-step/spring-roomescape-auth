@@ -8,7 +8,7 @@ public class Member {
     private String password;
     private String name;
     private String phone;
-    private List<String> roles;
+    private Role role;
 
     protected Member() {
     }
@@ -28,13 +28,13 @@ public class Member {
         this.phone = phone;
     }
 
-    public Member(Long id, String username, String password, String name, String phone, List<String> roles) {
+    public Member(Long id, String username, String password, String name, String phone, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.name = name;
         this.phone = phone;
-        this.roles = roles;
+        this.role = role;
     }
 
     public Long getId() {
@@ -57,8 +57,8 @@ public class Member {
         return phone;
     }
 
-    public List<String> getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
     public boolean checkWrongPassword(String password) {

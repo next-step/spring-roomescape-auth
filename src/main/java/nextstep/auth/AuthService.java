@@ -24,7 +24,7 @@ public class AuthService {
         if (member == null || member.checkWrongPassword(request.getPassword())) {
             throw new AuthenticationException("인증에 실패하였습니다.");
         }
-        String token = jwtTokenProvider.createToken(String.valueOf(member.getId()), member.getRoles());
+        String token = jwtTokenProvider.createToken(String.valueOf(member.getId()), member.getRole());
 
         return new TokenResponse(token);
     }
