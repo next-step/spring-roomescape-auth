@@ -55,7 +55,7 @@ Content-Type: application/json
   - [x] 비로그인 사용자는 예약이 불가능하다. 
   - [x] 자신의 예약이 아닌 경우 예약 취소가 불가능하다.
 ### 프로그래밍 요구사항
-- [ ] HandlerMethodArgumentResolver를 활용한다.
+- [x] HandlerMethodArgumentResolver를 활용한다.
 ### API 설계
 ##### 예약 생성 
 ```http request
@@ -80,3 +80,15 @@ authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjYzMjk5MDcwL
 ```http request
 HTTP/1.1 204
 ```
+
+## 3단계 - 관리자 기능 보호
+### 기능 요구사항
+- [ ] 관리자 역할을 추가한다.
+  - [ ] 일반 멤버와 관리자 멤버를 구분한다.
+- [ ] 관리자 기능을 보호한다.
+  - [ ] 관리자 관련 기능 API는 /admin 붙이고 interceptor로 검증한다.
+  - [ ] 관리자 관련 기능 API는 authorization 헤더를 이용하여 인증과 인가를 진행한다.
+
+### 프로그래밍 요구사항
+- [ ] 관리자를 등록하도록 하기 보다는 애플리케이션이 동작할 때 관리자는 추가될 수 있도록 한다
+  - [ ] DataLoader
