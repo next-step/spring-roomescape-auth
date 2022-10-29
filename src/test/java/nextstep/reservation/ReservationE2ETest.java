@@ -1,9 +1,7 @@
 package nextstep.reservation;
 
 import io.restassured.RestAssured;
-import nextstep.member.MemberRequest;
-import nextstep.schedule.ScheduleRequest;
-import nextstep.theme.ThemeRequest;
+import nextstep.member.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,14 +28,27 @@ class ReservationE2ETest {
 
     @BeforeEach
     void setUp() {
-        var memberRequest = memberRequest();
+        var memberRequest = memberRequest(Role.ADMIN);
         createMemberRequest(memberRequest);
         loginToken = getLoginTokenRequest(tokenRequest(memberRequest));
 
-        themeId = createTheme(themeRequest());
-
-        var scheduleId = createSchedule(scheduleRequest(themeId, DATE));
+        themeId = createThemeRequest(loginToken, themeRequest());
+        var scheduleId = createScheduleRequest(loginToken, scheduleRequest(themeId, DATE));
         request = reservationRequest(scheduleId);
+    }
+
+    @DisplayName("예약을 생성한다")
+    @Test
+    void create() {
+        var response = RestAssured
+            .given().log().all()
+            .header("Authorization", "Bearer " + loginToken)
+            .body(request)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .when().post("/reservations")
+            .then().log().all()
+            .extract();
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
 
     @DisplayName("로그인 없이는 예약을 생성할 수 없다")
@@ -51,20 +62,6 @@ class ReservationE2ETest {
             .then().log().all()
             .extract();
         assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-    }
-
-    @DisplayName("예약을 생성한다")
-    @Test
-    void create() {
-        var response = RestAssured
-                .given().log().all()
-                .header("Authorization", "Bearer " + loginToken)
-                .body(request)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().post("/reservations")
-                .then().log().all()
-                .extract();
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
 
     @DisplayName("예약을 조회한다")
@@ -105,7 +102,7 @@ class ReservationE2ETest {
     void deleteOthers() {
         var reservation = createReservationRequest(loginToken, request);
 
-        var otherUser = memberRequest("otherUser");
+        var otherUser = memberRequest(Role.USER, "otherUser");
         createMemberRequest(otherUser);
         var othersToken = getLoginTokenRequest(tokenRequest(otherUser));
 

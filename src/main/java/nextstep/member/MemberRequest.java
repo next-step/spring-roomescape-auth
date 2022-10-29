@@ -5,9 +5,9 @@ public class MemberRequest {
     private String password;
     private String name;
     private String phone;
-    private String role;
+    private Role role;
 
-    public MemberRequest(String username, String password, String name, String phone, String role) {
+    public MemberRequest(String username, String password, String name, String phone, Role role) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -35,7 +35,7 @@ public class MemberRequest {
         return phone;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 }

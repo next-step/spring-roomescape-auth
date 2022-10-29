@@ -1,6 +1,8 @@
 package nextstep.theme;
 
 import io.restassured.RestAssured;
+import nextstep.member.Role;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,12 +10,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 
-import static nextstep.utils.RequestFixture.themeRequest;
+import static nextstep.utils.RequestFixture.*;
+import static nextstep.utils.Requests.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class ThemeE2ETest {
+
+    private String loginToken;
+
+    @BeforeEach
+    private void setUp() {
+        var memberRequest = memberRequest(Role.ADMIN);
+        createMemberRequest(memberRequest);
+        loginToken = getLoginTokenRequest(tokenRequest(memberRequest));
+    }
 
     @DisplayName("테마를 생성한다")
     @Test
@@ -22,8 +34,9 @@ public class ThemeE2ETest {
         RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + loginToken)
                 .body(body)
-                .when().post("/themes")
+                .when().post("/admin/themes")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value());
     }
@@ -31,7 +44,7 @@ public class ThemeE2ETest {
     @DisplayName("테마 목록을 조회한다")
     @Test
     public void showThemes() {
-        createTheme();
+        createThemeRequest(loginToken, themeRequest());
 
         var response = RestAssured
                 .given().log().all()
@@ -46,27 +59,15 @@ public class ThemeE2ETest {
     @DisplayName("테마를 삭제한다")
     @Test
     void delete() {
-        Long id = createTheme();
+        Long id = createThemeRequest(loginToken, themeRequest());
 
         var response = RestAssured
                 .given().log().all()
-                .when().delete("/themes/" + id)
+                .header("Authorization", "Bearer " + loginToken)
+                .when().delete("/admin/themes/" + id)
                 .then().log().all()
                 .extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-    }
-
-    public Long createTheme() {
-        ThemeRequest body = themeRequest();
-        String location = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().post("/themes")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().header("Location");
-        return Long.parseLong(location.split("/")[2]);
     }
 }

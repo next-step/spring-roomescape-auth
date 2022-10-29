@@ -50,12 +50,13 @@ public class Requests {
         return Long.parseLong(memberLocation[memberLocation.length - 1]);
     }
 
-    public static Long createSchedule(ScheduleRequest scheduleRequest ) {
+    public static Long createScheduleRequest(String loginToken, ScheduleRequest scheduleRequest ) {
         var scheduleResponse = RestAssured
             .given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", "Bearer " + loginToken)
             .body(scheduleRequest)
-            .when().post("/schedules")
+            .when().post("/admin/schedules")
             .then().log().all()
             .statusCode(HttpStatus.CREATED.value())
             .extract();
@@ -63,12 +64,13 @@ public class Requests {
         return Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
     }
 
-    public static Long createTheme(ThemeRequest themeRequest) {
+    public static Long createThemeRequest(String loginToken, ThemeRequest themeRequest) {
         var themeResponse = RestAssured
             .given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .header("Authorization", "Bearer " + loginToken)
             .body(themeRequest)
-            .when().post("/themes")
+            .when().post("/admin/themes")
             .then().log().all()
             .statusCode(HttpStatus.CREATED.value())
             .extract();

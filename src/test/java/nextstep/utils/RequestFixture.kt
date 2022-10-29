@@ -2,6 +2,7 @@ package nextstep.utils
 
 import nextstep.auth.TokenRequest
 import nextstep.member.MemberRequest
+import nextstep.member.Role
 import nextstep.reservation.ReservationRequest
 import nextstep.schedule.ScheduleRequest
 import nextstep.theme.ThemeRequest
@@ -13,11 +14,11 @@ class RequestFixture {
         @JvmStatic
         @JvmOverloads
         fun memberRequest(
+            role: Role = Role.USER,
             userName: String = "username",
             password: String = "password",
             name: String = "name",
             phoneNumber: String = "010-1234-1234",
-            role: String = "ADMIN"
         ) = MemberRequest(userName, password, name, phoneNumber, role)
 
         @JvmStatic
