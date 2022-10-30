@@ -21,7 +21,7 @@ public class ReservationService {
         this.scheduleDao = scheduleDao;
     }
 
-    public Long create(ReservationRequest reservationRequest) {
+    public Long create(ReservationRequest reservationRequest, Long memberId) {
         Schedule schedule = scheduleDao.findById(reservationRequest.getScheduleId());
         if (schedule == null) {
             throw new NullPointerException();
@@ -34,7 +34,8 @@ public class ReservationService {
 
         Reservation newReservation = new Reservation(
                 schedule,
-                reservationRequest.getName()
+                reservationRequest.getName(),
+                memberId
         );
 
         return reservationDao.save(newReservation);

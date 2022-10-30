@@ -56,3 +56,43 @@ Content-Type: application/json
     "role": "ADMIN"
 }
 ```
+
+---
+
+### 기능 요구사항
+
+- [ ] 예약하기, 예약취소 개선
+  - [ ] 아래의 API 설계에 맞춰 API 스펙을 변경한다.
+  - [x] 비로그인 사용자는 예약이 불가능하다.
+  - [ ] 자신의 예약이 아닌 경우 예약 취소가 불가능하다.
+
+### API 설계
+
+#### 예약 생성
+
+```
+POST /reservations HTTP/1.1
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjYzMjk4NTkwLCJleHAiOjE2NjMzMDIxOTAsInJvbGUiOiJBRE1JTiJ9.-OO1QxEpcKhmC34HpmuBhlnwhKdZ39U8q91QkTdH9i0
+content-type: application/json; charset=UTF-8
+host: localhost:8080
+
+{
+  "scheduleId": 1
+}
+```
+
+```
+HTTP/1.1 201 Created
+Location: /reservations/1
+```
+
+#### 예약 삭제
+
+```
+DELETE /reservations/1 HTTP/1.1
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjYzMjk5MDcwLCJleHAiOjE2NjMzMDI2NzAsInJvbGUiOiJBRE1JTiJ9.zgz7h7lrKLNw4wP9I0W8apQnMUn3WHnmqQ1N2jNqwlQ
+```
+
+```
+HTTP/1.1 204
+``` 
