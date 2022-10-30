@@ -8,6 +8,7 @@ import nextstep.theme.ThemeDao;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ReservationService {
@@ -50,10 +51,14 @@ public class ReservationService {
         return reservationDao.findAllByThemeIdAndDate(themeId, date);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Long memberId) {
         Reservation reservation = reservationDao.findById(id);
         if (reservation == null) {
             throw new NullPointerException();
+        }
+
+        if (!Objects.equals(reservation.getMemberId(), memberId)) {
+            throw new IllegalArgumentException("자신의 예약이 아닌 경우 예약 취소가 불가능합니다.");
         }
 
         reservationDao.deleteById(id);
