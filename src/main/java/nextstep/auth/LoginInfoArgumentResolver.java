@@ -10,14 +10,14 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class LoginInfoArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final LoginService loginService;
-    private final BearerTokenAuthorizationExtractor tokenAuthorizationExtractor;
+    private final TokenService tokenService;
+    private final BearerTokenRequestAuthorization tokenAuthorizationExtractor;
 
     public LoginInfoArgumentResolver(
-            LoginService loginService,
-            BearerTokenAuthorizationExtractor tokenAuthorizationExtractor
+            TokenService tokenService,
+            BearerTokenRequestAuthorization tokenAuthorizationExtractor
     ) {
-        this.loginService = loginService;
+        this.tokenService = tokenService;
         this.tokenAuthorizationExtractor = tokenAuthorizationExtractor;
     }
 
@@ -28,7 +28,7 @@ public class LoginInfoArgumentResolver implements HandlerMethodArgumentResolver 
 
     @Override
     public LoginInfo resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        final String token = tokenAuthorizationExtractor.extract(webRequest);
-        return loginService.loginInfoFromToken(token);
+        final String token = tokenAuthorizationExtractor.token(webRequest);
+        return tokenService.loginInfoFromToken(token);
     }
 }

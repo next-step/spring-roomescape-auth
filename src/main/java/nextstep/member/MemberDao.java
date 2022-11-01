@@ -22,7 +22,7 @@ public class MemberDao {
         resultSet.getString("password"),
         resultSet.getString("name"),
         resultSet.getString("phone"),
-        resultSet.getString("role")
+        Role.valueOf(resultSet.getString("role"))
     );
 
     public Long save(Member member) {
@@ -35,7 +35,7 @@ public class MemberDao {
             ps.setString(2, member.getPassword());
             ps.setString(3, member.getName());
             ps.setString(4, member.getPhone());
-            ps.setString(5, member.getRole());
+            ps.setString(5, member.getRole().name());
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();

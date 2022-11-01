@@ -1,16 +1,17 @@
 package nextstep.auth;
 
 import nextstep.member.Member;
+import nextstep.member.Role;
 
 public class LoginInfo {
 
     private String username;
-    private String role;
+    private Role role;
 
     public LoginInfo() {
     }
 
-    public LoginInfo(String username, String role) {
+    public LoginInfo(String username, Role role) {
         this.username = username;
         this.role = role;
     }
@@ -23,7 +24,11 @@ public class LoginInfo {
         return username;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
+    }
+
+    public boolean isAdmin() {
+        return role.equals(Role.ADMIN);
     }
 }

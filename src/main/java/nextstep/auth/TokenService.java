@@ -5,14 +5,14 @@ import nextstep.member.MemberDao;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoginService {
+public class TokenService {
 
     private static final String LOGIN_INFO_CLAIM_NAME = "member";
 
     private final MemberDao memberDao;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public LoginService(MemberDao memberDao, JwtTokenProvider jwtTokenProvider) {
+    public TokenService(MemberDao memberDao, JwtTokenProvider jwtTokenProvider) {
         this.memberDao = memberDao;
         this.jwtTokenProvider = jwtTokenProvider;
     }

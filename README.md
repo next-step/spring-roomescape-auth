@@ -1,3 +1,39 @@
+## 3단계 - 관리자 기능 보호
+- 관리자 역할을 추가한다.
+    - 일반 멤버와 관리자 멤버를 구분한다.
+    - 관리자 기능을 보호한다.
+    - 관리자 관련 기능 API는 /admin 붙이고 interceptor로 검증한다.
+    - 관리자 관련 기능 API는 authorization 헤더를 이용하여 인증과 인가를 진행한다.
+
+## 2단계 - 로그인 리팩터링
+
+### 기능 추가
+- 예약하기, 예약취소 개선
+  - 아래의 API 설계에 맞춰 API 스펙을 변경한다.
+  - 비로그인 사용자는 예약이 불가능하다.
+  - 자신의 예약이 아닌 경우 예약 취소가 불가능하다.
+
+### API 추가
+
+#### 로그인 토큰을 이용한 예약 생성
+```
+POST /reservations HTTP/1.1
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjYzMjk4NTkwLCJleHAiOjE2NjMzMDIxOTAsInJvbGUiOiJBRE1JTiJ9.-OO1QxEpcKhmC34HpmuBhlnwhKdZ39U8q91QkTdH9i0
+content-type: application/json; charset=UTF-8
+host: localhost:8080
+
+{
+    "scheduleId": 1
+}
+```
+
+#### 로그인 토큰을 이용한 예약 삭제
+
+```
+DELETE /reservations/1 HTTP/1.1
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjYzMjk5MDcwLCJleHAiOjE2NjMzMDI2NzAsInJvbGUiOiJBRE1JTiJ9.zgz7h7lrKLNw4wP9I0W8apQnMUn3WHnmqQ1N2jNqwlQ
+```
+
 ## 1단계 API 설계
 
 #### 토큰 발급
