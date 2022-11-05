@@ -6,20 +6,26 @@ public class Member {
     private String password;
     private String name;
     private String phone;
+    private Role role;
 
-    public Member(Long id, String username, String password, String name, String phone) {
+    protected Member() {
+    }
+
+    public Member(String username, String password, String name, String phone, Role role) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.role = role;
+    }
+
+    public Member(Long id, String username, String password, String name, String phone, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.name = name;
         this.phone = phone;
-    }
-
-    public Member(String username, String password, String name, String phone) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.phone = phone;
+        this.role = role;
     }
 
     public Long getId() {
@@ -42,7 +48,13 @@ public class Member {
         return phone;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
     public boolean checkWrongPassword(String password) {
         return !this.password.equals(password);
     }
+
+    public static final Member ADMIN = new Member("admin", "123123", "신지혜", "101-0000-0000", Role.ADMIN);
 }
