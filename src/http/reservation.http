@@ -1,4 +1,16 @@
+### 예약 생성
 POST localhost:8080/reservations HTTP/1.1
+authorization: {{accessToken}}
+content-type: application/json; charset=UTF-8
+host: localhost:8080
+
+{
+  "scheduleId": 1
+}
+
+### 예약 삭제
+DELETE localhost:8080/reservations/1 HTTP/1.1
+authorization: {{accessToken}}
 content-type: application/json; charset=UTF-8
 host: localhost:8080
 

@@ -2,14 +2,13 @@ package nextstep.member;
 
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import nextstep.auth.AuthenticationException;
 import nextstep.auth.JwtTokenProvider;
+import nextstep.auth.MemberAuthentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,13 +28,9 @@ public class MemberController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity me(@RequestHeader String authorization) {
-    if (!tokenProvider.validateToken(authorization)) {
-      throw new AuthenticationException("인증되지 않은 토큰입니다.");
-    }
-    var principal = tokenProvider.getPrincipal(authorization);
-    Member member = memberService.findById(Long.valueOf(principal));
-    return ResponseEntity.ok(member);
+  public ResponseEntity me(@MemberAuthentication Member member) {
+    Member findMember = memberService.findById(Long.valueOf(member.getId()));
+    return ResponseEntity.ok(findMember);
   }
 
   @ExceptionHandler(RuntimeException.class)
