@@ -5,7 +5,8 @@ content-type: application/json; charset=UTF-8
 host: localhost:8080
 
 {
-  "scheduleId": 1
+  "scheduleId": 1,
+  "name": "manager"
 }
 
 ### 예약 삭제

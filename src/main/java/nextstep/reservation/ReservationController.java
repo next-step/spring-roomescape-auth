@@ -2,8 +2,12 @@ package nextstep.reservation;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import nextstep.auth.AuthenticationException;
 import nextstep.auth.MemberAuthentication;
 import nextstep.member.Member;
+import nextstep.member.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,14 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/reservations")
 public class ReservationController {
 
-  public final ReservationService reservationService;
-
-  public ReservationController(ReservationService reservationService) {
-    this.reservationService = reservationService;
-  }
+  private final ReservationService reservationService;
+  private final MemberService memberService;
 
   @PostMapping
   public ResponseEntity createReservation(@MemberAuthentication Member member,
@@ -40,13 +42,17 @@ public class ReservationController {
 
   @DeleteMapping("/{id}")
   public ResponseEntity deleteReservation(@MemberAuthentication Member member, @PathVariable Long id) {
+    var reservation = reservationService.findById(id);
+    if (!Objects.equals(reservation.getName(), member.getName())) {
+      throw new AuthenticationException("자신의 예약만 취소 가능합니다.");
+    }
     reservationService.deleteById(id);
 
     return ResponseEntity.noContent().build();
   }
 
-  @ExceptionHandler(Exception.class)
-  public ResponseEntity onException(Exception e) {
-    return ResponseEntity.badRequest().build();
+  @ExceptionHandler(RuntimeException.class)
+  public ResponseEntity<String> handle(RuntimeException exception) {
+    return ResponseEntity.badRequest().body(exception.getMessage());
   }
 }
