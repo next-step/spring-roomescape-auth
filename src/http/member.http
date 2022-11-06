@@ -1,0 +1,8 @@
+POST localhost:8080/login/token HTTP/1.1
+accept: */*
+content-type: application/json; charset=UTF-8
+
+{
+  "username": "username",
+  "password": "password"
+}
