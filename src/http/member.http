@@ -1,8 +1,17 @@
+### 로그인
 POST localhost:8080/login/token HTTP/1.1
 accept: */*
 content-type: application/json; charset=UTF-8
 
 {
-  "username": "username",
+  "username": "manager",
   "password": "password"
 }
+
+> {%
+  client.global.set("accessToken", "Bearer " + response.body.accessToken);
+%}
+
+### 로그인 정보 조회
+GET localhost:8080/members/me HTTP/1.1
+authorization: {{accessToken}}
