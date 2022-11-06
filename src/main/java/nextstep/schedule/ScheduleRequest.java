@@ -1,41 +1,20 @@
 package nextstep.schedule;
 
-import nextstep.theme.Theme;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
+import lombok.Builder;
+import lombok.extern.jackson.Jacksonized;
+import nextstep.theme.Theme;
 
-public class ScheduleRequest {
-    private Long themeId;
-    private String date;
-    private String time;
+@Builder
+@Jacksonized
+public record ScheduleRequest(Long themeId, String date, String time) {
 
-    public ScheduleRequest() {
-    }
-
-    public ScheduleRequest(Long themeId, String date, String time) {
-        this.themeId = themeId;
-        this.date = date;
-        this.time = time;
-    }
-
-    public Long getThemeId() {
-        return themeId;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public Schedule toEntity(Theme theme) {
-        return new Schedule(
-                theme,
-                LocalDate.parse(this.date),
-                LocalTime.parse(this.time)
-        );
-    }
+  public Schedule toEntity(Theme theme) {
+    return new Schedule(
+        theme,
+        LocalDate.parse(this.date),
+        LocalTime.parse(this.time)
+    );
+  }
 }
