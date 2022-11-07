@@ -90,8 +90,8 @@ public class ReservationDao {
         }
     }
 
-    public void deleteById(Long id) {
-        String sql = "DELETE FROM reservation where id = ?;";
-        jdbcTemplate.update(sql, id);
+    public void deleteById(Long id, Long memberId) {
+        String sql = "DELETE FROM reservation where id = ? and member_id = ?;";
+        jdbcTemplate.update(sql, id, memberId);
     }
 }
