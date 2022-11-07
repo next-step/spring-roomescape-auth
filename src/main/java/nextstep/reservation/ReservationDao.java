@@ -38,13 +38,14 @@ public class ReservationDao {
     );
 
     public Long save(Reservation reservation) {
-        String sql = "INSERT INTO reservation (schedule_id, name) VALUES (?, ?);";
+        String sql = "INSERT INTO reservation (schedule_id, name, member_id) VALUES (?, ?, ?);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
             ps.setLong(1, reservation.getSchedule().getId());
             ps.setString(2, reservation.getName());
+            ps.setLong(3, reservation.getMemberId());
             return ps;
 
         }, keyHolder);
