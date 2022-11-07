@@ -1,5 +1,7 @@
 package nextstep.reservation;
 
+import nextstep.member.Member;
+import nextstep.member.MemberDao;
 import nextstep.schedule.Schedule;
 import nextstep.schedule.ScheduleDao;
 import nextstep.support.DuplicateEntityException;
@@ -14,14 +16,16 @@ public class ReservationService {
     public final ReservationDao reservationDao;
     public final ThemeDao themeDao;
     public final ScheduleDao scheduleDao;
+    public final MemberDao memberDao;
 
-    public ReservationService(ReservationDao reservationDao, ThemeDao themeDao, ScheduleDao scheduleDao) {
+    public ReservationService(ReservationDao reservationDao, ThemeDao themeDao, ScheduleDao scheduleDao, MemberDao memberDao) {
         this.reservationDao = reservationDao;
         this.themeDao = themeDao;
         this.scheduleDao = scheduleDao;
+        this.memberDao = memberDao;
     }
 
-    public Long create(ReservationRequest reservationRequest) {
+    public Long create(ReservationRequest reservationRequest, Long memberId) {
         Schedule schedule = scheduleDao.findById(reservationRequest.getScheduleId());
         if (schedule == null) {
             throw new NullPointerException();
@@ -32,9 +36,12 @@ public class ReservationService {
             throw new DuplicateEntityException();
         }
 
+        Member member = memberDao.findById(memberId);
+
         Reservation newReservation = new Reservation(
                 schedule,
-                reservationRequest.getName()
+                member.getName(),
+                memberId
         );
 
         return reservationDao.save(newReservation);
@@ -49,12 +56,12 @@ public class ReservationService {
         return reservationDao.findAllByThemeIdAndDate(themeId, date);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Long memberId) {
         Reservation reservation = reservationDao.findById(id);
         if (reservation == null) {
             throw new NullPointerException();
         }
 
-        reservationDao.deleteById(id);
+        reservationDao.deleteById(id, memberId);
     }
 }
