@@ -1,6 +1,6 @@
 package nextstep.member;
 
-import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import nextstep.auth.JwtTokenProvider;
 import nextstep.auth.TokenRequest;
@@ -19,7 +19,7 @@ public class MemberLoginController {
   @PostMapping("/login/token")
   public TokenResponse login(@RequestBody TokenRequest req) {
     var member = memberService.getByUserNameAndPassword(req.getUsername(), req.getPassword());
-    var token = tokenProvider.createToken(String.valueOf(member.getId()), Collections.emptyList());
+    var token = tokenProvider.createToken(String.valueOf(member.getId()), List.of(member.getRole().name()));
     return new TokenResponse(token);
   }
 }
