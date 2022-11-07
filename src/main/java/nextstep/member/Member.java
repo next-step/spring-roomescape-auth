@@ -1,48 +1,56 @@
 package nextstep.member;
 
 public class Member {
-    private Long id;
-    private String username;
-    private String password;
-    private String name;
-    private String phone;
 
-    public Member(Long id, String username, String password, String name, String phone) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.phone = phone;
-    }
+  private Long id;
+  private final String username;
+  private final String password;
+  private final String name;
+  private final String phone;
+  private final RoleType role;
 
-    public Member(String username, String password, String name, String phone) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.phone = phone;
-    }
+  public Member(Long id, String username, String password, String name, String phone, RoleType role) {
+    this.id = id;
+    this.username = username;
+    this.password = password;
+    this.name = name;
+    this.phone = phone;
+    this.role = role;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public Member(String username, String password, String name, String phone, RoleType role) {
+    this.username = username;
+    this.password = password;
+    this.name = name;
+    this.phone = phone;
+    this.role = role;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public String getPhone() {
-        return phone;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public boolean checkWrongPassword(String password) {
-        return !this.password.equals(password);
-    }
+  public String getPhone() {
+    return phone;
+  }
+
+  public RoleType getRole() {
+    return role;
+  }
+
+  public boolean checkWrongPassword(String password) {
+    return !this.password.equals(password);
+  }
 }
