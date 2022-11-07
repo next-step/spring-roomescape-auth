@@ -4,7 +4,10 @@ import nextstep.member.Member;
 import nextstep.member.MemberDao;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -21,7 +24,8 @@ public class AuthService {
         if (member.checkWrongPassword(password)) {
             throw new AuthenticationException();
         }
-        return jwtTokenProvider.createToken(String.valueOf(member.getId()), Collections.singletonList("ADMIN"));
+        List<String> roles = Arrays.stream(member.getRole().split(",")).collect(Collectors.toList());
+        return jwtTokenProvider.createToken(String.valueOf(member.getId()), roles);
     }
 
     public Long findPrincipal(String accessToken) {

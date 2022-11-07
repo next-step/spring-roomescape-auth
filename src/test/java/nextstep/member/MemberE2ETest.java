@@ -23,12 +23,12 @@ public class MemberE2ETest {
     public void create() {
         MemberRequest body = new MemberRequest(USERNAME, PASSWORD, "name", "010-1234-5678");
         RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body)
-                .when().post("/members")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value());
+            .given().log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(body)
+            .when().post("/members")
+            .then().log().all()
+            .statusCode(HttpStatus.CREATED.value());
     }
 
     @DisplayName("access token으로 내 정보를 조회한다.")
