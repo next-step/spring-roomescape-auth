@@ -1,0 +1,14 @@
+###
+POST localhost:8080/login/token HTTP/1.1
+accept: */*
+content-type: application/json; charset=UTF-8
+
+{
+    "username": "username",
+    "password": "password"
+}
+
+###
+GET localhost:8080/members/me HTTP/1.1
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjYzMjk4NTkwLCJleHAiOjE2NjMzMDIxOTAsInJvbGUiOiJBRE1JTiJ9.-OO1QxEpcKhmC34HpmuBhlnwhKdZ39U8q91QkTdH9i0
+
