@@ -3,6 +3,7 @@ package nextstep;
 import lombok.RequiredArgsConstructor;
 import nextstep.member.MemberRequest;
 import nextstep.member.MemberService;
+import nextstep.member.RoleType;
 import nextstep.schedule.ScheduleRequest;
 import nextstep.schedule.ScheduleService;
 import nextstep.theme.ThemeRequest;
@@ -28,6 +29,7 @@ public class BaseDataLoader implements ApplicationRunner {
             .name("manager")
             .password("password")
             .phone("010-1234-5678")
+            .role(RoleType.ADMIN)
             .build());
 
     var themeId = themeService.create(
