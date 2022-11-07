@@ -22,7 +22,7 @@ public class BaseDataLoader implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
-    // example member 생성
+    // example admin member 생성
     memberService.create(
         MemberRequest.builder()
             .username("manager")
@@ -30,6 +30,15 @@ public class BaseDataLoader implements ApplicationRunner {
             .password("password")
             .phone("010-1234-5678")
             .role(RoleType.ADMIN)
+            .build());
+
+    memberService.create(
+        MemberRequest.builder()
+            .username("user")
+            .name("user")
+            .password("password")
+            .phone("010-1234-5678")
+            .role(RoleType.USER)
             .build());
 
     var themeId = themeService.create(
