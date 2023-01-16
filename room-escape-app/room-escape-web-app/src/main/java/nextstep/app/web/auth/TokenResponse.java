@@ -3,11 +3,15 @@ package nextstep.app.web.auth;
 public class TokenResponse {
     public String accessToken;
 
-    public TokenResponse() {
+    private TokenResponse() {
     }
 
-    public TokenResponse(String accessToken) {
+    private TokenResponse(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public static TokenResponse from(String token) {
+        return new TokenResponse(token);
     }
 
     public String getAccessToken() {

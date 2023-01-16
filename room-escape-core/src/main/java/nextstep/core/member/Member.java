@@ -20,7 +20,7 @@ public class Member {
     }
 
     public boolean checkWrongPassword(String password) {
-        return !this.password.equals(password);
+        return this.password.equals(password);
     }
 
     public Long getId() {

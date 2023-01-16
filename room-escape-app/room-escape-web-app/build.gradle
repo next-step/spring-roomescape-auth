@@ -15,6 +15,7 @@ dependencies {
     // For Auth
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'net.rakugakibox.spring.boot:logback-access-spring-boot-starter:2.7.1'
+    implementation 'javax.xml.bind:jaxb-api:2.3.0-b170201.1204' // 추가 안하면 JDK 17에서 토큰 생성시 오류
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.rest-assured:rest-assured:3.3.0'

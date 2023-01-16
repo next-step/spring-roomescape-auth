@@ -2,10 +2,12 @@ package nextstep.core.member.out;
 
 import nextstep.core.member.Member;
 
+import java.util.Optional;
+
 public interface MemberRepository {
     Member save(Member member);
 
-    Member findById(Long id);
+    Optional<Member> findByUsername(String username);
 
-    Member findByUsername(String username);
+    Optional<Member> findById(Long memberId);
 }

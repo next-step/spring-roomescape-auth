@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 public class MemberH2Repository implements MemberRepository {
@@ -36,18 +37,20 @@ public class MemberH2Repository implements MemberRepository {
     }
 
     @Override
-    public Member findById(Long id) {
-        Objects.requireNonNull(id);
-
-        String query = "SELECT id, username, password, name, phone from member where id = ?";
-        return template.queryForObject(query, ROW_MAPPER, id);
-    }
-
-    @Override
-    public Member findByUsername(String username) {
+    public Optional<Member> findByUsername(String username) {
         Objects.requireNonNull(username);
 
         String query = "SELECT id, username, password, name, phone from member where username = ?";
-        return template.queryForObject(query, ROW_MAPPER, username);
+        Member member = template.queryForObject(query, ROW_MAPPER, username);
+        return Optional.ofNullable(member);
+    }
+
+    @Override
+    public Optional<Member> findById(Long memberId) {
+        Objects.requireNonNull(memberId);
+
+        String query = "SELECT id, username, password, name, phone from member where id = ?";
+        Member member = template.queryForObject(query, ROW_MAPPER, memberId);
+        return Optional.ofNullable(member);
     }
 }

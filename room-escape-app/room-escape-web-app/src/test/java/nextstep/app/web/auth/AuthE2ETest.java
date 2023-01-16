@@ -1,6 +1,8 @@
 package nextstep.app.web.auth;
 
 import io.restassured.RestAssured;
+import io.restassured.http.Header;
+import nextstep.app.web.member.MemberWebResponse;
 import nextstep.core.member.in.MemberRegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +34,7 @@ public class AuthE2ETest {
 
     @DisplayName("토큰을 생성한다")
     @Test
-    public void create() {
+    public String create() {
         TokenRequest body = new TokenRequest(USERNAME, PASSWORD);
         var response = RestAssured
                 .given().log().all()
@@ -43,6 +45,27 @@ public class AuthE2ETest {
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        assertThat(response.as(TokenResponse.class)).isNotNull();
+        TokenResponse tokenResponse = response.as(TokenResponse.class);
+        assertThat(tokenResponse).isNotNull();
+
+        return tokenResponse.getAccessToken();
+    }
+
+    @DisplayName("내 정보를 조회한다")
+    @Test
+    public void me() {
+        String token = create();
+
+        MemberWebResponse response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header(new Header("authorization", "Bearer " + token))
+                .when().get("/members/me")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract().body().as(MemberWebResponse.class);
+
+        assertThat(response.getUsername()).isEqualTo(USERNAME);
+        assertThat(response.getPassword()).isEqualTo(PASSWORD);
     }
 }

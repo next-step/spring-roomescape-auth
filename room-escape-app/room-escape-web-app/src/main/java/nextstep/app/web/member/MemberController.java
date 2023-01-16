@@ -1,5 +1,6 @@
 package nextstep.app.web.member;
 
+import nextstep.app.web.auth.LoginMember;
 import nextstep.app.web.member.adapter.in.MemberService;
 import nextstep.core.member.in.MemberResponse;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,8 @@ public class MemberController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<MemberWebResponse> me() {
-        Long id = 1L;
-        MemberResponse member = memberService.login(id);
+    public ResponseEntity<MemberWebResponse> me(@LoginMember Long memberId) {
+        MemberResponse member = memberService.findMember(memberId);
         return ResponseEntity.ok(MemberWebResponse.from(member));
     }
 }

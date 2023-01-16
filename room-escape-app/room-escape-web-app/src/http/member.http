@@ -1,0 +1,14 @@
+### 회원 가입
+POST http://localhost:8080/members
+Content-Type: application/json
+
+{
+  "username": "username",
+  "password": "password",
+  "name": "name",
+  "phone": "010-0000-0000"
+}
+
+### 내 정보 조회
+GET http://localhost:8080/members/me
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjczODc3NzEzLCJleHAiOjE2NzM4ODEzMTMsInJvbGVzIjpbXX0.hpBQYLCYovZjxX9bmmaS3IEjkokOb0yoeqcPY-4LNsU
