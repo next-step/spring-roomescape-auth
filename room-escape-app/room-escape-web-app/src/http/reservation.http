@@ -14,4 +14,5 @@ GET http://localhost:8080/reservations?date=2022-08-11
 Content-Type: application/json
 
 ### 예약 삭제
-DELETE http://localhost:8080/reservations?schedule_id=1&date=2022-08-11&time=13:00
+DELETE http://localhost:8080/reservations/1
+authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjc0MDUyNzc0LCJleHAiOjE2NzQwNTYzNzQsInJvbGVzIjpbIlVTRVIiXX0.DIPxTRbKi2g4MwOqIR8ixD6MuDH3lco93MfXVRr0Hkw

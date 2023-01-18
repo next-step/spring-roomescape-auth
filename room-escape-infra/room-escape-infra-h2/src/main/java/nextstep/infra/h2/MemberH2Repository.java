@@ -1,6 +1,7 @@
 package nextstep.infra.h2;
 
 import nextstep.core.member.Member;
+import nextstep.core.member.MemberRole;
 import nextstep.core.member.out.MemberRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,6 +17,7 @@ public class MemberH2Repository implements MemberRepository {
             resultSet.getString("username"),
             resultSet.getString("password"),
             resultSet.getString("name"),
+            MemberRole.valueOf(resultSet.getString("role")),
             resultSet.getString("phone")
     );
     private final JdbcTemplate template;
@@ -29,18 +31,18 @@ public class MemberH2Repository implements MemberRepository {
     public Member save(Member member) {
         Objects.requireNonNull(member);
 
-        String query = "INSERT INTO member (username, password, name, phone) VALUES (?, ?, ?, ?)";
-        template.update(query, member.getUsername(), member.getPassword(), member.getName(), member.getPhone());
+        String query = "INSERT INTO member (username, password, name, role, phone) VALUES (?, ?, ?, ?, ?)";
+        template.update(query, member.getUsername(), member.getPassword(), member.getName(), member.getRole().name(), member.getPhone());
 
         Long id = template.queryForObject("SELECT last_insert_id()", Long.class);
-        return new Member(id, member.getUsername(), member.getPassword(), member.getName(), member.getPhone());
+        return new Member(id, member.getUsername(), member.getPassword(), member.getName(), member.getRole(), member.getPhone());
     }
 
     @Override
     public Optional<Member> findByUsername(String username) {
         Objects.requireNonNull(username);
 
-        String query = "SELECT id, username, password, name, phone from member where username = ?";
+        String query = "SELECT id, username, password, name, role, phone from member where username = ?";
         Member member = template.queryForObject(query, ROW_MAPPER, username);
         return Optional.ofNullable(member);
     }
@@ -49,7 +51,7 @@ public class MemberH2Repository implements MemberRepository {
     public Optional<Member> findById(Long memberId) {
         Objects.requireNonNull(memberId);
 
-        String query = "SELECT id, username, password, name, phone from member where id = ?";
+        String query = "SELECT id, username, password, name, role, phone from member where id = ?";
         Member member = template.queryForObject(query, ROW_MAPPER, memberId);
         return Optional.ofNullable(member);
     }

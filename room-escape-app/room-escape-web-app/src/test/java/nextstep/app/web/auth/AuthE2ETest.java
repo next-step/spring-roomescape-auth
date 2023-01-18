@@ -3,6 +3,7 @@ package nextstep.app.web.auth;
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
 import nextstep.app.web.member.MemberWebResponse;
+import nextstep.core.member.MemberRole;
 import nextstep.core.member.in.MemberRegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +23,7 @@ public class AuthE2ETest {
 
     @BeforeEach
     void setUp() {
-        MemberRegisterRequest body = new MemberRegisterRequest(USERNAME, PASSWORD, "name", "010-1234-5678");
+        MemberRegisterRequest body = new MemberRegisterRequest(USERNAME, PASSWORD, "name", MemberRole.USER, "010-1234-5678");
         RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

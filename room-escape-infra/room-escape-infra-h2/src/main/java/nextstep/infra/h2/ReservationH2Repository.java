@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,9 +16,7 @@ public class ReservationH2Repository implements ReservationRepository {
     private static final RowMapper<Reservation> ROW_MAPPER = (resultSet, rowNum) -> new Reservation(
             resultSet.getLong("id"),
             resultSet.getLong("schedule_id"),
-            resultSet.getDate("date").toLocalDate(),
-            resultSet.getTime("time").toLocalTime(),
-            resultSet.getString("name")
+            resultSet.getLong("member_id")
     );
     private final JdbcTemplate template;
 
@@ -32,11 +29,11 @@ public class ReservationH2Repository implements ReservationRepository {
     public Reservation save(Reservation reservation) {
         Objects.requireNonNull(reservation);
 
-        String query = "INSERT INTO reservation(schedule_id, date, time, name) VALUES (?, ?, ?, ?)";
-        template.update(query, reservation.getScheduleId(), reservation.getDate(), reservation.getTime(), reservation.getName());
+        String query = "INSERT INTO reservation(schedule_id, member_id) VALUES (?, ?)";
+        template.update(query, reservation.getScheduleId(), reservation.getMemberId());
 
         Long id = template.queryForObject("SELECT last_insert_id()", Long.class);
-        return new Reservation(id, reservation.getScheduleId(), reservation.getDate(), reservation.getTime(), reservation.getName());
+        return new Reservation(id, reservation.getScheduleId(), reservation.getMemberId());
     }
 
     @Override
@@ -44,32 +41,8 @@ public class ReservationH2Repository implements ReservationRepository {
         Objects.requireNonNull(scheduleId);
         Objects.requireNonNull(date);
 
-        String query = "SELECT * FROM reservation WHERE schedule_id = ? AND date = ?";
+        String query = "SELECT * FROM reservation INNER JOIN schedules on reservation.schedule_id = schedules.id INNER JOIN themes on schedules.theme_id = theme_id WHERE schedule_id = ? AND schedules.date = ?";
         return template.query(query, ROW_MAPPER, scheduleId, date);
-    }
-
-    @Override
-    public void deleteByDateAndTime(Long scheduleId, LocalDate date, LocalTime time) {
-        Objects.requireNonNull(scheduleId);
-        Objects.requireNonNull(date);
-        Objects.requireNonNull(time);
-
-        String query = "DELETE FROM reservation WHERE schedule_id = ? AND date = ? AND time = ?";
-        template.update(query, scheduleId, date, time);
-    }
-
-    @Override
-    public boolean existsById(Long scheduleId, LocalDate date, LocalTime time) {
-        Objects.requireNonNull(scheduleId);
-        Objects.requireNonNull(date);
-        Objects.requireNonNull(time);
-
-        String query = "SELECT reservation.id FROM reservation WHERE schedule_id = ? AND date = ? AND time = ?";
-        try {
-            return Boolean.TRUE.equals(template.queryForObject(query, Boolean.class, scheduleId, date, time));
-        } catch (EmptyResultDataAccessException e) {
-            return Boolean.FALSE;
-        }
     }
 
     @Override

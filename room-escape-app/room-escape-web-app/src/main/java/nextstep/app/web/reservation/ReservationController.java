@@ -1,5 +1,6 @@
 package nextstep.app.web.reservation;
 
+import nextstep.app.web.auth.LoginMember;
 import nextstep.core.reservation.in.ReservationResponse;
 import nextstep.core.reservation.in.ReservationUseCase;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @RequestMapping("/reservations")
@@ -20,10 +20,10 @@ class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody ReservationCreateWebRequest request) {
-        ReservationResponse reservation = useCase.create(request.to());
+    public ResponseEntity<Void> create(@RequestBody ReservationCreateWebRequest request, @LoginMember Long memberId) {
+        ReservationResponse reservation = useCase.create(request.to(), memberId);
         return ResponseEntity
-                .created(URI.create("/reservations/" + reservation.getId()))
+                .created(URI.create("/reservations/" + reservation.id()))
                 .build();
     }
 
@@ -37,19 +37,9 @@ class ReservationController {
         );
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> delete(
-            @RequestParam("schedule_id") Long scheduleId,
-            @RequestParam String date,
-            @RequestParam String time
-    ) {
-        useCase.delete(scheduleId, LocalDate.parse(date), LocalTime.parse(time));
-        return ResponseEntity.noContent().build();
-    }
-
     @DeleteMapping("/{reservationId}")
-    public ResponseEntity<Void> delete(@PathVariable Long reservationId) {
-        useCase.delete(reservationId);
+    public ResponseEntity<Void> delete(@PathVariable Long reservationId, @LoginMember Long memberId) {
+        useCase.delete(reservationId, memberId);
         return ResponseEntity.noContent().build();
     }
 }

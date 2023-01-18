@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,11 +25,14 @@ public class ReservationService implements ReservationUseCase {
     }
 
     @Transactional
-    public ReservationResponse create(ReservationCreateRequest request) {
+    public ReservationResponse create(ReservationCreateRequest request, Long memberId) {
         Objects.requireNonNull(request);
-        validateExistsSchedule(request.getScheduleId());
+        Objects.requireNonNull(memberId);
+
+        validateExistsSchedule(request.scheduleId());
         validateDuplicatedScheduleIdAndDateAndTime(request);
-        Reservation reservation = request.to();
+
+        Reservation reservation = request.to(memberId);
 
         Reservation saved = repository.save(reservation);
         return ReservationResponse.from(saved);
@@ -43,7 +45,7 @@ public class ReservationService implements ReservationUseCase {
     }
 
     private void validateDuplicatedScheduleIdAndDateAndTime(ReservationCreateRequest request) {
-        if (repository.existsById(request.getScheduleId(), request.getDate(), request.getTime())) {
+        if (repository.existsById(request.scheduleId())) {
             throw new IllegalArgumentException("동일한 날짜와 시간엔 예약할 수 없습니다.");
         }
     }
@@ -61,27 +63,11 @@ public class ReservationService implements ReservationUseCase {
     }
 
     @Transactional
-    public void delete(Long scheduleId, LocalDate date, LocalTime time) {
-        Objects.requireNonNull(date);
-        Objects.requireNonNull(time);
-        validateExistsSchedule(scheduleId);
-        validateExistsReservation(scheduleId, date, time);
-
-        repository.deleteByDateAndTime(scheduleId, date, time);
-    }
-
-    @Transactional
-    public void delete(Long reservationId) {
+    public void delete(Long reservationId, Long memberId) {
         Objects.requireNonNull(reservationId);
         validateExistsReservation(reservationId);
 
         repository.deleteById(reservationId);
-    }
-
-    private void validateExistsReservation(Long scheduleId, LocalDate date, LocalTime time) {
-        if (!repository.existsById(scheduleId, date, time)) {
-            throw new IllegalArgumentException("해당 날짜와 시간에 예약이 존재하지 않습니다.");
-        }
     }
 
     private void validateExistsReservation(Long reservationId) {

@@ -4,7 +4,6 @@ import nextstep.core.reservation.Reservation;
 import nextstep.core.reservation.out.ReservationRepository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Scanner;
 
 public class ReservationController {
@@ -38,20 +37,12 @@ public class ReservationController {
                 System.out.println("스케줄 아이디를 입력해주세요.");
                 String scheduleId = scanner.nextLine();
 
-                System.out.println("날짜 (ex.2022-08-11)");
-                String date = scanner.nextLine();
-
-                System.out.println("시간 (ex.13:00)");
-                String time = scanner.nextLine();
-
-                System.out.println("예약자 이름");
-                String name = scanner.nextLine();
+                System.out.println("예약자 아이디");
+                String memberId = scanner.nextLine();
 
                 Reservation reservation = new Reservation(
                         Long.parseLong(scheduleId),
-                        LocalDate.parse(date),
-                        LocalTime.parse(time + ":00"),
-                        name
+                        Long.parseLong(memberId)
                 );
 
                 repository.save(reservation);
@@ -66,13 +57,7 @@ public class ReservationController {
                 System.out.println("스케줄 아이디를 입력해주세요.");
                 String scheduleId = scanner.nextLine();
 
-                System.out.println("날짜 (ex.2022-08-11)");
-                String date = scanner.nextLine();
-
-                System.out.println("시간 (ex.13:00)");
-                String time = scanner.nextLine();
-
-                repository.deleteByDateAndTime(Long.parseLong(scheduleId), LocalDate.parse(date), LocalTime.parse(time));
+                repository.deleteById(Long.parseLong(scheduleId));
                 System.out.println("예약이 취소되었습니다.");
             }
 

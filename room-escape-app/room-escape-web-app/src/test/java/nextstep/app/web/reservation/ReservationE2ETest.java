@@ -3,9 +3,10 @@ package nextstep.app.web.reservation;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import nextstep.core.member.in.MemberRegisterRequest;
+import nextstep.app.web.auth.AuthE2ETest;
+import nextstep.app.web.member.MemberRegisterWebRequest;
+import nextstep.core.member.MemberRole;
 import nextstep.core.reservation.Reservation;
-import nextstep.core.reservation.in.ReservationCreateRequest;
 import nextstep.core.schedule.in.ScheduleCreateRequest;
 import nextstep.core.theme.in.ThemeCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,9 +28,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ReservationE2ETest {
     public static final String DATE = "2022-08-11";
     public static final String TIME = "13:00";
-    public static final String NAME = "name";
 
-    private ReservationCreateRequest request;
+    private final AuthE2ETest authE2ETest = new AuthE2ETest();
+    private ReservationCreateWebRequest request;
     private Long themeId;
     private Long scheduleId;
     private Long memberId;
@@ -60,7 +61,7 @@ class ReservationE2ETest {
         String[] scheduleLocation = scheduleResponse.header("Location").split("/");
         scheduleId = Long.parseLong(scheduleLocation[scheduleLocation.length - 1]);
 
-        MemberRegisterRequest body = new MemberRegisterRequest("username", "password", "name", "010-1234-5678");
+        MemberRegisterWebRequest body = new MemberRegisterWebRequest("username", "password", "name", MemberRole.USER, "010-1234-5678");
         var memberResponse = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -73,21 +74,19 @@ class ReservationE2ETest {
         String[] memberLocation = memberResponse.header("Location").split("/");
         memberId = Long.parseLong(memberLocation[memberLocation.length - 1]);
 
-        request = new ReservationCreateRequest(
-                LocalDate.parse(DATE),
-                LocalTime.parse(TIME),
-                NAME,
-                scheduleId
-        );
+        request = new ReservationCreateWebRequest(scheduleId);
     }
 
     @DisplayName("예약을 생성한다")
     @Test
     void create() {
+        String token = authE2ETest.create();
+
         var response = RestAssured
                 .given().log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("authorization", "Bearer " + token)
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
@@ -130,11 +129,13 @@ class ReservationE2ETest {
     @Test
     void createDuplicateReservation() {
         createReservation();
+        String token = authE2ETest.create();
 
         var response = RestAssured
                 .given().log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("authorization", "Bearer " + token)
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
@@ -170,10 +171,13 @@ class ReservationE2ETest {
     }
 
     private ExtractableResponse<Response> createReservation() {
+        String token = authE2ETest.create();
+
         return RestAssured
                 .given().log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("authorization", "Bearer " + token)
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
