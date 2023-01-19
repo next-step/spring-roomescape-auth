@@ -17,12 +17,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+@Profile("local")
 @Component
 public class RoomEscapeApplicationRunner implements ApplicationRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomEscapeApplicationRunner.class);
@@ -47,10 +49,12 @@ public class RoomEscapeApplicationRunner implements ApplicationRunner {
 
         ScheduleResponse scheduleResponse = scheduleService.create(new ScheduleCreateRequest(themeResponse.getId(), LocalDate.parse("2022-08-11"), LocalTime.parse("13:00")));
 
-        MemberResponse memberResponse = memberService.register(new MemberRegisterRequest("username", "password", "name", MemberRole.USER, "010-0000-0000"));
+        MemberResponse user = memberService.register(new MemberRegisterRequest("user", "user", "user", MemberRole.USER, "010-0000-0000"));
+        MemberResponse admin = memberService.register(new MemberRegisterRequest("admin", "admin", "admin", MemberRole.ADMIN, "010-0000-0000"));
 
-        reservationService.create(new ReservationCreateRequest(scheduleResponse.getId()), memberResponse.getId());
+        reservationService.create(new ReservationCreateRequest(scheduleResponse.getId()), user.getId());
 
-        LOGGER.info("token: " + jwtTokenProvider.createToken(memberResponse.getId().toString(), List.of("USER")));
+        LOGGER.info("user token: " + jwtTokenProvider.createToken(user.getId().toString(), List.of("USER")));
+        LOGGER.info("admin token: " + jwtTokenProvider.createToken(admin.getId().toString(), List.of("ADMIN")));
     }
 }

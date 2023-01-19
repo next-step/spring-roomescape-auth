@@ -14,10 +14,12 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     private static final String TOKEN_FORMAT = "Bearer ";
 
     private final JwtTokenProvider tokenProvider;
+    private final AuthorizationResolver authorizationResolver;
     private final MemberService memberService;
 
-    public LoginMemberArgumentResolver(JwtTokenProvider tokenProvider, MemberService memberService) {
+    public LoginMemberArgumentResolver(JwtTokenProvider tokenProvider, AuthorizationResolver authorizationResolver, MemberService memberService) {
         this.tokenProvider = tokenProvider;
+        this.authorizationResolver = authorizationResolver;
         this.memberService = memberService;
     }
 
@@ -28,20 +30,9 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        String authorization = webRequest.getHeader("authorization");
-        if (authorization == null) {
-            throw new AuthenticationException("토큰 정보가 없습니다.");
-        }
-        if (!authorization.startsWith(TOKEN_FORMAT)) {
-            throw new AuthenticationException("잘못된 토큰 형식입니다.");
-        }
-
-        String token = authorization.replace(TOKEN_FORMAT, "");
-        if (!tokenProvider.validateToken(token)) {
-            throw new AuthenticationException("잘못된 토큰입니다.");
-        }
-
+        String token = authorizationResolver.resolve(webRequest.getHeader("authorization"));
         String principal = tokenProvider.getPrincipal(token);
+
         MemberResponse member = memberService.findMember(Long.parseLong(principal));
         return member.getId();
     }

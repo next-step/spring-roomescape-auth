@@ -97,7 +97,8 @@ class ReservationE2ETest {
     @DisplayName("예약을 조회한다")
     @Test
     void show() {
-        createReservation();
+        String token = authE2ETest.create();
+        createReservation(token);
 
         var response = RestAssured
                 .given().log().all()
@@ -114,10 +115,12 @@ class ReservationE2ETest {
     @DisplayName("예약을 삭제한다")
     @Test
     void delete() {
-        var reservation = createReservation();
+        String token = authE2ETest.create();
+        var reservation = createReservation(token);
 
         var response = RestAssured
                 .given().log().all()
+                .header("authorization", "Bearer " + token)
                 .when().delete(reservation.header("Location"))
                 .then().log().all()
                 .extract();
@@ -128,14 +131,15 @@ class ReservationE2ETest {
     @DisplayName("중복 예약을 생성한다")
     @Test
     void createDuplicateReservation() {
-        createReservation();
         String token = authE2ETest.create();
+        createReservation(token);
 
+        String anotherToken = authE2ETest.create();
         var response = RestAssured
                 .given().log().all()
                 .body(request)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("authorization", "Bearer " + token)
+                .header("authorization", "Bearer " + anotherToken)
                 .when().post("/reservations")
                 .then().log().all()
                 .extract();
@@ -161,8 +165,10 @@ class ReservationE2ETest {
     @DisplayName("없는 예약을 삭제한다")
     @Test
     void createNotExistReservation() {
+        String token = authE2ETest.create();
         var response = RestAssured
                 .given().log().all()
+                .header("authorization", "Bearer " + token)
                 .when().delete("/reservations/1")
                 .then().log().all()
                 .extract();
@@ -170,9 +176,7 @@ class ReservationE2ETest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
-    private ExtractableResponse<Response> createReservation() {
-        String token = authE2ETest.create();
-
+    private ExtractableResponse<Response> createReservation(String token) {
         return RestAssured
                 .given().log().all()
                 .body(request)
