@@ -1,7 +1,5 @@
 package roomescape.adapter.in.web;
 
-import static roomescape.adapter.mapper.ThemeMapper.mapToDomain;
-
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import roomescape.adapter.in.web.dto.ThemeCommand;
-import roomescape.adapter.in.web.dto.ThemeResponse;
-import roomescape.adapter.mapper.ThemeMapper;
+import roomescape.application.dto.ThemeCommand;
+import roomescape.application.dto.ThemeResponse;
 import roomescape.application.port.in.ThemeUseCase;
 
 @RestController
@@ -30,19 +27,14 @@ public class ThemeController {
 
   @GetMapping
   public ResponseEntity<List<ThemeResponse>> getThemes() {
-    List<ThemeResponse> themes = themeUseCase.retrieveThemes()
-                                             .stream()
-                                             .map(ThemeMapper::mapToResponse)
-                                             .toList();
-
-    return new ResponseEntity<>(themes, HttpStatus.OK);
+    return new ResponseEntity<>(themeUseCase.retrieveThemes(), HttpStatus.OK);
 
   }
 
   @PostMapping
   public ResponseEntity<ThemeResponse> createReservation(@RequestBody ThemeCommand themeCommand) {
     return ResponseEntity.ok()
-                         .body(ThemeMapper.mapToResponse(themeUseCase.registerTheme(mapToDomain(themeCommand))));
+                         .body(themeUseCase.registerTheme(themeCommand));
   }
 
   @ResponseStatus(HttpStatus.OK)

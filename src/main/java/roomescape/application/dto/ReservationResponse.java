@@ -1,4 +1,4 @@
-package roomescape.adapter.in.web.dto;
+package roomescape.application.dto;
 
 public record ReservationResponse(Long id, String name, String date, String time) {
 

@@ -1,13 +1,14 @@
 package roomescape.application.port.in;
 
 import java.util.List;
-import roomescape.domain.ReservationTime;
+import roomescape.application.dto.ReservationTimeCommand;
+import roomescape.application.dto.ReservationTimeResponse;
 
 public interface ReservationTimeUseCase {
 
-  ReservationTime registerReservationTime(ReservationTime reservationTime);
+  ReservationTimeResponse registerReservationTime(ReservationTimeCommand reservationTimeCommand);
 
-  List<ReservationTime> retrieveReservationTimes();
+  List<ReservationTimeResponse> retrieveReservationTimes();
 
   void deleteReservationTime(Long id);
 }

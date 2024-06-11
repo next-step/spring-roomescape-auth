@@ -1,9 +1,9 @@
 package roomescape.adapter.mapper;
 
 
-import roomescape.adapter.in.web.dto.ReservationTimeCommand;
-import roomescape.adapter.in.web.dto.ReservationTimeResponse;
 import roomescape.adapter.out.ReservationTimeEntity;
+import roomescape.application.dto.ReservationTimeCommand;
+import roomescape.application.dto.ReservationTimeResponse;
 import roomescape.domain.ReservationTime;
 
 public class ReservationTimeMapper {

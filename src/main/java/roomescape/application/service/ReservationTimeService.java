@@ -1,8 +1,14 @@
 package roomescape.application.service;
 
+import static roomescape.adapter.mapper.ReservationTimeMapper.mapToDomain;
+import static roomescape.adapter.mapper.ReservationTimeMapper.mapToResponse;
+
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import roomescape.adapter.mapper.ReservationTimeMapper;
+import roomescape.application.dto.ReservationTimeCommand;
+import roomescape.application.dto.ReservationTimeResponse;
 import roomescape.application.port.in.ReservationTimeUseCase;
 import roomescape.application.port.out.ReservationPort;
 import roomescape.application.port.out.ReservationTimePort;
@@ -24,19 +30,24 @@ public class ReservationTimeService implements ReservationTimeUseCase {
   }
 
   @Override
-  public ReservationTime registerReservationTime(ReservationTime reservationTime) {
+  public ReservationTimeResponse registerReservationTime(ReservationTimeCommand reservationTimeCommand) {
+    ReservationTime reservationTime = mapToDomain(reservationTimeCommand);
+
     if (reservationTimePort.findReservationTimeByStartAt(reservationTime.getStartAt())
                            .isPresent()) {
       throw new InvalidSaveDuplicationReservationTime();
     }
 
-    return reservationTimePort.saveReservationTime(reservationTime);
+    return mapToResponse(reservationTimePort.saveReservationTime(reservationTime));
   }
 
   @Transactional(readOnly = true)
   @Override
-  public List<ReservationTime> retrieveReservationTimes() {
-    return reservationTimePort.findReservationTimes();
+  public List<ReservationTimeResponse> retrieveReservationTimes() {
+    return reservationTimePort.findReservationTimes()
+                              .stream()
+                              .map(ReservationTimeMapper::mapToResponse)
+                              .toList();
   }
 
   @Override

@@ -1,8 +1,8 @@
 package roomescape.adapter.mapper;
 
-import roomescape.adapter.in.web.dto.ThemeCommand;
-import roomescape.adapter.in.web.dto.ThemeResponse;
 import roomescape.adapter.out.ThemeEntity;
+import roomescape.application.dto.ThemeCommand;
+import roomescape.application.dto.ThemeResponse;
 import roomescape.domain.Theme;
 
 public class ThemeMapper {

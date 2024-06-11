@@ -1,8 +1,5 @@
 package roomescape.adapter.in.web;
 
-import static roomescape.adapter.mapper.ReservationMapper.mapToDomain;
-import static roomescape.adapter.mapper.ReservationMapper.mapToResponse;
-
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import roomescape.adapter.in.web.dto.ReservationCommand;
-import roomescape.adapter.in.web.dto.ReservationResponse;
-import roomescape.adapter.mapper.ReservationMapper;
+import roomescape.application.dto.ReservationCommand;
+import roomescape.application.dto.ReservationResponse;
 import roomescape.application.port.in.ReservationUseCase;
-import roomescape.validator.DateTimeValidator;
 
 @RestController
 @RequestMapping("/reservations")
@@ -32,20 +27,14 @@ public class ReservationController {
 
   @GetMapping
   public ResponseEntity<List<ReservationResponse>> getReservations() {
-    List<ReservationResponse> reservations = reservationUseCase.retrieveReservations()
-                                                               .stream()
-                                                               .map(ReservationMapper::mapToResponse)
-                                                               .toList();
-
-    return new ResponseEntity<>(reservations, HttpStatus.OK);
+    return new ResponseEntity<>(reservationUseCase.retrieveReservations(), HttpStatus.OK);
 
   }
 
   @PostMapping
   public ResponseEntity<ReservationResponse> createReservation(@RequestBody ReservationCommand reservationCommand) {
-    DateTimeValidator.previousDateTimeCheck(reservationCommand.date(), reservationCommand.time());
     return ResponseEntity.ok()
-                         .body(mapToResponse(reservationUseCase.registerReservation(mapToDomain(reservationCommand))));
+                         .body(reservationUseCase.registerReservation(reservationCommand));
   }
 
   @ResponseStatus(HttpStatus.OK)

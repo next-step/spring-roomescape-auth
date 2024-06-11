@@ -1,13 +1,14 @@
 package roomescape.application.port.in;
 
 import java.util.List;
-import roomescape.domain.Theme;
+import roomescape.application.dto.ThemeCommand;
+import roomescape.application.dto.ThemeResponse;
 
 public interface ThemeUseCase {
 
-  Theme registerTheme(Theme theme);
+  ThemeResponse registerTheme(ThemeCommand themeCommand);
 
-  List<Theme> retrieveThemes();
+  List<ThemeResponse> retrieveThemes();
 
   void deleteTheme(Long id);
 }
