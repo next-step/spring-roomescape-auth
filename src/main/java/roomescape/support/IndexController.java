@@ -13,7 +13,7 @@ public class IndexController {
 
     @GetMapping("/admin/reservation")
     public String adminReservationPage() {
-        return "/admin/reservation-new";
+        return "/admin/reservation";
     }
 
     @GetMapping("/admin/time")
