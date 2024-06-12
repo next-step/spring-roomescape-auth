@@ -37,11 +37,11 @@ public class TimeController {
     @PostMapping
     public ResponseEntity<ReservationTimeResponse> createTime(@RequestBody ReservationTimeRequest request) {
         ReservationTimeResponse response = reservationTimeSaver.saveReservationTimeBy(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
-    public HttpEntity<Void> deleteTime(@PathVariable("id") long id) {
+    public ResponseEntity<Void> deleteTime(@PathVariable("id") long id) {
         reservationTimeDeleter.deleteReservationTimeBy(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

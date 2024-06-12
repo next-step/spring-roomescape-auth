@@ -1,6 +1,7 @@
 package roomescape.apply.theme.ui;
 
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.apply.theme.application.ThemeDeleter;
@@ -26,12 +27,12 @@ public record ThemeController(ThemeSaver themeSaver,
     @PostMapping
     public ResponseEntity<ThemeResponse> createTheme(@RequestBody ThemeRequest request) {
         ThemeResponse themeResponse = themeSaver.saveThemeBy(request);
-        return ResponseEntity.ok(themeResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(themeResponse);
     }
 
     @DeleteMapping("/{id}")
     public HttpEntity<Void> deleteTime(@PathVariable("id") long id) {
         themeDeleter.deleteThemeBy(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

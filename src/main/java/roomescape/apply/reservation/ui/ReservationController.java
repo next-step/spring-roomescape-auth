@@ -1,5 +1,6 @@
 package roomescape.apply.reservation.ui;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.apply.reservation.application.ReservationCanceler;
@@ -32,12 +33,13 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<ReservationResponse> addReservation(@RequestBody ReservationRequest request) {
-        return ResponseEntity.ok(reservationRecorder.recordReservationBy(request));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                             .body(reservationRecorder.recordReservationBy(request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancelReservation(@PathVariable("id") long id) {
         reservationCanceler.cancelReservation(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
