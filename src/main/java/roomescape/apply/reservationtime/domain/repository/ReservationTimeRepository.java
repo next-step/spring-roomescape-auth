@@ -16,4 +16,6 @@ public interface ReservationTimeRepository {
     Optional<Long> checkIdExists(long id);
 
     Optional<ReservationTime> findById(long timeId);
+
+    List<Long> findReservedTimeIds(String date, long themeId);
 }

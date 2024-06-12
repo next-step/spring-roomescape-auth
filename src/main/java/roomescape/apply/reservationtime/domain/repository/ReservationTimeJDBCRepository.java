@@ -3,12 +3,13 @@ package roomescape.apply.reservationtime.domain.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import roomescape.apply.reservationtime.domain.ReservationTime;
 
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,7 +55,18 @@ public class ReservationTimeJDBCRepository implements ReservationTimeRepository 
                 WHERE id = ?
             """;
 
-    private final JdbcTemplate template;
+    private static final String SELECT_RESERVED_TIMES_SQL = """
+            SELECT
+                rt.id as time_id
+            FROM
+                reservation_time rt
+                INNER JOIN reservation r ON rt.id = r.time_id
+            WHERE
+                r.date = :date
+                AND r.theme_id = :themeId
+            """;
+
+    private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
     public ReservationTimeJDBCRepository(JdbcTemplate template) {
         this.template = template;
@@ -105,6 +117,14 @@ public class ReservationTimeJDBCRepository implements ReservationTimeRepository 
         } catch (EmptyResultDataAccessException exception) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<Long> findReservedTimeIds(String date, long themeId) {
+        MapSqlParameterSource reservedParam = new MapSqlParameterSource();
+        reservedParam.addValue("date", date);
+        reservedParam.addValue("themeId", themeId);
+        return namedJdbcTemplate.queryForList(SELECT_RESERVED_TIMES_SQL, reservedParam, Long.class);
     }
 
     private RowMapper<ReservationTime> reservationTimeRowMapper() {

@@ -1,11 +1,12 @@
 package roomescape.apply.reservationtime.ui;
 
-import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.apply.reservationtime.application.ReservationTimeDeleter;
 import roomescape.apply.reservationtime.application.ReservationTimeFinder;
 import roomescape.apply.reservationtime.application.ReservationTimeSaver;
+import roomescape.apply.reservationtime.ui.dto.AvailableReservationTimeResponse;
 import roomescape.apply.reservationtime.ui.dto.ReservationTimeRequest;
 import roomescape.apply.reservationtime.ui.dto.ReservationTimeResponse;
 
@@ -42,7 +43,15 @@ public class TimeController {
     @DeleteMapping("/{id}")
     public HttpEntity<Void> deleteTime(@PathVariable("id") long id) {
         reservationTimeDeleter.deleteReservationTimeBy(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<AvailableReservationTimeResponse>> getAvailableTimes(@RequestParam("date") String date,
+                                                                                    @RequestParam("themeId") String themeId
+    ) {
+        var response = reservationTimeFinder.findAvailableTimesBy(date, themeId);
+        return ResponseEntity.ok(response);
     }
 
 }
