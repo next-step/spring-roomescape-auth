@@ -110,11 +110,11 @@ public class ReservationTimeJdbcRepository implements ReservationTimePort {
   @Override
   public List<ReservationTime> findAvailableReservationTimes(String date, Long themeId) {
     String sql = """
-    SELECT rt.id, rt.start_at
-    FROM reservation_time rt
-    LEFT JOIN reservation r ON rt.id = r.reservation_time_id AND r.date = ? AND r.theme_id = ?
-    WHERE r.reservation_time_id IS NULL
-  """;
+        SELECT rt.id, rt.start_at
+        FROM reservation_time rt
+        LEFT JOIN reservation r ON rt.id = r.reservation_time_id AND r.date = ? AND r.theme_id = ?
+        WHERE r.reservation_time_id IS NULL
+      """;
 
     List<ReservationTimeEntity> reservationTimeEntities = jdbcTemplate.query(
       sql, (resultSet, rowNum) ->

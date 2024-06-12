@@ -1,4 +1,4 @@
-package roomescape.adapter.in.web.rest;
+package roomescape.adapter.in.web;
 
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -47,7 +47,8 @@ public class ReservationTimeController {
   }
 
   @GetMapping("/available")
-  public ResponseEntity<List<ReservationTimeResponse>> getAvailableReservationTimes(@RequestParam("date") String date, @RequestParam("themeId") Long themeId) {
+  public ResponseEntity<List<ReservationTimeResponse>> getAvailableReservationTimes(@RequestParam("date") String date,
+    @RequestParam("themeId") Long themeId) {
     return new ResponseEntity<>(reservationTimeUseCase.retrieveAvailableReservationTimes(date, themeId), HttpStatus.OK);
   }
 }
