@@ -1,4 +1,4 @@
-package roomescape.adapter.in.web;
+package roomescape.adapter.in.web.rest;
 
 import java.util.List;
 import org.springframework.http.HttpStatus;
