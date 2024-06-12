@@ -9,6 +9,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import roomescape.apply.auth.application.exception.IllegalTokenException;
+import roomescape.apply.auth.application.exception.TokenNotFoundException;
 import roomescape.apply.reservation.application.excpetion.DuplicateReservationException;
 import roomescape.apply.reservation.application.excpetion.NotFoundReservationException;
 import roomescape.apply.reservationtime.application.exception.NotFoundReservationTimeException;
@@ -22,6 +24,11 @@ import java.util.NoSuchElementException;
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler({TokenNotFoundException.class, IllegalTokenException.class})
+    public ResponseEntity<ExceptionResponse> handleTokenException(IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(new ExceptionResponse(400, e.getMessage()));
+    }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, IllegalArgumentException.class,
             ReservationTimeReferencedException.class, ThemeReferencedException.class

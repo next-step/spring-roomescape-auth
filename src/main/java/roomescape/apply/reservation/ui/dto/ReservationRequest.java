@@ -1,7 +1,7 @@
 package roomescape.apply.reservation.ui.dto;
 
 import org.springframework.util.StringUtils;
-import roomescape.support.ReservationDateChecker;
+import roomescape.support.checker.ReservationDateChecker;
 
 public record ReservationRequest(
         String name,

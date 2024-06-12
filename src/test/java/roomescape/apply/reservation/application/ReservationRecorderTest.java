@@ -32,8 +32,8 @@ class ReservationRecorderTest extends BaseTestService {
         reservationTimeRepository = new ReservationTimeJDBCRepository(template);
         var reservationRepository = new ReservationJDBCRepository(template);
         themeRepository = new ThemeJDBCRepository(template);
-        var reservationTimeFinder = new ReservationTimeFinder(reservationTimeRepository);
         var themeFinder = new ThemeFinder(themeRepository);
+        var reservationTimeFinder = new ReservationTimeFinder(reservationTimeRepository);
         var reservationFinder = new ReservationFinder(reservationRepository);
         reservationRecorder = new ReservationRecorder(reservationRepository, reservationTimeFinder, themeFinder, reservationFinder);
     }
