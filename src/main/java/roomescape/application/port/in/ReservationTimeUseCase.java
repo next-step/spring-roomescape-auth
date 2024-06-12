@@ -11,4 +11,6 @@ public interface ReservationTimeUseCase {
   List<ReservationTimeResponse> retrieveReservationTimes();
 
   void deleteReservationTime(Long id);
+
+  List<ReservationTimeResponse> retrieveAvailableReservationTimes(String date, Long themeId);
 }

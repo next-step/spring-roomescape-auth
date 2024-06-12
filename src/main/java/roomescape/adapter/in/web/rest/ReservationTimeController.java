@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import roomescape.application.dto.ReservationTimeCommand;
@@ -43,5 +44,10 @@ public class ReservationTimeController {
   @DeleteMapping("/{id}")
   public void deleteReservation(@PathVariable("id") Long id) {
     reservationTimeUseCase.deleteReservationTime(id);
+  }
+
+  @GetMapping("/available")
+  public ResponseEntity<List<ReservationTimeResponse>> getAvailableReservationTimes(@RequestParam("date") String date, @RequestParam("themeId") Long themeId) {
+    return new ResponseEntity<>(reservationTimeUseCase.retrieveAvailableReservationTimes(date, themeId), HttpStatus.OK);
   }
 }

@@ -63,4 +63,13 @@ public class ReservationTimeService implements ReservationTimeUseCase {
 
     reservationTimePort.deleteReservationTime(id);
   }
+
+  @Transactional(readOnly = true)
+  @Override
+  public List<ReservationTimeResponse> retrieveAvailableReservationTimes(String date, Long themeId) {
+    return reservationTimePort.findAvailableReservationTimes(date, themeId)
+                              .stream()
+                              .map(ReservationTimeMapper::mapToResponse)
+                              .toList();
+  }
 }
