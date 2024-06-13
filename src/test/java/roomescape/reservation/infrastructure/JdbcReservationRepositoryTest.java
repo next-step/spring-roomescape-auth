@@ -34,6 +34,7 @@ class JdbcReservationRepositoryTest {
     void setUp() {
         String date = LocalDate.now().plusDays(1).toString();
         reservationRepository = new JdbcReservationRepository(jdbcTemplate, dataSource);
+
         jdbcTemplate.execute("ALTER TABLE reservation ALTER COLUMN id RESTART WITH 1");
         jdbcTemplate.execute("ALTER TABLE reservation_time ALTER COLUMN id RESTART WITH 1");
         jdbcTemplate.execute("ALTER TABLE theme ALTER COLUMN id RESTART WITH 1");
@@ -125,6 +126,54 @@ class JdbcReservationRepositoryTest {
     void existsByDateAndTimeId_ReturnFalse() {
         boolean result = reservationRepository.existsByDateAndTimeId("2023-08-06", 1L);
 
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("예약 날짜와 시간, 테마가 존재하면 TRUE를 반환한다.")
+    void existsByDateAndReservationTimeAndTheme_ReturnTrue() {
+        // given
+        String date = LocalDate.now().plusDays(1).toString();
+        Theme theme = new Theme(1L, "레벨1 탈출", "우테코 레벨1을 탈출하는 내용입니다.",
+                "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
+        ReservationTime reservationTime = new ReservationTime(1L, LocalTime.parse("15:40"));
+
+        // when
+        boolean result = reservationRepository.existsByDateAndReservationTimeAndTheme(date, reservationTime, theme);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("예약한 테마가 존재하지 않으면 FALSE를 반환한다.")
+    void existsByDateAndReservationTimeAndTheme_ReturnFalse_WhenThemeNotFound() {
+        // given
+        String date = LocalDate.now().plusDays(1).toString();
+        Theme theme = new Theme(2L, "레벨1 탈출", "우테코 레벨1을 탈출하는 내용입니다.",
+                "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
+        ReservationTime reservationTime = new ReservationTime(1L, LocalTime.parse("15:40"));
+
+        // when
+        boolean result = reservationRepository.existsByDateAndReservationTimeAndTheme(date, reservationTime, theme);
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("예약한 시간이 존재하지 않으면 FALSE를 반환한다.")
+    void existsByDateAndReservationTimeAndTheme_ReturnFalse_WhenTimeNotFound() {
+        // given
+        String date = LocalDate.now().plusDays(1).toString();
+        Theme theme = new Theme(1L, "레벨1 탈출", "우테코 레벨1을 탈출하는 내용입니다.",
+                "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
+        ReservationTime reservationTime = new ReservationTime(2L, LocalTime.parse("15:40"));
+
+        // when
+        boolean result = reservationRepository.existsByDateAndReservationTimeAndTheme(date, reservationTime, theme);
+
+        // then
         assertThat(result).isFalse();
     }
 }
