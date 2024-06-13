@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class MissionStepTest {
+class FirstMissionStepTest {
 
     @Test
     void page() {
@@ -149,7 +149,7 @@ class MissionStepTest {
                 .body("size()", is(0));
     }
 
-    private void sendSaveReservationTimeRequest() {
+    public static void sendSaveReservationTimeRequest() {
         Map<String, String> timeParams = new HashMap<>();
         timeParams.put("startAt", "10:00");
         RestAssured.given().log().all()
