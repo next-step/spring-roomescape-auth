@@ -26,7 +26,7 @@ public class JwtTokenManager {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(LoginResponse loginResponse) {
+    public String generateTokenByLoginResponse(LoginResponse loginResponse) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiryDate = now.plusMinutes(EXPIRATION_TIME);
 
@@ -52,10 +52,8 @@ public class JwtTokenManager {
 
     public String getRoleNameFromToken(String token) {
         Object role = parseJwt(token).get("role");
-        if (role instanceof LinkedHashMap roleHashMap) {
-            if (roleHashMap.containsKey("joinedNames")) {
-                return roleHashMap.get("joinedNames").toString();
-            }
+        if (role instanceof LinkedHashMap roleHashMap && (roleHashMap.containsKey("joinedNames"))) {
+            return roleHashMap.get("joinedNames").toString();
         }
         throw new IllegalTokenException();
     }

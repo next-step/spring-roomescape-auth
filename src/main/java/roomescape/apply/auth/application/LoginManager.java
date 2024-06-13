@@ -19,7 +19,7 @@ public class LoginManager {
 
 
     public void addTokenToCookie(LoginResponse loginResponse, HttpServletResponse servletResponse) {
-        String token = jwtTokenManager.generateToken(loginResponse);
+        String token = jwtTokenManager.generateTokenByLoginResponse(loginResponse);
         Cookie cookie = new Cookie(ServletRequestTokenFinder.COOKIE_NAME, token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
