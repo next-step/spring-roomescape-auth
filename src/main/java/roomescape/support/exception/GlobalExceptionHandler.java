@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateReservationException.class)
     public ResponseEntity<ExceptionResponse> handleDuplicateReservationException(DuplicateReservationException e) {
-        logger.error("DuplicateReservationException caught: " + e.getMessage());
+        logger.error("DuplicateReservationException caught: {} ", e.getMessage());
         return ResponseEntity.badRequest().body(new ExceptionResponse(400, e.getMessage()));
     }
 
