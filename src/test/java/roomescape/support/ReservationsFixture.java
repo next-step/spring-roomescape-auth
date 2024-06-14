@@ -32,8 +32,8 @@ public class ReservationsFixture {
         return theme("레벨2 탈출", "우테코 레벨2를 탈출하는 내용입니다.");
     }
 
-    public static Reservation reservation(ReservationTime time, Theme theme) {
-        return Reservation.of("테스트_예약자", "2099-01-01", time, theme);
+    public static Reservation reservation(ReservationTime time, Theme theme, String date) {
+        return Reservation.of("테스트_예약자", date, time, theme);
     }
 
     public static ReservationTimeRequest reservationTimeRequest() {

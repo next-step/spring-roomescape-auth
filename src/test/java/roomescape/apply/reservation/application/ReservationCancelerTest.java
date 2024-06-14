@@ -46,7 +46,7 @@ class ReservationCancelerTest extends BaseTestService {
         // given
         ReservationTime saveReservationTime = reservationTimeRepository.save(reservationTime());
         Theme saveTheme = themeRepository.save(theme());
-        Reservation saved = reservationRepository.save(reservation(saveReservationTime, saveTheme));
+        Reservation saved = reservationRepository.save(reservation(saveReservationTime, saveTheme, "2099-01-01"));
         assertThat(reservationRepository.findAll().size()).isNotZero();
         // when
         reservationCanceler.cancelReservation(saved.getId());

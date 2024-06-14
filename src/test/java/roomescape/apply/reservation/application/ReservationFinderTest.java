@@ -50,7 +50,7 @@ class ReservationFinderTest extends BaseTestService {
         for (String time : times) {
             ReservationTime saveReservationTime = reservationTimeRepository.save(reservationTime(time));
             Theme saveTheme = themeRepository.save(theme());
-            reservationRepository.save(reservation(saveReservationTime, saveTheme));
+            reservationRepository.save(reservation(saveReservationTime, saveTheme, "2099-01-01"));
         }
         // when
         List<ReservationResponse> responses = reservationFinder.findAll();
