@@ -16,7 +16,7 @@ public class MemberDuplicateChecker {
         boolean isDuplicated = memberFinder.isDuplicateEmail(request.email());
 
         if (isDuplicated) {
-            throw new IllegalArgumentException("이미 존재하는 아이디 입니다.");
+            throw new IllegalArgumentException("이미 존재하는 이메일 입니다.");
         }
     }
 }

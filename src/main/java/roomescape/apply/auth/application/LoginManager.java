@@ -10,6 +10,7 @@ import roomescape.support.ServletRequestTokenFinder;
 
 @Service
 public class LoginManager {
+    private static final int COOKIE_EXPIRY = 3601;
 
     private final JwtTokenManager jwtTokenManager;
 
@@ -23,6 +24,7 @@ public class LoginManager {
         Cookie cookie = new Cookie(ServletRequestTokenFinder.COOKIE_NAME, token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
+        cookie.setMaxAge(COOKIE_EXPIRY);
         servletResponse.addCookie(cookie);
     }
 
