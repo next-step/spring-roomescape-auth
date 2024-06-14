@@ -10,4 +10,9 @@ public class PageController {
     public String reservation() {
         return "reservation";
     }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
 }
