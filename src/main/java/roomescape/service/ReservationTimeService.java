@@ -1,6 +1,5 @@
 package roomescape.service;
 
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import roomescape.domain.ReservationTime;
@@ -9,6 +8,8 @@ import roomescape.dto.response.ReservationTimeResponse;
 import roomescape.exception.BusinessException;
 import roomescape.repository.JdbcReservationDao;
 import roomescape.repository.JdbcReservationTimeDao;
+
+import java.util.List;
 
 @Service
 public class ReservationTimeService {
@@ -47,11 +48,19 @@ public class ReservationTimeService {
         reservationTimeDao.delete(id);
     }
 
+    public List<ReservationTimeResponse> findAllByAvailableTime(String date, Long themeId) {
+        return this.convertToList(reservationTimeDao.findAllByAvailableTime(date, themeId));
+    }
+
     private ReservationTimeResponse convertToResponse(ReservationTime reservationTime) {
         return new ReservationTimeResponse(reservationTime.getId(), reservationTime.getStartAt());
     }
 
     private ReservationTime convertToEntity(ReservationTimeRequest reservationTimeRequest) {
         return new ReservationTime(reservationTimeRequest.getStartAt());
+    }
+
+    private List<ReservationTimeResponse> convertToList(List<ReservationTime> reservationTimes) {
+        return reservationTimes.stream().map(this::convertToResponse).toList();
     }
 }
