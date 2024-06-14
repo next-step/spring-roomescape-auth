@@ -45,8 +45,15 @@ class JwtTokenManagerTest {
         String token = jwtTokenManager.generateTokenByLoginResponse(loginResponse);
         // when && then
         assertDoesNotThrow(() -> jwtTokenManager.validateToken(token));
+    }
+
+    @Test
+    @DisplayName("잘못된 토큰은 검증에 실패한다")
+    void validateFailToken() {
+        // when && then
         assertThatThrownBy(() -> jwtTokenManager.validateToken("TOOOOOKEN")).isExactlyInstanceOf(IllegalTokenException.class);
     }
+
 
     @Test
     @DisplayName("토큰에서 저장된 사용자 권한 이름을 가져올 수 있다.")
