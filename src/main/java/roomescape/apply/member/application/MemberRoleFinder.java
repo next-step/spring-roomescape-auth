@@ -19,7 +19,7 @@ public class MemberRoleFinder {
     public Set<MemberRoleName> findRolesInMember(long memberId) {
         return memberRoleRepository.findNamesByMemberId(memberId)
                 .stream()
-                .map(MemberRoleName::findRoleByValue)
+                .map(MemberRoleName::findRoleByName)
                 .collect(Collectors.toSet());
     }
 

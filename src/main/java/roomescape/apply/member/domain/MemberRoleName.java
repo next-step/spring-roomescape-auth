@@ -12,9 +12,16 @@ public enum MemberRoleName {
         this.value = value;
     }
 
-    public static MemberRoleName findRoleByValue(String roleName) {
+    public static MemberRoleName findRoleByValue(String roleValue) {
         return Arrays.stream(MemberRoleName.values())
-                .filter(it -> it.getValue().equals(roleName))
+                .filter(it -> it.getValue().equals(roleValue))
+                .findFirst()
+                .orElse(MemberRoleName.GUEST);
+    }
+
+    public static MemberRoleName findRoleByName(String roleName) {
+        return Arrays.stream(MemberRoleName.values())
+                .filter(it -> it.name().equals(roleName))
                 .findFirst()
                 .orElse(MemberRoleName.GUEST);
     }

@@ -10,9 +10,9 @@ public class MemberRole {
 
     }
 
-    public static MemberRole of(String roleName, Long memberId) {
+    public static MemberRole of(String roleValue, Long memberId) {
         MemberRole member = new MemberRole();
-        member.memberRoleName = MemberRoleName.findRoleByValue(roleName);
+        member.memberRoleName = MemberRoleName.findRoleByValue(roleValue);
         member.memberId = memberId;
         return member;
     }
