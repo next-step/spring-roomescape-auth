@@ -8,8 +8,8 @@ public class IllegalTokenException extends IllegalArgumentException {
         super(DEFAULT_MESSAGE);
     }
 
-    public IllegalTokenException(Throwable cause) {
-        super(DEFAULT_MESSAGE, cause);
+    public IllegalTokenException(String message) {
+        super(message);
     }
 
     public IllegalTokenException(String message, Throwable cause) {

@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 @Service
 public class JwtTokenManager {
     public static final String NOT_VALID_TOKEN_ERROR = "잘못된 토큰입니다. 재 로그인 해주세요.";
+    public static final String EXPIRED_TOKEN_ERROR = "이미 만료된 토큰입니다. 재 로그인 해주세요.";
     private static final String ROLE_CLAIM = "role";
     private static final String NAME_CLAIM = "name";
     private static final String JOINED_NAMES = "joinedNames";
@@ -45,9 +46,9 @@ public class JwtTokenManager {
         try {
             parseJwt(token);
         } catch (ExpiredJwtException e) {
-            throw new IllegalTokenException(NOT_VALID_TOKEN_ERROR, e);
+            throw new IllegalTokenException(EXPIRED_TOKEN_ERROR);
         } catch (RuntimeException e) {
-            throw new IllegalTokenException(e);
+            throw new IllegalTokenException(NOT_VALID_TOKEN_ERROR, e);
         }
     }
 
