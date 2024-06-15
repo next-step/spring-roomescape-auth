@@ -32,6 +32,9 @@ public class JwtTokenProvider {
     }
 
     public String getEmail(String accessToken) {
+        if (accessToken.isEmpty()) {
+            return null;
+        }
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
