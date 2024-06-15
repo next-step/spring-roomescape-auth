@@ -107,8 +107,8 @@ function renderAvailableTimes(times) {
     return;
   }
   times.forEach(time => {
-    const startAt = time.id;
-    const timeId = time.startAt;
+    const startAt = time.startAt;
+    const timeId = time.id;
     const alreadyBooked = false;
 
     const div = createSlot('time', startAt, timeId, alreadyBooked); // createSlot('time', 시작 시간, time id, 예약 여부)

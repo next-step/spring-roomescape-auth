@@ -19,3 +19,5 @@ INSERT INTO theme (id, name, description, thumbnail) VALUES (7, '테마7', '테�
 INSERT INTO theme (id, name, description, thumbnail) VALUES (8, '테마8', '테마8의 설명입니다', 'samle_thumbnail8');
 INSERT INTO theme (id, name, description, thumbnail) VALUES (9, '테마9', '테마9의 설명입니다', 'samle_thumbnail9');
 INSERT INTO theme (id, name, description, thumbnail) VALUES (10, '테마10', '테마10의 설명입니다', 'samle_thumbnail10');
+
+INSERT INTO member (id, name, email, password) VALUES (1, '테스트', 'test@email.com', '1234');

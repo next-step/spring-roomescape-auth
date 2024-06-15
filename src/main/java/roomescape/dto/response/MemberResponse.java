@@ -1,10 +1,10 @@
 package roomescape.dto.response;
 
-public class LoginResponse {
+public class MemberResponse {
 
     private String name;
 
-    public LoginResponse(String name) {
+    public MemberResponse(String name) {
         this.name = name;
     }
 
