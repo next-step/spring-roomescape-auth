@@ -9,3 +9,7 @@ spring:
       console:
         enabled: true
         path: /h2-console
+
+jwt:
+  secret: aaaaadaferpgaelbekbnlebnjlaernenabobnadfaeriijf1293ru3490u08r3hgeuifd
+  expire: 86400000
