@@ -41,4 +41,16 @@ class JwtTokenProviderTest {
         // then
         assertThat(extractedEmail).isEqualTo(email);
     }
+
+    @Test
+    void 토큰이_빈문자열이면_NULL을_반환한다() {
+        // given
+        String jwt = "";
+
+        // when
+        String extractedEmail = jwtTokenProvider.getEmail(jwt);
+
+        // then
+        assertThat(extractedEmail).isNull();
+    }
 }
