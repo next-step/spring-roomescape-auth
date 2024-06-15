@@ -2,6 +2,7 @@ package roomescape.auth.application;
 
 import org.springframework.stereotype.Service;
 
+import roomescape.auth.dto.CheckUserInfoResponse;
 import roomescape.jwt.JwtTokenProvider;
 import roomescape.user.domain.User;
 import roomescape.user.domain.repository.UserRepository;
@@ -28,5 +29,12 @@ public class AuthService {
         }
 
         return jwtTokenProvider.createJwt(user.getEmail());
+    }
+
+    public CheckUserInfoResponse checkUserInfo(String accessToken) {
+        String email = jwtTokenProvider.getEmail(accessToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다"));
+        return new CheckUserInfoResponse(user.getName());
     }
 }

@@ -30,4 +30,13 @@ public class JwtTokenProvider {
                 .signWith(secretKey)
                 .compact();
     }
+
+    public String getEmail(String accessToken) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(accessToken)
+                .getPayload()
+                .get("email", String.class);
+    }
 }
