@@ -3,6 +3,8 @@ package roomescape.apply.reservationtime.ui;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import roomescape.apply.auth.application.annotation.NeedMemberRole;
+import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.reservationtime.application.ReservationTimeDeleter;
 import roomescape.apply.reservationtime.application.ReservationTimeFinder;
 import roomescape.apply.reservationtime.application.ReservationTimeSaver;
@@ -35,12 +37,14 @@ public class TimeController {
     }
 
     @PostMapping
+    @NeedMemberRole(MemberRoleName.ADMIN)
     public ResponseEntity<ReservationTimeResponse> createTime(@RequestBody ReservationTimeRequest request) {
         ReservationTimeResponse response = reservationTimeSaver.saveReservationTimeBy(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
+    @NeedMemberRole(MemberRoleName.ADMIN)
     public ResponseEntity<Void> deleteTime(@PathVariable("id") long id) {
         reservationTimeDeleter.deleteReservationTimeBy(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

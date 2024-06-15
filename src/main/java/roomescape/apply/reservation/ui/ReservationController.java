@@ -3,6 +3,9 @@ package roomescape.apply.reservation.ui;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import roomescape.apply.auth.application.annotation.NeedMemberRole;
+import roomescape.apply.auth.ui.dto.LoginMember;
+import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.reservation.application.ReservationCanceler;
 import roomescape.apply.reservation.application.ReservationFinder;
 import roomescape.apply.reservation.application.ReservationRecorder;
@@ -32,12 +35,16 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> addReservation(@RequestBody ReservationRequest request) {
+    @NeedMemberRole({MemberRoleName.ADMIN, MemberRoleName.GUEST})
+    public ResponseEntity<ReservationResponse> addReservation(@RequestBody ReservationRequest request,
+                                                              LoginMember loginMember
+    ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                             .body(reservationRecorder.recordReservationBy(request));
+                .body(reservationRecorder.recordReservationBy(request, loginMember));
     }
 
     @DeleteMapping("/{id}")
+    @NeedMemberRole({MemberRoleName.ADMIN, MemberRoleName.GUEST})
     public ResponseEntity<Void> cancelReservation(@PathVariable("id") long id) {
         reservationCanceler.cancelReservation(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

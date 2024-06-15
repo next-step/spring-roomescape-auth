@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import roomescape.apply.auth.application.LoginManager;
+import roomescape.apply.auth.application.annotation.NeedMemberRole;
 import roomescape.apply.auth.ui.dto.LoginCheckResponse;
 import roomescape.apply.auth.ui.dto.LoginRequest;
 import roomescape.apply.member.application.MemberFinder;
+import roomescape.apply.member.domain.MemberRoleName;
 
 @RestController
 public class LoginController {
@@ -34,6 +36,7 @@ public class LoginController {
     }
 
     @GetMapping("/login/check")
+    @NeedMemberRole({MemberRoleName.ADMIN, MemberRoleName.GUEST})
     public ResponseEntity<LoginCheckResponse> loginCheck(HttpServletRequest servletRequest) {
         LoginCheckResponse response = loginTokenManager.findRoleNameByToken(servletRequest);
         return ResponseEntity.ok(response);

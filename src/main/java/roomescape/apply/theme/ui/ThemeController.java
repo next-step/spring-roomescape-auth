@@ -4,6 +4,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import roomescape.apply.auth.application.annotation.NeedMemberRole;
+import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.theme.application.ThemeDeleter;
 import roomescape.apply.theme.application.ThemeFinder;
 import roomescape.apply.theme.application.ThemeSaver;
@@ -25,12 +27,14 @@ public record ThemeController(ThemeSaver themeSaver,
     }
 
     @PostMapping
+    @NeedMemberRole(MemberRoleName.ADMIN)
     public ResponseEntity<ThemeResponse> createTheme(@RequestBody ThemeRequest request) {
         ThemeResponse themeResponse = themeSaver.saveThemeBy(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(themeResponse);
     }
 
     @DeleteMapping("/{id}")
+    @NeedMemberRole(MemberRoleName.ADMIN)
     public HttpEntity<Void> deleteTime(@PathVariable("id") long id) {
         themeDeleter.deleteThemeBy(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
