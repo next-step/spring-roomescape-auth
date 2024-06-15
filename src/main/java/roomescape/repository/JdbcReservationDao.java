@@ -38,19 +38,21 @@ public class JdbcReservationDao {
     }
 
     public List<Reservation> findAll() {
-        final String sql = "SELECT "
-                + "r.id as reservation_id"
-                + ", r.name as reservation_name"
-                + ", r.\"date\" as reservation_date"
-                + ", t.id as time_id"
-                + ", t.start_at as time_start_at"
-                + ", theme.id as theme_id"
-                + ", theme.name as theme_name"
-                + ", theme.description as theme_description"
-                + ", theme.thumbnail as theme_thumbnail"
-                + " FROM reservation as r"
-                + " INNER JOIN reservation_time as t ON r.time_id = t.id"
-                + " INNER JOIN theme ON r.theme_id = theme.id";
+        final String sql = """
+                SELECT 
+                r.id as reservation_id
+                , r.name as reservation_name
+                , r.\"date\" as reservation_date
+                , t.id as time_id
+                , t.start_at as time_start_at
+                , theme.id as theme_id
+                , theme.name as theme_name
+                , theme.description as theme_description
+                , theme.thumbnail as theme_thumbnail
+                 FROM reservation as r
+                 INNER JOIN reservation_time as t ON r.time_id = t.id
+                 INNER JOIN theme ON r.theme_id = theme.id
+                 """;
 
         return jdbcTemplate.query(sql, (resultSet, rowNum) -> {
             ReservationTime reservationTime = new ReservationTime(

@@ -19,6 +19,8 @@ import roomescape.service.MemberService;
 @Controller
 public class ReservationViewController {
 
+    public static final String TOKEN_COOKIE_NAME = "token";
+
     private final MemberService memberService;
 
     public ReservationViewController(MemberService memberService) {
@@ -39,27 +41,47 @@ public class ReservationViewController {
     @ResponseBody
     public ResponseEntity<Void> login(@RequestBody LoginRequest request) {
         String tokenValue = memberService.tokenLogin(request);
-        ResponseCookie responseCookie = ResponseCookie.from("token", tokenValue)
+
+        ResponseCookie responseCookie = createTokenCookie(tokenValue);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, responseCookie.toString());
+
+        return ResponseEntity.ok().headers(headers).build();
+    }
+
+    @GetMapping("/login/check")
+    public ResponseEntity<LoginResponse> loginCheck(HttpServletRequest request) {
+        String token = extractCookieValue(request, TOKEN_COOKIE_NAME);
+        LoginResponse loginResponse = memberService.loginCheck(token);
+        return ResponseEntity.ok().body(loginResponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        removeTokenCookie(request, response);
+        return ResponseEntity.ok().build();
+    }
+
+    private void removeTokenCookie(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(TOKEN_COOKIE_NAME)) {
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
+                }
+            }
+        }
+    }
+
+    private ResponseCookie createTokenCookie(String tokenValue) {
+        return ResponseCookie.from(TOKEN_COOKIE_NAME, tokenValue)
                 .path("/")
                 .httpOnly(true)
                 .secure(true)
                 .maxAge(60)
                 .build();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.SET_COOKIE, responseCookie.toString());
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .build();
-    }
-
-    @GetMapping("/login/check")
-    public ResponseEntity<LoginResponse> loginCheck(HttpServletRequest request) {
-        String token = extractCookieValue(request, "token");
-
-        LoginResponse loginResponse = memberService.loginCheck(token);
-        return ResponseEntity.ok().body(loginResponse);
     }
 
     private String extractCookieValue(HttpServletRequest request, String cookieName) {
@@ -72,20 +94,5 @@ public class ReservationViewController {
             }
         }
         return null;
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("token")) {
-                    cookie.setMaxAge(0);
-                    cookie.setPath("/");
-                    response.addCookie(cookie);
-                }
-            }
-        }
-        return ResponseEntity.ok().build();
     }
 }
