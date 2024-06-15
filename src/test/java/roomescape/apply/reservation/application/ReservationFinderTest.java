@@ -5,6 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import roomescape.apply.member.application.MemberFinder;
+import roomescape.apply.member.application.MemberRoleFinder;
+import roomescape.apply.member.application.mock.MockPasswordHasher;
+import roomescape.apply.member.domain.repository.MemberJDBCRepository;
+import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
 import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
 import roomescape.apply.reservation.domain.repository.ReservationRepository;
 import roomescape.apply.reservation.ui.dto.ReservationResponse;
@@ -34,7 +39,12 @@ class ReservationFinderTest extends BaseTestService {
         reservationRepository = new ReservationJDBCRepository(template);
         reservationTimeRepository = new ReservationTimeJDBCRepository(template);
         themeRepository = new ThemeJDBCRepository(template);
-        reservationFinder = new ReservationFinder(reservationRepository);
+        var memberRepository = new MemberJDBCRepository(template);
+        var memberRoleRepository = new MemberRoleJDBCRepository(template);
+
+        var memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
+        var memberFinder = new MemberFinder(new MockPasswordHasher(), memberRepository, memberRoleFinder);
+        reservationFinder = new ReservationFinder(reservationRepository, memberFinder);
     }
 
     @AfterEach

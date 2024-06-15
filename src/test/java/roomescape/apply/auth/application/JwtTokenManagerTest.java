@@ -4,8 +4,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import roomescape.apply.auth.application.exception.IllegalTokenException;
 import roomescape.apply.auth.ui.dto.LoginResponse;
+import roomescape.apply.member.application.MemberFinder;
+import roomescape.apply.member.application.MemberRoleFinder;
+import roomescape.apply.member.application.mock.MockPasswordHasher;
 import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.member.domain.MemberRoleNames;
+import roomescape.apply.member.domain.repository.MemberJDBCRepository;
+import roomescape.apply.member.domain.repository.MemberRepository;
+import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
+import roomescape.apply.member.domain.repository.MemberRoleRepository;
+import roomescape.support.BaseTestService;
 
 import java.util.Set;
 
@@ -13,13 +21,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-class JwtTokenManagerTest {
+class JwtTokenManagerTest extends BaseTestService {
 
     private final JwtTokenManager jwtTokenManager;
 
     JwtTokenManagerTest() {
         String testKey = "TeStSeCuReKeYIsSuPeRSeCuReKeYTeStSeCuReKeYIsSuPeRSeCuReKeYTeStSeCuReKeYIsSuPeRSeCuReKeY";
-        this.jwtTokenManager = new JwtTokenManager(testKey);
+        var mockPasswordHasher = new MockPasswordHasher();
+        MemberRepository memberRepository = new MemberJDBCRepository(template);
+        MemberRoleRepository memberRoleRepository = new MemberRoleJDBCRepository(template);
+        MemberRoleFinder memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
+        var memberFinder = new MemberFinder(mockPasswordHasher, memberRepository, memberRoleFinder);
+        this.jwtTokenManager = new JwtTokenManager(testKey, memberFinder);
     }
 
     @Test

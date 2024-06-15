@@ -2,6 +2,11 @@ package roomescape.apply.reservation.application;
 
 import org.junit.jupiter.api.*;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import roomescape.apply.member.application.MemberFinder;
+import roomescape.apply.member.application.MemberRoleFinder;
+import roomescape.apply.member.application.mock.MockPasswordHasher;
+import roomescape.apply.member.domain.repository.MemberJDBCRepository;
+import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
 import roomescape.apply.reservation.application.excpetion.DuplicateReservationException;
 import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
 import roomescape.apply.reservation.ui.dto.ReservationRequest;
@@ -18,6 +23,7 @@ import roomescape.support.BaseTestService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static roomescape.support.MemberFixture.loginMember;
 import static roomescape.support.ReservationsFixture.*;
 
 class ReservationRecorderTest extends BaseTestService {
@@ -32,10 +38,19 @@ class ReservationRecorderTest extends BaseTestService {
         reservationTimeRepository = new ReservationTimeJDBCRepository(template);
         var reservationRepository = new ReservationJDBCRepository(template);
         themeRepository = new ThemeJDBCRepository(template);
+        var memberRepository = new MemberJDBCRepository(template);
+        var memberRoleRepository = new MemberRoleJDBCRepository(template);
+
         var themeFinder = new ThemeFinder(themeRepository);
         var reservationTimeFinder = new ReservationTimeFinder(reservationTimeRepository);
-        var reservationFinder = new ReservationFinder(reservationRepository);
-        reservationRecorder = new ReservationRecorder(reservationRepository, reservationTimeFinder, themeFinder, reservationFinder);
+        var memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
+        var memberFinder = new MemberFinder(new MockPasswordHasher(), memberRepository, memberRoleFinder);
+        var reservationFinder = new ReservationFinder(reservationRepository, memberFinder);
+        reservationRecorder = new ReservationRecorder(reservationRepository,
+                reservationTimeFinder,
+                themeFinder,
+                reservationFinder,
+                memberFinder);
     }
 
     @AfterEach
@@ -51,7 +66,7 @@ class ReservationRecorderTest extends BaseTestService {
         Theme theme = themeRepository.save(theme());
         ReservationRequest request = reservationRequest(time.getId(), theme.getId());
         // when
-        ReservationResponse response = reservationRecorder.recordReservationBy(request);
+        ReservationResponse response = reservationRecorder.recordReservationBy(request, loginMember());
         // then
         assertThat(response).isNotNull();
         assertThat(response.id()).isNotZero();
@@ -72,8 +87,8 @@ class ReservationRecorderTest extends BaseTestService {
         Theme theme = themeRepository.save(theme());
         ReservationRequest request = reservationRequest(time.getId(), theme.getId());
         // when && then
-        Assertions.assertDoesNotThrow(() -> reservationRecorder.recordReservationBy(request));
-        assertThatThrownBy(() -> reservationRecorder.recordReservationBy(request))
+        Assertions.assertDoesNotThrow(() -> reservationRecorder.recordReservationBy(request, loginMember()));
+        assertThatThrownBy(() -> reservationRecorder.recordReservationBy(request, loginMember()))
                 .isInstanceOf(DuplicateReservationException.class)
                 .hasMessage(DuplicateReservationException.DEFAULT_MESSAGE);
     }

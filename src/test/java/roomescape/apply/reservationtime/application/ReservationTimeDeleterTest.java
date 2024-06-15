@@ -5,6 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import roomescape.apply.member.application.MemberFinder;
+import roomescape.apply.member.application.MemberRoleFinder;
+import roomescape.apply.member.application.mock.MockPasswordHasher;
+import roomescape.apply.member.domain.repository.MemberJDBCRepository;
+import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
 import roomescape.apply.reservation.application.ReservationFinder;
 import roomescape.apply.reservation.domain.Reservation;
 import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
@@ -35,7 +40,12 @@ class ReservationTimeDeleterTest extends BaseTestService {
         themeRepository = new ThemeJDBCRepository(template);
         reservationRepository = new ReservationJDBCRepository(template);
         reservationTimeRepository = new ReservationTimeJDBCRepository(template);
-        var reservationFinder = new ReservationFinder(reservationRepository);
+        var memberRepository = new MemberJDBCRepository(template);
+        var memberRoleRepository = new MemberRoleJDBCRepository(template);
+
+        var memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
+        var memberFinder = new MemberFinder(new MockPasswordHasher(), memberRepository, memberRoleFinder);
+        var reservationFinder = new ReservationFinder(reservationRepository, memberFinder);
         reservationTimeDeleter = new ReservationTimeDeleter(reservationTimeRepository, reservationFinder);
     }
 
