@@ -15,6 +15,8 @@ import roomescape.reservation.exception.ReservationAlreadyExistsException;
 import roomescape.theme.exception.ThemeNotFoundException;
 import roomescape.time.exception.CannotDeleteReserveTimeException;
 import roomescape.time.exception.ReservationTimeAlreadyExistsException;
+import roomescape.user.exception.PasswordNotMatchException;
+import roomescape.user.exception.UserNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,7 +25,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({CannotDeleteReserveTimeException.class, ReservationAlreadyExistsException.class,
             NoSuchElementException.class, PastDateReservationException.class,
-            ReservationTimeAlreadyExistsException.class})
+            ReservationTimeAlreadyExistsException.class, UserNotFoundException.class, PasswordNotMatchException.class})
     public ResponseEntity<ExceptionResponse> handleCannotDeleteReservedTimeException(RuntimeException e) {
         log.warn("{}", e.getMessage());
         return ResponseEntity.badRequest().body(ExceptionResponse.from(e.getMessage()));
