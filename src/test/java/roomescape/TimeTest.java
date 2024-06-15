@@ -10,9 +10,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.time.error.exception.ErrorCode;
-import roomescape.time.error.exception.TimeException;
-import roomescape.time.presentation.dto.TimeRequest;
+import roomescape.domain.time.api.dto.TimeRequest;
+import roomescape.domain.time.error.exception.ErrorCode;
+import roomescape.domain.time.error.exception.TimeException;
 
 import java.util.HashMap;
 import java.util.Map;

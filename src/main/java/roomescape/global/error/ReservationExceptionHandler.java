@@ -3,8 +3,8 @@ package roomescape.global.error;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import roomescape.theme.error.exception.ThemeException;
-import roomescape.time.error.exception.TimeException;
+import roomescape.admin.domain.theme.error.exception.ThemeException;
+import roomescape.admin.domain.time.error.exception.TimeException;
 
 import java.util.List;
 

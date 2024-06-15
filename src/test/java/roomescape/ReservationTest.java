@@ -11,12 +11,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.reservation.domain.Reservation;
-import roomescape.reservation.error.exception.ErrorCode;
-import roomescape.reservation.error.exception.ReservationException;
-import roomescape.reservation.presentation.dto.ReservationRequest;
-import roomescape.theme.domain.Theme;
-import roomescape.time.domain.Time;
+import roomescape.domain.reservation.api.dto.ReservationRequest;
+import roomescape.domain.reservation.domain.Reservation;
+import roomescape.domain.reservation.error.exception.ErrorCode;
+import roomescape.domain.reservation.error.exception.ReservationException;
+import roomescape.domain.theme.domain.Theme;
+import roomescape.domain.time.domain.Time;
 
 import java.util.HashMap;
 import java.util.Map;
