@@ -75,4 +75,22 @@ class AuthControllerTest {
                 .statusCode(HttpStatus.OK.value())
                 .body("name", Matchers.equalTo("어드민"));
     }
+
+    @Test
+    void 로그아웃을_한다() {
+        LoginRequest loginRequest = new LoginRequest("admin@email.com", "password");
+
+        String accessToken = RestAssured.given().log().all()
+                .body(loginRequest)
+                .contentType(ContentType.JSON)
+                .when().post("/login")
+                .then().log().all()
+                .extract().cookie("token");
+
+        RestAssured.given().log().all()
+                .cookie("token", accessToken)
+                .when().post("/logout")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value());
+    }
 }
