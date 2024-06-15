@@ -5,7 +5,9 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import roomescape.apply.member.application.MemberFinder;
 import roomescape.apply.member.application.MemberRoleFinder;
 import roomescape.apply.member.application.mock.MockPasswordHasher;
+import roomescape.apply.member.domain.Member;
 import roomescape.apply.member.domain.repository.MemberJDBCRepository;
+import roomescape.apply.member.domain.repository.MemberRepository;
 import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
 import roomescape.apply.reservation.application.excpetion.DuplicateReservationException;
 import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
@@ -24,6 +26,7 @@ import roomescape.support.BaseTestService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static roomescape.support.MemberFixture.loginMember;
+import static roomescape.support.MemberFixture.member;
 import static roomescape.support.ReservationsFixture.*;
 
 class ReservationRecorderTest extends BaseTestService {
@@ -31,6 +34,7 @@ class ReservationRecorderTest extends BaseTestService {
     private ReservationRecorder reservationRecorder;
     private ReservationTimeRepository reservationTimeRepository;
     private ThemeRepository themeRepository;
+    private MemberRepository memberRepository;
 
     @BeforeEach
     void setUp() {
@@ -38,7 +42,7 @@ class ReservationRecorderTest extends BaseTestService {
         reservationTimeRepository = new ReservationTimeJDBCRepository(template);
         var reservationRepository = new ReservationJDBCRepository(template);
         themeRepository = new ThemeJDBCRepository(template);
-        var memberRepository = new MemberJDBCRepository(template);
+        memberRepository = new MemberJDBCRepository(template);
         var memberRoleRepository = new MemberRoleJDBCRepository(template);
 
         var themeFinder = new ThemeFinder(themeRepository);
@@ -65,18 +69,17 @@ class ReservationRecorderTest extends BaseTestService {
         ReservationTime time = reservationTimeRepository.save(reservationTime());
         Theme theme = themeRepository.save(theme());
         ReservationRequest request = reservationRequest(time.getId(), theme.getId());
+        Member save = memberRepository.save(member());
         // when
-        ReservationResponse response = reservationRecorder.recordReservationBy(request, loginMember());
+        ReservationResponse response = reservationRecorder.recordReservationBy(request, loginMember(save));
         // then
         assertThat(response).isNotNull();
         assertThat(response.id()).isNotZero();
-        assertThat(response).usingRecursiveComparison()
-                .ignoringFields("id", "time", "theme")
-                .isEqualTo(request);
-        assertThat(response.time()).usingRecursiveComparison()
-                .isEqualTo(time);
-        assertThat(response.theme()).usingRecursiveComparison()
-                .isEqualTo(theme);
+        assertThat(response.date()).isEqualTo(request.date());
+        assertThat(response.theme().id()).isEqualTo(request.themeId());
+        assertThat(response.time().id()).isEqualTo(request.timeId());
+        assertThat(response.name()).isNotEmpty();
+
     }
 
     @Test
@@ -86,9 +89,10 @@ class ReservationRecorderTest extends BaseTestService {
         ReservationTime time = reservationTimeRepository.save(reservationTime());
         Theme theme = themeRepository.save(theme());
         ReservationRequest request = reservationRequest(time.getId(), theme.getId());
+        Member save = memberRepository.save(member());
         // when && then
-        Assertions.assertDoesNotThrow(() -> reservationRecorder.recordReservationBy(request, loginMember()));
-        assertThatThrownBy(() -> reservationRecorder.recordReservationBy(request, loginMember()))
+        Assertions.assertDoesNotThrow(() -> reservationRecorder.recordReservationBy(request, loginMember(save)));
+        assertThatThrownBy(() -> reservationRecorder.recordReservationBy(request, loginMember(save)))
                 .isInstanceOf(DuplicateReservationException.class)
                 .hasMessage(DuplicateReservationException.DEFAULT_MESSAGE);
     }

@@ -1,7 +1,10 @@
 package roomescape.apply.auth.application;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import roomescape.apply.auth.application.exception.IllegalTokenException;
 import roomescape.apply.auth.ui.dto.LoginResponse;
 import roomescape.apply.member.application.MemberFinder;
@@ -13,6 +16,13 @@ import roomescape.apply.member.domain.repository.MemberJDBCRepository;
 import roomescape.apply.member.domain.repository.MemberRepository;
 import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
 import roomescape.apply.member.domain.repository.MemberRoleRepository;
+import roomescape.apply.reservation.application.ReservationFinder;
+import roomescape.apply.reservation.application.ReservationRecorder;
+import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
+import roomescape.apply.reservationtime.application.ReservationTimeFinder;
+import roomescape.apply.reservationtime.domain.repository.ReservationTimeJDBCRepository;
+import roomescape.apply.theme.application.ThemeFinder;
+import roomescape.apply.theme.domain.repository.ThemeJDBCRepository;
 import roomescape.support.BaseTestService;
 
 import java.util.Set;
@@ -23,17 +33,25 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class JwtTokenManagerTest extends BaseTestService {
 
-    private final JwtTokenManager jwtTokenManager;
+    private JwtTokenManager jwtTokenManager;
 
-    JwtTokenManagerTest() {
+    @BeforeEach
+    void setUp() {
+        transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
         String testKey = "TeStSeCuReKeYIsSuPeRSeCuReKeYTeStSeCuReKeYIsSuPeRSeCuReKeYTeStSeCuReKeYIsSuPeRSeCuReKeY";
         var mockPasswordHasher = new MockPasswordHasher();
-        MemberRepository memberRepository = new MemberJDBCRepository(template);
-        MemberRoleRepository memberRoleRepository = new MemberRoleJDBCRepository(template);
-        MemberRoleFinder memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
+        var memberRepository = new MemberJDBCRepository(template);
+        var memberRoleRepository = new MemberRoleJDBCRepository(template);
+        var memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
         var memberFinder = new MemberFinder(mockPasswordHasher, memberRepository, memberRoleFinder);
         this.jwtTokenManager = new JwtTokenManager(testKey, memberFinder);
     }
+
+    @AfterEach
+    void clear() {
+        transactionManager.rollback(transactionStatus);
+    }
+
 
     @Test
     @DisplayName("LoginResponse 값을 통해 토큰을 만들 수 있다.")
