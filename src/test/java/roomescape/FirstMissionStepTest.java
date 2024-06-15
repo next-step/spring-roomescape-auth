@@ -4,17 +4,15 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import roomescape.support.BaseWebApplicationTest;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.is;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class FirstMissionStepTest {
+
+class FirstMissionStepTest extends BaseWebApplicationTest {
 
     @Test
     void page() {
@@ -104,7 +102,7 @@ class FirstMissionStepTest {
                 .statusCode(400)
                 .body("message", is("JSON parse error: 필수 값은 비어 있을 수 없습니다. name = , description = , thumbnail = "));
     }
-    
+
     @Test
     void reservationTime() {
         sendSaveReservationTimeRequest();
