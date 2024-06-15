@@ -43,7 +43,9 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletResponse response) {
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        String accessToken = extractTokenFromCookie(request.getCookies());
+        authService.logout(accessToken);
         Cookie cookie = createCookie("");
         cookie.setMaxAge(0);
         response.addCookie(cookie);

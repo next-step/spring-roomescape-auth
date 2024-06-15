@@ -37,4 +37,10 @@ public class AuthService {
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다"));
         return new CheckUserInfoResponse(user.getName());
     }
+
+    public void logout(String accessToken) {
+        String email = jwtTokenProvider.getEmail(accessToken);
+        userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다"));
+    }
 }
