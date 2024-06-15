@@ -39,13 +39,14 @@ public class MemberJDBCRepository implements MemberRepository {
                     member
             """;
 
-    private static final String COUNT_BY_EMAIL_SQL = """
+    private static final String FIND_ANY_ID_BY_ID_SQL = """
                 SELECT
-                    COUNT(id)
+                    id
                 FROM
                     member
                 WHERE
                     email = ?
+                LIMIT 1
             """;
 
     private static final String INSERT_MEMBER_SQL = """
@@ -81,11 +82,11 @@ public class MemberJDBCRepository implements MemberRepository {
     }
 
     @Override
-    public Integer countByEmail(String email) {
+    public Optional<Long> findAnyIdByEmail(String email) {
         try {
-            return template.queryForObject(COUNT_BY_EMAIL_SQL, Integer.class, email);
+            return Optional.ofNullable(template.queryForObject(FIND_ANY_ID_BY_ID_SQL, Long.class, email));
         } catch (EmptyResultDataAccessException ex) {
-            return 0;
+            return Optional.empty();
         }
     }
 

@@ -47,6 +47,6 @@ public class MemberFinder {
     }
 
     public boolean isDuplicateEmail(String email) {
-        return memberRepository.countByEmail(email) != 0;
+        return memberRepository.findAnyIdByEmail(email).isPresent();
     }
 }

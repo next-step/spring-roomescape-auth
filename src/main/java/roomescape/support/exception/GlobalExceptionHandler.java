@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({TokenNotFoundException.class, IllegalTokenException.class})
     public ResponseEntity<ExceptionResponse> handleTokenException(IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(new ExceptionResponse(400, e.getMessage()));
+        return ResponseEntity.badRequest().body(new ExceptionResponse(401, e.getMessage()));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, IllegalArgumentException.class,

@@ -32,13 +32,14 @@ public class ThemeJDBCRepository implements ThemeRepository {
                     theme
             """;
 
-    private static final String CHECK_ID_EXISTS_SQL = """
+    private static final String FIND_ANY_ID_BY_ID_SQL = """
                 SELECT
                     id
                 FROM
                     theme
                 WHERE
                     id = ?
+                LIMIT 1
             """;
 
     private static final String SELECT_ONE_SQL = """
@@ -94,9 +95,9 @@ public class ThemeJDBCRepository implements ThemeRepository {
     }
 
     @Override
-    public Optional<Long> checkIdExists(long id) {
+    public Optional<Long> findAnyIdById(long id) {
         try {
-            Long themeId = template.queryForObject(CHECK_ID_EXISTS_SQL, Long.class, id);
+            Long themeId = template.queryForObject(FIND_ANY_ID_BY_ID_SQL, Long.class, id);
             return Optional.ofNullable(themeId);
         } catch (EmptyResultDataAccessException exception) {
             return Optional.empty();

@@ -6,8 +6,6 @@ import roomescape.apply.theme.application.exception.ThemeReferencedException;
 import roomescape.apply.theme.domain.repository.ThemeRepository;
 import roomescape.apply.theme.application.exception.NotFoundThemeException;
 
-import java.util.Optional;
-
 @Service
 public class ThemeDeleter {
 
@@ -20,7 +18,7 @@ public class ThemeDeleter {
     }
 
     public void deleteThemeBy(long id) {
-        final long existId = themeRepository.checkIdExists(id).orElseThrow(NotFoundThemeException::new);
+        final long existId = themeRepository.findAnyIdById(id).orElseThrow(NotFoundThemeException::new);
         boolean isReferenced = reservationFinder.findAnyByThemeId(id).isPresent();
         if (isReferenced) {
             throw new ThemeReferencedException();

@@ -14,7 +14,7 @@ public class ReservationCanceler {
     }
 
     public void cancelReservation(long id) {
-        final long reservationId = reservationRepository.checkIdExists(id).orElseThrow(NotFoundReservationException::new);
+        final long reservationId = reservationRepository.findAnyIdById(id).orElseThrow(NotFoundReservationException::new);
         reservationRepository.deleteById(reservationId);
     }
 }

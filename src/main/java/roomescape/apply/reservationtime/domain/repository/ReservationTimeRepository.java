@@ -13,7 +13,7 @@ public interface ReservationTimeRepository {
 
     void deleteById(Long id);
 
-    Optional<Long> checkIdExists(long id);
+    Optional<Long> findAnyIdById(long id);
 
     Optional<ReservationTime> findById(long timeId);
 

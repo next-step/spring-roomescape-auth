@@ -41,13 +41,14 @@ public class ReservationJDBCRepository implements ReservationRepository {
             on r.theme_id = th.id
     """;
 
-    private static final String CHECK_ID_EXISTS_SQL = """
+    private static final String FIND_ANY_ID_BY_ID_SQL = """
         SELECT
             id
         FROM
             reservation
         WHERE
             id = ?
+        LIMIT 1
     """;
 
     private static final String DELETE_SQL = """
@@ -118,9 +119,9 @@ public class ReservationJDBCRepository implements ReservationRepository {
     }
 
     @Override
-    public Optional<Long> checkIdExists(long id) {
+    public Optional<Long> findAnyIdById(long id) {
         try {
-            Long reservation = template.queryForObject(CHECK_ID_EXISTS_SQL, Long.class, id);
+            Long reservation = template.queryForObject(FIND_ANY_ID_BY_ID_SQL, Long.class, id);
             return Optional.ofNullable(reservation);
         } catch (EmptyResultDataAccessException exception) {
             return Optional.empty();
