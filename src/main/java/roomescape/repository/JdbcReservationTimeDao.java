@@ -1,15 +1,14 @@
 package roomescape.repository;
 
+import java.sql.PreparedStatement;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import roomescape.domain.ReservationTime;
-
-import java.sql.PreparedStatement;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class JdbcReservationTimeDao {
@@ -72,10 +71,15 @@ public class JdbcReservationTimeDao {
 
     public List<ReservationTime> findAllByAvailableTime(String date, Long themeId) {
         final String sql = """
-                SELECT id, start_at
-                FROM reservation_time
-                WHERE NOT EXISTS
-                (SELECT time_id FROM reservation WHERE \"date\" = ? AND theme_id = ?)
+                 SELECT rt.id, rt.start_at
+                 FROM reservation_time rt
+                 WHERE NOT EXISTS (
+                     SELECT 1
+                     FROM reservation r
+                     WHERE r.\"date\" = ?
+                     AND r.theme_id = ?
+                     AND r.time_id = rt.id
+                 )
                 """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> new ReservationTime(

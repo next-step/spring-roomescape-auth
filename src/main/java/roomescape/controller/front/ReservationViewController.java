@@ -4,6 +4,7 @@ package roomescape.controller.front;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class ReservationViewController {
 
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Void> login(@RequestBody @Valid LoginRequest request) {
         String tokenValue = memberService.tokenLogin(request);
 
         ResponseCookie responseCookie = createTokenCookie(tokenValue);

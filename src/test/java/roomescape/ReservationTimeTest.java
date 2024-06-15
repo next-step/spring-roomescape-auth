@@ -105,7 +105,7 @@ public class ReservationTimeTest {
     }
 
     @Test
-    @DisplayName("예약테마를 삭제할 때 사용중인 예약이 있는 경우 에러가 발생한다.")
+    @DisplayName("예약시간을 삭제할 때 사용중인 예약이 있는 경우 에러가 발생한다.")
     void deleteReservationTimeExistReservation() {
         Map<String, String> params = new HashMap<>();
         params.put("name", "레벨2 탈출");
@@ -132,5 +132,38 @@ public class ReservationTimeTest {
                 .when().delete("/times/1")
                 .then().log().all()
                 .statusCode(HttpStatus.CONFLICT.value());
+    }
+
+    @DisplayName("테마의 예약가능 시간 목록을 조회한다.")
+    @Test
+    void availableTimes() {
+        Map<String, String> params = new HashMap<>();
+        params.put("name", "레벨2 탈출");
+        params.put("description", "우테코 레벨2를 탈출하는 내용입니다.");
+        params.put("thumbnail", "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
+
+        예약테마를_생성한다(params);
+
+        params.clear();
+        params.put("startAt", "10:00");
+        예약시간을_생성한다(params);
+
+        params.clear();
+        params.put("startAt", "11:00");
+        예약시간을_생성한다(params);
+
+        params.clear();
+        params.put("name", "브라운");
+        params.put("date", "2024-06-25");
+        params.put("timeId", "1");
+        params.put("themeId", "1");
+        예약을_생성한다(params);
+
+        RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .when().get("/times/available?date=2024-06-25&themeId=1")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .body("size()", is(1));
     }
 }
