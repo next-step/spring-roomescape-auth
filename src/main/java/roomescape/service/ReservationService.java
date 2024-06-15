@@ -51,8 +51,10 @@ public class ReservationService {
         findReservationThemeById(reservationRequest.getThemeId());
         ReservationTime reservationTime = findReservationTimeById(reservationRequest.getTimeId());
 
-        long count = reservationDao.countByDateAndTimeId(reservationRequest.getDate()
-                , reservationRequest.getTimeId());
+        long count = reservationDao.countByDateAndTimeIdAndThemeId(
+                reservationRequest.getDate()
+                , reservationRequest.getTimeId()
+                , reservationRequest.getThemeId());
         if (count > 0) {
             throw new BusinessException("해당 시간에 이미 예약이 존재합니다.", HttpStatus.CONFLICT);
         }

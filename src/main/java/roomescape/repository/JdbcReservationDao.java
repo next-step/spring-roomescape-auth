@@ -79,9 +79,15 @@ public class JdbcReservationDao {
         jdbcTemplate.update(sql, id);
     }
 
-    public Long countByDateAndTimeId(String date, String timeId) {
-        final String sql = "SELECT count(*) FROM reservation r WHERE \"date\" = ? AND time_id = ?";
-        return jdbcTemplate.queryForObject(sql, Long.class, date, timeId);
+    public Long countByDateAndTimeIdAndThemeId(String date, String timeId, String themeId) {
+        final String sql = """
+                    SELECT count(*) 
+                    FROM reservation r 
+                    WHERE \"date\" = ? 
+                    AND time_id = ?
+                    AND theme_id = ?
+                """;
+        return jdbcTemplate.queryForObject(sql, Long.class, date, timeId, themeId);
     }
 
     public Long countByTimeId(Long timeId) {
