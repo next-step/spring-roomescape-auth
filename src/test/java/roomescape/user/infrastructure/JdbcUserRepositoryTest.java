@@ -29,9 +29,7 @@ class JdbcUserRepositoryTest {
     @DisplayName("이메일로 회원을 조회한다.")
     void findByEmail() {
         // given
-        jdbcTemplate.execute("INSERT INTO users(email, password) VALUES ('email@email.com', '1234')");
-
-        String email = "email@email.com";
+        String email = "admin@email.com";
 
         // when
         User user = userRepository.findByEmail(email).get();

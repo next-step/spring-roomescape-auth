@@ -11,7 +11,7 @@ class UserTest {
     @DisplayName("비밀번호가 일치하면 TRUE를 반환한다.")
     void matchPassword_ReturnTrue() {
         // given
-        User user = new User(1L, "admin@email.com", "1234");
+        User user = new User(1L, "어드민", "admin@email.com", "1234");
 
         // when
         boolean result = user.matchPassword("1234");
@@ -24,7 +24,7 @@ class UserTest {
     @DisplayName("비밀번호가 일치하면 FALSE를 반환한다.")
     void matchPassword_ReturnFalse() {
         // given
-        User user = new User(1L, "admin@email.com", "1234");
+        User user = new User(1L, "어드민", "admin@email.com", "1234");
 
         // when
         boolean result = user.matchPassword("123");

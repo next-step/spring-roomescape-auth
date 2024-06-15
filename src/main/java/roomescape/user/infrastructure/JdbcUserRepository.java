@@ -24,6 +24,7 @@ public class JdbcUserRepository implements UserRepository {
         try {
             User findUser = jdbcTemplate.queryForObject(sql, (resultSet, rowNum) -> new User(
                     resultSet.getLong("id"),
+                    resultSet.getString("name"),
                     resultSet.getString("email"),
                     resultSet.getString("password")
             ), email);
