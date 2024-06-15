@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import roomescape.auth.dto.CheckUserInfoResponse;
 import roomescape.auth.dto.LoginRequest;
 import roomescape.jwt.JwtTokenProvider;
 import roomescape.user.domain.User;
@@ -81,5 +82,19 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.login(request))
                 .isInstanceOf(PasswordNotMatchException.class)
                 .hasMessage("비밀번호가 일치하지 않습니다");
+    }
+
+    @Test
+    void 사용자_정보를_조회한다() {
+        // given
+        given(jwtTokenProvider.getEmail(anyString())).willReturn("admin@email.com");
+        given(userRepository.findByEmail(anyString()))
+                .willReturn(Optional.of(new User(1L, "어드민", "password", "admin@email.com")));
+
+        // when
+        CheckUserInfoResponse response = authService.checkUserInfo("accessToken");
+
+        // then
+        assertThat(response.name()).isEqualTo("어드민");
     }
 }

@@ -55,4 +55,24 @@ class AuthControllerTest {
                 .then().log().all()
                 .statusCode(HttpStatus.BAD_REQUEST.value());
     }
+
+    @Test
+    @DisplayName("로그인한 사용자 정보를 조회한다.")
+    void checkUserInfo() {
+        LoginRequest loginRequest = new LoginRequest("admin@email.com", "password");
+
+        String accessToken = RestAssured.given().log().all()
+                .body(loginRequest)
+                .contentType(ContentType.JSON)
+                .when().post("/login")
+                .then().log().all()
+                .extract().cookie("token");
+
+        RestAssured.given().log().all()
+                .cookie("token", accessToken)
+                .when().get("/login/check")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .body("name", Matchers.equalTo("어드민"));
+    }
 }

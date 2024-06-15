@@ -28,4 +28,17 @@ class JwtTokenProviderTest {
         // then
         assertThat(jwt).isNotNull();
     }
+
+    @Test
+    void 토큰에서_이메일을_추출한다() {
+        // given
+        String email = "email@email.com";
+        String jwt = jwtTokenProvider.createJwt(email);
+
+        // when
+        String extractedEmail = jwtTokenProvider.getEmail(jwt);
+
+        // then
+        assertThat(extractedEmail).isEqualTo(email);
+    }
 }
