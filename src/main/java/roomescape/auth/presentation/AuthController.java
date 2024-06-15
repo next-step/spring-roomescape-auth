@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import roomescape.auth.application.AuthService;
@@ -18,7 +17,6 @@ import roomescape.auth.dto.CheckUserInfoResponse;
 import roomescape.auth.dto.LoginRequest;
 
 @RestController
-@RequestMapping("/login")
 public class AuthController {
 
     private static final String TOKEN_COOKIE_NAME = "token";
@@ -29,7 +27,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         String accessToken = authService.login(loginRequest);
         Cookie cookie = createCookie(accessToken);
@@ -37,11 +35,19 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/check")
+    @GetMapping("/login/check")
     public ResponseEntity<CheckUserInfoResponse> checkUserInfo(HttpServletRequest request) {
         String accessToken = extractTokenFromCookie(request.getCookies());
         CheckUserInfoResponse response = authService.checkUserInfo(accessToken);
         return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        Cookie cookie = createCookie("");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return ResponseEntity.ok().build();
     }
 
     private Cookie createCookie(String token) {
