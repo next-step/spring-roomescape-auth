@@ -1,5 +1,5 @@
 let isEditing = false;
-const RESERVATION_API_ENDPOINT = '/reservations';
+const RESERVATION_API_ENDPOINT = '/admin/reservations';
 const TIME_API_ENDPOINT = '/times';
 const THEME_API_ENDPOINT = '/themes';
 const MEMBER_API_ENDPOINT = '/members';
@@ -49,7 +49,7 @@ function fetchThemes() {
   requestRead(THEME_API_ENDPOINT)
       .then(data => {
         themesOptions.push(...data);
-        populateSelect('theme', themesOptions, 'name');
+        addDropdownOptions('theme', themesOptions, 'name');
       })
       .catch(error => console.error('Error fetching theme:', error));
 }
@@ -58,18 +58,20 @@ function fetchMembers() {
   requestRead(MEMBER_API_ENDPOINT)
       .then(data => {
         membersOptions.push(...data);
-        populateSelect('member', membersOptions, 'name');
+        addDropdownOptions('member', membersOptions, 'name');
       })
       .catch(error => console.error('Error fetching member:', error));
 }
 
-function populateSelect(selectId, options, textProperty) {
-  const select = document.getElementById(selectId);
-  options.forEach(optionData => {
-    const option = document.createElement('option');
-    option.value = optionData.id;
-    option.textContent = optionData[textProperty];
-    select.appendChild(option);
+function addDropdownOptions(selectId, options, textProperty) {
+  const selects = document.querySelectorAll(`select[id=${selectId}]`); // 모든 select 요소 선택
+  selects.forEach(select => {
+    options.forEach(optionData => {
+      const option = document.createElement('option');
+      option.value = optionData.id;
+      option.textContent = optionData[textProperty];
+      select.appendChild(option);
+    });
   });
 }
 
@@ -131,6 +133,8 @@ function addInputRow() {
     row.remove();
     isEditing = false;
   }));
+  addDropdownOptions('theme', themesOptions, 'name');
+  addDropdownOptions('member', membersOptions, 'name');
 }
 
 function createInput(type) {
@@ -190,7 +194,7 @@ function requestCreate(reservation) {
     body: JSON.stringify(reservation)
   };
 
-  return fetch('/reservations', requestOptions)
+  return fetch('/admin/reservations', requestOptions)
       .then(response => {
         if (response.status === 201) return response.json();
         throw new Error('Create failed');
