@@ -116,6 +116,34 @@ DELETE /times/1 HTTP/1.1
 HTTP/1.1 200
 ```
 
+### 예약 가능 시간 조회
+- Request
+```jsonpath
+GET /times/available?date={date}&themeId={themeId} HTTP/1.1
+```
+- Response
+```jsonpath
+HTTP/1.1 200 
+Content-Type: application/json
+
+[
+    {
+        "id": 1,
+        "startAt": "10:00"
+    },
+    {
+        "id": 2,
+        "startAt": "12:00"
+    },
+    {
+        "id": 2,
+        "startAt": "12:00"
+    }
+]
+
+```
+
+
 ### 테마 조회 API
 - request
 ```json
