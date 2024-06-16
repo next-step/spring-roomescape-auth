@@ -1,20 +1,23 @@
 package roomescape.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTheme;
 import roomescape.domain.ReservationTime;
 import roomescape.dto.request.ReservationRequest;
 import roomescape.dto.response.ReservationResponse;
-import roomescape.exception.BusinessException;
+import roomescape.exception.custom.ExistingReservationException;
+import roomescape.exception.custom.InvalidReservationThemeException;
+import roomescape.exception.custom.InvalidReservationTimeException;
+import roomescape.exception.custom.PastDateReservationException;
 import roomescape.repository.JdbcReservationDao;
 import roomescape.repository.JdbcReservationThemeDao;
 import roomescape.repository.JdbcReservationTimeDao;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 @Service
 public class ReservationService {
@@ -56,11 +59,11 @@ public class ReservationService {
                 , reservationRequest.getTimeId()
                 , reservationRequest.getThemeId());
         if (count > 0) {
-            throw new BusinessException("해당 시간에 이미 예약이 존재합니다.", HttpStatus.CONFLICT);
+            throw new ExistingReservationException();
         }
 
         if (isDateExpired(reservationRequest.getDate(), reservationTime.getStartAt())) {
-            throw new BusinessException("이미 지나간 날짜는 예약할 수 없습니다.", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new PastDateReservationException();
         }
     }
 
@@ -80,13 +83,13 @@ public class ReservationService {
     private ReservationTime findReservationTimeById(String timeId) {
         return reservationTimeDao
                 .findById(Long.parseLong(timeId))
-                .orElseThrow(() -> new BusinessException("존재하지 않는 예약시간입니다.", HttpStatus.BAD_REQUEST));
+                .orElseThrow(InvalidReservationTimeException::new);
     }
 
     private ReservationTheme findReservationThemeById(String themeId) {
         return reservationThemeDao
                 .findById(Long.parseLong(themeId))
-                .orElseThrow(() -> new BusinessException("존재하지 않는 예약테마입니다.", HttpStatus.BAD_REQUEST));
+                .orElseThrow(InvalidReservationThemeException::new);
     }
 
     private boolean isDateExpired(String date, String startAt) {

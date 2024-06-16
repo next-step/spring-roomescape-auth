@@ -1,8 +1,8 @@
-package roomescape.exception;
+package roomescape.exception.dto;
 
 public class ErrorResponse {
 
-    private String message;
+    private final String message;
 
     public ErrorResponse(String message) {
         this.message = message;

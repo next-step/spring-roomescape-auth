@@ -1,12 +1,14 @@
 package roomescape.service;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 import roomescape.domain.Member;
 import roomescape.dto.request.LoginRequest;
 import roomescape.dto.response.LoginResponse;
-import roomescape.exception.BusinessException;
+import roomescape.exception.custom.InvalidTokenException;
+import roomescape.exception.custom.PasswordMismatchException;
+import roomescape.exception.custom.TokenNotFoundException;
+import roomescape.exception.custom.UserNotFoundException;
 import roomescape.repository.JdbcMemberDao;
 import roomescape.util.JwtTokenProvider;
 
@@ -33,14 +35,13 @@ public class MemberService {
         Member member = findByEmail(email);
 
         if (!member.getPassword().equals(password)) {
-            throw new BusinessException("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+            throw new PasswordMismatchException();
         }
     }
 
     private Member findByEmail(String email) {
-        Member member = memberDao.findByEmail(email)
-                .orElseThrow(() -> new BusinessException("존재하지 않는 사용자입니다.", HttpStatus.BAD_REQUEST));
-        return member;
+        return memberDao.findByEmail(email)
+                .orElseThrow(UserNotFoundException::new);
     }
 
     public LoginResponse loginCheck(String token) {
@@ -54,11 +55,11 @@ public class MemberService {
 
     private void validateToken(String token) {
         if (StringUtils.isEmpty(token)) {
-            throw new BusinessException("토큰이 존재하지 않습니다", HttpStatus.BAD_REQUEST);
+            throw new TokenNotFoundException();
         }
 
         if (!jwtTokenProvider.validateToken(token)) {
-            throw new BusinessException("유효하지 않은 토큰입니다.", HttpStatus.BAD_REQUEST);
+            throw new InvalidTokenException();
         }
     }
 }

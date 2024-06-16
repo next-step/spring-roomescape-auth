@@ -1,11 +1,11 @@
 package roomescape.service;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import roomescape.domain.ReservationTime;
 import roomescape.dto.request.ReservationTimeRequest;
 import roomescape.dto.response.ReservationTimeResponse;
-import roomescape.exception.BusinessException;
+import roomescape.exception.custom.DuplicateTimeException;
+import roomescape.exception.custom.ReservationTimeConflictException;
 import roomescape.repository.JdbcReservationDao;
 import roomescape.repository.JdbcReservationTimeDao;
 
@@ -25,7 +25,7 @@ public class ReservationTimeService {
     public ReservationTimeResponse createReservationTime(ReservationTimeRequest reservationTimeRequest) {
         Long count = reservationTimeDao.findByStartAt(reservationTimeRequest.getStartAt());
         if (count > 0) {
-            throw new BusinessException("동일한 테마시간이 존재합니다.", HttpStatus.CONFLICT);
+            throw new DuplicateTimeException();
         }
 
         ReservationTime reservationTime = reservationTimeDao.save(convertToEntity(reservationTimeRequest));
@@ -42,8 +42,7 @@ public class ReservationTimeService {
     public void deleteReservationTime(Long id) {
         long count = reservationDao.countByTimeId(id);
         if (count > 0) {
-            throw new BusinessException("예약 시간을 사용중인 예약이 존재합니다. 예약 삭제 후 다시 시도해주세요."
-                    , HttpStatus.CONFLICT);
+            throw new ReservationTimeConflictException();
         }
         reservationTimeDao.delete(id);
     }

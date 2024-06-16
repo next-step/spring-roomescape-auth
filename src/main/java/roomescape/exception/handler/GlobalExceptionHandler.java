@@ -1,9 +1,11 @@
-package roomescape.exception;
+package roomescape.exception.handler;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import roomescape.exception.custom.BusinessException;
+import roomescape.exception.dto.ErrorResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

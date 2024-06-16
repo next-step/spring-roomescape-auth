@@ -1,14 +1,15 @@
 package roomescape.service;
 
-import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import roomescape.domain.ReservationTheme;
 import roomescape.dto.request.ReservationThemeRequest;
 import roomescape.dto.response.ReservationThemeResponse;
-import roomescape.exception.BusinessException;
+import roomescape.exception.custom.DuplicateThemeException;
+import roomescape.exception.custom.ReservationThemeConflictException;
 import roomescape.repository.JdbcReservationDao;
 import roomescape.repository.JdbcReservationThemeDao;
+
+import java.util.List;
 
 @Service
 public class ReservationThemeService {
@@ -24,7 +25,7 @@ public class ReservationThemeService {
     public ReservationThemeResponse createReservationTheme(ReservationThemeRequest request) {
         Long count = reservationThemeDao.findByName(request.getName());
         if (count > 0) {
-            throw new BusinessException("동일한 테마이름이 존재합니다.", HttpStatus.CONFLICT);
+            throw new DuplicateThemeException();
         }
 
         ReservationTheme reservationTheme = reservationThemeDao.save(this.convertToEntity(request));
@@ -41,8 +42,7 @@ public class ReservationThemeService {
     public void deleteReservationTheme(Long id) {
         long count = reservationDao.countByThemeId(id);
         if (count > 0) {
-            throw new BusinessException("예약 테마를 사용중인 예약이 존재합니다. 예약 삭제 후 다시 시도해주세요."
-                    , HttpStatus.CONFLICT);
+            throw new ReservationThemeConflictException();
         }
 
         reservationThemeDao.delete(id);
