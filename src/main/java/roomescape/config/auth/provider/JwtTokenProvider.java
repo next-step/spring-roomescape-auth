@@ -18,9 +18,10 @@ public class JwtTokenProvider {
     this.jwtProperties = jwtProperties;
   }
 
-  public String createToken(String payload) {
+  public String createToken(String payload, String role) {
     Claims claims = Jwts.claims()
                         .setSubject(payload);
+    claims.put("ROLE", role);
     Date now = new Date();
     Date validity = new Date(now.getTime() + jwtProperties.getValidityInMilliseconds());
 
@@ -38,6 +39,14 @@ public class JwtTokenProvider {
                .parseClaimsJws(token)
                .getBody()
                .getSubject();
+  }
+
+  public String getRole(String token) {
+    return Jwts.parser()
+               .setSigningKey(jwtProperties.getSecretKey())
+               .parseClaimsJws(token)
+               .getBody()
+               .get("ROLE", String.class);
   }
 
   public boolean validateToken(String token) {

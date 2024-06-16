@@ -38,6 +38,6 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
                            .orElseThrow(AuthenticationException::new)
                            .getValue();
 
-        return loginUseCase.findUserByJwt(jwt);
+        return loginUseCase.findMemberByJwt(jwt);
     }
 }

@@ -5,6 +5,7 @@
 //import org.springframework.web.bind.annotation.ExceptionHandler;
 //import org.springframework.web.bind.annotation.RestControllerAdvice;
 //import roomescape.exception.AuthenticationException;
+//import roomescape.exception.AuthorizationException;
 //import roomescape.exception.InvalidSaveDuplicationReservationTime;
 //import roomescape.exception.NotFoundReservationException;
 //import roomescape.exception.NotFoundReservationTimeException;
@@ -27,6 +28,12 @@
 //  @ExceptionHandler(AuthenticationException.class)
 //  public ResponseEntity<Void> handleException(AuthenticationException e) {
 //    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                         .build();
+//  }
+//
+//  @ExceptionHandler(AuthorizationException.class)
+//  public ResponseEntity<Void> handleException(AuthorizationException e) {
+//    return ResponseEntity.status(HttpStatus.FORBIDDEN)
 //                         .build();
 //  }
 //

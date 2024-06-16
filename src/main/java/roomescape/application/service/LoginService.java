@@ -8,6 +8,7 @@ import roomescape.application.port.in.LoginUseCase;
 import roomescape.application.port.out.MemberPort;
 import roomescape.config.auth.provider.JwtTokenProvider;
 import roomescape.domain.Member;
+import roomescape.enums.Role;
 import roomescape.exception.AuthenticationException;
 
 @Service
@@ -33,21 +34,22 @@ public class LoginService implements LoginUseCase {
       throw new AuthenticationException();
     }
 
-    return jwtTokenProvider.createToken(loginCommand.email());
+    return jwtTokenProvider.createToken(loginCommand.email(), Role.ADMIN.name());
   }
 
   @Override
-  public MemberResponse findMember(String payload) {
-      return new MemberResponse(payload);
+  public MemberResponse findMember(String payload, Role role) {
+      return new MemberResponse(payload, role);
   }
 
   @Override
-  public MemberResponse findUserByJwt(String jwt) {
+  public MemberResponse findMemberByJwt(String jwt) {
     if (!jwtTokenProvider.validateToken(jwt)) {
       throw new AuthenticationException();
     }
 
     String payload = jwtTokenProvider.getPayload(jwt);
-    return findMember(payload);
+    String role = jwtTokenProvider.getRole(jwt);
+    return findMember(payload, Role.from(role));
   }
 }

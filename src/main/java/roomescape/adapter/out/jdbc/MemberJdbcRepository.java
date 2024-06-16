@@ -20,7 +20,7 @@ public class MemberJdbcRepository implements MemberPort {
 
     @Override
     public List<Member> findMembers() {
-        String sql = "SELECT id, name, email FROM member";
+        String sql = "SELECT id, name, email, role FROM member";
 
         List<MemberEntity> memberEntities = jdbcTemplate.query(
             sql, (resultSet, rowNum) -> {
@@ -28,7 +28,8 @@ public class MemberJdbcRepository implements MemberPort {
                     resultSet.getLong("id"),
                     resultSet.getString("name"),
                     resultSet.getString("email"),
-                    null
+                    null,
+                    resultSet.getString("role")
                 );
 
                 return memberEntity;
@@ -42,14 +43,14 @@ public class MemberJdbcRepository implements MemberPort {
 
     @Override
     public void saveMember(Member member) {
-        String sql = "INSERT INTO member(name, email, password) VALUES(?, ?, ?)";
+        String sql = "INSERT INTO member(name, email, password, role) VALUES(?, ?, ?, ?)";
 
-        jdbcTemplate.update(sql, member.getName(), member.getEmail(), member.getPassword());
+        jdbcTemplate.update(sql, member.getName(), member.getEmail(), member.getPassword(), member.getRole().name());
     }
 
     @Override
     public Optional<Member> findMemberByEmail(String email) {
-        String sql = "SELECT id, name, email, password FROM member WHERE email = ?";
+        String sql = "SELECT id, name, email, password, role FROM member WHERE email = ?";
 
         List<MemberEntity> memberEntities = jdbcTemplate.query(
             sql, new Object[] {email}, (resultSet, rowNum) -> {
@@ -57,7 +58,8 @@ public class MemberJdbcRepository implements MemberPort {
                     resultSet.getLong("id"),
                     resultSet.getString("name"),
                     resultSet.getString("email"),
-                    resultSet.getString("password")
+                    resultSet.getString("password"),
+                    resultSet.getString("role")
                 );
 
                 return member;

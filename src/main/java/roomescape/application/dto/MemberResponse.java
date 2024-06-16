@@ -1,5 +1,7 @@
 package roomescape.application.dto;
 
-public record MemberResponse(String name) {
+import roomescape.enums.Role;
+
+public record MemberResponse(String name, Role role) {
 
 }
