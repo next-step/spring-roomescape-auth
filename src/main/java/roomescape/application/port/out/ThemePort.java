@@ -1,6 +1,7 @@
 package roomescape.application.port.out;
 
 import java.util.List;
+import java.util.Optional;
 import roomescape.domain.Theme;
 
 public interface ThemePort {
@@ -12,4 +13,6 @@ public interface ThemePort {
   void deleteTheme(Long id);
 
   Integer countThemeById(Long id);
+
+    Optional<Theme> findThemeById(Long id);
 }

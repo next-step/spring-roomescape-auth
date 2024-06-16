@@ -1,15 +1,16 @@
 package roomescape.application.port.in;
 
-import roomescape.application.dto.UserCommand;
-import roomescape.application.dto.UserResponse;
+import roomescape.application.dto.LoginCommand;
+import roomescape.application.dto.MemberCommand;
+import roomescape.application.dto.MemberResponse;
 
 public interface LoginUseCase {
 
-  boolean checkInvalidLogin(String principal, String credentials);
+  boolean checkInvalidLogin(LoginCommand loginCommand);
 
-  String createToken(UserCommand userCommand);
+  String createToken(LoginCommand loginCommand);
 
-  UserResponse findUser(String payload);
+  MemberResponse findMember(String payload);
 
-  UserResponse findUserByJwt(String jwt);
+  MemberResponse findUserByJwt(String jwt);
 }

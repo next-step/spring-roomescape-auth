@@ -1,21 +1,21 @@
 package roomescape.adapter.in.web;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import roomescape.application.dto.UserCommand;
-import roomescape.application.dto.UserResponse;
+import roomescape.annotation.UserInfo;
+import roomescape.application.dto.LoginCommand;
+import roomescape.application.dto.MemberCommand;
+import roomescape.application.dto.MemberResponse;
 import roomescape.application.port.in.LoginUseCase;
-import roomescape.exception.AuthenticationException;
 
 @Controller
 @RequestMapping("/login")
@@ -33,23 +33,16 @@ public class LoginController {
   }
 
   @ResponseBody
-  @GetMapping("/login/check")
-  public ResponseEntity<UserResponse> checkInvalidLogin(HttpServletRequest request) {
-    String jwt = Arrays.stream(request.getCookies())
-                       .filter(cookie -> cookie.getName()
-                                               .equals("jwt"))
-                       .findFirst()
-                       .orElseThrow(AuthenticationException::new)
-                       .getValue();
-
-    return ResponseEntity.ok(loginUseCase.findUserByJwt(jwt));
+  @GetMapping("/check")
+  public ResponseEntity<MemberResponse> checkInvalidLogin(@UserInfo MemberResponse memberResponse) {
+    return ResponseEntity.ok(memberResponse);
   }
 
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  @PostMapping("/login")
-  public void login(UserCommand userCommand, HttpServletResponse response) {
-    String jwt = loginUseCase.createToken(userCommand);
+  @PostMapping("")
+  public void login(@RequestBody LoginCommand loginCommand, HttpServletResponse response) {
+    String jwt = loginUseCase.createToken(loginCommand);
 
     Cookie jwtCookie = new Cookie("jwt", jwt);
     jwtCookie.setHttpOnly(true);

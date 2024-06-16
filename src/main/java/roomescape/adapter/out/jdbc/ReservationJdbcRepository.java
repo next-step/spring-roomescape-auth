@@ -16,6 +16,7 @@ import roomescape.adapter.out.ReservationTimeEntity;
 import roomescape.application.port.out.ReservationPort;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
+import roomescape.domain.Theme;
 
 @Primary
 @Repository
@@ -91,16 +92,17 @@ public class ReservationJdbcRepository implements ReservationPort {
   }
 
   @Override
-  public Reservation saveReservation(Reservation reservation, ReservationTime reservationTime) {
+  public Reservation saveReservation(Reservation reservation) {
 
-    String sql = "INSERT INTO reservation(name, date, time_id) VALUES(?, ?, ?)";
+    String sql = "INSERT INTO reservation(name, date, time_id, theme_id) VALUES(?, ?, ?, ?)";
     KeyHolder keyHolder = new GeneratedKeyHolder();
 
     jdbcTemplate.update(connection -> {
       PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       ps.setString(1, reservation.getName());
       ps.setString(2, reservation.getDate());
-      ps.setLong(3, reservationTime.getId());
+      ps.setLong(3, reservation.getTime().getId());
+      ps.setLong(4, reservation.getTheme().getId());
       return ps;
     }, keyHolder);
 

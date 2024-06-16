@@ -15,6 +15,7 @@ import roomescape.adapter.out.ReservationEntity;
 import roomescape.application.port.out.ReservationPort;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
+import roomescape.domain.Theme;
 
 @Component
 public class ReservationInMemoryRepository implements ReservationPort {
@@ -29,8 +30,8 @@ public class ReservationInMemoryRepository implements ReservationPort {
 
     ReservationTime reservationTime1 = new ReservationTime(1L, "12:30");
     ReservationTime reservationTime2 = new ReservationTime(2L, "11:00");
-    saveReservation(new Reservation(null, "브라운", "2024-06-06", reservationTime1, null), null);
-    saveReservation(new Reservation(null, "블랙", "2024-07-06", reservationTime2, null), null);
+    saveReservation(new Reservation(null, "브라운", "2024-06-06", reservationTime1, null));
+    saveReservation(new Reservation(null, "블랙", "2024-07-06", reservationTime2, null));
   }
 
   @Override
@@ -47,7 +48,7 @@ public class ReservationInMemoryRepository implements ReservationPort {
   }
 
   @Override
-  public Reservation saveReservation(Reservation reservation, ReservationTime reservationTime) {
+  public Reservation saveReservation(Reservation reservation) {
     Long newIndex = index.incrementAndGet();
     ReservationEntity registerReservation = mapToEntity(reservation.addId(newIndex));
 

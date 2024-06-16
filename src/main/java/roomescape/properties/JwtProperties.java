@@ -8,13 +8,14 @@ import org.springframework.context.annotation.Configuration;
 public class JwtProperties {
 
   private String secretKey;
-  private String validityInMilliseconds;
+  private Long validityInMilliseconds;
+
 
   public String getSecretKey() {
     return secretKey;
   }
 
-  public String getValidityInMilliseconds() {
+  public Long getValidityInMilliseconds() {
     return validityInMilliseconds;
   }
 
@@ -22,7 +23,7 @@ public class JwtProperties {
     this.secretKey = secretKey;
   }
 
-  public void setValidityInMilliseconds(String validityInMilliseconds) {
+  public void setValidityInMilliseconds(Long validityInMilliseconds) {
     this.validityInMilliseconds = validityInMilliseconds;
   }
 }

@@ -1,4 +1,4 @@
-package roomescape.auth.provider;
+package roomescape.config.auth.provider;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

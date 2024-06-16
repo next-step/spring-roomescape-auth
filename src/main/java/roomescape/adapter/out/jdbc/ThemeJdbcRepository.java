@@ -3,6 +3,7 @@ package roomescape.adapter.out.jdbc;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -75,4 +76,30 @@ public class ThemeJdbcRepository implements ThemePort {
 
     return jdbcTemplate.queryForObject(sql, Integer.class);
   }
+
+    @Override
+    public Optional<Theme> findThemeById(Long id) {
+        String sql = "SELECT id, name, description, thumbnail FROM theme WHERE id = ?";
+
+        List<ThemeEntity> themeEntities = jdbcTemplate.query(
+            sql, (resultSet, rowNum) -> {
+                ThemeEntity themeEntity = new ThemeEntity(
+                    resultSet.getLong("id"),
+                    resultSet.getString("name"),
+                    resultSet.getString("description"),
+                    resultSet.getString("thumbnail")
+                );
+
+                return themeEntity;
+            }, id
+        );
+
+        Theme theme = null;
+
+        if (!themeEntities.isEmpty()) {
+            theme = ThemeMapper.mapToDomain(themeEntities.get(0));
+        }
+
+        return Optional.ofNullable(theme);
+    }
 }

@@ -1,46 +1,53 @@
 package roomescape.application.service;
 
 import org.springframework.stereotype.Service;
-import roomescape.application.dto.UserCommand;
-import roomescape.application.dto.UserResponse;
+import roomescape.application.dto.LoginCommand;
+import roomescape.application.dto.MemberCommand;
+import roomescape.application.dto.MemberResponse;
 import roomescape.application.port.in.LoginUseCase;
-import roomescape.auth.provider.JwtTokenProvider;
+import roomescape.application.port.out.MemberPort;
+import roomescape.config.auth.provider.JwtTokenProvider;
+import roomescape.domain.Member;
 import roomescape.exception.AuthenticationException;
 
 @Service
 public class LoginService implements LoginUseCase {
 
-  private static final String EMAIL = "joisfe@gmail.com";
-  private static final String PASSWORD = "1234";
-
   private final JwtTokenProvider jwtTokenProvider;
+  private final MemberPort memberPort;
 
-  public LoginService(JwtTokenProvider jwtTokenProvider) {
+  public LoginService(JwtTokenProvider jwtTokenProvider, MemberPort memberPort) {
     this.jwtTokenProvider = jwtTokenProvider;
+    this.memberPort = memberPort;
   }
 
   @Override
-  public boolean checkInvalidLogin(String principal, String credentials) {
-    return !EMAIL.equals(principal) || !PASSWORD.equals(credentials);
+  public boolean checkInvalidLogin(LoginCommand loginCommand) {
+    Member member = memberPort.findMemberByEmail(loginCommand.email()).orElseThrow(AuthenticationException::new);
+    return !member.getPassword().equals(loginCommand.password());
   }
 
   @Override
-  public String createToken(UserCommand userCommand) {
-    if (checkInvalidLogin(userCommand.email(), userCommand.password())) {
+  public String createToken(LoginCommand loginCommand) {
+    if (checkInvalidLogin(loginCommand)) {
       throw new AuthenticationException();
     }
 
-    return jwtTokenProvider.createToken(userCommand.email());
+    return jwtTokenProvider.createToken(loginCommand.email());
   }
 
   @Override
-  public UserResponse findUser(String payload) {
-    return new UserResponse("누군가");
+  public MemberResponse findMember(String payload) {
+      return new MemberResponse(payload);
   }
 
   @Override
-  public UserResponse findUserByJwt(String jwt) {
+  public MemberResponse findUserByJwt(String jwt) {
+    if (!jwtTokenProvider.validateToken(jwt)) {
+      throw new AuthenticationException();
+    }
+
     String payload = jwtTokenProvider.getPayload(jwt);
-    return findUser(payload);
+    return findMember(payload);
   }
 }

@@ -43,4 +43,8 @@ public class Reservation {
   public static Reservation of(Long id, String name, String date, ReservationTime time, Theme theme) {
     return new Reservation(id, name, date, time, theme);
   }
+
+  public Reservation addReservationTime(ReservationTime reservationTime) {
+    return new Reservation(this.id, this.name, this.date, reservationTime, this.theme);
+  }
 }
