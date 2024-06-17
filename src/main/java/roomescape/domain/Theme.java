@@ -53,6 +53,18 @@ public class Theme {
 		return Objects.hash(this.id);
 	}
 
+	@Override
+	public String toString() {
+		// @formatter:off
+		return "Theme{" +
+				"id=" + this.id +
+				", name='" + this.name + '\'' +
+				", description='" + this.description + '\'' +
+				", thumbnail='" + this.thumbnail + '\'' +
+				'}';
+		// @formatter:on
+	}
+
 	public static final class Builder {
 
 		private final Theme theme;

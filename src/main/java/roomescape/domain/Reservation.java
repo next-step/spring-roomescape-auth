@@ -59,6 +59,19 @@ public class Reservation {
 		return Objects.hash(this.id);
 	}
 
+	@Override
+	public String toString() {
+		// @formatter:off
+		return "Reservation{" +
+				"id=" + this.id +
+				", name='" + this.name + '\'' +
+				", date='" + this.date + '\'' +
+				", time=" + this.time +
+				", theme=" + this.theme +
+				'}';
+		// @formatter:on
+	}
+
 	public static final class Builder {
 
 		private final Reservation reservation;

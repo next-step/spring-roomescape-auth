@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.PostConstruct;
-import roomescape.controller.dto.ReservationRequest;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
@@ -14,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.ObjectUtils;
 
 @Repository
 public class ReservationRepository {
@@ -58,8 +56,8 @@ public class ReservationRepository {
 
 	public boolean isExistId(long id) {
 		String sql = "SELECT COUNT(*) FROM reservation WHERE id = ?";
-		int count = this.jdbcTemplate.queryForObject(sql, Integer.class, id);
-		return count > 0;
+		Integer count = this.jdbcTemplate.queryForObject(sql, Integer.class, id);
+		return count != null && count > 0;
 	}
 
 	public Reservation save(Reservation reservation) {
