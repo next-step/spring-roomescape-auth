@@ -1,12 +1,17 @@
 package roomescape.integration;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import roomescape.controller.dto.LoginCheckResponse;
 import roomescape.controller.dto.LoginRequest;
+import roomescape.domain.MemberRole;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 
@@ -20,6 +25,13 @@ class LoginIntegrationTests {
 
 	@LocalServerPort
 	private int port;
+
+	private HttpHeaders headers;
+
+	@BeforeEach
+	void setUp() {
+		this.headers = new HttpHeaders();
+	}
 
 	@Test
 	void login() {
@@ -53,16 +65,23 @@ class LoginIntegrationTests {
 		// given
 		var loginRequest = new LoginRequest("tester@gmail.com", "1234");
 
-		this.restTemplate.postForEntity("http://localhost:" + this.port + "/login", loginRequest, Void.class);
-
 		// when
-		var checkResponse = this.restTemplate.getForEntity("http://localhost:" + this.port + "/login/check",
-				LoginCheckResponse.class);
+		var loginResponse = this.restTemplate.postForEntity("http://localhost:" + this.port + "/login", loginRequest,
+				Void.class);
+
+		assertThat(loginResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		String token = loginResponse.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
+
+		this.headers.set(HttpHeaders.COOKIE, token);
+
+		var checkResponse = this.restTemplate.exchange("http://localhost:" + this.port + "/login/check", HttpMethod.GET,
+				new HttpEntity<>(this.headers), LoginCheckResponse.class);
 
 		// then
 		assertThat(checkResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(checkResponse.getBody()).isNotNull();
-		assertThat(checkResponse.getBody().role()).isEqualTo("USER");
+		assertThat(checkResponse.getBody().role()).isEqualTo(MemberRole.USER.name());
 	}
 
 	@Test
