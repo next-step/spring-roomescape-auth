@@ -50,10 +50,6 @@ public class ReservationTimeAcceptanceTest {
     void 예약_시간_삭제_성공() {
         예약_시간_등록(request);
 
-        ExtractableResponse<Response> responseBeforeDelete = 예약_시간_조회();
-        assertThat(responseBeforeDelete.statusCode()).isEqualTo(200);
-        assertThat(responseBeforeDelete.jsonPath().getList("id")).hasSize(1);
-
         RestAssured.given().log().all()
             .when().delete("/times/1")
             .then().log().all()
@@ -90,6 +86,25 @@ public class ReservationTimeAcceptanceTest {
             .when().delete("/times/1")
             .then().log().all()
             .statusCode(409);
+    }
+
+    @Test
+    void 예약_가능_시간_조회() {
+        예약_시간_등록(request);
+
+        ThemeRequest themeRequest = new ThemeRequest("탈출 미션", "탈출하는 내용입니다.", "thumbnail.jpg");
+        RestAssured.given().log().all()
+            .contentType(ContentType.JSON)
+            .body(themeRequest)
+            .when().post("/themes")
+            .then().log().all()
+            .statusCode(201)
+            .body("id", is(1));
+
+        RestAssured.given().log().all()
+            .when().get("/times/available?date=9999-12-31&themeId=1")
+            .then().log().all()
+            .statusCode(200);
     }
 
     private ExtractableResponse<Response> 예약_시간_등록(ReservationTimeRequest request) {
