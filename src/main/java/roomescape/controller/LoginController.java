@@ -44,6 +44,7 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public ResponseEntity<Void> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+		LoginRequest.validateLoginInfo(request);
 		try {
 			// TODO: STEP2 HandlerMethodArgumentResolver 를 통해서 리팩터링 예정
 			LoginRequest loginRequest = new LoginRequest(request.email(), PasswordEncoder.encode(request.password()));
