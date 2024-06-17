@@ -35,4 +35,9 @@ public class ReservationTimeController {
         reservationTimeService.deleteReservationTime(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<ReservationTimeResponse>> getAvailableReservationTime(@RequestParam String date, @RequestParam Long themeId) {
+        return ResponseEntity.ok().body(reservationTimeService.findAvailableReservationTimes(date, themeId));
+    }
 }

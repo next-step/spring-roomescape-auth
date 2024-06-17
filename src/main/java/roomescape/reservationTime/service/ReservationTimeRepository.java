@@ -1,5 +1,6 @@
 package roomescape.reservationTime.service;
 
+import java.time.LocalDate;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -54,5 +55,22 @@ public class ReservationTimeRepository {
 
     public void delete(Long id) {
         jdbcTemplate.update("DELETE FROM reservation_time WHERE id = ?", id);
+    }
+
+    public List<ReservationTime> findAvailableTimesByDateAndTheme(LocalDate date, Long themeId) {
+        String sql = """
+            SELECT rt.id
+                ,rt.start_at
+            FROM reservation_time rt
+            WHERE NOT EXISTS (
+                SELECT r.time_id 
+                FROM reservation r 
+                WHERE r.date = ? 
+                    AND r.theme_id = ? 
+                    AND r.time_id = rt.id)
+            """;
+
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+            new ReservationTime(rs.getLong("id"), rs.getTime("start_at").toLocalTime()), date, themeId);
     }
 }
