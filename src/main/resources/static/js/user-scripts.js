@@ -42,6 +42,10 @@ function updateUIBasedOnLogin() {
         document.getElementById('profile-name').textContent = 'Profile'; // 기본 텍스트로 재설정
         document.querySelector('.nav-item.dropdown').style.display = 'none'; // 드롭다운 메뉴 숨김
         document.querySelector('.nav-item a[href="/login"]').parentElement.style.display = 'block'; // 로그인 버튼 표시
+
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
+          window.location.href = '/login';
+        }
       });
 }
 
@@ -74,8 +78,13 @@ function login() {
     })
   })
       .then(response => {
-        if (200 === !response.status) {
-          alert('Login failed'); // 로그인 실패 시 경고창 표시
+        if (response.status === 401) {
+          alert('The password is incorrect.'); // 로그인 실패 시 경고창 표시
+          throw new Error('Login failed');
+        }
+        else if (response.status === 404) {
+          alert('Unregistered user. Please sign up for membership first.');
+          signup()
           throw new Error('Login failed');
         }
       })
