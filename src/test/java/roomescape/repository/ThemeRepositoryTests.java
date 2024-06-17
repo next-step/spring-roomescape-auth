@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -84,8 +83,7 @@ class ThemeRepositoryTests {
 		// given
 		Theme theme = Theme.builder().id(1L).name("테마1").description("첫번째테마").thumbnail("썸네일이미지").build();
 
-		given(this.jdbcTemplate.queryForObject(any(String.class), any(RowMapper.class), anyLong()))
-				.willReturn(theme);
+		given(this.jdbcTemplate.queryForObject(any(String.class), any(RowMapper.class), anyLong())).willReturn(theme);
 
 		// when
 		Theme result = this.themeRepository.findById(1L);

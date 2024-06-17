@@ -9,7 +9,6 @@ import roomescape.controller.dto.MemberRequest;
 import roomescape.controller.dto.MemberResponse;
 import roomescape.domain.MemberRole;
 import roomescape.service.MemberService;
-import roomescape.support.PasswordEncoder;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

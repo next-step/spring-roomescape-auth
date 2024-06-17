@@ -2,7 +2,6 @@ package roomescape.repository;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -19,7 +18,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -104,8 +102,7 @@ class ReservationTimeRepositoryTests {
 		long themeId = 1L;
 		List<Long> ids = Arrays.asList(1L, 2L, 3L);
 
-		given(this.jdbcTemplate.query(anyString(), any(RowMapper.class), any(Object[].class)))
-				.willReturn(ids);
+		given(this.jdbcTemplate.query(anyString(), any(RowMapper.class), any(Object[].class))).willReturn(ids);
 
 		// when
 		List<Long> reservedTimeIds = this.reservationTimeRepository.findReservedTimeIds(date, themeId);

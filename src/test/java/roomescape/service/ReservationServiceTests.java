@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import roomescape.DataTimeFormatterUtils;
 import roomescape.controller.dto.ReservationRequest;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
@@ -21,9 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static roomescape.DataTimeFormatterUtils.getFormattedTomorrowDate;
 
 class ReservationServiceTests {
 
@@ -88,7 +86,8 @@ class ReservationServiceTests {
 	@Test
 	void createReservation() {
 		// given
-		ReservationRequest request = new ReservationRequest("tester", getFormattedTomorrowDate(), 1L, 1L);
+		ReservationRequest request = new ReservationRequest("tester", DataTimeFormatterUtils.getFormattedTomorrowDate(),
+				1L, 1L);
 
 		ReservationTime reservationTime = ReservationTime.builder().id(1L).startAt("10:00").build();
 
@@ -129,10 +128,9 @@ class ReservationServiceTests {
 		// given
 		long id = 1L;
 
-
 		// when, then
 		assertThatThrownBy(() -> this.reservationService.cancel(id)).isInstanceOf(RoomEscapeException.class)
-				.hasMessage(ErrorCode.NOT_FOUND_RESERVATION.getMessage());
+			.hasMessage(ErrorCode.NOT_FOUND_RESERVATION.getMessage());
 	}
 
 }

@@ -78,12 +78,12 @@ class MemberServiceTests {
 		// given
 		LoginRequest loginRequest = new LoginRequest("tester@gmail.com", PasswordEncoder.encode("1234"));
 		Member member = Member.builder()
-				.id(1L)
-				.name("이름")
-				.email("tester@gmail.com")
-				.password(PasswordEncoder.encode("1234"))
-				.role(MemberRole.USER.name())
-				.build();
+			.id(1L)
+			.name("이름")
+			.email("tester@gmail.com")
+			.password(PasswordEncoder.encode("1234"))
+			.role(MemberRole.USER.name())
+			.build();
 		MemberResponse memberResponse = new MemberResponse(1L, "이름", "tester@gmail.com", MemberRole.USER.name());
 
 		given(this.memberRepository.findByEmail(loginRequest.email())).willReturn(member);
@@ -104,8 +104,8 @@ class MemberServiceTests {
 
 		// when, then
 		assertThatThrownBy(() -> this.memberService.findMemberByLoginRequest(loginRequest))
-				.isInstanceOf(RoomEscapeException.class)
-				.hasMessageContaining(ErrorCode.NOT_FOUND_MEMBER.getMessage());
+			.isInstanceOf(RoomEscapeException.class)
+			.hasMessageContaining(ErrorCode.NOT_FOUND_MEMBER.getMessage());
 	}
 
 	@Test
@@ -113,19 +113,19 @@ class MemberServiceTests {
 		// given
 		LoginRequest loginRequest = new LoginRequest("tester@gmail.com", PasswordEncoder.encode("4444"));
 		Member member = Member.builder()
-				.id(1L)
-				.name("이름")
-				.email("tester@gmail.com")
-				.password(PasswordEncoder.encode("1234"))
-				.role(MemberRole.USER.name())
-				.build();
+			.id(1L)
+			.name("이름")
+			.email("tester@gmail.com")
+			.password(PasswordEncoder.encode("1234"))
+			.role(MemberRole.USER.name())
+			.build();
 
 		given(this.memberRepository.findByEmail(loginRequest.email())).willReturn(member);
 
 		// when, then
 		assertThatThrownBy(() -> this.memberService.findMemberByLoginRequest(loginRequest))
-				.isInstanceOf(RoomEscapeException.class)
-				.hasMessageContaining(ErrorCode.INVALID_PASSWORD.getMessage());
+			.isInstanceOf(RoomEscapeException.class)
+			.hasMessageContaining(ErrorCode.INVALID_PASSWORD.getMessage());
 	}
 
 }

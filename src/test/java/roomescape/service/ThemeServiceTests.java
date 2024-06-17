@@ -18,8 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 class ThemeServiceTests {
 
@@ -90,7 +88,7 @@ class ThemeServiceTests {
 
 		// when, then
 		assertThatThrownBy(() -> this.themeService.delete(id)).isInstanceOf(RoomEscapeException.class)
-				.hasMessage(ErrorCode.NOT_FOUND_THEME.getMessage());
+			.hasMessage(ErrorCode.NOT_FOUND_THEME.getMessage());
 	}
 
 	@Test

@@ -105,17 +105,17 @@ class MissionStepTests {
 		params.put("thumbnail", "테마이미지");
 
 		RestAssured.given()
-				.log()
-				.all()
-				.contentType(ContentType.JSON)
-				.body(params)
-				.when()
-				.post("/themes")
-				.then()
-				.log()
-				.all()
-				.statusCode(200)
-				.body("id", is(1));
+			.log()
+			.all()
+			.contentType(ContentType.JSON)
+			.body(params)
+			.when()
+			.post("/themes")
+			.then()
+			.log()
+			.all()
+			.statusCode(200)
+			.body("id", is(1));
 	}
 
 }

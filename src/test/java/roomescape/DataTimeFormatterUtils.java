@@ -3,7 +3,11 @@ package roomescape;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class DataTimeFormatterUtils {
+public final class DataTimeFormatterUtils {
+
+	private DataTimeFormatterUtils() {
+
+	}
 
 	public static String getFormattedTomorrowDate() {
 		LocalDate tomorrow = LocalDate.now().plusDays(1);
