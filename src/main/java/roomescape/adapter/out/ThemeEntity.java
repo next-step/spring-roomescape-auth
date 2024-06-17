@@ -1,5 +1,7 @@
 package roomescape.adapter.out;
 
+import java.util.Objects;
+
 public class ThemeEntity {
 
   private final Long id;
@@ -28,5 +30,22 @@ public class ThemeEntity {
 
   public String getThumbnail() {
     return thumbnail;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ThemeEntity that = (ThemeEntity) o;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
   }
 }

@@ -2,11 +2,14 @@ package roomescape.adapter.out.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -94,20 +97,19 @@ public class ReservationJdbcRepository implements ReservationPort {
   @Override
   public Reservation saveReservation(Reservation reservation) {
 
-    String sql = "INSERT INTO reservation(name, date, time_id, theme_id) VALUES(?, ?, ?, ?)";
-    KeyHolder keyHolder = new GeneratedKeyHolder();
+    SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+      .withTableName("reservation")
+      .usingGeneratedKeyColumns("id");
 
-    jdbcTemplate.update(connection -> {
-      PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-      ps.setString(1, reservation.getName());
-      ps.setString(2, reservation.getDate());
-      ps.setLong(3, reservation.getTime().getId());
-      ps.setLong(4, reservation.getTheme().getId());
-      return ps;
-    }, keyHolder);
+    Map<String, Object> columnMap = new HashMap<>();
+    columnMap.put("name", reservation.getName());
+    columnMap.put("date", reservation.getDate());
+    columnMap.put("time_id", reservation.getTime().getId());
+    columnMap.put("theme_id", reservation.getTheme().getId());
 
-    return reservation.addId(Objects.requireNonNull(keyHolder.getKey())
-                                    .longValue());
+    Number reservationId = jdbcInsert.executeAndReturnKey(columnMap);
+
+    return reservation.addId(reservationId.longValue());
   }
 
   @Override

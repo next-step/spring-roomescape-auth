@@ -12,5 +12,5 @@ public interface LoginUseCase {
 
   MemberResponse findMember(String payload, Role role);
 
-  MemberResponse findMemberByJwt(String jwt);
+  MemberResponse findMemberByToken(String jwt);
 }

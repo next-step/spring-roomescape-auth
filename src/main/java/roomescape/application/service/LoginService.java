@@ -43,13 +43,13 @@ public class LoginService implements LoginUseCase {
   }
 
   @Override
-  public MemberResponse findMemberByJwt(String jwt) {
-    if (!jwtTokenProvider.validateToken(jwt)) {
+  public MemberResponse findMemberByToken(String token) {
+    if (!jwtTokenProvider.validateToken(token)) {
       throw new AuthenticationException();
     }
 
-    String payload = jwtTokenProvider.getPayload(jwt);
-    String role = jwtTokenProvider.getRole(jwt);
+    String payload = jwtTokenProvider.getPayload(token);
+    String role = jwtTokenProvider.getRole(token);
     return findMember(payload, Role.from(role));
   }
 }

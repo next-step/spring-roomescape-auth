@@ -1,5 +1,7 @@
 package roomescape.adapter.out;
 
+import java.util.Objects;
+
 public class ReservationEntity {
 
   private final Long id;
@@ -34,6 +36,23 @@ public class ReservationEntity {
 
   public ThemeEntity getTheme() {
     return theme;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ReservationEntity that = (ReservationEntity) o;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
   }
 
   public static ReservationEntity of(Long id, String name, String date, ReservationTimeEntity time) {

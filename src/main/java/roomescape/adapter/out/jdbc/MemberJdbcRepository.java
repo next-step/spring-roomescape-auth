@@ -1,8 +1,11 @@
 package roomescape.adapter.out.jdbc;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import roomescape.adapter.mapper.MemberMapper;
 import roomescape.adapter.out.MemberEntity;
@@ -43,9 +46,17 @@ public class MemberJdbcRepository implements MemberPort {
 
     @Override
     public void saveMember(Member member) {
-        String sql = "INSERT INTO member(name, email, password, role) VALUES(?, ?, ?, ?)";
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+          .withTableName("member")
+          .usingGeneratedKeyColumns("id");
 
-        jdbcTemplate.update(sql, member.getName(), member.getEmail(), member.getPassword(), member.getRole().name());
+        Map<String, Object> columnMap = new HashMap<>();
+        columnMap.put("name", member.getName());
+        columnMap.put("email", member.getEmail());
+        columnMap.put("password", member.getPassword());
+        columnMap.put("role", member.getRole().name());
+
+        jdbcInsert.execute(columnMap);
     }
 
     @Override

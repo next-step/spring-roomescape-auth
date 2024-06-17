@@ -28,7 +28,7 @@ public class AdminInterceptor implements HandlerInterceptor {
                            .orElseThrow(AuthenticationException::new)
                            .getValue();
 
-        MemberResponse memberResponse = loginUseCase.findMemberByJwt(jwt);
+        MemberResponse memberResponse = loginUseCase.findMemberByToken(jwt);
 
         if (!memberResponse.role().name().equals("ADMIN")) {
             throw new AuthorizationException();
