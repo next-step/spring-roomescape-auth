@@ -12,7 +12,7 @@ import roomescape.dto.request.LoginRequest;
 
 import static org.hamcrest.Matchers.is;
 
-
+@DisplayName("인증 관련 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AuthTest {

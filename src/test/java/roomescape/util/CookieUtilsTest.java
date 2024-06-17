@@ -8,6 +8,7 @@ import org.springframework.http.ResponseCookie;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("쿠키 관련 테스트")
 class CookieUtilsTest {
 
     @DisplayName("응답 쿠키를 생성한다.")
