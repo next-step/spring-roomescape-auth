@@ -8,15 +8,15 @@ import roomescape.dto.response.LoginResponse;
 import roomescape.exception.custom.PasswordMismatchException;
 import roomescape.exception.custom.TokenNotFoundException;
 import roomescape.exception.custom.UserNotFoundException;
-import roomescape.repository.JdbcMemberDao;
+import roomescape.repository.MemberDao;
 import roomescape.util.JwtTokenProvider;
 
 @Service
 public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
-    private final JdbcMemberDao memberDao;
+    private final MemberDao memberDao;
 
-    public MemberService(JwtTokenProvider jwtTokenProvider, JdbcMemberDao memberDao) {
+    public MemberService(JwtTokenProvider jwtTokenProvider, MemberDao memberDao) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.memberDao = memberDao;
     }

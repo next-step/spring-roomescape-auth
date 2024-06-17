@@ -1,35 +1,35 @@
 package roomescape.repository;
 
-import java.sql.PreparedStatement;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import roomescape.domain.ReservationTime;
 
+import javax.sql.DataSource;
+import java.util.List;
+import java.util.Optional;
+
 @Repository
-public class JdbcReservationTimeDao {
+public class ReservationTimeDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcReservationTimeDao(JdbcTemplate jdbcTemplate) {
+    public ReservationTimeDao(JdbcTemplate jdbcTemplate, DataSource source) {
         this.jdbcTemplate = jdbcTemplate;
+        this.jdbcInsert = new SimpleJdbcInsert(source)
+                .withTableName("reservation_time")
+                .usingGeneratedKeyColumns("id");
     }
 
     public ReservationTime save(ReservationTime reservationTime) {
-        final String sql = "INSERT INTO reservation_time (start_at) values (?)";
+        SqlParameterSource params = new BeanPropertySqlParameterSource(reservationTime);
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(con -> {
-            PreparedStatement ps = con.prepareStatement(sql, new String[]{"id"});
-            ps.setString(1, reservationTime.getStartAt());
-            return ps;
-        }, keyHolder);
-
-        return reservationTime.toEntity(reservationTime, keyHolder.getKey().longValue());
+        long id = jdbcInsert.executeAndReturnKey(params).longValue();
+        return reservationTime.toEntity(reservationTime, id);
     }
 
     public List<ReservationTime> findAll() {
@@ -76,7 +76,7 @@ public class JdbcReservationTimeDao {
                  WHERE NOT EXISTS (
                      SELECT 1
                      FROM reservation r
-                     WHERE r.\"date\" = ?
+                     WHERE r.reservation_date = ?
                      AND r.theme_id = ?
                      AND r.time_id = rt.id
                  )

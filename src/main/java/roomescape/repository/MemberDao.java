@@ -1,38 +1,34 @@
 package roomescape.repository;
 
-import java.sql.PreparedStatement;
-import java.util.Optional;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import roomescape.domain.Member;
 
+import javax.sql.DataSource;
+import java.util.Optional;
+
 @Repository
-public class JdbcMemberDao {
+public class MemberDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcMemberDao(JdbcTemplate jdbcTemplate) {
+    public MemberDao(JdbcTemplate jdbcTemplate, DataSource source) {
         this.jdbcTemplate = jdbcTemplate;
+        this.jdbcInsert = new SimpleJdbcInsert(source)
+                .withTableName("MEMBER")
+                .usingGeneratedKeyColumns("id");
     }
 
     public Member save(Member member) {
-        final String sql = "INSERT INTO member (name, email, password) values (?, ?, ?)";
+        SqlParameterSource params = new BeanPropertySqlParameterSource(member);
+        Long id = jdbcInsert.executeAndReturnKey(params).longValue();
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(con -> {
-            PreparedStatement ps = con.prepareStatement(sql, new String[]{"id"});
-            ps.setString(1, member.getName());
-            ps.setString(2, member.getEmail());
-            ps.setString(3, member.getPassword());
-
-            return ps;
-        }, keyHolder);
-
-        return member.toEntity(member, keyHolder.getKey().longValue());
+        return member.toEntity(member, id);
     }
 
     public Optional<Member> findByEmail(String email) {

@@ -10,9 +10,9 @@ import roomescape.exception.custom.ExistingReservationException;
 import roomescape.exception.custom.InvalidReservationThemeException;
 import roomescape.exception.custom.InvalidReservationTimeException;
 import roomescape.exception.custom.PastDateReservationException;
-import roomescape.repository.JdbcReservationDao;
-import roomescape.repository.JdbcReservationThemeDao;
-import roomescape.repository.JdbcReservationTimeDao;
+import roomescape.repository.ReservationDao;
+import roomescape.repository.ReservationThemeDao;
+import roomescape.repository.ReservationTimeDao;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,12 +22,12 @@ import java.util.List;
 @Service
 public class ReservationService {
 
-    private final JdbcReservationDao reservationDao;
-    private final JdbcReservationTimeDao reservationTimeDao;
-    private final JdbcReservationThemeDao reservationThemeDao;
+    private final ReservationDao reservationDao;
+    private final ReservationTimeDao reservationTimeDao;
+    private final ReservationThemeDao reservationThemeDao;
 
-    public ReservationService(JdbcReservationDao reservationDao, JdbcReservationTimeDao reservationTimeDao,
-                              JdbcReservationThemeDao reservationThemeDao) {
+    public ReservationService(ReservationDao reservationDao, ReservationTimeDao reservationTimeDao,
+                              ReservationThemeDao reservationThemeDao) {
         this.reservationDao = reservationDao;
         this.reservationTimeDao = reservationTimeDao;
         this.reservationThemeDao = reservationThemeDao;
@@ -68,7 +68,7 @@ public class ReservationService {
     }
 
     private ReservationResponse convertToResponse(Reservation reservation) {
-        return new ReservationResponse(reservation.getId(), reservation.getName(), reservation.getDate(),
+        return new ReservationResponse(reservation.getId(), reservation.getName(), reservation.getReservationDate(),
                 reservation.getTime().getStartAt(), reservation.getTheme().getName());
     }
 

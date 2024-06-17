@@ -6,18 +6,18 @@ import roomescape.dto.request.ReservationTimeRequest;
 import roomescape.dto.response.ReservationTimeResponse;
 import roomescape.exception.custom.DuplicateTimeException;
 import roomescape.exception.custom.ReservationTimeConflictException;
-import roomescape.repository.JdbcReservationDao;
-import roomescape.repository.JdbcReservationTimeDao;
+import roomescape.repository.ReservationDao;
+import roomescape.repository.ReservationTimeDao;
 
 import java.util.List;
 
 @Service
 public class ReservationTimeService {
 
-    private final JdbcReservationTimeDao reservationTimeDao;
-    private final JdbcReservationDao reservationDao;
+    private final ReservationTimeDao reservationTimeDao;
+    private final ReservationDao reservationDao;
 
-    public ReservationTimeService(JdbcReservationTimeDao reservationTimeDao, JdbcReservationDao reservationDao) {
+    public ReservationTimeService(ReservationTimeDao reservationTimeDao, ReservationDao reservationDao) {
         this.reservationTimeDao = reservationTimeDao;
         this.reservationDao = reservationDao;
     }

@@ -6,18 +6,18 @@ import roomescape.dto.request.ReservationThemeRequest;
 import roomescape.dto.response.ReservationThemeResponse;
 import roomescape.exception.custom.DuplicateThemeException;
 import roomescape.exception.custom.ReservationThemeConflictException;
-import roomescape.repository.JdbcReservationDao;
-import roomescape.repository.JdbcReservationThemeDao;
+import roomescape.repository.ReservationDao;
+import roomescape.repository.ReservationThemeDao;
 
 import java.util.List;
 
 @Service
 public class ReservationThemeService {
 
-    private final JdbcReservationThemeDao reservationThemeDao;
-    private final JdbcReservationDao reservationDao;
+    private final ReservationThemeDao reservationThemeDao;
+    private final ReservationDao reservationDao;
 
-    public ReservationThemeService(JdbcReservationThemeDao reservationThemeDao, JdbcReservationDao reservationDao) {
+    public ReservationThemeService(ReservationThemeDao reservationThemeDao, ReservationDao reservationDao) {
         this.reservationThemeDao = reservationThemeDao;
         this.reservationDao = reservationDao;
     }
