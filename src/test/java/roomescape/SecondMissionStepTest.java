@@ -36,7 +36,7 @@ class SecondMissionStepTest extends BaseWebApplicationTest {
                 .when().get("/members")
                 .then().log().all()
                 .statusCode(200)
-                .body("size()", is(1));
+                .body("size()", is(2));
     }
 
     @Test
@@ -102,6 +102,20 @@ class SecondMissionStepTest extends BaseWebApplicationTest {
     }
 
     private static void saveMember() {
+        Map<String, String> loginParam = new HashMap<>();
+        loginParam.put("email", "master@gmail.com");
+        loginParam.put("password", "123");
+        Response loginResponse = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(loginParam)
+                .when().post("/login")
+                .then().log().all()
+                .statusCode(200)
+                .cookie("token", notNullValue())
+                .extract().response();
+
+        String token = loginResponse.getCookie("token");
+
         Map<String, Object> memberParams = new HashMap<>();
         memberParams.put("name", "테스터");
         memberParams.put("email", "testing@gmail.com");
@@ -111,7 +125,9 @@ class SecondMissionStepTest extends BaseWebApplicationTest {
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(memberParams)
-                .when().post("/members")
+                .when()
+                .cookie("token", token)
+                .post("/members")
                 .then().log().all()
                 .statusCode(201)
                 .body("name", is("테스터"));

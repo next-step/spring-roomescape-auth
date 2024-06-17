@@ -52,7 +52,7 @@ class MemberFinderTest extends BaseTestService {
         // when
         List<MemberResponse> allMembers = memberFinder.findAll();
         // then
-        assertThat(allMembers).isNotNull().hasSize(3);
+        assertThat(allMembers).isNotNull().hasSize(4);
     }
 
     @Test
