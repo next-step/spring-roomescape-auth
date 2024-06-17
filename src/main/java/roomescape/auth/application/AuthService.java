@@ -24,7 +24,7 @@ public class AuthService {
     public String login(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.email())
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다"));
-        if (!user.matchPassword(loginRequest.password())) {
+        if (user.isNotMatchPassword(loginRequest.password())) {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다");
         }
 

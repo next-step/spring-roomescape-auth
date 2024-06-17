@@ -14,8 +14,8 @@ public class User {
         this.password = password;
     }
 
-    public boolean matchPassword(String password) {
-        return this.password.equals(password);
+    public boolean isNotMatchPassword(String password) {
+        return !this.password.equals(password);
     }
 
     public String getName() {
