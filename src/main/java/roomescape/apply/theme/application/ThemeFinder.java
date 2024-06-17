@@ -25,6 +25,6 @@ public class ThemeFinder {
     }
 
     public Theme findOneById(long themeId) {
-        return themeRepository.findById(themeId).orElseThrow(NotFoundThemeException::new);
+        return themeRepository.findOneById(themeId).orElseThrow(NotFoundThemeException::new);
     }
 }

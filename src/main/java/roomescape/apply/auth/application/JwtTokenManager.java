@@ -73,7 +73,7 @@ public class JwtTokenManager {
                 .getPayload();
     }
 
-    public LoginMember getMemberEmailAndNameBy(String token) {
+    public LoginMember getLoginMemberEmailAndNameBy(String token) {
         String email = parseJwt(token).getSubject();
         return memberFinder.getLoginMemberByEmail(email);
     }

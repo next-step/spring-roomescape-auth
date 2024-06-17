@@ -31,7 +31,7 @@ public class ReservationTimeJDBCRepository implements ReservationTimeRepository 
                     reservation_time
             """;
 
-    private static final String FIND_ANY_ID_BY_ID_SQL = """
+    private static final String FIND_ONE_ID_BY_ID_SQL = """
                 SELECT
                     id
                 FROM
@@ -100,11 +100,11 @@ public class ReservationTimeJDBCRepository implements ReservationTimeRepository 
     }
 
     @Override
-    public Optional<Long> findAnyIdById(long id) {
+    public Optional<Long> findIdById(long id) {
         try {
             MapSqlParameterSource parameters = new MapSqlParameterSource();
             parameters.addValue("id", id);
-            Long reservation = namedJdbcTemplate.queryForObject(FIND_ANY_ID_BY_ID_SQL, parameters, Long.class);
+            Long reservation = namedJdbcTemplate.queryForObject(FIND_ONE_ID_BY_ID_SQL, parameters, Long.class);
             return Optional.ofNullable(reservation);
         } catch (EmptyResultDataAccessException exception) {
             return Optional.empty();
@@ -112,7 +112,7 @@ public class ReservationTimeJDBCRepository implements ReservationTimeRepository 
     }
 
     @Override
-    public Optional<ReservationTime> findById(long timeId) {
+    public Optional<ReservationTime> findOneById(long timeId) {
         try {
             MapSqlParameterSource parameters = new MapSqlParameterSource();
             parameters.addValue("timeId", timeId);

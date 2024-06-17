@@ -106,7 +106,7 @@ public class MemberJDBCRepository implements MemberRepository {
     }
 
     @Override
-    public Optional<Long> findAnyIdByEmail(String email) {
+    public Optional<Long> findIdByEmail(String email) {
         try {
             return Optional.ofNullable(template.queryForObject(FIND_ANY_ID_BY_EMAIL_SQL, Long.class, email));
         } catch (EmptyResultDataAccessException ex) {

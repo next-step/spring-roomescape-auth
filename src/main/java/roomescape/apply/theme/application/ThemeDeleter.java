@@ -18,8 +18,8 @@ public class ThemeDeleter {
     }
 
     public void deleteThemeBy(long id) {
-        final long existId = themeRepository.findAnyIdById(id).orElseThrow(NotFoundThemeException::new);
-        boolean isReferenced = reservationFinder.findAnyByThemeId(id).isPresent();
+        final long existId = themeRepository.findIdById(id).orElseThrow(NotFoundThemeException::new);
+        boolean isReferenced = reservationFinder.findIdByThemeId(id).isPresent();
         if (isReferenced) {
             throw new ThemeReferencedException();
         }

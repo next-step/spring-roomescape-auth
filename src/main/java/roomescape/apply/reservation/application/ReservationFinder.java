@@ -42,11 +42,11 @@ public class ReservationFinder {
         return existedId.isPresent();
     }
 
-    public Optional<Long> findAnyByTimeId(long timeId) {
-        return reservationRepository.findAnyByTimeId(timeId);
+    public Optional<Long> findIdByTimeId(long timeId) {
+        return reservationRepository.findIdByTimeId(timeId);
     }
 
-    public Optional<Long> findAnyByThemeId(long themeId) {
-        return reservationRepository.findAnyByThemeId(themeId);
+    public Optional<Long> findIdByThemeId(long themeId) {
+        return reservationRepository.findIdByThemeId(themeId);
     }
 }

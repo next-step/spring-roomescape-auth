@@ -13,7 +13,7 @@ public interface ThemeRepository {
 
     void deleteById(Long id);
 
-    Optional<Long> findAnyIdById(long id);
+    Optional<Long> findIdById(long id);
 
-    Optional<Theme> findById(long themeId);
+    Optional<Theme> findOneById(long themeId);
 }

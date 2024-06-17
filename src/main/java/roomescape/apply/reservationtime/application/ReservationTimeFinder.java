@@ -30,7 +30,7 @@ public class ReservationTimeFinder {
     }
 
     public ReservationTime findOneById(long timeId) {
-        return reservationTimeRepository.findById(timeId).orElseThrow(NotFoundReservationTimeException::new);
+        return reservationTimeRepository.findOneById(timeId).orElseThrow(NotFoundReservationTimeException::new);
     }
 
     public List<AvailableReservationTimeResponse> findAvailableTimesBy(String date, String themeId) {

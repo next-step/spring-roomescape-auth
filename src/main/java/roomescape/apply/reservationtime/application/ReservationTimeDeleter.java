@@ -18,8 +18,8 @@ public class ReservationTimeDeleter {
     }
 
     public void deleteReservationTimeBy(long id) {
-        final long existId = reservationTimeRepository.findAnyIdById(id).orElseThrow(NotFoundReservationTimeException::new);
-        boolean isReferenced = reservationFinder.findAnyByTimeId(id).isPresent();
+        final long existId = reservationTimeRepository.findIdById(id).orElseThrow(NotFoundReservationTimeException::new);
+        boolean isReferenced = reservationFinder.findIdByTimeId(id).isPresent();
         if (isReferenced) {
             throw new ReservationTimeReferencedException();
         }

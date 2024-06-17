@@ -34,7 +34,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         if (httpServletRequest != null) {
             String token = ServletRequestTokenFinder.getTokenByRequestCookies(httpServletRequest);
             jwtTokenManager.validateToken(token);
-            return jwtTokenManager.getMemberEmailAndNameBy(token);
+            return jwtTokenManager.getLoginMemberEmailAndNameBy(token);
         }
         throw new IllegalArgumentException("HttpServletRequest 객체를 가져올 수 없습니다.");
     }

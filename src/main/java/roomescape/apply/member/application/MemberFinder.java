@@ -49,7 +49,7 @@ public class MemberFinder {
     }
 
     public boolean isDuplicateEmail(String email) {
-        return memberRepository.findAnyIdByEmail(email).isPresent();
+        return memberRepository.findIdByEmail(email).isPresent();
     }
 
     public LoginMember getLoginMemberByEmail(String email) {
