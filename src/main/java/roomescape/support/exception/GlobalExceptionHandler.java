@@ -4,10 +4,10 @@ package roomescape.support.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import roomescape.apply.auth.application.exception.IllegalTokenException;
 import roomescape.apply.auth.application.exception.TokenNotFoundException;
@@ -25,49 +25,65 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler({TokenNotFoundException.class, IllegalTokenException.class})
-    public ResponseEntity<ExceptionResponse> handleTokenException(IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(new ExceptionResponse(401, e.getMessage()));
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(IllegalTokenException.class)
+    public ExceptionResponse handleIllegalTokenExceptionException(IllegalTokenException e) {
+        return new ExceptionResponse(ExceptionCode.WRONG_TOKEN_ERROR.value(), e.getMessage());
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, IllegalArgumentException.class,
-            ReservationTimeReferencedException.class, ThemeReferencedException.class
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(TokenNotFoundException.class)
+    public ExceptionResponse handleTokenNotFoundException(TokenNotFoundException e) {
+        int unAuthorizedCode = HttpStatus.UNAUTHORIZED.value();
+        return new ExceptionResponse(unAuthorizedCode, e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({ MethodArgumentNotValidException.class, IllegalArgumentException.class,
+                        ReservationTimeReferencedException.class, ThemeReferencedException.class
     })
-    public ResponseEntity<ExceptionResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+    public ExceptionResponse handleIllegalArgumentException(IllegalArgumentException e) {
         logger.error("IllegalArgumentException caught: {}", e.getMessage());
-        return ResponseEntity.badRequest().body(new ExceptionResponse(400, e.getMessage()));
+        return new ExceptionResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DuplicateReservationException.class)
-    public ResponseEntity<ExceptionResponse> handleDuplicateReservationException(DuplicateReservationException e) {
+    public ExceptionResponse handleDuplicateReservationException(DuplicateReservationException e) {
         logger.error("DuplicateReservationException caught: {} ", e.getMessage());
-        return ResponseEntity.badRequest().body(new ExceptionResponse(400, e.getMessage()));
+        return new ExceptionResponse(ExceptionCode.DUPLICATED_ERROR.value(), e.getMessage());
     }
 
-    @ExceptionHandler({NotFoundThemeException.class, NotFoundReservationTimeException.class, NotFoundReservationException.class})
-    public ResponseEntity<ExceptionResponse> handleNoSuchElementException(NoSuchElementException e) {
-        logger.error("NoSuchElementException caught: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionResponse(404, e.getMessage()));
-    }
-
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    public ExceptionResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         logger.error("HttpMessageNotReadableException caught: {}", e.getMessage());
-        return ResponseEntity.badRequest().body(new ExceptionResponse(400, "JSON parse error: " + e.getMostSpecificCause().getMessage()));
+        String errorMsg = "JSON parse error: " + e.getMostSpecificCause().getMessage();
+        return new ExceptionResponse(HttpStatus.BAD_REQUEST.value(), errorMsg);
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler({NotFoundThemeException.class, NotFoundReservationTimeException.class,
+                       NotFoundReservationException.class})
+    public ExceptionResponse handleNoSuchElementException(NoSuchElementException e) {
+        logger.error("NoSuchElementException caught: {}", e.getMessage());
+        return new ExceptionResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ExceptionResponse> handleRuntimeException(RuntimeException e) {
+    public ExceptionResponse handleRuntimeException(RuntimeException e) {
         logger.error("RuntimeException caught: ", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionResponse(500, "Server Error"));
+        return new ExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Server Error");
     }
 
-
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<String> handleException(Exception ex) {
+    public ExceptionResponse handleException(Exception ex) {
         logger.error("Exception caught: ", ex);
-        return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Server Error");
     }
+
     public record ExceptionResponse(
             int status,
             String message
