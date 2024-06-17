@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.controller;
 
 import static org.hamcrest.Matchers.is;
 import static roomescape.fixture.ReservationFixture.예약을_생성한다;

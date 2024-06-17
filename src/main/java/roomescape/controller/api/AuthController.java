@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import roomescape.dto.request.LoginRequest;
 import roomescape.dto.response.LoginResponse;
 import roomescape.service.MemberService;
+import roomescape.util.CookieUtils;
 
 @RestController
 public class AuthController {
@@ -28,7 +29,8 @@ public class AuthController {
     public ResponseEntity<Void> login(@RequestBody @Valid LoginRequest request) {
         String tokenValue = memberService.tokenLogin(request);
 
-        ResponseCookie responseCookie = createTokenCookie(tokenValue);
+        ResponseCookie responseCookie = CookieUtils.createResponseCookie(TOKEN_COOKIE_NAME, tokenValue
+                , 60); // 60초 후 만료
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
@@ -37,48 +39,16 @@ public class AuthController {
 
     @GetMapping("/login/check")
     public ResponseEntity<LoginResponse> loginCheck(HttpServletRequest request) {
-        String token = extractCookieValue(request, TOKEN_COOKIE_NAME);
+        String token = CookieUtils.extractCookieValue(request.getCookies(), TOKEN_COOKIE_NAME);
         LoginResponse loginResponse = memberService.loginCheck(token);
         return ResponseEntity.ok().body(loginResponse);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
-        removeTokenCookie(request, response);
+        Cookie cookie = CookieUtils.expireCookieByName(request.getCookies(), TOKEN_COOKIE_NAME);
+        response.addCookie(cookie);
+
         return ResponseEntity.ok().build();
-    }
-
-    private void removeTokenCookie(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(TOKEN_COOKIE_NAME)) {
-                    cookie.setMaxAge(0);
-                    cookie.setPath("/");
-                    response.addCookie(cookie);
-                }
-            }
-        }
-    }
-
-    private ResponseCookie createTokenCookie(String tokenValue) {
-        return ResponseCookie.from(TOKEN_COOKIE_NAME, tokenValue)
-                .path("/")
-                .httpOnly(true)
-                .secure(true)
-                .maxAge(60) // 60초 후 만료
-                .build();
-    }
-
-    private String extractCookieValue(HttpServletRequest request, String cookieName) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookieName.equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
     }
 }

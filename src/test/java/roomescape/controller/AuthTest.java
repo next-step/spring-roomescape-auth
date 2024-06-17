@@ -1,6 +1,4 @@
-package roomescape;
-
-import static org.hamcrest.Matchers.is;
+package roomescape.controller;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -11,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.dto.request.LoginRequest;
+
+import static org.hamcrest.Matchers.is;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
