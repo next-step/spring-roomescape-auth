@@ -1,6 +1,7 @@
 package roomescape.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,9 +18,9 @@ import roomescape.repository.ReservationTimeRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 class ReservationTimeTests {
 
@@ -86,7 +87,7 @@ class ReservationTimeTests {
 
 		// when, then
 		assertThatThrownBy(() -> this.reservationTimeService.delete(id)).isInstanceOf(RoomEscapeException.class)
-				.hasMessage(ErrorCode.NOT_FOUND_RESERVATION_TIME.getMessage());
+			.hasMessage(ErrorCode.NOT_FOUND_RESERVATION_TIME.getMessage());
 	}
 
 	@Test
@@ -103,6 +104,41 @@ class ReservationTimeTests {
 		assertThat(resultReservationTimeById).isNotNull();
 		assertThat(resultReservationTimeById.getId()).isEqualTo(1L);
 		assertThat(resultReservationTimeById.getStartAt()).isEqualTo("10:00");
+	}
+
+	@Test
+	void getAvailableReservationTimes() {
+		// given
+		String date = "2024-06-18";
+		long themeId = 1L;
+
+		List<ReservationTime> reservationTimes = Arrays.asList(
+				ReservationTime.builder().id(1L).startAt("10:00").build(),
+				ReservationTime.builder().id(2L).startAt("11:00").build(),
+				ReservationTime.builder().id(3L).startAt("12:00").build());
+		given(this.reservationTimeRepository.findAll()).willReturn(reservationTimes);
+
+		List<Long> reservedTimeIds = Arrays.asList(1L, 3L);
+		given(this.reservationTimeRepository.findReservedTimeIds(anyString(), eq(themeId))).willReturn(reservedTimeIds);
+
+		// when
+		var availableTimes = this.reservationTimeService.getAvailableReservationTimes(date, themeId);
+
+		// then
+		assertThat(availableTimes).isNotNull();
+		assertThat(availableTimes).hasSize(reservationTimes.size());
+
+		assertThat(availableTimes.get(0)).isNotNull();
+		assertThat(availableTimes.get(0).startAt()).isEqualTo("10:00");
+		assertThat(availableTimes.get(0).alreadyBooked()).isTrue();
+
+		assertThat(availableTimes.get(1)).isNotNull();
+		assertThat(availableTimes.get(1).startAt()).isEqualTo("11:00");
+		assertThat(availableTimes.get(1).alreadyBooked()).isFalse();
+
+		assertThat(availableTimes.get(2)).isNotNull();
+		assertThat(availableTimes.get(2).startAt()).isEqualTo("12:00");
+		assertThat(availableTimes.get(2).alreadyBooked()).isTrue();
 	}
 
 }

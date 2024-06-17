@@ -3,6 +3,7 @@ package roomescape.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import roomescape.controller.dto.AvailableReservationTimeResponse;
 import roomescape.controller.dto.ReservationTimeRequest;
 import roomescape.controller.dto.ReservationTimeResponse;
 import roomescape.domain.ReservationTime;
@@ -52,7 +53,16 @@ public class ReservationTimeService {
 		catch (EmptyResultDataAccessException ex) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_RESERVATION_TIME);
 		}
+	}
 
+	public List<AvailableReservationTimeResponse> getAvailableReservationTimes(String date, long themeId) {
+		var reservationTimes = this.reservationTimeRepository.findAll();
+		var reservedTimeIds = this.reservationTimeRepository.findReservedTimeIds(date, themeId);
+
+		return reservationTimes.stream()
+			.map((reservationTime) -> AvailableReservationTimeResponse.from(reservationTime,
+					reservedTimeIds.contains(reservationTime.getId())))
+			.collect(Collectors.toList());
 	}
 
 }

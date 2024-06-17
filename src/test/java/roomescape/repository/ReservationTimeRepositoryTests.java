@@ -1,5 +1,7 @@
 package roomescape.repository;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -20,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -56,7 +59,7 @@ class ReservationTimeRepositoryTests {
 		// given
 		ReservationTime reservationTime = ReservationTime.builder().id(1L).startAt("10:00").build();
 
-		given(this.jdbcInsert.executeAndReturnKey(any(Map.class))).willReturn(1L);
+		given(this.jdbcInsert.executeAndReturnKey(anyMap())).willReturn(1L);
 
 		// when
 		ReservationTime savedReservationTime = this.reservationTimeRepository.save(reservationTime);
@@ -84,7 +87,7 @@ class ReservationTimeRepositoryTests {
 		// given
 		ReservationTime reservationTime = ReservationTime.builder().id(1L).startAt("10:00").build();
 
-		given(this.jdbcTemplate.queryForObject(any(String.class), any(RowMapper.class), anyLong()))
+		given(this.jdbcTemplate.queryForObject(anyString(), any(RowMapper.class), anyLong()))
 			.willReturn(reservationTime);
 
 		// when
@@ -92,6 +95,25 @@ class ReservationTimeRepositoryTests {
 
 		// then
 		assertThat(result).isEqualTo(reservationTime);
+	}
+
+	@Test
+	void findReservedTimeIds() {
+		// given
+		String date = "2024-06-18";
+		long themeId = 1L;
+		List<Long> ids = Arrays.asList(1L, 2L, 3L);
+
+		given(this.jdbcTemplate.query(anyString(), any(RowMapper.class), any(Object[].class)))
+				.willReturn(ids);
+
+		// when
+		List<Long> reservedTimeIds = this.reservationTimeRepository.findReservedTimeIds(date, themeId);
+
+		// then
+		assertThat(reservedTimeIds).isNotNull();
+		assertThat(reservedTimeIds).hasSize(ids.size());
+		assertThat(reservedTimeIds).containsExactlyElementsOf(ids);
 	}
 
 }

@@ -41,6 +41,16 @@ public class ReservationTime {
 		return Objects.hash(this.id);
 	}
 
+	@Override
+	public String toString() {
+		// @formatter:off
+		return "ReservationTime{" +
+				"id=" + this.id +
+				", startAt='" + this.startAt + '\'' +
+				'}';
+		// @formatter:on
+	}
+
 	public static final class Builder {
 
 		private final ReservationTime reservationTime;

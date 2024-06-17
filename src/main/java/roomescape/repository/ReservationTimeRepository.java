@@ -17,6 +17,8 @@ public class ReservationTimeRepository {
 
 	private static final RowMapper<ReservationTime> RESERVATION_TIME_ROW_MAPPER;
 
+	private static final RowMapper<Long> RESERVED_TIME_IDS_ROW_MAPPER;
+
 	private final JdbcTemplate jdbcTemplate;
 
 	private SimpleJdbcInsert jdbcInsert;
@@ -61,6 +63,22 @@ public class ReservationTimeRepository {
 		this.jdbcTemplate.update(sql, id);
 	}
 
+	public List<Long> findReservedTimeIds(String date, long themeId) {
+		String sql = """
+						SELECT
+							rt.id as time_id
+						FROM
+							reservation_time rt
+						INNER JOIN reservation r ON rt.id = r.time_id
+						WHERE
+							r.date = ?
+						AND r.theme_id = ?;
+				""";
+		Object[] parameters = new Object[] { date, themeId };
+
+		return this.jdbcTemplate.query(sql, RESERVED_TIME_IDS_ROW_MAPPER, parameters);
+	}
+
 	static {
 		RESERVATION_TIME_ROW_MAPPER = (resultSet, rowNum) -> {
 			long id = resultSet.getLong("id");
@@ -68,6 +86,10 @@ public class ReservationTimeRepository {
 
 			return ReservationTime.builder().id(id).startAt(startAt).build();
 		};
+	}
+
+	static {
+		RESERVED_TIME_IDS_ROW_MAPPER = (resultSet, rowNum) -> resultSet.getLong("time_id");
 	}
 
 }
