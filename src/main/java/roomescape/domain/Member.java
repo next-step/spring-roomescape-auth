@@ -1,5 +1,9 @@
 package roomescape.domain;
 
+import org.thymeleaf.util.StringUtils;
+
+import java.util.Objects;
+
 public class Member {
 
     private Long id;
@@ -28,5 +32,22 @@ public class Member {
 
     public Member toEntity(Member member, Long id) {
         return new Member(id, member.getName(), member.getName(), member.getPassword());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member member = (Member) o;
+        return Objects.equals(id, member.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public boolean checkPassword(String password) {
+        return StringUtils.equals(this.password, password);
     }
 }

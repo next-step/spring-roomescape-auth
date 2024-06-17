@@ -5,7 +5,6 @@ import org.thymeleaf.util.StringUtils;
 import roomescape.domain.Member;
 import roomescape.dto.request.LoginRequest;
 import roomescape.dto.response.LoginResponse;
-import roomescape.exception.custom.InvalidTokenException;
 import roomescape.exception.custom.PasswordMismatchException;
 import roomescape.exception.custom.TokenNotFoundException;
 import roomescape.exception.custom.UserNotFoundException;
@@ -34,7 +33,7 @@ public class MemberService {
     private void validateMemberCredentials(String email, String password) {
         Member member = findByEmail(email);
 
-        if (!member.getPassword().equals(password)) {
+        if (!member.checkPassword(password)) {
             throw new PasswordMismatchException();
         }
     }
@@ -57,9 +56,6 @@ public class MemberService {
         if (StringUtils.isEmpty(token)) {
             throw new TokenNotFoundException();
         }
-
-        if (!jwtTokenProvider.validateToken(token)) {
-            throw new InvalidTokenException();
-        }
+        jwtTokenProvider.validateToken(token);
     }
 }
