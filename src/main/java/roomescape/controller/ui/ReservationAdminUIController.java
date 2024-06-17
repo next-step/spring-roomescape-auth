@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/admin")
-public class ReservationAdminController {
+public class ReservationAdminUIController {
 
 	@GetMapping("/")
 	public String admin() {
@@ -15,7 +15,7 @@ public class ReservationAdminController {
 
 	@GetMapping("/reservation")
 	public String reservation() {
-		return "/admin/reservation-new";
+		return "/admin/reservation";
 	}
 
 	@GetMapping("/time")
