@@ -16,9 +16,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/themes")
-public record ThemeController(ThemeSaver themeSaver,
-                              ThemeFinder themeFinder,
-                              ThemeDeleter themeDeleter) {
+public class ThemeController {
+
+    private final ThemeSaver themeSaver;
+    private final ThemeFinder themeFinder;
+    private final ThemeDeleter themeDeleter;
+
+    public ThemeController(ThemeSaver themeSaver, ThemeFinder themeFinder, ThemeDeleter themeDeleter) {
+        this.themeSaver = themeSaver;
+        this.themeFinder = themeFinder;
+        this.themeDeleter = themeDeleter;
+    }
 
     @GetMapping
     public ResponseEntity<List<ThemeResponse>> findAllThemes() {

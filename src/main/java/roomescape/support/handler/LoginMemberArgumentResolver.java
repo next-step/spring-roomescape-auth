@@ -11,9 +11,13 @@ import roomescape.apply.auth.application.JwtTokenManager;
 import roomescape.apply.auth.ui.dto.LoginMember;
 import roomescape.support.ServletRequestTokenFinder;
 
-public record LoginMemberArgumentResolver(
-        JwtTokenManager jwtTokenManager
-) implements HandlerMethodArgumentResolver {
+public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
+
+    private final JwtTokenManager jwtTokenManager;
+
+    public LoginMemberArgumentResolver(JwtTokenManager jwtTokenManager) {
+        this.jwtTokenManager = jwtTokenManager;
+    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
