@@ -153,15 +153,29 @@ class MissionStepTests {
 
 		RestAssured.given().log().all().cookie("token", token).post("/logout").then().log().all().statusCode(200);
 
+		RestAssured.given().log().all().when().get("/login/check").then().log().all().statusCode(401);
+	}
+
+	@Test
+	void createMember() {
+		Map<String, String> params = new HashMap<>();
+		params.put("name", "이름");
+		params.put("email", "name@gmail.com");
+		params.put("password", "1234");
+
 		RestAssured.given()
 			.log()
 			.all()
+			.contentType(ContentType.JSON)
+			.body(params)
 			.when()
-			.get("/login/check")
+			.post("/members")
 			.then()
 			.log()
 			.all()
-			.statusCode(401);
+			.statusCode(201)
+			.body("name", is("이름"))
+			.body("email", is("name@gmail.com"));
 	}
 
 }
