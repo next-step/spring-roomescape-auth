@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import static roomescape.exception.ErrorCode.INVALID_PARAMETER;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -26,7 +24,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, INVALID_PARAMETER.getMessage());
+		ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status,
+				ErrorCode.INVALID_PARAMETER.getMessage());
 		return handleExceptionInternal(ex, problemDetail, headers, HttpStatus.BAD_REQUEST, request);
 	}
 
@@ -61,10 +60,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private HttpStatus getStatusForErrorCode(ErrorCode errorCode) {
 		return switch (errorCode) {
 			case INVALID_PARAMETER, INVALID_THEME_NAME, INVALID_THEME_DESCRIPTION, INVALID_THEME_THUMBNAIL,
-					INVALID_TIME, INVALID_RESERVATION, PAST_RESERVATION ->
+					INVALID_TIME, INVALID_RESERVATION_NAME, PAST_RESERVATION, INVALID_EMAIL ->
 				HttpStatus.BAD_REQUEST;
-			case DUPLICATE_RESERVATION -> HttpStatus.CONFLICT;
-			case NOT_FOUND_RESERVATION, NOT_FOUND_RESERVATION_TIME, NOT_FOUND_THEME -> HttpStatus.NOT_FOUND;
+			case DUPLICATE_RESERVATION, DUPLICATE_MEMBER -> HttpStatus.CONFLICT;
+			case NOT_FOUND_RESERVATION, NOT_FOUND_RESERVATION_TIME, NOT_FOUND_THEME, NOT_FOUND_MEMBER ->
+				HttpStatus.NOT_FOUND;
+			case EXPIRED_LOGIN_TOKEN, INVALID_PASSWORD, NEEDS_LOGIN -> HttpStatus.UNAUTHORIZED;
 		};
 	}
 
