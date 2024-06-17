@@ -9,14 +9,17 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import roomescape.apply.auth.application.JwtTokenManager;
 import roomescape.apply.auth.ui.dto.LoginMember;
+import roomescape.apply.member.application.MemberFinder;
 import roomescape.support.ServletRequestTokenFinder;
 
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final JwtTokenManager jwtTokenManager;
+    private final MemberFinder memberFinder;
 
-    public LoginMemberArgumentResolver(JwtTokenManager jwtTokenManager) {
+    public LoginMemberArgumentResolver(JwtTokenManager jwtTokenManager, MemberFinder memberFinder) {
         this.jwtTokenManager = jwtTokenManager;
+        this.memberFinder = memberFinder;
     }
 
     @Override
@@ -34,7 +37,8 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         if (httpServletRequest != null) {
             String token = ServletRequestTokenFinder.getTokenByRequestCookies(httpServletRequest);
             jwtTokenManager.validateToken(token);
-            return jwtTokenManager.getLoginMemberEmailAndNameBy(token);
+            final String email = jwtTokenManager.getEmailBy(token);
+            return memberFinder.getLoginMemberByEmail(email);
         }
         throw new IllegalArgumentException("HttpServletRequest 객체를 가져올 수 없습니다.");
     }

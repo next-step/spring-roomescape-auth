@@ -8,9 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import roomescape.apply.auth.application.exception.IllegalTokenException;
-import roomescape.apply.auth.ui.dto.LoginMember;
 import roomescape.apply.auth.ui.dto.LoginResponse;
-import roomescape.apply.member.application.MemberFinder;
 import roomescape.support.TokenValidityPeriodCreator;
 
 import javax.crypto.SecretKey;
@@ -25,11 +23,8 @@ public class JwtTokenManager {
     private static final String JOINED_NAMES = "joinedNames";
 
     private final SecretKey secretKey;
-    private final MemberFinder memberFinder;
 
-    public JwtTokenManager(@Value("${jwt.secret}") String secretKey,
-                           MemberFinder memberFinder) {
-        this.memberFinder = memberFinder;
+    public JwtTokenManager(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -73,9 +68,7 @@ public class JwtTokenManager {
                 .getPayload();
     }
 
-    public LoginMember getLoginMemberEmailAndNameBy(String token) {
-        String email = parseJwt(token).getSubject();
-        return memberFinder.getLoginMemberByEmail(email);
+    public String getEmailBy(String token) {
+        return parseJwt(token).getSubject();
     }
-
 }

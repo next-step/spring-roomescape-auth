@@ -7,22 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import roomescape.apply.auth.application.exception.IllegalTokenException;
 import roomescape.apply.auth.ui.dto.LoginResponse;
-import roomescape.apply.member.application.MemberFinder;
-import roomescape.apply.member.application.MemberRoleFinder;
-import roomescape.apply.member.application.mock.MockPasswordHasher;
 import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.member.domain.MemberRoleNames;
-import roomescape.apply.member.domain.repository.MemberJDBCRepository;
-import roomescape.apply.member.domain.repository.MemberRepository;
-import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
-import roomescape.apply.member.domain.repository.MemberRoleRepository;
-import roomescape.apply.reservation.application.ReservationFinder;
-import roomescape.apply.reservation.application.ReservationRecorder;
-import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
-import roomescape.apply.reservationtime.application.ReservationTimeFinder;
-import roomescape.apply.reservationtime.domain.repository.ReservationTimeJDBCRepository;
-import roomescape.apply.theme.application.ThemeFinder;
-import roomescape.apply.theme.domain.repository.ThemeJDBCRepository;
 import roomescape.support.BaseTestService;
 
 import java.util.Set;
@@ -39,12 +25,7 @@ class JwtTokenManagerTest extends BaseTestService {
     void setUp() {
         transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
         String testKey = "TeStSeCuReKeYIsSuPeRSeCuReKeYTeStSeCuReKeYIsSuPeRSeCuReKeYTeStSeCuReKeYIsSuPeRSeCuReKeY";
-        var mockPasswordHasher = new MockPasswordHasher();
-        var memberRepository = new MemberJDBCRepository(template);
-        var memberRoleRepository = new MemberRoleJDBCRepository(template);
-        var memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
-        var memberFinder = new MemberFinder(mockPasswordHasher, memberRepository, memberRoleFinder);
-        this.jwtTokenManager = new JwtTokenManager(testKey, memberFinder);
+        this.jwtTokenManager = new JwtTokenManager(testKey);
     }
 
     @AfterEach
