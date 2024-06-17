@@ -22,8 +22,7 @@ public class AuthService {
     }
 
     public String login(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.email())
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다"));
+        User user = getUserByEmail(loginRequest.email());
         if (user.isNotMatchPassword(loginRequest.password())) {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다");
         }
@@ -33,14 +32,17 @@ public class AuthService {
 
     public CheckUserInfoResponse checkUserInfo(String accessToken) {
         String email = jwtTokenProvider.getEmail(accessToken);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다"));
+        User user = getUserByEmail(email);
         return new CheckUserInfoResponse(user.getName());
     }
 
     public void logout(String accessToken) {
         String email = jwtTokenProvider.getEmail(accessToken);
-        userRepository.findByEmail(email)
+        getUserByEmail(email);
+    }
+
+    private User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다"));
     }
 }
