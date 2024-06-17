@@ -9,10 +9,14 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import roomescape.apply.auth.application.JwtTokenManager;
 import roomescape.apply.auth.application.annotation.NeedMemberRole;
 import roomescape.apply.auth.application.exception.IllegalTokenException;
+import roomescape.apply.auth.application.exception.TokenNotFoundException;
 import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.member.domain.MemberRoleNames;
 import roomescape.support.ServletRequestTokenFinder;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
@@ -21,6 +25,8 @@ import static java.util.stream.Collectors.toSet;
 
 @Component
 public class MemberRoleAccessInterceptor implements HandlerInterceptor {
+
+    private static final String LOGIN_REDIRECT = "/login?redirect=";
 
     private final JwtTokenManager jwtTokenManager;
 
@@ -34,13 +40,12 @@ public class MemberRoleAccessInterceptor implements HandlerInterceptor {
         if (!hasAnnotation) {
             return true;
         }
-
-        String token = ServletRequestTokenFinder.getTokenByRequestCookies(request);
-
+        String token;
         try {
+            token = ServletRequestTokenFinder.getTokenByRequestCookies(request);
             jwtTokenManager.validateToken(token);
-        } catch (IllegalTokenException ex) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (IllegalTokenException | TokenNotFoundException ex) {
+            redirectToLogin(request, response);
             return false;
         }
 
@@ -49,11 +54,21 @@ public class MemberRoleAccessInterceptor implements HandlerInterceptor {
         Set<MemberRoleName> requiredRoleNames = getRequiredMemberRolesInMethod(handler);
         boolean containRole = requiredRoleNames.stream().anyMatch(memberRoleNames::contains);
         if (!containRole) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            redirectToLogin(request, response);
         }
 
         return containRole;
     }
+
+    private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            String originalUrl = URLEncoder.encode(request.getRequestURL().toString(), StandardCharsets.UTF_8.toString());
+            response.sendRedirect(LOGIN_REDIRECT + originalUrl);
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     private boolean hasNeedMemberRoleAnnotation(Object handler) {
         if (handler instanceof ResourceHttpRequestHandler) {

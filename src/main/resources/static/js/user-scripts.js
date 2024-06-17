@@ -62,26 +62,36 @@ function login() {
     alert('Please fill in all fields.');
     return; // 필수 입력 필드가 비어있으면 여기서 함수 실행을 중단
   }
+      // 현재 URL에서 redirect 파라미터 추출
+      const urlParams = new URLSearchParams(window.location.search);
+      let redirectUrl = urlParams.get('redirect');
 
-  fetch('/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      email: email,
-      password: password
-    })
-  })
+      // URL에서 경로만 추출
+      if (redirectUrl) {
+          const url = new URL(redirectUrl);
+          redirectUrl = url.pathname + url.search;
+      }
+      fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          redirect: redirectUrl
+        })
+      })
       .then(response => {
         if (200 === !response.status) {
           alert('Login failed'); // 로그인 실패 시 경고창 표시
           throw new Error('Login failed');
         }
+          return response.json();
       })
-      .then(() => {
+      .then(data => {
         updateUIBasedOnLogin(); // UI 업데이트
-        window.location.href = '/';
+        window.location.href = data.redirect;
       })
       .catch(error => {
         console.error('Error during login:', error);

@@ -1,9 +1,9 @@
 package roomescape.apply.auth.application;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import roomescape.apply.auth.application.annotation.NeedMemberRole;
 
 import java.lang.annotation.Annotation;
@@ -24,18 +24,21 @@ public class MemberRolePathExtractor {
     public List<String> findURIAnnotatedNeedAccountRole() {
         List<String> annotatedURIs = new ArrayList<>();
 
-        Map<String, Object> restControllers = applicationContext.getBeansWithAnnotation(RestController.class);
+        Map<String, Object> controllers = applicationContext.getBeansWithAnnotation(Controller.class);
 
-        for (Object restController : restControllers.values()) {
-            Class<?> restControllerClass = restController.getClass();
+        for (Object controller : controllers.values()) {
+            Class<?> controllerClass = controller.getClass();
 
-            Method[] methods = restControllerClass.getDeclaredMethods();
+            Method[] methods = controllerClass.getDeclaredMethods();
 
-            List<String> classBaseURIs = getControllerBaseURIs(restControllerClass.getAnnotation(RequestMapping.class));
+            List<String> classBaseURIs = getControllerBaseURIs(controllerClass.getAnnotation(RequestMapping.class));
 
             for (Method method : methods) {
                 if (method.isAnnotationPresent(NeedMemberRole.class)) {
                     List<String> methodURIs = extractMethodAndURI(method);
+                    if (methodURIs.isEmpty()) {
+                        annotatedURIs.addAll(classBaseURIs);
+                    }
                     for (String classBaseURI : classBaseURIs) {
                         for (String methodURI : methodURIs) {
                             annotatedURIs.add(classBaseURI + methodURI);

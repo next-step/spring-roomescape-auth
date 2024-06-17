@@ -11,6 +11,7 @@ import roomescape.apply.auth.application.LoginManager;
 import roomescape.apply.auth.application.annotation.NeedMemberRole;
 import roomescape.apply.auth.ui.dto.LoginCheckResponse;
 import roomescape.apply.auth.ui.dto.LoginRequest;
+import roomescape.apply.auth.ui.dto.RedirectResponse;
 import roomescape.apply.member.application.MemberFinder;
 import roomescape.apply.member.domain.MemberRoleName;
 
@@ -26,13 +27,12 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request,
-                                      HttpServletResponse servletResponse
-
+    public ResponseEntity<RedirectResponse> login(@RequestBody LoginRequest request,
+                                                  HttpServletResponse servletResponse
     ) {
         var loginResponse = memberFinder.findByLoginRequest(request);
         loginTokenManager.addTokenToCookie(loginResponse, servletResponse);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new RedirectResponse(request.redirect()));
     }
 
     @GetMapping("/login/check")

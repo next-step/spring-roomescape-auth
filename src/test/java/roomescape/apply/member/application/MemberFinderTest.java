@@ -63,7 +63,7 @@ class MemberFinderTest extends BaseTestService {
         memberRepository.save(member(memberRequest("newbie1", "newbie1@gmail.com")));
         memberRepository.save(member(memberRequest(targetName, "newbie2@gmail.com")));
         memberRepository.save(member(memberRequest("newbie3", "newbie3@gmail.com")));
-        LoginRequest request = new LoginRequest("newbie2@gmail.com", "123");
+        LoginRequest request = new LoginRequest("newbie2@gmail.com", "123", "");
         // when
         LoginResponse loginResponse = memberFinder.findByLoginRequest(request);
         // then

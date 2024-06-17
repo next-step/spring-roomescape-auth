@@ -30,12 +30,12 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
                                        @Nonnull NativeWebRequest webRequest,
                                        WebDataBinderFactory binderFactory
     ) {
-        if (webRequest instanceof HttpServletRequest httpServletRequest) {
+        final HttpServletRequest httpServletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+        if (httpServletRequest != null) {
             String token = ServletRequestTokenFinder.getTokenByRequestCookies(httpServletRequest);
             jwtTokenManager.validateToken(token);
             return jwtTokenManager.getMemberEmailAndNameBy(token);
         }
-
         throw new IllegalArgumentException("HttpServletRequest 객체를 가져올 수 없습니다.");
     }
 }
