@@ -17,9 +17,7 @@ import roomescape.service.MemberService;
 
 @RestController
 public class AuthController {
-
-    public static final String TOKEN_COOKIE_NAME = "token";
-
+    private static final String TOKEN_COOKIE_NAME = "token";
     private final MemberService memberService;
 
     public AuthController(MemberService memberService) {
@@ -68,7 +66,7 @@ public class AuthController {
                 .path("/")
                 .httpOnly(true)
                 .secure(true)
-                .maxAge(60)
+                .maxAge(60) // 60초 후 만료
                 .build();
     }
 
