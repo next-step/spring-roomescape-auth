@@ -75,6 +75,8 @@ class LoginIntegrationTests {
 
 		this.headers.set(HttpHeaders.COOKIE, token);
 
+		// login check
+		// when
 		var checkResponse = this.restTemplate.exchange("http://localhost:" + this.port + "/login/check", HttpMethod.GET,
 				new HttpEntity<>(this.headers), LoginCheckResponse.class);
 
