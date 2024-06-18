@@ -22,8 +22,7 @@ public enum ErrorCode {
 	NOT_FOUND_MEMBER("RES-3004", "등록되지 않은 사용자입니다."),
 
 	EXPIRED_LOGIN_TOKEN("RES-4001", "로그인 토큰이 만료되었습니다."),
-	NEEDS_LOGIN("RES-4002", "로그인이 필요합니다.")
-	;
+	NEEDS_LOGIN("RES-4002", "로그인이 필요합니다.");
 	// @formatter:on
 
 	private final String code;

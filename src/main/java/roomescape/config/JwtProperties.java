@@ -5,11 +5,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "security.jwt")
 public class JwtProperties {
 
-	public String tokenSecretKey;
+	private String tokenSecretKey;
 
-	public long tokenExpireLength;
+	private long tokenExpireLength;
 
-	public long clockSkewSeconds;
+	private long clockSkewSeconds;
 
 	public String getTokenSecretKey() {
 		return this.tokenSecretKey;
