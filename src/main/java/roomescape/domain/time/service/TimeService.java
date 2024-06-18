@@ -2,6 +2,9 @@ package roomescape.domain.time.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import roomescape.domain.theme.domain.Theme;
+import roomescape.domain.theme.service.ThemeService;
+import roomescape.domain.time.api.dto.TimeRequest;
 import roomescape.domain.time.domain.Time;
 import roomescape.domain.time.domain.repository.TimeRepository;
 
@@ -11,13 +14,17 @@ import java.util.List;
 public class TimeService {
 
     private final TimeRepository timeRepository;
+    private final ThemeService themeService;
 
-    public TimeService(TimeRepository timeRepository) {
+    public TimeService(TimeRepository timeRepository, ThemeService themeService) {
         this.timeRepository = timeRepository;
+        this.themeService = themeService;
     }
 
     @Transactional
-    public Time save(Time time) {
+    public Time save(TimeRequest timeRequest) {
+        Theme theme = themeService.findById(timeRequest.getThemeId());
+        Time time = new Time(null, timeRequest.getDate(), theme, timeRequest.getStartAt());
         Long id = timeRepository.save(time);
         return findById(id);
     }

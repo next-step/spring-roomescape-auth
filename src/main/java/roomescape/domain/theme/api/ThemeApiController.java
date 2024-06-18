@@ -20,8 +20,8 @@ public class ThemeApiController {
     }
 
     @PostMapping
-    public ResponseEntity<ThemeResponse> save(@RequestBody ThemeRequest request) {
-        Theme theme = themeService.save(new Theme(null, request.getName(), request.getDescription(), request.getThumbnail()));
+    public ResponseEntity<ThemeResponse> save(@RequestBody ThemeRequest themeRequest) {
+        Theme theme = themeService.save(themeRequest);
         return ResponseEntity.ok().body(new ThemeResponse(
                 theme.getId(),
                 theme.getName(),

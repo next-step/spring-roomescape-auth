@@ -2,6 +2,7 @@ package roomescape.domain.theme.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import roomescape.domain.theme.api.dto.ThemeRequest;
 import roomescape.domain.theme.domain.Theme;
 import roomescape.domain.theme.domain.repository.ThemeRepository;
 
@@ -17,7 +18,8 @@ public class ThemeService {
     }
 
     @Transactional
-    public Theme save(Theme theme) {
+    public Theme save(ThemeRequest themeRequest) {
+        Theme theme = new Theme(null, themeRequest.getName(), themeRequest.getDescription(), themeRequest.getThumbnail());
         Long id = themeRepository.save(theme);
         return findById(id);
     }

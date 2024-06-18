@@ -20,22 +20,13 @@ public class ApiTimeController {
     }
 
     @PostMapping
-    public ResponseEntity<TimeResponse> save(@RequestBody TimeRequest request) {
-        Time time = timeService.save(request.convertToDomainObject());
+    public ResponseEntity<TimeResponse> save(@RequestBody TimeRequest timeRequest) {
+        Time time = timeService.save(timeRequest);
         return ResponseEntity.ok().body(new TimeResponse(
                 time.getId(),
-                time.getStartAt()));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<TimeResponse>> findAll() {
-        List<Time> times = timeService.findAll();
-        List<TimeResponse> responses = times.stream().map(
-                time -> new TimeResponse(
-                        time.getId(),
-                        time.getStartAt())
-        ).toList();
-        return ResponseEntity.ok().body(responses);
+                time.getDate(),
+                time.getStartAt(),
+                time.getTheme().getId()));
     }
 
     @DeleteMapping("/{id}")
