@@ -56,14 +56,4 @@ public class Reservation {
     public Theme getTheme() {
         return theme;
     }
-
-    @Override
-    public String toString() {
-        return "Reservation{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", date=" + date +
-                ", startAt=" + time +
-                '}';
-    }
 }
