@@ -1,8 +1,8 @@
 package roomescape.domain;
 
-import org.thymeleaf.util.StringUtils;
-
 import java.util.Objects;
+import org.thymeleaf.util.StringUtils;
+import roomescape.exception.custom.PasswordMismatchException;
 
 public class Member {
 
@@ -36,8 +36,12 @@ public class Member {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Member member = (Member) o;
         return Objects.equals(id, member.id);
     }
@@ -47,7 +51,9 @@ public class Member {
         return Objects.hash(id);
     }
 
-    public boolean checkPassword(String password) {
-        return StringUtils.equals(this.password, password);
+    public void checkPassword(String password) {
+        if (!StringUtils.equals(this.password, password)) {
+            throw new PasswordMismatchException();
+        }
     }
 }
