@@ -17,6 +17,12 @@ public class MemberRepository {
                 m.email = ? AND 
                 m.password = ?;
             """;
+    private static final String FIND_BY_ID = """
+            SELECT * 
+            FROM member m
+            WHERE
+                m.id = ?;
+            """;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -32,6 +38,21 @@ public class MemberRepository {
                                 rs.getString("password"),
                                 rs.getString("name")),
                 email, password);
+        if (members.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(members.get(0));
+    }
+
+    public Optional<Member> findById(Long memberId) {
+        List<Member> members = jdbcTemplate.query(FIND_BY_ID, (rs, rowNum) ->
+                        new Member(
+                                rs.getLong("id"),
+                                rs.getString("name"),
+                                rs.getString("email"),
+                                rs.getString("password")
+                        ),
+                memberId);
         if (members.isEmpty()) {
             return Optional.empty();
         }

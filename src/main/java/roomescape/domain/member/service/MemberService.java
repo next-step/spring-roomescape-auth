@@ -31,4 +31,14 @@ public class MemberService {
                 .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
                 .compact();
     }
+
+    @Transactional(readOnly = true)
+    public Member findByToken(String token) {
+        Long memberId = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody().get("id", Long.class);
+        return memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.COOKIE_NOT_FOUND_ERROR));
+    }
 }
