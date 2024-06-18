@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import roomescape.reservation.exception.PastDateReservationException;
 import roomescape.reservation.exception.ReservationAlreadyExistsException;
+import roomescape.theme.application.ThemeHasReservationException;
 import roomescape.theme.exception.ThemeNotFoundException;
 import roomescape.time.exception.CannotDeleteReserveTimeException;
 import roomescape.time.exception.ReservationTimeAlreadyExistsException;
@@ -37,8 +38,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ExceptionResponse.from(e.getMessage()));
     }
 
-    @ExceptionHandler(ThemeNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleThemeNotFoundException(ThemeNotFoundException e) {
+    @ExceptionHandler({ThemeNotFoundException.class, ThemeHasReservationException.class})
+    public ResponseEntity<ExceptionResponse> handleThemeNotFoundException(RuntimeException e) {
         log.warn("{}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionResponse.from(e.getMessage()));
     }

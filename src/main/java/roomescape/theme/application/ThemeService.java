@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import roomescape.reservation.domain.repository.ReservationRepository;
 import roomescape.theme.domain.Theme;
 import roomescape.theme.domain.repository.ThemeRepository;
 import roomescape.theme.dto.ThemeCreateRequest;
@@ -13,28 +14,33 @@ import roomescape.theme.exception.ThemeNotFoundException;
 @Service
 public class ThemeService {
 
-    private final ThemeRepository jdbcThemeRepository;
+    private final ThemeRepository themeRepository;
+    private final ReservationRepository reservationRepository;
 
-    public ThemeService(ThemeRepository jdbcThemeRepository) {
-        this.jdbcThemeRepository = jdbcThemeRepository;
+    public ThemeService(ThemeRepository themeRepository, ReservationRepository reservationRepository) {
+        this.themeRepository = themeRepository;
+        this.reservationRepository = reservationRepository;
     }
 
     public ThemeResponse createTheme(ThemeCreateRequest request) {
-        Theme theme = jdbcThemeRepository.save(request.toTheme());
+        Theme theme = themeRepository.save(request.toTheme());
         return ThemeResponse.from(theme);
     }
 
     public List<ThemeResponse> getThemes() {
-        List<Theme> themes = jdbcThemeRepository.findAll();
+        List<Theme> themes = themeRepository.findAll();
         return themes.stream()
                 .map(ThemeResponse::from)
                 .toList();
     }
 
     public void deleteTheme(Long themeId) {
-        if (!jdbcThemeRepository.existsById(themeId)) {
+        if (!themeRepository.existsById(themeId)) {
             throw new ThemeNotFoundException();
         }
-        jdbcThemeRepository.deleteById(themeId);
+        if (reservationRepository.existsByThemeId(themeId)) {
+            throw new ThemeHasReservationException();
+        }
+        themeRepository.deleteById(themeId);
     }
 }

@@ -35,7 +35,8 @@ public class JdbcReservationRepository implements ReservationRepository {
                 .addValue("time_id", reservation.getTime().getId())
                 .addValue("theme_id", reservation.getTheme().getId());
         Long reservationId = simpleJdbcInsert.executeAndReturnKey(paramsReservation).longValue();
-        return new Reservation(reservationId, reservation.getName(), reservation.getDate(), reservation.getTime(), reservation.getTheme());
+        return new Reservation(reservationId, reservation.getName(), reservation.getDate(), reservation.getTime(),
+                reservation.getTheme());
     }
 
     @Override
@@ -94,9 +95,16 @@ public class JdbcReservationRepository implements ReservationRepository {
     }
 
     @Override
-    public boolean existsByDateAndReservationTimeAndTheme(String date, ReservationTime reservationTime,Theme theme) {
+    public boolean existsByDateAndReservationTimeAndTheme(String date, ReservationTime reservationTime, Theme theme) {
         String sql = "SELECT COUNT(*) FROM reservation WHERE date = ? AND time_id = ? AND theme_id = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, date, reservationTime.getId(),theme.getId());
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, date, reservationTime.getId(), theme.getId());
+        return count != null && count.equals(1);
+    }
+
+    @Override
+    public boolean existsByThemeId(Long themeId) {
+        String sql = "SELECT COUNT(*) FROM reservation WHERE theme_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, themeId);
         return count != null && count.equals(1);
     }
 }
