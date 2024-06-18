@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.domain.theme.domain.Theme;
-import roomescape.domain.theme.error.exception.ErrorCode;
+import roomescape.domain.theme.error.exception.ThemeErrorCode;
 import roomescape.domain.theme.error.exception.ThemeException;
 import roomescape.domain.theme.api.dto.ThemeRequest;
 
@@ -115,7 +115,7 @@ public class ThemeTest {
                 themeRequest.getDescription(),
                 themeRequest.getThumbnail())
         ).isInstanceOf(ThemeException.class)
-                .hasMessage(ErrorCode.INVALID_THEME_NAME_FORMAT_ERROR.getErrorMessage());
+                .hasMessage(ThemeErrorCode.INVALID_THEME_NAME_FORMAT_ERROR.getErrorMessage());
     }
 
     @ParameterizedTest
@@ -148,7 +148,7 @@ public class ThemeTest {
                 themeRequest.getDescription(),
                 themeRequest.getThumbnail())
         ).isInstanceOf(ThemeException.class)
-                .hasMessage(ErrorCode.INVALID_THEME_DESCRIPTION_FORMAT_ERROR.getErrorMessage());
+                .hasMessage(ThemeErrorCode.INVALID_THEME_DESCRIPTION_FORMAT_ERROR.getErrorMessage());
     }
 
     @ParameterizedTest
@@ -181,7 +181,7 @@ public class ThemeTest {
                 themeRequest.getDescription(),
                 themeRequest.getThumbnail())
         ).isInstanceOf(ThemeException.class)
-                .hasMessage(ErrorCode.INVALID_THEME_THUMBNAIL_FORMAT_ERROR.getErrorMessage());
+                .hasMessage(ThemeErrorCode.INVALID_THEME_THUMBNAIL_FORMAT_ERROR.getErrorMessage());
     }
 
     @ParameterizedTest

@@ -4,8 +4,8 @@ import roomescape.global.error.exception.UserException;
 
 public class ThemeException extends UserException {
 
-    public ThemeException(ErrorCode errorCode) {
-        super(errorCode.getStatus(), errorCode.getErrorMessage());
+    public ThemeException(ThemeErrorCode themeErrorCode) {
+        super(themeErrorCode.getStatus(), themeErrorCode.getErrorMessage());
     }
 
     @Override
@@ -13,3 +13,4 @@ public class ThemeException extends UserException {
         return super.getStatus();
     }
 }
+

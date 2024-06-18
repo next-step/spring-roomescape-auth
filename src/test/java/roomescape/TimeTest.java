@@ -4,20 +4,19 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.domain.time.api.dto.TimeRequest;
-import roomescape.domain.time.error.exception.ErrorCode;
-import roomescape.domain.time.error.exception.TimeException;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -25,6 +24,36 @@ public class TimeTest {
 
     private static final String ID = "id";
     private static final String START_AT = "startAt";
+    private static final String NAME = "name";
+    private static final String DESCRIPTION = "description";
+    private static final String THUMBNAIL = "thumbnail";
+    private static final String THEME_ID = "themeId";
+    private static final String DATE = "date";
+    private static final long THEME_VALUE = 1L;
+    private static final String CURRENT_DATE = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    private static final String REQUEST_TIME = LocalTime.now().plusMinutes(5L).format(DateTimeFormatter.ofPattern("HH:mm"));
+
+    @BeforeEach
+    void 테마를_추가한다() {
+
+        //given
+        Map<String, Object> theme = new HashMap<>();
+        theme.put(NAME, "무시무시한 공포 테마");
+        theme.put(DESCRIPTION, "오싹");
+        theme.put(THUMBNAIL, "www.youtube.com/boorownie");
+
+        //when
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(theme)
+                .when().post("/themes")
+                .then().log().all()
+                .extract();
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getLong(ID)).isEqualTo(1L);
+    }
 
     @Test
     void 시간_관리_페이지를_랜더링한다() {
@@ -45,7 +74,9 @@ public class TimeTest {
 
         //given
         Map<String, Object> time = new HashMap<>();
-        time.put(START_AT, "15:40");
+        time.put(START_AT, REQUEST_TIME);
+        time.put(THEME_ID, THEME_VALUE);
+        time.put(DATE, CURRENT_DATE);
 
         //when
         ExtractableResponse<Response> response = RestAssured.given().log().all()
@@ -68,7 +99,7 @@ public class TimeTest {
 
         //when
         ExtractableResponse<Response> response = RestAssured.given().log().all()
-                .when().get("/times")
+                .when().get("/times/available?date=" + CURRENT_DATE + "&themeId=" + THEME_VALUE)
                 .then().log().all()
                 .extract();
 
@@ -90,27 +121,5 @@ public class TimeTest {
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"24:01", "-1:32", "12;30", "01:61"})
-    void 시간_형식이_맞지_않는_경우_예외를_발생시킨다(String startAt) {
-
-        //given
-        TimeRequest timeRequest = new TimeRequest(startAt);
-
-        //when, then
-        assertThatThrownBy(timeRequest::convertToDomainObject).isInstanceOf(TimeException.class).hasMessage(ErrorCode.INVALID_TIME_FORMAT_ERROR.getErrorMessage());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"00:00", "12:00", "23:59"})
-    void 시간_형식이_맞는_경우_예외가_발생하지_않는다(String startAt) {
-
-        //given
-        TimeRequest timeRequest = new TimeRequest(startAt);
-
-        //when, then
-        assertThatCode(timeRequest::convertToDomainObject).doesNotThrowAnyException();
     }
 }

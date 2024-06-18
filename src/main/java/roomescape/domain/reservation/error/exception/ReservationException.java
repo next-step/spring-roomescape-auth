@@ -4,8 +4,8 @@ import roomescape.global.error.exception.UserException;
 
 public class ReservationException extends UserException {
 
-    public ReservationException(ErrorCode errorCode) {
-        super(errorCode.getStatus(), errorCode.getErrorMessage());
+    public ReservationException(ReservationErrorCode reservationErrorCode) {
+        super(reservationErrorCode.getStatus(), reservationErrorCode.getErrorMessage());
     }
 
     @Override

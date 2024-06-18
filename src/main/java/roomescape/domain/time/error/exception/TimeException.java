@@ -4,8 +4,8 @@ import roomescape.global.error.exception.UserException;
 
 public class TimeException extends UserException {
 
-    public TimeException(ErrorCode errorCode) {
-        super(errorCode.getStatus(), errorCode.getErrorMessage());
+    public TimeException(TimeErrorCode timeErrorCode) {
+        super(timeErrorCode.getStatus(), timeErrorCode.getErrorMessage());
     }
 
     @Override

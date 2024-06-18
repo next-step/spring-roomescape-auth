@@ -1,14 +1,11 @@
 package roomescape.domain.time.domain;
 
 import roomescape.domain.theme.domain.Theme;
-import roomescape.domain.time.error.exception.ErrorCode;
-import roomescape.domain.time.error.exception.TimeException;
 
-
+import static roomescape.utils.DateTimeCheckUtil.isBeforeCheck;
+import static roomescape.utils.FormatCheckUtil.startAtFormatCheck;
 
 public class Time {
-
-    private static final String REGEX_FORMAT = "^(?:[01]\\d|2[0-3]):[0-5]\\d$";
 
     private Long id;
     private String date;
@@ -16,17 +13,16 @@ public class Time {
     private String startAt;
 
     public Time(Long id, String date, Theme theme, String startAt) {
-        checkFormats(startAt);
+        validationCheck(date, startAt);
         this.id = id;
         this.startAt = startAt;
         this.theme = theme;
         this.date = date;
     }
 
-    private void checkFormats(String startAt) {
-        if (!startAt.matches(REGEX_FORMAT)) {
-            throw new TimeException(ErrorCode.INVALID_TIME_FORMAT_ERROR);
-        }
+    private static void validationCheck(String date, String startAt) {
+        startAtFormatCheck(startAt);
+        isBeforeCheck(date, startAt);
     }
 
     public Long getId() {
