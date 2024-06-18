@@ -150,7 +150,7 @@ class JdbcReservationRepositoryTest {
     void existsByDateAndReservationTimeAndTheme_ReturnFalse_WhenThemeNotFound() {
         // given
         String date = LocalDate.now().plusDays(1).toString();
-        Theme theme = new Theme(2L, "레벨1 탈출", "우테코 레벨1을 탈출하는 내용입니다.",
+        Theme theme = new Theme(2L, "레벨2 탈출", "우테코 레벨2을 탈출하는 내용입니다.",
                 "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
         ReservationTime reservationTime = new ReservationTime(1L, LocalTime.parse("15:40"));
 
@@ -174,6 +174,20 @@ class JdbcReservationRepositoryTest {
         boolean result = reservationRepository.existsByDateAndReservationTimeAndTheme(date, reservationTime, theme);
 
         // then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void 테마가_존재하면_TRUE를_반환한다() {
+        boolean result = reservationRepository.existsByThemeId(1L);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void 테마가_존재하지_않으면_FALSE를_반환한다() {
+        boolean result = reservationRepository.existsByThemeId(5L);
+
         assertThat(result).isFalse();
     }
 }
