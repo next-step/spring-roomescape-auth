@@ -9,6 +9,7 @@ import roomescape.theme.domain.Theme;
 import roomescape.theme.domain.repository.ThemeRepository;
 import roomescape.theme.dto.ThemeCreateRequest;
 import roomescape.theme.dto.ThemeResponse;
+import roomescape.theme.exception.ThemeHasReservationException;
 import roomescape.theme.exception.ThemeNotFoundException;
 
 @Service

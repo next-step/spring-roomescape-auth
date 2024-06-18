@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import roomescape.reservation.exception.PastDateReservationException;
 import roomescape.reservation.exception.ReservationAlreadyExistsException;
-import roomescape.theme.application.ThemeHasReservationException;
+import roomescape.theme.exception.ThemeHasReservationException;
 import roomescape.theme.exception.ThemeNotFoundException;
 import roomescape.time.exception.CannotDeleteReserveTimeException;
 import roomescape.time.exception.ReservationTimeAlreadyExistsException;

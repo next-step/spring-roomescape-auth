@@ -1,4 +1,4 @@
-package roomescape.theme.application;
+package roomescape.theme.exception;
 
 public class ThemeHasReservationException extends RuntimeException {
 
