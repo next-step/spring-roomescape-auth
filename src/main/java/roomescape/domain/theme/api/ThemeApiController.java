@@ -2,8 +2,8 @@ package roomescape.domain.theme.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import roomescape.domain.theme.api.dto.ThemeRequest;
-import roomescape.domain.theme.api.dto.ThemeResponse;
+import roomescape.domain.theme.service.dto.ThemeRequest;
+import roomescape.domain.theme.service.dto.ThemeResponse;
 import roomescape.domain.theme.domain.Theme;
 import roomescape.domain.theme.service.ThemeService;
 

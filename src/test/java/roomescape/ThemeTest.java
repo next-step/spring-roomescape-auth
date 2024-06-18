@@ -13,7 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import roomescape.domain.theme.domain.Theme;
 import roomescape.domain.theme.error.exception.ThemeErrorCode;
 import roomescape.domain.theme.error.exception.ThemeException;
-import roomescape.domain.theme.api.dto.ThemeRequest;
+import roomescape.domain.theme.service.dto.ThemeRequest;
 
 import java.util.HashMap;
 import java.util.Map;

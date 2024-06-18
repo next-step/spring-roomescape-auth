@@ -1,4 +1,4 @@
-package roomescape.domain.theme.api.dto;
+package roomescape.domain.theme.service.dto;
 
 public class ThemeResponse {
 

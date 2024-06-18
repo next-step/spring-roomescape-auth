@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.domain.theme.domain.Theme;
 import roomescape.domain.theme.service.ThemeService;
-import roomescape.domain.time.api.dto.TimeRequest;
+import roomescape.domain.time.service.dto.TimeRequest;
 import roomescape.domain.time.domain.Time;
 import roomescape.domain.time.domain.repository.TimeRepository;
 

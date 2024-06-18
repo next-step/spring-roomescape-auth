@@ -1,4 +1,4 @@
-package roomescape.domain.reservation.api.dto;
+package roomescape.domain.reservation.service.dto;
 
 import roomescape.domain.theme.domain.Theme;
 import roomescape.domain.time.domain.Time;

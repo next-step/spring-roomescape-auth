@@ -2,7 +2,7 @@ package roomescape.domain.theme.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import roomescape.domain.theme.api.dto.ThemeRequest;
+import roomescape.domain.theme.service.dto.ThemeRequest;
 import roomescape.domain.theme.domain.Theme;
 import roomescape.domain.theme.domain.repository.ThemeRepository;
 

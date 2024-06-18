@@ -1,4 +1,4 @@
-package roomescape.domain.time.api.dto;
+package roomescape.domain.time.service.dto;
 
 public class TimeResponse {
 

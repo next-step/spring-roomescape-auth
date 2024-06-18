@@ -2,8 +2,8 @@ package roomescape.domain.time.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import roomescape.domain.time.api.dto.TimeRequest;
-import roomescape.domain.time.api.dto.TimeResponse;
+import roomescape.domain.time.service.dto.TimeRequest;
+import roomescape.domain.time.service.dto.TimeResponse;
 import roomescape.domain.time.domain.Time;
 import roomescape.domain.time.service.TimeService;
 
