@@ -77,22 +77,25 @@ public class ReservationRepository {
     }
 
     public Reservation findById(long reservationId) {
-        return jdbcTemplate.query(FIND_BY_ID_SQL, (rs, rowNum) ->
-                new Reservation(
-                        rs.getLong(RESERVATION_ID),
-                        rs.getString(RESERVATION_NAME),
+        return jdbcTemplate.query(FIND_BY_ID_SQL, (rs, rowNum) -> new Reservation(
+                rs.getLong(RESERVATION_ID),
+                rs.getString(RESERVATION_NAME),
+                rs.getString(RESERVATION_DATE),
+                new Time(
+                        rs.getLong(TIME_ID),
                         rs.getString(RESERVATION_DATE),
-                        new Time(
-                                rs.getLong(TIME_ID),
-                                rs.getString(TIME_START_AT)
-                        ),
-                        new Theme(
-                                rs.getLong(THEME_ID),
+                        new Theme(rs.getLong(THEME_ID),
                                 rs.getString(THEME_NAME),
                                 rs.getString(THEME_DESCRIPTION),
-                                rs.getString(THEME_THUMBNAIL)
-                        )
-                ), reservationId).get(0);
+                                rs.getString(THEME_THUMBNAIL)),
+                        rs.getString(TIME_START_AT)),
+                new Theme(
+                        rs.getLong(THEME_ID),
+                        rs.getString(THEME_NAME),
+                        rs.getString(THEME_DESCRIPTION),
+                        rs.getString(THEME_THUMBNAIL)
+                )
+        ), reservationId).get(0);
     }
 
     public long save(Reservation reservation) {
@@ -119,8 +122,12 @@ public class ReservationRepository {
                         rs.getString(RESERVATION_DATE),
                         new Time(
                                 rs.getLong(TIME_ID),
-                                rs.getString(TIME_START_AT)
-                        ),
+                                rs.getString(RESERVATION_DATE),
+                                new Theme(rs.getLong(THEME_ID),
+                                        rs.getString(THEME_NAME),
+                                        rs.getString(THEME_DESCRIPTION),
+                                        rs.getString(THEME_THUMBNAIL)),
+                                rs.getString(TIME_START_AT)),
                         new Theme(
                                 rs.getLong(THEME_ID),
                                 rs.getString(THEME_NAME),

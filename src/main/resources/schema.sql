@@ -1,12 +1,4 @@
-CREATE TABLE reservation_time
-(
-    id BIGINT NOT NULL AUTO_INCREMENT,
-    start_at VARCHAR(255) NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE theme
-(
+create TABLE theme (
     id BIGINT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
@@ -14,8 +6,16 @@ CREATE TABLE theme
     PRIMARY KEY (id)
 );
 
-CREATE TABLE reservation
-(
+create TABLE reservation_time (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    start_at VARCHAR(255) NOT NULL,
+    date VARCHAR(255) NOT NULL,
+    theme_id BIGINT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (theme_id) REFERENCES theme (id)
+);
+
+create TABLE reservation (
     id BIGINT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     date VARCHAR(255) NOT NULL,

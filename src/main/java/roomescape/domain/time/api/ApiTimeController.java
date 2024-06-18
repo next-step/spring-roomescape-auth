@@ -29,6 +29,19 @@ public class ApiTimeController {
                 time.getTheme().getId()));
     }
 
+    @GetMapping("/available")
+    public ResponseEntity<List<TimeResponse>> findByDateAndThemeId(@RequestParam("date") String date, @RequestParam("themeId") String themeId) {
+        List<Time> times = timeService.findByDateAndThemeId(date, themeId);
+        List<TimeResponse> responses = times.stream().map(
+                time -> new TimeResponse(
+                        time.getId(),
+                        time.getDate(),
+                        time.getStartAt(),
+                        time.getTheme().getId())
+        ).toList();
+        return ResponseEntity.ok().body(responses);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         timeService.delete(id);

@@ -43,4 +43,9 @@ public class TimeService {
     public void delete(Long id) {
         timeRepository.delete(id);
     }
+
+    @Transactional(readOnly = true)
+    public List<Time> findByDateAndThemeId(String date, String themeId) {
+        return timeRepository.findByDateAndThemeId(date, themeId);
+    }
 }
