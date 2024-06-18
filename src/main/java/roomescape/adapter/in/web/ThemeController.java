@@ -1,5 +1,7 @@
 package roomescape.adapter.in.web;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +35,7 @@ public class ThemeController {
 
   @PostMapping
   public ResponseEntity<ThemeResponse> createReservation(@RequestBody ThemeCommand themeCommand) {
-    return ResponseEntity.ok()
+    return ResponseEntity.status(CREATED)
                          .body(themeUseCase.registerTheme(themeCommand));
   }
 

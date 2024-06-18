@@ -96,7 +96,6 @@ public class ReservationJdbcRepository implements ReservationPort {
 
   @Override
   public Reservation saveReservation(Reservation reservation) {
-
     SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
       .withTableName("reservation")
       .usingGeneratedKeyColumns("id");

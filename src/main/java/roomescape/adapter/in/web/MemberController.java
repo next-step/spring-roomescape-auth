@@ -34,7 +34,7 @@ public class MemberController {
     return ResponseEntity.ok(memberUseCase.findMembers());
   }
 
-  @ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
   @PostMapping("/members")
   public void createMember(@RequestBody MemberCommand memberCommand) {

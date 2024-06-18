@@ -47,18 +47,22 @@ public class ReservationService implements ReservationUseCase {
 
     @Override
     public ReservationResponse registerReservation(ReservationCommand reservationCommand) {
-        DateTimeValidator.previousDateTimeCheck(reservationCommand.date(), reservationCommand.time());
-        Reservation reservation = mapToDomain(reservationCommand);
-        ReservationTime reservationTime = reservationTimePort.findReservationTimeByStartAt(reservation.getTime()
-                                                                                                      .getStartAt())
+        ReservationTime reservationTime = reservationTimePort.findReservationTimeById(reservationCommand.timeId())
                                                              .orElseThrow(NotFoundReservationException::new);
+
+        DateTimeValidator.previousDateTimeCheck(reservationCommand.date(), reservationTime.getStartAt());
 
         if (reservationPort.findReservationByReservationTime(reservationTime)
                            .isPresent()) {
             throw new ReservationTimeConflictException();
         }
 
-        reservation = reservation.addReservationTime(reservationTime);
+        Theme theme = themePort.findThemeById(reservationCommand.themeId())
+                               .orElseThrow(NotFoundReservationException::new);
+
+        Reservation reservation = mapToDomain(reservationCommand);
+
+        reservation = reservation.addReservationTimeAndTheme(reservationTime, theme);
 
         return mapToResponse(reservationPort.saveReservation(reservation));
     }

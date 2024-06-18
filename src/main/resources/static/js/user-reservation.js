@@ -85,9 +85,6 @@ function checkDateAndTheme() {
   if (selectedDate && selectedThemeElement) {
     const selectedThemeId = selectedThemeElement.getAttribute('data-theme-id');
 
-    console.log("여기 봐바")
-    console.log(selectedDate)
-    console.log(selectedThemeId)
     fetchAvailableTimes(selectedDate, selectedThemeId);
   }
 }

@@ -1,5 +1,7 @@
 package roomescape.domain;
 
+import java.util.Objects;
+
 public class Reservation {
 
   private final Long id;
@@ -40,11 +42,39 @@ public class Reservation {
     return new Reservation(index, this.name, this.date, this.time, this.theme);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Reservation that = (Reservation) o;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
+  }
+
+  @Override
+  public String toString() {
+    return "Reservation{" +
+      "id=" + id +
+      ", name='" + name + '\'' +
+      ", date='" + date + '\'' +
+      ", time=" + time +
+      ", theme=" + theme +
+      '}';
+  }
+
   public static Reservation of(Long id, String name, String date, ReservationTime time, Theme theme) {
     return new Reservation(id, name, date, time, theme);
   }
 
-  public Reservation addReservationTime(ReservationTime reservationTime) {
-    return new Reservation(this.id, this.name, this.date, reservationTime, this.theme);
+  public Reservation addReservationTimeAndTheme(ReservationTime reservationTime, Theme theme) {
+    return new Reservation(this.id, this.name, this.date, reservationTime, theme);
   }
 }

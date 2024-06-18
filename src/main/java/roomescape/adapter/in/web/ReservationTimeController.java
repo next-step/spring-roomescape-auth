@@ -1,5 +1,7 @@
 package roomescape.adapter.in.web;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +31,8 @@ public class ReservationTimeController {
   @PostMapping
   public ResponseEntity<ReservationTimeResponse> createReservationTime(
     @RequestBody ReservationTimeCommand reservationTimeCommand) {
-    return ResponseEntity.ok()
-                         .body(
-                           reservationTimeUseCase.registerReservationTime(reservationTimeCommand));
+    return ResponseEntity.status(CREATED)
+                         .body(reservationTimeUseCase.registerReservationTime(reservationTimeCommand));
   }
 
   @GetMapping

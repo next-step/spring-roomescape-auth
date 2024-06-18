@@ -19,8 +19,7 @@ public class ReservationMapper {
   }
 
   public static Reservation mapToDomain(ReservationCommand reservationCommand) {
-    return Reservation.of(null, reservationCommand.name(), reservationCommand.date(), ReservationTime.of(
-      null, reservationCommand.time()), null);
+    return Reservation.of(null, reservationCommand.name(), reservationCommand.date(), null, null);
   }
 
   public static Reservation mapToDomain(ReservationEntity reservationEntity) {
