@@ -7,8 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class UserPageController {
 
 
-    @GetMapping("reservation")
+    @GetMapping("/reservation")
     public String reservationPage() {
         return "reservation";
+    }
+
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
     }
 }
