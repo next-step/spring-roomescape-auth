@@ -33,7 +33,7 @@ public class ThemeService {
 
     public void deleteTheme(Long themeId) {
         if (!jdbcThemeRepository.existsById(themeId)) {
-            throw new ThemeNotFoundException("존재하지 않는 테마입니다.");
+            throw new ThemeNotFoundException();
         }
         jdbcThemeRepository.deleteById(themeId);
     }

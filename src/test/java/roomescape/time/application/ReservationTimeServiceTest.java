@@ -62,7 +62,7 @@ class ReservationTimeServiceTest {
     @Test
     @DisplayName("테마를 찾을 수 없는 경우 예외가 발생한다.")
     void getAvailableReservationTimes_Fail_WhenThemeNotFound() {
-        given(themeRepository.findById(anyLong())).willThrow(new ThemeNotFoundException("해당 테마가 존재하지 않습니다."));
+        given(themeRepository.findById(anyLong())).willThrow(new ThemeNotFoundException());
 
         assertThatThrownBy(() -> reservationTimeService.getAvailableReservationTimes(LocalDate.parse("2021-07-01"), 1L))
                 .isInstanceOf(ThemeNotFoundException.class)

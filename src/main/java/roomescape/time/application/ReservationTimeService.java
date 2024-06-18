@@ -32,7 +32,7 @@ public class ReservationTimeService {
 
     public ReservationTimeResponse createReservationTime(ReservationTimeCreateRequest request) {
         if (reservationTimeRepository.existsByStartAt(request.startAt())) {
-            throw new ReservationTimeAlreadyExistsException("이미 존재하는 시간입니다.");
+            throw new ReservationTimeAlreadyExistsException();
         }
         ReservationTime savedResponseTime = reservationTimeRepository.save(request.toEntity());
         return ReservationTimeResponse.from(savedResponseTime);
@@ -47,7 +47,7 @@ public class ReservationTimeService {
 
     public List<ReservationTimeResponse> getAvailableReservationTimes(LocalDate date, Long themeId) {
         Theme findTheme = themeRepository.findById(themeId)
-                .orElseThrow(() -> new ThemeNotFoundException("해당 테마가 존재하지 않습니다."));
+                .orElseThrow(() -> new ThemeNotFoundException());
         List<ReservationTime> reservationTimes = reservationTimeRepository.findAll();
         return reservationTimes.stream()
                 .filter(time ->
@@ -58,7 +58,7 @@ public class ReservationTimeService {
 
     public void deleteReservationTime(Long reservationTimeId) {
         if (reservationRepository.existsByReservationTimeId(reservationTimeId)) {
-            throw new CannotDeleteReserveTimeException("예약된 시간은 삭제할 수 없습니다.");
+            throw new CannotDeleteReserveTimeException();
         }
         reservationTimeRepository.deleteById(reservationTimeId);
     }

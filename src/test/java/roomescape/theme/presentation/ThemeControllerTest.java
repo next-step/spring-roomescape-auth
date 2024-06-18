@@ -92,6 +92,6 @@ class ThemeControllerTest {
                 .when().delete("/themes/1")
                 .then().log().all()
                 .statusCode(HttpStatus.NOT_FOUND.value())
-                .body("message", is("존재하지 않는 테마입니다."));
+                .body("message", is("해당 테마가 존재하지 않습니다."));
     }
 }

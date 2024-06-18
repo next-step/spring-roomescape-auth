@@ -37,7 +37,7 @@ public class ReservationService {
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 테마입니다."));
 
         if (reservationRepository.existsByDateAndTimeId(request.date(), findReservationTime.getId())) {
-            throw new ReservationAlreadyExistsException("이미 예약된 시간입니다.");
+            throw new ReservationAlreadyExistsException();
         }
 
         Reservation reservation = reservationRepository.save(request.toReservation(findReservationTime, findTheme));

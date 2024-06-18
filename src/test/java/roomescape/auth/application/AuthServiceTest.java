@@ -58,7 +58,7 @@ class AuthServiceTest {
         // given
         User user = new User(1L, "어드민", "admin@email.com", "password");
 
-        given(userRepository.findByEmail(anyString())).willThrow(new UserNotFoundException("사용자를 찾을 수 없습니다"));
+        given(userRepository.findByEmail(anyString())).willThrow(new UserNotFoundException());
 
         LoginRequest request = new LoginRequest(user.getEmail(), user.getPassword());
 

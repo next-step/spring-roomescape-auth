@@ -24,7 +24,7 @@ public class AuthService {
     public String login(LoginRequest loginRequest) {
         User user = getUserByEmail(loginRequest.email());
         if (user.isNotMatchPassword(loginRequest.password())) {
-            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다");
+            throw new PasswordNotMatchException();
         }
 
         return jwtTokenProvider.createJwt(user.getEmail());
@@ -43,6 +43,6 @@ public class AuthService {
 
     private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다"));
+                .orElseThrow(UserNotFoundException::new);
     }
 }

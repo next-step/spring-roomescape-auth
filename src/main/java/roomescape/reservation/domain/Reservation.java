@@ -28,7 +28,7 @@ public class Reservation {
 
     public Reservation(Long id, String name, LocalDate date, ReservationTime time, Theme theme) {
         if (LocalDateTime.now().isAfter(LocalDateTime.of(date, time.getStartAt()))) {
-            throw new PastDateReservationException("이미 지난 시간은 예약할 수 없습니다.");
+            throw new PastDateReservationException();
         }
         this.id = id;
         this.name = name;
