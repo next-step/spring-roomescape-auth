@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.format.DateTimeParseException;
 import roomescape.error.exception.NotExistsException;
+import roomescape.error.exception.PasswordNotMatchedException;
 import roomescape.error.exception.PastDateTimeException;
 import roomescape.error.exception.ReferenceException;
 
@@ -66,5 +67,12 @@ public class RoomescapeExceptionHandler {
         NotExistsException e) {
         return new ResponseEntity<>(RoomescapeExceptionResponse.of(e.getMessage()),
                                     HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PasswordNotMatchedException.class)
+    public ResponseEntity<RoomescapeExceptionResponse> handleFailedLoginException(
+        PasswordNotMatchedException e) {
+        return new ResponseEntity<>(RoomescapeExceptionResponse.of(e.getMessage()),
+                                    HttpStatus.UNAUTHORIZED);
     }
 }
