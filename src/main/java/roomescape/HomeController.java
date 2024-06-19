@@ -26,4 +26,9 @@ public class HomeController {
     public String reservation(Model model) {
         return "reservation";
     }
+
+    @GetMapping("/login")
+    public String goLoginPage(Model model) {
+        return "login";
+    }
 }
