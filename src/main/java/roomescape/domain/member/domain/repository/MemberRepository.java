@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public class MemberRepository {
 
+    private static final String SAVE_SQL = "INSERT INTO member (name, email, password) VALUES (?, ?, ?)";
     private static final String FIND_BY_EMAIL_AND_PASSWORD_SQL = """
             SELECT * 
             FROM member m
@@ -17,12 +18,11 @@ public class MemberRepository {
                 m.email = ? AND 
                 m.password = ?;
             """;
-    private static final String FIND_BY_ID = """
-            SELECT * 
-            FROM member m
-            WHERE
-                m.id = ?;
-            """;
+    private static final String FIND_BY_ID_SQL = "SELECT * FROM member m WHERE m.id = ?;";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String EMAIL = "email";
+    private static final String PASSWORD = "password";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -33,10 +33,11 @@ public class MemberRepository {
     public Optional<Member> login(String email, String password) {
         List<Member> members = jdbcTemplate.query(FIND_BY_EMAIL_AND_PASSWORD_SQL, (rs, rowNum) ->
                         new Member(
-                                rs.getLong("id"),
-                                rs.getString("email"),
-                                rs.getString("password"),
-                                rs.getString("name")),
+                                rs.getLong(ID),
+                                rs.getString(NAME),
+                                rs.getString(EMAIL),
+                                rs.getString(PASSWORD)
+                        ),
                 email, password);
         if (members.isEmpty()) {
             return Optional.empty();
@@ -45,12 +46,12 @@ public class MemberRepository {
     }
 
     public Optional<Member> findById(Long memberId) {
-        List<Member> members = jdbcTemplate.query(FIND_BY_ID, (rs, rowNum) ->
+        List<Member> members = jdbcTemplate.query(FIND_BY_ID_SQL, (rs, rowNum) ->
                         new Member(
-                                rs.getLong("id"),
-                                rs.getString("name"),
-                                rs.getString("email"),
-                                rs.getString("password")
+                                rs.getLong(ID),
+                                rs.getString(NAME),
+                                rs.getString(EMAIL),
+                                rs.getString(PASSWORD)
                         ),
                 memberId);
         if (members.isEmpty()) {

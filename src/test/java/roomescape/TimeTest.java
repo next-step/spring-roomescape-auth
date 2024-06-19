@@ -75,8 +75,6 @@ public class TimeTest {
         //given
         Map<String, Object> time = new HashMap<>();
         time.put(START_AT, REQUEST_TIME);
-        time.put(THEME_ID, THEME_VALUE);
-        time.put(DATE, CURRENT_DATE);
 
         //when
         ExtractableResponse<Response> response = RestAssured.given().log().all()

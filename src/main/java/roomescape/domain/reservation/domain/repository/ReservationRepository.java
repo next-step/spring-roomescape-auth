@@ -22,7 +22,6 @@ public class ReservationRepository {
                 r.date AS reservation_date, 
                 rt.id AS reservation_time_id, 
                 rt.start_at AS reservation_time_start_at, 
-                rt.start_at AS reservation_time, 
                 t.id AS theme_id, 
                 t.name AS theme_name, 
                 t.description AS theme_description, 
@@ -34,10 +33,7 @@ public class ReservationRepository {
                 ON r.theme_id = t.id 
             WHERE r.id = ?;
             """;
-    private static final String SAVE_SQL = """
-            INSERT INTO reservation (name, date, time_id, theme_id) 
-            VALUES (?, ?, ?, ?);
-            """;
+    private static final String SAVE_SQL = "INSERT INTO reservation (name, date, time_id, theme_id) VALUES (?, ?, ?, ?)";
     private static final String FIND_ALL_SQL = """
             SELECT 
                 r.id AS reservation_id, 
@@ -45,7 +41,6 @@ public class ReservationRepository {
                 r.date AS reservation_date, 
                 rt.id AS reservation_time_id, 
                 rt.start_at AS reservation_time_start_at, 
-                rt.start_at AS reservation_time, 
                 t.id AS theme_id, 
                 t.name AS theme_name, 
                 t.description AS theme_description, 
@@ -54,11 +49,9 @@ public class ReservationRepository {
             INNER JOIN reservation_time rt 
                 ON r.time_id = rt.id 
             INNER JOIN theme t 
-                ON r.theme_id = t.id;
+                ON r.theme_id = t.id 
             """;
-    private static final String DELETE_SQL = """
-            DELETE FROM reservation WHERE id = ?;
-            """;
+    private static final String DELETE_SQL = "DELETE FROM reservation WHERE id = ?;";
     private static final String ID = "id";
     private static final String RESERVATION_ID = "reservation_id";
     private static final String RESERVATION_NAME = "reservation_name";
@@ -83,11 +76,6 @@ public class ReservationRepository {
                 rs.getString(RESERVATION_DATE),
                 new Time(
                         rs.getLong(TIME_ID),
-                        rs.getString(RESERVATION_DATE),
-                        new Theme(rs.getLong(THEME_ID),
-                                rs.getString(THEME_NAME),
-                                rs.getString(THEME_DESCRIPTION),
-                                rs.getString(THEME_THUMBNAIL)),
                         rs.getString(TIME_START_AT)),
                 new Theme(
                         rs.getLong(THEME_ID),
@@ -117,16 +105,11 @@ public class ReservationRepository {
     public List<Reservation> findAll() {
         return jdbcTemplate.query(FIND_ALL_SQL, (rs, rowNum) ->
                 new Reservation(
-                        rs.getLong(ID),
+                        rs.getLong(RESERVATION_ID),
                         rs.getString(RESERVATION_NAME),
                         rs.getString(RESERVATION_DATE),
                         new Time(
                                 rs.getLong(TIME_ID),
-                                rs.getString(RESERVATION_DATE),
-                                new Theme(rs.getLong(THEME_ID),
-                                        rs.getString(THEME_NAME),
-                                        rs.getString(THEME_DESCRIPTION),
-                                        rs.getString(THEME_THUMBNAIL)),
                                 rs.getString(TIME_START_AT)),
                         new Theme(
                                 rs.getLong(THEME_ID),

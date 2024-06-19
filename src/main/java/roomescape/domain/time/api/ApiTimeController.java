@@ -2,10 +2,10 @@ package roomescape.domain.time.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import roomescape.domain.time.service.dto.TimeRequest;
-import roomescape.domain.time.service.dto.TimeResponse;
 import roomescape.domain.time.domain.Time;
 import roomescape.domain.time.service.TimeService;
+import roomescape.domain.time.service.dto.TimeRequest;
+import roomescape.domain.time.service.dto.TimeResponse;
 
 import java.util.List;
 
@@ -22,22 +22,22 @@ public class ApiTimeController {
     @PostMapping
     public ResponseEntity<TimeResponse> save(@RequestBody TimeRequest timeRequest) {
         Time time = timeService.save(timeRequest);
-        return ResponseEntity.ok().body(new TimeResponse(
-                time.getId(),
-                time.getDate(),
-                time.getStartAt(),
-                time.getTheme().getId()));
+        return ResponseEntity.ok().body(
+                new TimeResponse(
+                        time.getId(),
+                        time.getStartAt()
+                )
+        );
     }
 
     @GetMapping("/available")
-    public ResponseEntity<List<TimeResponse>> findByDateAndThemeId(@RequestParam("date") String date, @RequestParam("themeId") String themeId) {
-        List<Time> times = timeService.findByDateAndThemeId(date, themeId);
+    public ResponseEntity<List<TimeResponse>> findByThemeIdAndDate(@RequestParam("date") String date, @RequestParam("themeId") String themeId) {
+        List<Time> times = timeService.findByThemeIdAndDate(themeId, date);
         List<TimeResponse> responses = times.stream().map(
                 time -> new TimeResponse(
                         time.getId(),
-                        time.getDate(),
-                        time.getStartAt(),
-                        time.getTheme().getId())
+                        time.getStartAt()
+                )
         ).toList();
         return ResponseEntity.ok().body(responses);
     }

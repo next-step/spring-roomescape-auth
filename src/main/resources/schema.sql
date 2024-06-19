@@ -9,10 +9,7 @@ create TABLE theme (
 create TABLE reservation_time (
     id BIGINT NOT NULL AUTO_INCREMENT,
     start_at VARCHAR(255) NOT NULL,
-    date VARCHAR(255) NOT NULL,
-    theme_id BIGINT,
-    PRIMARY KEY (id),
-    FOREIGN KEY (theme_id) REFERENCES theme (id)
+    PRIMARY KEY (id)
 );
 
 create TABLE reservation (
@@ -25,8 +22,8 @@ create TABLE reservation (
     FOREIGN KEY (time_id) REFERENCES reservation_time (id),
     FOREIGN KEY (theme_id) REFERENCES theme (id)
 );
-CREATE TABLE member (
-    id BIGINT AUTO_INCREMENT ,
+create TABLE member (
+    id BIGINT AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
