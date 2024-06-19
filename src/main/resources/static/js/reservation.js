@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   requestRead(RESERVATION_API_ENDPOINT)
       .then(render)
-      .catch(error => console.error('Error fetching reservations:', error));
+      .catch(error => console.error('Error fetching reservations:', error.message));
 
   fetchTimes();
   fetchThemes();
@@ -39,7 +39,7 @@ function fetchTimes() {
       .then(data => {
         timesOptions.push(...data);
       })
-      .catch(error => console.error('Error fetching time:', error));
+      .catch(error => console.error('Error fetching time:', error.message));
 }
 
 function fetchThemes() {
@@ -47,7 +47,7 @@ function fetchThemes() {
       .then(data => {
         themesOptions.push(...data);
       })
-      .catch(error => console.error('Error fetching theme:', error));
+      .catch(error => console.error('Error fetching theme:', error.message));
 }
 
 function createSelect(options, defaultText, selectId, textProperty) {
@@ -146,7 +146,7 @@ function saveRow(event) {
       .then(() => {
         location.reload();
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error:', error.message));
 
   isEditing = false;  // isEditing 값을 false로 설정
 }
@@ -157,7 +157,7 @@ function deleteRow(event) {
 
   requestDelete(reservationId)
       .then(() => row.remove())
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error:', error.message));
 }
 
 function requestCreate(reservation) {

@@ -4,7 +4,7 @@ const AVAILABLE_TIME_API_ENDPOINT = '/times/available';
 document.addEventListener('DOMContentLoaded', () => {
   requestRead(THEME_API_ENDPOINT)
       .then(renderTheme)
-      .catch(error => console.error('Error fetching times:', error));
+      .catch(error => console.error('Error fetching times:', error.message));
 
   flatpickr("#datepicker", {
     inline: true,
@@ -67,7 +67,7 @@ function checkDate() {
 
     requestRead(THEME_API_ENDPOINT)
         .then(renderTheme)
-        .catch(error => console.error('Error fetching times:', error));
+        .catch(error => console.error('Error fetching times:', error.message));
   }
 }
 
@@ -91,9 +91,12 @@ function fetchAvailableTimes(date, themeId) {
     },
   }).then(response => {
     if (response.status === 200) return response.json();
-    throw new Error('Read failed');
+    return response.json().then(body => {
+      alert('Read failed: ' + body.message);
+      throw new Error('Read failed: ' + body.message);
+    });
   }).then(renderAvailableTimes)
-  .catch(error => console.error("Error fetching available times:", error));
+  .catch(error => console.error("Error fetching available times:" + error.message));
 }
 
 function renderAvailableTimes(times) {
@@ -154,7 +157,12 @@ function onReservationButtonClick() {
       body: JSON.stringify(reservationData)
     })
         .then(response => {
-          if (!response.ok) throw new Error('Reservation failed');
+          if (!response.ok) {
+            return response.json().then(body => {
+              alert('Reservation failed: ' + body.message);
+              throw new Error('Reservation failed: ' + body.message);
+            });
+          }
           return response.json();
         })
         .then(data => {
@@ -162,8 +170,8 @@ function onReservationButtonClick() {
           location.reload();
         })
         .catch(error => {
-          alert("An error occurred while making the reservation.");
-          console.error(error);
+          alert("An error occurred while making the reservation." + error.message);
+          console.error(error.message);
         });
   } else {
     alert("Please select a date, theme, and time before making a reservation.");

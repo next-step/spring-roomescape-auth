@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('add-button').addEventListener('click', addRow);
   requestRead()
       .then(render)
-      .catch(error => console.error('Error fetching times:', error));
+      .catch(error => console.error('Error fetching times:', error.message));
 });
 
 function render(data) {
@@ -84,7 +84,7 @@ function saveRow(event) {
       .then(() => {
         location.reload();
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error:', error.message));
 
   isEditing = false;  // isEditing 값을 false로 설정
 }
@@ -95,7 +95,7 @@ function deleteRow(event) {
 
   requestDelete(id)
       .then(() => row.remove())
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error:', error.message));
 }
 
 
@@ -111,7 +111,10 @@ function requestCreate(data) {
   return fetch(API_ENDPOINT, requestOptions)
       .then(response => {
         if (response.status === 201) return response.json();
-        throw new Error('Create failed');
+        return response.json().then(body => {
+          alert('Create failed: ' + body.message);
+          throw new Error('Create failed: ' + body.message);
+        });
       });
 }
 
@@ -119,7 +122,10 @@ function requestRead() {
   return fetch(API_ENDPOINT)
       .then(response => {
         if (response.status === 200) return response.json();
-        throw new Error('Read failed');
+        return response.json().then(body => {
+          alert('Read failed: ' + body.message);
+          throw new Error('Read failed: ' + body.message);
+        });
       });
 }
 
@@ -130,6 +136,11 @@ function requestDelete(id) {
 
   return fetch(`${API_ENDPOINT}/${id}`, requestOptions)
       .then(response => {
-        if (response.status !== 204) throw new Error('Delete failed');
+        if (response.status !== 204) {
+          return response.json().then(body => {
+            alert('Delete failed: ' + body.message);
+            throw new Error('Delete failed: ' + body.message);
+          });
+        }
       });
 }

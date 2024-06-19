@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   requestRead(RESERVATION_API_ENDPOINT)
       .then(render)
-      .catch(error => console.error('Error fetching reservations:', error));
+      .catch(error => console.error('Error fetching reservations:', error.message));
 
   fetchTimes();
   fetchThemes();
@@ -42,7 +42,7 @@ function fetchTimes() {
       .then(data => {
         timesOptions.push(...data);
       })
-      .catch(error => console.error('Error fetching time:', error));
+      .catch(error => console.error('Error fetching time:', error.message));
 }
 
 function fetchThemes() {
@@ -51,7 +51,7 @@ function fetchThemes() {
         themesOptions.push(...data);
         addDropdownOptions('theme', themesOptions, 'name');
       })
-      .catch(error => console.error('Error fetching theme:', error));
+      .catch(error => console.error('Error fetching theme:', error.message));
 }
 
 function fetchMembers() {
@@ -60,7 +60,7 @@ function fetchMembers() {
         membersOptions.push(...data);
         addDropdownOptions('member', membersOptions, 'name');
       })
-      .catch(error => console.error('Error fetching member:', error));
+      .catch(error => console.error('Error fetching member:', error.message));
 }
 
 function addDropdownOptions(selectId, options, textProperty) {
@@ -173,7 +173,7 @@ function saveRow(event) {
       .then(() => {
         location.reload();
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error:', error.message));
 
   isEditing = false;  // isEditing 값을 false로 설정
 }
@@ -184,7 +184,7 @@ function deleteRow(event) {
 
   requestDelete(reservationId)
       .then(() => row.remove())
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error:', error.message));
 }
 
 function requestCreate(reservation) {
@@ -197,7 +197,10 @@ function requestCreate(reservation) {
   return fetch('/admin/reservations', requestOptions)
       .then(response => {
         if (response.status === 201) return response.json();
-        throw new Error('Create failed');
+        return response.json().then(body => {
+          alert('Reservations Create failed: ' + body.message);
+          throw new Error('Reservations Create failed: ' + body.message);
+        });
       });
 }
 
@@ -208,7 +211,12 @@ function requestDelete(id) {
 
   return fetch(`${RESERVATION_API_ENDPOINT}/${id}`, requestOptions)
       .then(response => {
-        if (response.status !== 204) throw new Error('Delete failed');
+        if (response.status !== 204) {
+          return response.json().then(body => {
+            alert('Deleted failed: ' + body.message);
+            throw new Error('Deleted failed: ' + body.message);
+          });
+        }
       });
 }
 
@@ -216,6 +224,9 @@ function requestRead(endpoint) {
   return fetch(endpoint)
       .then(response => {
         if (response.status === 200) return response.json();
-        throw new Error('Read failed');
+        return response.json().then(body => {
+          alert('Read failed: ' + body.message);
+          throw new Error('Read failed: ' + body.message);
+        });
       });
 }
