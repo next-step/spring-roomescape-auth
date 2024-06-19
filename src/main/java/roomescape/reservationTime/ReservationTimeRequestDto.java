@@ -16,6 +16,10 @@ public class ReservationTimeRequestDto {
         return startAt;
     }
 
+    public ReservationTimeRequestDto(Long id) {
+        this.id = id;
+    }
+
     public ReservationTimeRequestDto(String startAt) {
         this.startAt = startAt;
     }

@@ -3,6 +3,7 @@ package roomescape.reservation;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import roomescape.reservationTime.ReservationTimeResponseDto;
 
 import java.util.List;
 
@@ -32,5 +33,11 @@ public class ReservationController {
     public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
         reservationService.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/times/available")
+    public ResponseEntity<List<ReservationTimeResponseDto>> getAvaliableTimes(@RequestParam String date, @RequestParam Long themeId) {
+        final List<ReservationTimeResponseDto> reservationTimeResponseDtos = reservationService.findAvaliableTimes(date, themeId);
+        return ResponseEntity.ok().body(reservationTimeResponseDtos);
     }
 }

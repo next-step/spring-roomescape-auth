@@ -1,5 +1,6 @@
 package roomescape.reservation;
 
+import roomescape.reservationTheme.ReservationThemeResponseDto;
 import roomescape.reservationTime.ReservationTimeResponseDto;
 
 public class ReservationResponseDto {
@@ -7,6 +8,8 @@ public class ReservationResponseDto {
     private String name;
     private String date;
     private ReservationTimeResponseDto reservationTimeResponseDto;
+
+    private ReservationThemeResponseDto reservationThemeResponseDto;
 
     public Long getId() {
         return id;
@@ -25,11 +28,16 @@ public class ReservationResponseDto {
 
     }
 
-    public ReservationResponseDto(Long id, String name, String date, ReservationTimeResponseDto reservationTimeResponseDto) {
+    public ReservationThemeResponseDto getReservationThemeResponseDto() {
+        return reservationThemeResponseDto;
+    }
+
+    public ReservationResponseDto(Long id, String name, String date, ReservationTimeResponseDto reservationTimeResponseDto, ReservationThemeResponseDto reservationThemeResponseDto) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.reservationTimeResponseDto = reservationTimeResponseDto;
+        this.reservationThemeResponseDto = reservationThemeResponseDto;
 
     }
 
@@ -38,6 +46,7 @@ public class ReservationResponseDto {
         private String name;
         private String date;
         private ReservationTimeResponseDto reservationTimeResponseDto;
+        private ReservationThemeResponseDto reservationThemeResponseDto;
 
         public Builder id(Long id) {
             this.id = id;
@@ -59,8 +68,13 @@ public class ReservationResponseDto {
             return this;
         }
 
+        public Builder reservationThemeResponseDto(ReservationThemeResponseDto reservationThemeResponseDto) {
+            this.reservationThemeResponseDto = reservationThemeResponseDto;
+            return this;
+        }
+
         public ReservationResponseDto build() {
-            return new ReservationResponseDto(id, name, date, reservationTimeResponseDto);
+            return new ReservationResponseDto(id, name, date, reservationTimeResponseDto, reservationThemeResponseDto);
         }
 
         @Override
@@ -70,6 +84,7 @@ public class ReservationResponseDto {
                     ", name='" + name + '\'' +
                     ", date='" + date + '\'' +
                     ", reservationTimeResponseDto=" + reservationTimeResponseDto +
+                    ", reservationThemeResponseDto=" + reservationThemeResponseDto +
                     '}';
         }
     }

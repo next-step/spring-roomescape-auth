@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotEmpty;
 import java.util.Objects;
 
 public class ReservationThemeRequestDto {
+
+    private Long id;
+
     @NotEmpty(message = "테마명을 입력 해주세요")
     private String name;
 
@@ -13,6 +16,10 @@ public class ReservationThemeRequestDto {
 
     @NotEmpty(message = "썸네일 url 을 입력해주세요")
     private String thumbnail;
+
+    public Long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
@@ -26,7 +33,16 @@ public class ReservationThemeRequestDto {
         return thumbnail;
     }
 
+    public ReservationThemeRequestDto(Long id) {
+        this.id = id;
+    }
+
     public ReservationThemeRequestDto(String name, String description, String thumbnail) {
+        this(null, name, description, thumbnail);
+    }
+
+    public ReservationThemeRequestDto(Long id, String name, String description, String thumbnail) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.thumbnail = thumbnail;
