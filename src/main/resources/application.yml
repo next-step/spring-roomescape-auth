@@ -1,0 +1,15 @@
+spring:
+    datasource:
+        url: jdbc:h2:mem:roomespace;MODE=MySQL
+        username: sa
+        password:
+        driver-class-name: org.h2.Driver
+
+    h2:
+      console:
+        enabled: true
+        path: /h2-console
+
+jwt:
+  secret: aaaaadaferpgaelbekbnlebnjlaernenabobnadfaeriijf1293ru3490u08r3hgeuifd
+  expire: 86400000
