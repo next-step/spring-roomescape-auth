@@ -50,13 +50,13 @@ public class ThemeRepository {
     }
 
     public Theme findById(Long id) {
-        return jdbcTemplate.query(FIND_BY_ID_SQL, (rs, rowNum) ->
+        return jdbcTemplate.queryForObject(FIND_BY_ID_SQL, (rs, rowNum) ->
                         new Theme(
                                 rs.getLong(ID),
                                 rs.getString(NAME),
                                 rs.getString(DESCRIPTION),
                                 rs.getString(THUMBNAIL)),
-                id).get(0);
+                id);
     }
 
     public List<Theme> findAll() {

@@ -77,7 +77,7 @@ public class ReservationRepository {
     }
 
     public Reservation findById(long reservationId) {
-        return jdbcTemplate.query(FIND_BY_ID_SQL, (rs, rowNum) -> new Reservation(
+        return jdbcTemplate.queryForObject(FIND_BY_ID_SQL, (rs, rowNum) -> new Reservation(
                 rs.getLong(RESERVATION_ID),
                 rs.getString(RESERVATION_NAME),
                 rs.getString(RESERVATION_DATE),
@@ -95,7 +95,7 @@ public class ReservationRepository {
                         rs.getString(THEME_DESCRIPTION),
                         rs.getString(THEME_THUMBNAIL)
                 )
-        ), reservationId).get(0);
+        ), reservationId);
     }
 
     public long save(Reservation reservation) {
