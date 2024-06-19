@@ -1,10 +1,16 @@
 package roomescape.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import roomescape.domain.LoginMember;
+import roomescape.domain.Member;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTheme;
 import roomescape.domain.ReservationTime;
+import roomescape.dto.request.ReservationAdminRequest;
 import roomescape.dto.request.ReservationRequest;
 import roomescape.dto.response.ReservationResponse;
 import roomescape.exception.custom.ExistingReservationException;
@@ -14,11 +20,6 @@ import roomescape.exception.custom.PastDateReservationException;
 import roomescape.repository.ReservationDao;
 import roomescape.repository.ReservationThemeDao;
 import roomescape.repository.ReservationTimeDao;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 
 @Service
 public class ReservationService {
@@ -37,9 +38,20 @@ public class ReservationService {
     public ReservationResponse createReservation(ReservationRequest reservationRequest, LoginMember loginMember) {
         validateReservationCreation(reservationRequest);
 
-        Reservation reservation = reservationDao.save(this.convertToEntity(reservationRequest, loginMember));
+        Reservation reservation = reservationDao.save(this.convertToEntity(reservationRequest, loginMember.getName()));
         return this.convertToResponse(reservation);
     }
+
+    public ReservationResponse createAdminReservation(ReservationAdminRequest request, Member member) {
+        ReservationRequest reservationRequest = new ReservationRequest(request.getDate()
+                , String.valueOf(request.getTimeId())
+                , String.valueOf(request.getThemeId()));
+        validateReservationCreation(reservationRequest);
+
+        Reservation reservation = reservationDao.save(this.convertToEntity(reservationRequest, member.getName()));
+        return this.convertToResponse(reservation);
+    }
+
 
     public List<ReservationResponse> findAllReservations() {
         return reservationDao.findAll().stream()
@@ -73,11 +85,11 @@ public class ReservationService {
                 reservation.getTime().getStartAt(), reservation.getTheme().getName());
     }
 
-    private Reservation convertToEntity(ReservationRequest reservationRequest, LoginMember loginMember) {
+    private Reservation convertToEntity(ReservationRequest reservationRequest, String name) {
         ReservationTime reservationTime = findReservationTimeById(reservationRequest.getTimeId());
         ReservationTheme reservationTheme = findReservationThemeById(reservationRequest.getThemeId());
 
-        return new Reservation(loginMember.getName()
+        return new Reservation(name
                 , reservationRequest.getDate()
                 , reservationTime
                 , reservationTheme);

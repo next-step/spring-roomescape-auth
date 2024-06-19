@@ -1,10 +1,12 @@
 package roomescape.service;
 
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 import roomescape.domain.Member;
 import roomescape.dto.request.LoginRequest;
 import roomescape.dto.response.LoginResponse;
+import roomescape.dto.response.MemberResponse;
 import roomescape.exception.custom.TokenNotFoundException;
 import roomescape.exception.custom.UserNotFoundException;
 import roomescape.repository.MemberDao;
@@ -37,6 +39,18 @@ public class MemberService {
     public Member findByEmail(String email) {
         return memberDao.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    public Member findById(Long id) {
+        return memberDao.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    public List<MemberResponse> findAllMembers() {
+        List<Member> members = memberDao.findAllMembers();
+        return members.stream()
+                .map(member -> new MemberResponse(member.getId(), member.getName()))
+                .toList();
     }
 
     public LoginResponse loginCheck(String token) {
