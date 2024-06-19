@@ -2,6 +2,8 @@ package roomescape.reservation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import roomescape.reservationTheme.ReservationTheme;
+import roomescape.reservationTheme.ReservationThemeRequestDto;
 import roomescape.reservationTime.ReservationTimeRequestDto;
 
 public class ReservationRequestDto {
@@ -10,6 +12,7 @@ public class ReservationRequestDto {
     @NotBlank(message = "예약일자를 입력해주세요")
     private String date;
     private ReservationTimeRequestDto reservationTimeRequestDto;
+    private ReservationThemeRequestDto reservationThemeRequestDto;
 
     public String getName() {
         return name;
@@ -23,16 +26,22 @@ public class ReservationRequestDto {
         return reservationTimeRequestDto;
     }
 
-    public ReservationRequestDto(String name, String date, ReservationTimeRequestDto reservationTimeRequestDto) {
+    public ReservationThemeRequestDto getReservationThemeRequestDto() {
+        return reservationThemeRequestDto;
+    }
+
+    public ReservationRequestDto(String name, String date, ReservationTimeRequestDto reservationTimeRequestDto, ReservationThemeRequestDto reservationThemeRequestDto) {
         this.name = name;
         this.date = date;
         this.reservationTimeRequestDto = reservationTimeRequestDto;
+        this.reservationThemeRequestDto = reservationThemeRequestDto;
     }
 
     public static class Builder {
         private String name;
         private String date;
         private ReservationTimeRequestDto reservationTimeRequestDto;
+        private ReservationThemeRequestDto reservationThemeRequestDto;
 
         public Builder name(String name) {
             this.name = name;
@@ -49,8 +58,13 @@ public class ReservationRequestDto {
             return this;
         }
 
+        public Builder reservationThemeRequestDto(ReservationThemeRequestDto reservationThemeRequestDto) {
+            this.reservationThemeRequestDto = reservationThemeRequestDto;
+            return this;
+        }
+
         public ReservationRequestDto build() {
-            return new ReservationRequestDto(name, date, reservationTimeRequestDto);
+            return new ReservationRequestDto(name, date, reservationTimeRequestDto, reservationThemeRequestDto);
         }
     }
 }

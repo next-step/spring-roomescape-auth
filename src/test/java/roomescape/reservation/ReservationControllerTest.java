@@ -13,11 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import roomescape.reservationTheme.ReservationTheme;
+import roomescape.reservationTheme.ReservationThemeRequestDto;
+import roomescape.reservationTheme.ReservationThemeResponseDto;
 import roomescape.reservationTime.ReservationTime;
 import roomescape.reservationTime.ReservationTimePolicy;
 import roomescape.reservationTime.ReservationTimeRequestDto;
 import roomescape.reservationTime.ReservationTimeResponseDto;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,8 +34,20 @@ class ReservationControllerTest {
     private ReservationRepository reservationRepository;
     private Long time1Id;
     private Long time2Id;
-    private String time1 = "";
-    private String time2 = "";
+    private Long time3Id;
+    private String time1startAt = "";
+    private String time2startAt = "";
+    private String time3startAt = "";
+
+    private Long theme1Id;
+    private String theme1Name;
+    private String theme1Thumbnail;
+    private String theme1description;
+    private Long theme2Id;
+    private String theme2Name;
+    private String theme2Thumbnail;
+    private String theme2description;
+
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -41,6 +57,7 @@ class ReservationControllerTest {
         reservationRepository = new ReservationRepository(jdbcTemplate);
         jdbcTemplate.execute("DROP TABLE IF EXISTS reservation");
         jdbcTemplate.execute("DROP TABLE IF EXISTS reservation_time");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS theme");
 
         jdbcTemplate.execute(
                 """
@@ -52,6 +69,16 @@ class ReservationControllerTest {
                         """
         );
 
+
+        jdbcTemplate.execute("""
+                CREATE TABLE theme (
+                            id BIGINT NOT NULL AUTO_INCREMENT,
+                            name VARCHAR(255) NOT NULL,
+                            description VARCHAR(255) NOT NULL,
+                            thumbnail VARCHAR(255) NOT NULL,
+                            PRIMARY KEY (id))
+                """);
+
         jdbcTemplate.execute(
                 """
                         CREATE TABLE reservation (
@@ -59,15 +86,19 @@ class ReservationControllerTest {
                             name VARCHAR(255) NOT NULL, 
                             date VARCHAR(255) NOT NULL, 
                             time_id BIGINT,
+                            theme_id BIGINT,
                             PRIMARY KEY (id),
-                            FOREIGN KEY (time_id) REFERENCES reservation_time (id)
+                            FOREIGN KEY (time_id) REFERENCES reservation_time (id),
+                            FOREIGN KEY (theme_id) REFERENCES theme (id)
                         )
                         """
         );
 
-        final ReservationTime request1 = new ReservationTime("15:40");
-        final ReservationTime request2 = new ReservationTime("16:40");
-        List<Object[]> reservationTimes = Arrays.asList(request1, request2).stream()
+        List<Object[]> reservationTimes = Arrays.asList(
+                        new ReservationTime("10:00"),
+                        new ReservationTime("12:00"),
+                        new ReservationTime("14:00"))
+                .stream()
                 .map(reservationTime -> new Object[]{reservationTime.getStartAt()})
                 .collect(Collectors.toList());
         jdbcTemplate.batchUpdate("INSERT INTO reservation_time(start_at) VALUES (?)", reservationTimes);
@@ -80,39 +111,55 @@ class ReservationControllerTest {
         List<ReservationTimeResponseDto> timeResponseDtos = response1.jsonPath().getList(".", ReservationTimeResponseDto.class);
         time1Id = timeResponseDtos.get(0).getId();
         time2Id = timeResponseDtos.get(1).getId();
-        time1 = timeResponseDtos.get(0).getStartAt();
-        time2 = timeResponseDtos.get(1).getStartAt();
+        time3Id = timeResponseDtos.get(2).getId();
+        time1startAt = timeResponseDtos.get(0).getStartAt();
+        time2startAt = timeResponseDtos.get(1).getStartAt();
+        time3startAt = timeResponseDtos.get(2).getStartAt();
 
-    }
-
-    @DisplayName("전체 예약을 조회 합니다.")
-    @Test
-    void readReservation() {
-
-
-        final Reservation reservation1 = new Reservation("제이슨", "2023-08-05", new ReservationTime(time1Id));
-        final Reservation reservation2 = new Reservation("심슨", "2023-08-05", new ReservationTime(time2Id));
-
-        List<Object[]> reservations = Arrays.asList(reservation1, reservation2).stream()
-                .map(reservation -> new Object[]{reservation.getName(), reservation.getDate(), reservation.getReservationTime().getId()})
+        final ReservationTheme theme1 = new ReservationTheme("테마1", "설명1", "썸네일1");
+        final ReservationTheme theme2 = new ReservationTheme("테마2", "설명2", "썸네일2");
+        List<Object[]> themes = Arrays.asList(theme1, theme2).stream()
+                .map(theme -> new Object[]{theme.getName(), theme.getDescription(), theme.getThumbnail()})
                 .collect(Collectors.toList());
+        jdbcTemplate.batchUpdate("INSERT INTO theme(name, description, thumbnail) VALUES (?,?,?)", themes);
 
-        jdbcTemplate.batchUpdate("INSERT INTO reservation(name, date, time_id) VALUES (?,?,?)", reservations);
-
-        var response = RestAssured
+        var response2 = RestAssured
                 .given().log().all()
-                .when().get("/reservations")
+                .when().get("/themes")
                 .then().log().all().extract();
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.jsonPath().getList(".", ReservationResponseDto.class)).hasSize(2);
+        List<ReservationThemeResponseDto> themeResponseDtos = response2.jsonPath().getList(".", ReservationThemeResponseDto.class);
+        theme1Id = themeResponseDtos.get(0).getId();
+        theme1Name = themeResponseDtos.get(0).getName();
+        theme1Thumbnail = themeResponseDtos.get(0).getThumbnail();
+        theme1description = themeResponseDtos.get(0).getDescription();
+        theme2Id = themeResponseDtos.get(1).getId();
+        theme2Name = themeResponseDtos.get(1).getName();
+
+        final ReservationTime savedTime = new ReservationTime(time1Id, time1startAt);
+        final ReservationTheme savedTheme = new ReservationTheme.Builder().id(theme1Id).name(theme1Name).thumbnail(theme1Thumbnail).description(theme1Thumbnail).build();
+        final Reservation savedReservation = new Reservation("김준성", "2024-12-25", savedTime, savedTheme);
+
+        List<Object[]> reservations = Arrays.asList(savedReservation).stream()
+                .map(reservation -> new Object[]{
+                        reservation.getName(),
+                        reservation.getDate(),
+                        reservation.getReservationTime().getId(),
+                        reservation.getReservationTheme().getId()})
+                .collect(Collectors.toList());
+
+        jdbcTemplate.batchUpdate("INSERT INTO reservation(name, date, time_id, theme_id) VALUES (?,?,?,?)", reservations);
+
+
     }
 
     @DisplayName("예약을 생성합니다.")
     @Test
     void createReservation() {
         // given
-        final ReservationRequestDto request = new ReservationRequestDto("제이슨", "2025-08-05", new ReservationTimeRequestDto(time1Id, time1));
+        final ReservationRequestDto request = new ReservationRequestDto("제이슨", "2025-08-05",
+                new ReservationTimeRequestDto(time1Id, time1startAt),
+                new ReservationThemeRequestDto(theme1Id));
 
         // when
         var response = RestAssured.given().log().all()
@@ -129,12 +176,26 @@ class ReservationControllerTest {
         assertThat(responseDto.getReservationTimeResponseDto().getStartAt()).isEqualTo(request.getReservationTimeRequestDto().getStartAt());
     }
 
+    @DisplayName("전체 예약을 조회 합니다.")
+    @Test
+    void readReservation() {
+
+        var response = RestAssured
+                .given().log().all()
+                .when().get("/reservations")
+                .then().log().all().extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getList(".", ReservationResponseDto.class)).hasSize(1);
+    }
+
     @DisplayName("예약을 삭제합니다.")
     @Test
     void deleteReservation() {
         // given
         final ReservationRequestDto request = new ReservationRequestDto("제이슨", "2024-08-05",
-                new ReservationTimeRequestDto(time1Id, time1));
+                new ReservationTimeRequestDto(time1Id, time1startAt),
+                new ReservationThemeRequestDto(theme2Id, theme2Name, theme2description, theme2Thumbnail));
 
         // when
         var response1 = RestAssured.given().log().all()
@@ -159,7 +220,9 @@ class ReservationControllerTest {
     @NullAndEmptySource
     void createReservationEmptyName(final String name) {
         // given
-        final ReservationRequestDto request = new ReservationRequestDto(name, "2025-08-05", new ReservationTimeRequestDto(time1Id, time1));
+        final ReservationRequestDto request = new ReservationRequestDto(name, "2025-08-05",
+                new ReservationTimeRequestDto(time1Id, time1startAt),
+                new ReservationThemeRequestDto(theme1Id, theme1Name, theme1description, theme1Thumbnail));
 
         // when
         var response = RestAssured.given().log().all()
@@ -178,7 +241,9 @@ class ReservationControllerTest {
     @NullAndEmptySource
     void createReservationEmptyDate(final String date) {
         // given
-        final ReservationRequestDto request = new ReservationRequestDto("제이슨", date, new ReservationTimeRequestDto(time1Id, time1));
+        final ReservationRequestDto request = new ReservationRequestDto("제이슨", date,
+                new ReservationTimeRequestDto(time1Id, time1startAt),
+                new ReservationThemeRequestDto(theme1Id, theme1Name, theme1description, theme1Thumbnail));
 
         // when
         var response = RestAssured.given().log().all()
@@ -190,6 +255,38 @@ class ReservationControllerTest {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(response.jsonPath().getString("date")).isEqualTo("예약일자를 입력해주세요");
+    }
+
+    @DisplayName("특정 일자와 테마 선택 시 기 예약된 시간을 제외한 시간을 반환한다.")
+    @Test
+    void getAvaliableTimes() {
+        // given
+        final String date = "2024-12-25";
+        final Long themeId = theme1Id;
+
+        final String date2 = "2025-12-31";
+        final Long themeId2 = theme1Id;
+
+
+        // when
+        var response = RestAssured.given().log().all()
+                .queryParam("date", date)
+                .queryParam("themeId", themeId)
+                .when().get("/times/available")
+                .then().log().all().extract();
+
+        var response2 = RestAssured.given().log().all()
+                .queryParam("date", date2)
+                .queryParam("themeId", themeId2)
+                .when().get("/times/available")
+                .then().log().all().extract();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(2);
+
+        assertThat(response2.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response2.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(3);
     }
 
 }

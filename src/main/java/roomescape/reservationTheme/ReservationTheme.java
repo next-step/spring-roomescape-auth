@@ -25,6 +25,12 @@ public class ReservationTheme {
         return thumbnail;
     }
 
+    public ReservationTheme(String name, String description, String thumbnail) {
+        this.name = name;
+        this.description = description;
+        this.thumbnail = thumbnail;
+    }
+
     public ReservationTheme(Long id, String name, String description, String thumbnail) {
         this.id = id;
         this.name = name;

@@ -28,12 +28,20 @@ public class MissionStepTest {
     void reservation() {
         Map<String, Object> params = new HashMap<>();
         params.put("name", "브라운");
-        params.put("date", "2023-08-05");
+        params.put("date", "2025-08-05");
 
         Map<String, Object> time = new HashMap<>();
         time.put("startAt", "15:40");
         time.put("id", 1);
+
+        Map<String, Object> theme = new HashMap<>();
+        theme.put("id", 1);
+        theme.put("name", "테마1");
+        theme.put("description", "설명1");
+        theme.put("thumbnail", "썸네일1");
+
         params.put("reservationTimeRequestDto", time);
+        params.put("reservationThemeRequestDto", theme);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
@@ -41,6 +49,14 @@ public class MissionStepTest {
                 .when().post("/times")
                 .then().log().all()
                 .statusCode(200)
+                .body("id", is(1));
+
+        RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(theme)
+                .when().post("/themes")
+                .then().log().all()
+                .statusCode(201)
                 .body("id", is(1));
 
         RestAssured.given().log().all()

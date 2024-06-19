@@ -22,8 +22,8 @@ public class HomeController {
         return "admin/theme";
     }
 
-    @GetMapping("/")
-    public String home(Model model) {
-        return "admin/index";
+    @GetMapping("/reservation")
+    public String reservation(Model model) {
+        return "reservation";
     }
 }
