@@ -42,4 +42,10 @@ public class LoginController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<RedirectResponse> logout(HttpServletResponse response
+    ) {
+        loginTokenManager.removeToken(response);
+        return ResponseEntity.ok().build();
+    }
 }

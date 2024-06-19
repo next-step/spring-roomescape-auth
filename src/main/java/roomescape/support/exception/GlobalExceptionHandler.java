@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({NotFoundThemeException.class, NotFoundReservationTimeException.class,
-                       NotFoundReservationException.class})
+                       NotFoundReservationException.class, NoSuchElementException.class})
     public ExceptionResponse handleNoSuchElementException(NoSuchElementException e) {
         logger.error("NoSuchElementException caught: {}", e.getMessage());
         return new ExceptionResponse(HttpStatus.NOT_FOUND.value(), e.getMessage());

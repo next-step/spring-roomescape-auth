@@ -3,10 +3,8 @@ package roomescape.apply.member.ui;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import roomescape.apply.auth.application.annotation.NeedMemberRole;
 import roomescape.apply.member.application.MemberAdder;
 import roomescape.apply.member.application.MemberFinder;
-import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.member.ui.dto.MemberRequest;
 import roomescape.apply.member.ui.dto.MemberResponse;
 
@@ -30,7 +28,6 @@ public class MemberController {
     }
 
     @PostMapping
-    @NeedMemberRole(MemberRoleName.ADMIN)
     public ResponseEntity<MemberResponse> addMember(@RequestBody MemberRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(memberAdder.addNewMember(request));
