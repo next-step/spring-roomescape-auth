@@ -1,10 +1,7 @@
 package roomescape.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 import org.springframework.stereotype.Service;
+import roomescape.domain.LoginMember;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTheme;
 import roomescape.domain.ReservationTime;
@@ -17,6 +14,11 @@ import roomescape.exception.custom.PastDateReservationException;
 import roomescape.repository.ReservationDao;
 import roomescape.repository.ReservationThemeDao;
 import roomescape.repository.ReservationTimeDao;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 @Service
 public class ReservationService {
@@ -32,10 +34,10 @@ public class ReservationService {
         this.reservationThemeDao = reservationThemeDao;
     }
 
-    public ReservationResponse createReservation(ReservationRequest reservationRequest) {
+    public ReservationResponse createReservation(ReservationRequest reservationRequest, LoginMember loginMember) {
         validateReservationCreation(reservationRequest);
 
-        Reservation reservation = reservationDao.save(this.convertToEntity(reservationRequest));
+        Reservation reservation = reservationDao.save(this.convertToEntity(reservationRequest, loginMember));
         return this.convertToResponse(reservation);
     }
 
@@ -71,12 +73,14 @@ public class ReservationService {
                 reservation.getTime().getStartAt(), reservation.getTheme().getName());
     }
 
-    private Reservation convertToEntity(ReservationRequest reservationRequest) {
+    private Reservation convertToEntity(ReservationRequest reservationRequest, LoginMember loginMember) {
         ReservationTime reservationTime = findReservationTimeById(reservationRequest.getTimeId());
         ReservationTheme reservationTheme = findReservationThemeById(reservationRequest.getThemeId());
 
-        return new Reservation(reservationRequest.getName(), reservationRequest.getDate(), reservationTime,
-                reservationTheme);
+        return new Reservation(loginMember.getName()
+                , reservationRequest.getDate()
+                , reservationTime
+                , reservationTheme);
     }
 
     private ReservationTime findReservationTimeById(String timeId) {

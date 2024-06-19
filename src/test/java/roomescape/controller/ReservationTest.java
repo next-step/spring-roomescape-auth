@@ -1,6 +1,7 @@
 package roomescape.controller;
 
 import static org.hamcrest.Matchers.is;
+import static roomescape.fixture.AuthFixture.사용자_로그인;
 import static roomescape.fixture.ReservationFixture.예약을_생성한다;
 import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
 import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
@@ -21,6 +22,9 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @DisplayName("예약 테스트")
 public class ReservationTest {
+    private static final String EMAIL = "test@email.com";
+    private static final String PASSWORD = "1234";
+    private String token;
 
     @BeforeEach
     void init() {
@@ -35,18 +39,20 @@ public class ReservationTest {
         params.put("thumbnail", "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
 
         예약테마를_생성한다(params);
+
+        Response response = 사용자_로그인(EMAIL, PASSWORD);
+        token = response.getCookie("token");
     }
 
     @Test
     @DisplayName("예약을 생성한다.")
     void createReservation() {
         Map<String, String> params = new HashMap<>();
-        params.put("name", "브라운");
         params.put("date", "2024-06-25");
         params.put("timeId", "1");
         params.put("themeId", "1");
 
-        Response response = 예약을_생성한다(params);
+        Response response = 예약을_생성한다(params, token);
 
         int expectedIdValue = 1;
         response.then().log().all()
@@ -58,13 +64,13 @@ public class ReservationTest {
     @DisplayName("예약을 생성할 때 이미 지난 날짜인경우 에러가 발생한다.")
     void createReservationIsDateExpired() {
         Map<String, String> params = new HashMap<>();
-        params.put("name", "브라운");
         params.put("date", "2023-08-05");
         params.put("timeId", "1");
         params.put("themeId", "1");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
@@ -75,13 +81,13 @@ public class ReservationTest {
     @DisplayName("예약을 생성할 때 필수값이 없으면 에러가 발생한다.")
     void createReservationException() {
         Map<String, String> params = new HashMap<>();
-        params.put("name", "");
-        params.put("date", "2023-08-05");
+        params.put("date", "");
         params.put("timeId", "1");
         params.put("themeId", "1");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
@@ -92,13 +98,13 @@ public class ReservationTest {
     @DisplayName("예약을 생성할때 유효하지 않은 날짜를 입력하면 에러가 발생한다.")
     void createReservationDateException() {
         Map<String, String> params = new HashMap<>();
-        params.put("name", "브라운");
         params.put("date", "2023-kk-05");
         params.put("timeId", "1");
         params.put("themeId", "1");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
@@ -109,13 +115,13 @@ public class ReservationTest {
     @DisplayName("예약을 생성할때 존재하지 않는 예약시간 아이디를 입력하면 에러가 발생한다.")
     void createReservationEmptyTimeId() {
         Map<String, String> params = new HashMap<>();
-        params.put("name", "브라운");
         params.put("date", "2024-06-25");
         params.put("timeId", "3");
         params.put("themeId", "1");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
@@ -126,13 +132,13 @@ public class ReservationTest {
     @DisplayName("예약을 생성할때 존재하지 않는 예약테마 아이디를 입력하면 에러가 발생한다.")
     void createReservationEmptyThemeId() {
         Map<String, String> params = new HashMap<>();
-        params.put("name", "브라운");
         params.put("date", "2024-06-25");
         params.put("timeId", "1");
         params.put("themeId", "3");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
@@ -143,13 +149,13 @@ public class ReservationTest {
     @DisplayName("예약을 생성할 때 중복된 날짜 및 시간인 경우 에러가 발생한다.")
     void createReservationDateAndTimeStartAtDuplicate() {
         Map<String, String> params = new HashMap<>();
-        params.put("name", "브라운");
         params.put("date", "2024-06-25");
         params.put("timeId", "1");
         params.put("themeId", "1");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
@@ -157,6 +163,7 @@ public class ReservationTest {
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
@@ -167,7 +174,6 @@ public class ReservationTest {
     @DisplayName("예약 목록을 조회한다.")
     void findAllReservations() {
         Map<String, String> params = new HashMap<>();
-        params.put("name", "브라운");
         params.put("date", "2024-06-25");
         params.put("timeId", "1");
         params.put("themeId", "1");
@@ -175,6 +181,7 @@ public class ReservationTest {
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(params)
+                .cookie("token", token)
                 .when().post("/reservations")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())

@@ -11,6 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import roomescape.dto.request.LoginRequest;
 
 import static org.hamcrest.Matchers.is;
+import static roomescape.fixture.AuthFixture.사용자_로그인;
 
 @DisplayName("인증 관련 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -24,17 +25,14 @@ public class AuthTest {
     @DisplayName("[로그인] - 유효한 자격 증명으로 로그인하여 토큰을 획득한다.")
     @Test
     void login() {
-        Response response = RestAssured
-                .given().log().all()
-                .body(new LoginRequest(EMAIL, PASSWORD))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .when().post("/login");
+        Response response = 사용자_로그인(EMAIL, PASSWORD);
 
         response.then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .cookie(TOKEN_COOKIE_NAME);
     }
+
+
 
     @DisplayName("[로그인] - 아이디 또는 비밀번호를 입력하지 않은 경우 에러가 발생한다.")
     @Test

@@ -34,7 +34,7 @@ public class MemberService {
         member.checkPassword(password);
     }
 
-    private Member findByEmail(String email) {
+    public Member findByEmail(String email) {
         return memberDao.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
     }

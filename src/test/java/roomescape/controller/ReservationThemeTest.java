@@ -1,6 +1,7 @@
 package roomescape.controller;
 
 import static org.hamcrest.Matchers.is;
+import static roomescape.fixture.AuthFixture.사용자_로그인;
 import static roomescape.fixture.ReservationFixture.예약을_생성한다;
 import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
 import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
@@ -10,6 +11,8 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +27,16 @@ public class ReservationThemeTest {
     private final String NAME = "레벨2 탈출";
     private final String DESCRIPTION = "우테코 레벨2를 탈출하는 내용입니다.";
     private final String THUMBNAIL = "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg";
+
+    private static final String EMAIL = "test@email.com";
+    private static final String PASSWORD = "1234";
+    private String token;
+
+    @BeforeEach
+    void init() {
+        Response response = 사용자_로그인(EMAIL, PASSWORD);
+        token = response.getCookie("token");
+    }
 
     @Test
     @DisplayName("예약테마를 생성한다.")
@@ -132,7 +145,7 @@ public class ReservationThemeTest {
         params.put("date", "2024-06-25");
         params.put("timeId", "1");
         params.put("themeId", "1");
-        예약을_생성한다(params);
+        예약을_생성한다(params, token);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
