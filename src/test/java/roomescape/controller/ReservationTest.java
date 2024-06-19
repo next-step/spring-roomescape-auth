@@ -3,6 +3,7 @@ package roomescape.controller;
 import static org.hamcrest.Matchers.is;
 import static roomescape.fixture.AuthFixture.사용자_로그인;
 import static roomescape.fixture.ReservationFixture.예약을_생성한다;
+import static roomescape.fixture.ReservationFixture.예약을_생성한다_관리자;
 import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
 import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
 
@@ -207,5 +208,22 @@ public class ReservationTest {
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .body("size()", is(0));
+    }
+
+    @Test
+    @DisplayName("예약을 생성한다. (관리자)")
+    void createAdminReservation() {
+        Map<String, String> params = new HashMap<>();
+        params.put("date", "2024-06-25");
+        params.put("timeId", "1");
+        params.put("themeId", "1");
+        params.put("memberId", "1");
+
+        Response response = 예약을_생성한다_관리자(params, token);
+
+        int expectedIdValue = 1;
+        response.then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .body("id", is(expectedIdValue));
     }
 }

@@ -14,4 +14,12 @@ public class ReservationFixture {
                 .body(params)
                 .when().post("/reservations");
     }
+
+    public static Response 예약을_생성한다_관리자(Map<String, String> params, String token) {
+        return RestAssured.given().log().all()
+                .cookie("token", token)
+                .contentType(ContentType.JSON)
+                .body(params)
+                .when().post("/admin/reservations");
+    }
 }

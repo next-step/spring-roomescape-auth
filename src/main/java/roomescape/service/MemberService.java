@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 import roomescape.domain.Member;
 import roomescape.dto.request.LoginRequest;
+import roomescape.dto.request.MemberRequest;
 import roomescape.dto.response.LoginResponse;
 import roomescape.dto.response.MemberResponse;
 import roomescape.exception.custom.TokenNotFoundException;
@@ -67,5 +68,20 @@ public class MemberService {
             throw new TokenNotFoundException();
         }
         jwtTokenProvider.validateToken(token);
+    }
+
+    public MemberResponse signup(MemberRequest memberRequest) {
+        // TODO. 중복체크 필요
+        // TODO. 비밀번호 암호화 필요
+        Member member = memberDao.save(this.convertToEntity(memberRequest));
+        return this.convertToResponse(member);
+    }
+
+    private Member convertToEntity(MemberRequest request) {
+        return new Member(request.getName(), request.getEmail(), request.getPassword());
+    }
+
+    private MemberResponse convertToResponse(Member member) {
+        return new MemberResponse(member.getId(), member.getName());
     }
 }
