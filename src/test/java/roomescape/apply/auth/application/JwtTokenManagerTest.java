@@ -1,11 +1,15 @@
 package roomescape.apply.auth.application;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import roomescape.apply.auth.application.exception.IllegalTokenException;
 import roomescape.apply.auth.ui.dto.LoginResponse;
 import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.member.domain.MemberRoleNames;
+import roomescape.support.BaseTestService;
 
 import java.util.Set;
 
@@ -13,14 +17,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-class JwtTokenManagerTest {
+class JwtTokenManagerTest extends BaseTestService {
 
-    private final JwtTokenManager jwtTokenManager;
+    private JwtTokenManager jwtTokenManager;
 
-    JwtTokenManagerTest() {
+    @BeforeEach
+    void setUp() {
+        transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
         String testKey = "TeStSeCuReKeYIsSuPeRSeCuReKeYTeStSeCuReKeYIsSuPeRSeCuReKeYTeStSeCuReKeYIsSuPeRSeCuReKeY";
         this.jwtTokenManager = new JwtTokenManager(testKey);
     }
+
+    @AfterEach
+    void clear() {
+        transactionManager.rollback(transactionStatus);
+    }
+
 
     @Test
     @DisplayName("LoginResponse 값을 통해 토큰을 만들 수 있다.")

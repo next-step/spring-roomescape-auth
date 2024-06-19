@@ -11,13 +11,13 @@ public interface ReservationRepository {
 
     List<Reservation> findAll();
 
-    Optional<Long> checkIdExists(long id);
+    Optional<Long> findIdById(long id);
 
     void deleteById(long id);
 
     Optional<Long> findIdByTimeIdAndThemeId(long timeId, long themeId);
 
-    Optional<Long> findAnyByTimeId(long id);
+    Optional<Long> findIdByTimeId(long id);
 
-    Optional<Long> findAnyByThemeId(long themeId);
+    Optional<Long> findIdByThemeId(long themeId);
 }

@@ -4,7 +4,8 @@ import org.springframework.util.StringUtils;
 
 public record LoginRequest(
         String email,
-        String password
+        String password,
+        String redirect
 ) {
 
     public LoginRequest {
@@ -12,7 +13,7 @@ public record LoginRequest(
     }
 
     private static final String EMAIL_FORMAT = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-
+    private static final String INDEX_PAGE = "/";
 
     private static void validateValues(String email, String password) {
         if (!StringUtils.hasText(email) || !StringUtils.hasText(password)) {
@@ -25,4 +26,11 @@ public record LoginRequest(
         }
     }
 
+    @Override
+    public String redirect() {
+        if (this.redirect == null || redirect.isEmpty()) {
+            return INDEX_PAGE;
+        }
+        return redirect;
+    }
 }

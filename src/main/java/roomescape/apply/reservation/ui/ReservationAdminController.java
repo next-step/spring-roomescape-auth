@@ -9,38 +9,38 @@ import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.reservation.application.ReservationCanceler;
 import roomescape.apply.reservation.application.ReservationFinder;
 import roomescape.apply.reservation.application.ReservationRecorder;
-import roomescape.apply.reservation.ui.dto.ReservationRequest;
-import roomescape.apply.reservation.ui.dto.ReservationResponse;
+import roomescape.apply.reservation.ui.dto.ReservationAdminRequest;
+import roomescape.apply.reservation.ui.dto.ReservationAdminResponse;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/reservations")
-public class ReservationController {
+@RequestMapping("/admin/reservations")
+public class ReservationAdminController {
 
     private final ReservationRecorder reservationRecorder;
     private final ReservationFinder reservationFinder;
     private final ReservationCanceler reservationCanceler;
 
-    public ReservationController(ReservationRecorder reservationRecorder, ReservationFinder reservationFinder,
-                                 ReservationCanceler reservationCanceler) {
+    public ReservationAdminController(ReservationRecorder reservationRecorder,
+                                      ReservationFinder reservationFinder,
+                                      ReservationCanceler reservationCanceler) {
         this.reservationRecorder = reservationRecorder;
         this.reservationFinder = reservationFinder;
         this.reservationCanceler = reservationCanceler;
     }
 
     @GetMapping
-    public ResponseEntity<List<ReservationResponse>> getReservations() {
-        return ResponseEntity.ok(reservationFinder.findAll());
+    public ResponseEntity<List<ReservationAdminResponse>> getReservations(LoginMember loginMember) {
+        return ResponseEntity.ok(reservationFinder.findAllForAdmin(loginMember));
     }
 
     @PostMapping
-    @NeedMemberRole({MemberRoleName.ADMIN, MemberRoleName.GUEST})
-    public ResponseEntity<ReservationResponse> addReservation(@RequestBody ReservationRequest request,
-                                                              LoginMember loginMember
+    @NeedMemberRole({MemberRoleName.ADMIN})
+    public ResponseEntity<ReservationAdminResponse> adminAddReservation(@RequestBody ReservationAdminRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(reservationRecorder.recordReservationBy(request, loginMember));
+                .body(reservationRecorder.recordReservationBy(request));
     }
 
     @DeleteMapping("/{id}")
@@ -49,4 +49,5 @@ public class ReservationController {
         reservationCanceler.cancelReservation(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
 }

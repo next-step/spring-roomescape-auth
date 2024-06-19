@@ -39,13 +39,38 @@ public class MemberJDBCRepository implements MemberRepository {
                     member
             """;
 
-    private static final String COUNT_BY_EMAIL_SQL = """
+    private static final String FIND_ANY_ID_BY_EMAIL_SQL = """
                 SELECT
-                    COUNT(id)
+                    id
                 FROM
                     member
                 WHERE
                     email = ?
+                LIMIT 1
+            """;
+
+    private static final String FIND_ONE_BY_EMAIL_SQL = """
+                SELECT
+                    id,
+                    name,
+                    email,
+                    password
+                FROM
+                    member
+                WHERE
+                    email = ?
+            """;
+
+    private static final String FIND_ONE_BY_ID_SQL = """
+                SELECT
+                    id,
+                    name,
+                    email,
+                    password
+                FROM
+                    member
+                WHERE
+                    id = ?
             """;
 
     private static final String INSERT_MEMBER_SQL = """
@@ -81,11 +106,11 @@ public class MemberJDBCRepository implements MemberRepository {
     }
 
     @Override
-    public Integer countByEmail(String email) {
+    public Optional<Long> findIdByEmail(String email) {
         try {
-            return template.queryForObject(COUNT_BY_EMAIL_SQL, Integer.class, email);
+            return Optional.ofNullable(template.queryForObject(FIND_ANY_ID_BY_EMAIL_SQL, Long.class, email));
         } catch (EmptyResultDataAccessException ex) {
-            return 0;
+            return Optional.empty();
         }
     }
 
@@ -105,6 +130,24 @@ public class MemberJDBCRepository implements MemberRepository {
         member.changeId(key);
 
         return member;
+    }
+
+    @Override
+    public Optional<Member> findOneByEmail(String email) {
+        try {
+            return Optional.ofNullable(template.queryForObject(FIND_ONE_BY_EMAIL_SQL, memberRowMapper(), email));
+        } catch (EmptyResultDataAccessException ex) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Member> findOneById(long memberId) {
+        try {
+            return Optional.ofNullable(template.queryForObject(FIND_ONE_BY_ID_SQL, memberRowMapper(), memberId));
+        } catch (EmptyResultDataAccessException ex) {
+            return Optional.empty();
+        }
     }
 
     private RowMapper<Member> memberRowMapper() {

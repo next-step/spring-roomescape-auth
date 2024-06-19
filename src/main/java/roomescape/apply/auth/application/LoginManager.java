@@ -11,6 +11,9 @@ import roomescape.support.ServletRequestTokenFinder;
 @Service
 public class LoginManager {
     private static final int COOKIE_EXPIRY = 3601;
+    private static final String COOKIE_PATH = "/";
+    private static final int EMPTY_EXPIRY = 0;
+    private static final String EMPTY_TOKEN = null;
 
     private final JwtTokenManager jwtTokenManager;
 
@@ -23,7 +26,7 @@ public class LoginManager {
         String token = jwtTokenManager.generateTokenByLoginResponse(loginResponse);
         Cookie cookie = new Cookie(ServletRequestTokenFinder.COOKIE_NAME, token);
         cookie.setHttpOnly(true);
-        cookie.setPath("/");
+        cookie.setPath(COOKIE_PATH);
         cookie.setMaxAge(COOKIE_EXPIRY);
         servletResponse.addCookie(cookie);
     }
@@ -32,5 +35,13 @@ public class LoginManager {
         String token = ServletRequestTokenFinder.getTokenByRequestCookies(servletRequest);
         jwtTokenManager.validateToken(token);
         return new LoginCheckResponse(jwtTokenManager.getRoleNameFromToken(token));
+    }
+
+    public void removeToken(HttpServletResponse servletResponse) {
+        Cookie cookie = new Cookie(ServletRequestTokenFinder.COOKIE_NAME, EMPTY_TOKEN);
+        cookie.setHttpOnly(true);
+        cookie.setPath(COOKIE_PATH);
+        cookie.setMaxAge(EMPTY_EXPIRY);
+        servletResponse.addCookie(cookie);
     }
 }

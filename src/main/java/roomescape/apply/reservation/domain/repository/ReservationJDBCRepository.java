@@ -41,13 +41,14 @@ public class ReservationJDBCRepository implements ReservationRepository {
             on r.theme_id = th.id
     """;
 
-    private static final String CHECK_ID_EXISTS_SQL = """
+    private static final String FIND_ID_BY_ID_SQL = """
         SELECT
             id
         FROM
             reservation
         WHERE
             id = ?
+        LIMIT 1
     """;
 
     private static final String DELETE_SQL = """
@@ -65,7 +66,7 @@ public class ReservationJDBCRepository implements ReservationRepository {
             AND theme_id = ?
     """;
 
-    private static final String SELECT_ANY_BY_TIME_ID_SQL = """
+    private static final String SELECT_ID_BY_TIME_ID_SQL = """
         SELECT
             id
         FROM
@@ -75,7 +76,7 @@ public class ReservationJDBCRepository implements ReservationRepository {
         LIMIT 1
     """;
 
-    private static final String SELECT_ANY_BY_THEME_ID_SQL = """
+    private static final String SELECT_ID_BY_THEME_ID_SQL = """
         SELECT
             id
         FROM
@@ -118,9 +119,9 @@ public class ReservationJDBCRepository implements ReservationRepository {
     }
 
     @Override
-    public Optional<Long> checkIdExists(long id) {
+    public Optional<Long> findIdById(long id) {
         try {
-            Long reservation = template.queryForObject(CHECK_ID_EXISTS_SQL, Long.class, id);
+            Long reservation = template.queryForObject(FIND_ID_BY_ID_SQL, Long.class, id);
             return Optional.ofNullable(reservation);
         } catch (EmptyResultDataAccessException exception) {
             return Optional.empty();
@@ -143,9 +144,9 @@ public class ReservationJDBCRepository implements ReservationRepository {
     }
 
     @Override
-    public Optional<Long> findAnyByTimeId(long timeId) {
+    public Optional<Long> findIdByTimeId(long timeId) {
         try {
-            Long foundReservationTimeId = template.queryForObject(SELECT_ANY_BY_TIME_ID_SQL, Long.class, timeId);
+            Long foundReservationTimeId = template.queryForObject(SELECT_ID_BY_TIME_ID_SQL, Long.class, timeId);
             return Optional.ofNullable(foundReservationTimeId);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -153,9 +154,9 @@ public class ReservationJDBCRepository implements ReservationRepository {
     }
 
     @Override
-    public Optional<Long> findAnyByThemeId(long themeId) {
+    public Optional<Long> findIdByThemeId(long themeId) {
         try {
-            Long foundThemeId = template.queryForObject(SELECT_ANY_BY_THEME_ID_SQL, Long.class, themeId);
+            Long foundThemeId = template.queryForObject(SELECT_ID_BY_THEME_ID_SQL, Long.class, themeId);
             return Optional.ofNullable(foundThemeId);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();

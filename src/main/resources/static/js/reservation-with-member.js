@@ -1,5 +1,5 @@
 let isEditing = false;
-const RESERVATION_API_ENDPOINT = '/reservations';
+const RESERVATION_API_ENDPOINT = '/admin/reservations';
 const TIME_API_ENDPOINT = '/times';
 const THEME_API_ENDPOINT = '/themes';
 const MEMBER_API_ENDPOINT = '/members';
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   requestRead(RESERVATION_API_ENDPOINT)
       .then(render)
-      .catch(error => console.error('Error fetching reservations:', error));
+      .catch(error => console.error('Error fetching reservations:', error.message));
 
   fetchTimes();
   fetchThemes();
@@ -42,34 +42,36 @@ function fetchTimes() {
       .then(data => {
         timesOptions.push(...data);
       })
-      .catch(error => console.error('Error fetching time:', error));
+      .catch(error => console.error('Error fetching time:', error.message));
 }
 
 function fetchThemes() {
   requestRead(THEME_API_ENDPOINT)
       .then(data => {
         themesOptions.push(...data);
-        populateSelect('theme', themesOptions, 'name');
+        addDropdownOptions('theme', themesOptions, 'name');
       })
-      .catch(error => console.error('Error fetching theme:', error));
+      .catch(error => console.error('Error fetching theme:', error.message));
 }
 
 function fetchMembers() {
   requestRead(MEMBER_API_ENDPOINT)
       .then(data => {
         membersOptions.push(...data);
-        populateSelect('member', membersOptions, 'name');
+        addDropdownOptions('member', membersOptions, 'name');
       })
-      .catch(error => console.error('Error fetching member:', error));
+      .catch(error => console.error('Error fetching member:', error.message));
 }
 
-function populateSelect(selectId, options, textProperty) {
-  const select = document.getElementById(selectId);
-  options.forEach(optionData => {
-    const option = document.createElement('option');
-    option.value = optionData.id;
-    option.textContent = optionData[textProperty];
-    select.appendChild(option);
+function addDropdownOptions(selectId, options, textProperty) {
+  const selects = document.querySelectorAll(`select[id=${selectId}]`); // 모든 select 요소 선택
+  selects.forEach(select => {
+    options.forEach(optionData => {
+      const option = document.createElement('option');
+      option.value = optionData.id;
+      option.textContent = optionData[textProperty];
+      select.appendChild(option);
+    });
   });
 }
 
@@ -131,6 +133,8 @@ function addInputRow() {
     row.remove();
     isEditing = false;
   }));
+  addDropdownOptions('theme', themesOptions, 'name');
+  addDropdownOptions('member', membersOptions, 'name');
 }
 
 function createInput(type) {
@@ -169,7 +173,7 @@ function saveRow(event) {
       .then(() => {
         location.reload();
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error:', error.message));
 
   isEditing = false;  // isEditing 값을 false로 설정
 }
@@ -180,7 +184,7 @@ function deleteRow(event) {
 
   requestDelete(reservationId)
       .then(() => row.remove())
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error:', error.message));
 }
 
 function requestCreate(reservation) {
@@ -190,10 +194,13 @@ function requestCreate(reservation) {
     body: JSON.stringify(reservation)
   };
 
-  return fetch('/reservations', requestOptions)
+  return fetch('/admin/reservations', requestOptions)
       .then(response => {
         if (response.status === 201) return response.json();
-        throw new Error('Create failed');
+        return response.json().then(body => {
+          alert('Reservations Create failed: ' + body.message);
+          throw new Error('Reservations Create failed: ' + body.message);
+        });
       });
 }
 
@@ -204,7 +211,12 @@ function requestDelete(id) {
 
   return fetch(`${RESERVATION_API_ENDPOINT}/${id}`, requestOptions)
       .then(response => {
-        if (response.status !== 204) throw new Error('Delete failed');
+        if (response.status !== 204) {
+          return response.json().then(body => {
+            alert('Deleted failed: ' + body.message);
+            throw new Error('Deleted failed: ' + body.message);
+          });
+        }
       });
 }
 
@@ -212,6 +224,9 @@ function requestRead(endpoint) {
   return fetch(endpoint)
       .then(response => {
         if (response.status === 200) return response.json();
-        throw new Error('Read failed');
+        return response.json().then(body => {
+          alert('Read failed: ' + body.message);
+          throw new Error('Read failed: ' + body.message);
+        });
       });
 }

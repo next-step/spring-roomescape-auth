@@ -67,4 +67,8 @@ public class JwtTokenManager {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+    public String getEmailBy(String token) {
+        return parseJwt(token).getSubject();
+    }
 }

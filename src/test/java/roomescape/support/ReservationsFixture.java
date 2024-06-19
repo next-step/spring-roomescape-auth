@@ -47,6 +47,6 @@ public class ReservationsFixture {
     }
 
     public static ReservationRequest reservationRequest(long timeId, long themeId) {
-        return new ReservationRequest("테스터", "2099-01-12", timeId, themeId);
+        return new ReservationRequest("2099-01-12", timeId, themeId, 1L);
     }
 }
