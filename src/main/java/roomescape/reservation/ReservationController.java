@@ -1,6 +1,8 @@
 package roomescape.reservation;
 
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.reservationTime.ReservationTimeResponseDto;
@@ -10,6 +12,7 @@ import java.util.List;
 @RestController
 public class ReservationController {
 
+    private static final Logger log = LoggerFactory.getLogger(ReservationController.class);
     private final ReservationService reservationService;
 
     public ReservationController(ReservationService reservationService) {
