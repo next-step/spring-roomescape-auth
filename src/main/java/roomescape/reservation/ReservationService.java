@@ -2,11 +2,14 @@ package roomescape.reservation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import roomescape.reservationTheme.ReservationTheme;
+import roomescape.reservationTheme.ReservationThemeResponseDto;
 import roomescape.reservationTime.ReservationTime;
 import roomescape.reservationTime.ReservationTimePolicy;
 import roomescape.reservationTime.ReservationTimeResponseDto;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReservationService {
@@ -28,19 +31,34 @@ public class ReservationService {
                                 .reservationTimeResponseDto(new ReservationTimeResponseDto(
                                         reservation.getReservationTime().getId(),
                                         reservation.getReservationTime().getStartAt()))
+                                .reservationThemeResponseDto(new ReservationThemeResponseDto(
+                                        reservation.getReservationTheme().getId(),
+                                        reservation.getReservationTheme().getName(),
+                                        reservation.getReservationTheme().getDescription(),
+                                        reservation.getReservationTheme().getThumbnail()
+                                ))
                                 .build()
                 ).toList();
     }
 
     @Transactional
     public ReservationResponseDto save(ReservationRequestDto reservationRequestDto) {
-        final Reservation reservation = new Reservation.Builder().name(reservationRequestDto.getName())
+        final Reservation reservation = new Reservation.Builder()
+                .name(reservationRequestDto.getName())
                 .date(reservationRequestDto.getDate())
                 .reservationTime(
                         new ReservationTime(
                                 reservationRequestDto.getReservationTimeRequestDto().getId(),
                                 reservationRequestDto.getReservationTimeRequestDto().getStartAt()
-                                ))
+                        ))
+                .reservationTheme(
+                        new ReservationTheme(
+                                reservationRequestDto.getReservationThemeRequestDto().getId(),
+                                reservationRequestDto.getReservationThemeRequestDto().getName(),
+                                reservationRequestDto.getReservationThemeRequestDto().getDescription(),
+                                reservationRequestDto.getReservationThemeRequestDto().getThumbnail()
+                        )
+                )
                 .build();
 
         final Long savedId = reservationRepository.save(reservation);
@@ -51,8 +69,17 @@ public class ReservationService {
                 .name(savedReservation.getName())
                 .date(savedReservation.getDate())
                 .reservationTimeResponseDto(
-                        new ReservationTimeResponseDto(savedReservation.getReservationTime().getId(),
+                        new ReservationTimeResponseDto(
+                                savedReservation.getReservationTime().getId(),
                                 savedReservation.getReservationTime().getStartAt()))
+                .reservationThemeResponseDto(
+                        new ReservationThemeResponseDto(
+                                savedReservation.getReservationTheme().getId(),
+                                savedReservation.getReservationTheme().getName(),
+                                savedReservation.getReservationTheme().getDescription(),
+                                savedReservation.getReservationTheme().getThumbnail()
+                        )
+                )
                 .build();
     }
 
@@ -81,4 +108,16 @@ public class ReservationService {
     }
 
 
+    public List<ReservationTimeResponseDto> findAvaliableTimes(final String date, final Long themeId) {
+        List<ReservationTime> availableReservationTimes = reservationRepository.getAvailableReservationTimes(date, themeId);
+        return availableReservationTimes.stream()
+                .map(
+                        reservationTime -> new ReservationTimeResponseDto(
+                                reservationTime.getId(),
+                                reservationTime.getStartAt()
+                        )
+                ).toList();
+
+
+    }
 }

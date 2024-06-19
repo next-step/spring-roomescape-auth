@@ -1,5 +1,6 @@
 package roomescape.reservation;
 
+import roomescape.reservationTheme.ReservationTheme;
 import roomescape.reservationTime.ReservationTime;
 
 import java.util.Objects;
@@ -12,6 +13,7 @@ public class Reservation {
     private String name;
     private String date;
     private ReservationTime reservationTime;
+    private ReservationTheme reservationTheme;
 
     public Long getId() {
         return id;
@@ -29,11 +31,15 @@ public class Reservation {
         return reservationTime;
     }
 
-    public Reservation(String name, String date, ReservationTime reservationTime) {
-        this(null, name, date, reservationTime);
+    public ReservationTheme getReservationTheme() {
+        return reservationTheme;
     }
 
-    public Reservation(Long id, String name, String date, ReservationTime reservationTime) {
+    public Reservation(String name, String date, ReservationTime reservationTime, ReservationTheme reservationTheme) {
+        this(null, name, date, reservationTime, reservationTheme);
+    }
+
+    public Reservation(Long id, String name, String date, ReservationTime reservationTime, ReservationTheme reservationTheme) {
         this.id = id;
         if(reservationPolicy.validateName(name)) {
             throw new IllegalArgumentException("예약자 이름에 특수문자가 포함되어 있습니다.");
@@ -45,6 +51,7 @@ public class Reservation {
         }
         this.date = date;
         this.reservationTime = reservationTime;
+        this.reservationTheme = reservationTheme;
 
     }
 
@@ -66,6 +73,7 @@ public class Reservation {
         private String name;
         private String date;
         private ReservationTime reservationTime;
+        private ReservationTheme reservationTheme;
 
 
         public Builder id(Long id) {
@@ -88,8 +96,13 @@ public class Reservation {
             return this;
         }
 
+        public Builder reservationTheme(ReservationTheme reservationTheme) {
+            this.reservationTheme = reservationTheme;
+            return this;
+        }
+
         public Reservation build() {
-            return new Reservation(id, name, date, reservationTime);
+            return new Reservation(id, name, date, reservationTime, reservationTheme);
         }
     }
 
@@ -100,6 +113,7 @@ public class Reservation {
                 ", name='" + name + '\'' +
                 ", date='" + date + '\'' +
                 ", reservationTime='" + reservationTime + '\'' +
+                ", reservationTheme='" + reservationTheme + '\'' +
                 '}';
     }
 
