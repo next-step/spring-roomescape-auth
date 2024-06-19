@@ -62,7 +62,7 @@ public class ThemeAcceptanceTest {
             .body(reservationTimeRequest)
             .when().post("/times")
             .then().log().all()
-            .statusCode(200);
+            .statusCode(201);
 
         ReservationRequest reservationRequest = new ReservationRequest("hhhhhwi", "2025-08-05", 1L,
             1L);

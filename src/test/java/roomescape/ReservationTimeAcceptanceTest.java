@@ -26,7 +26,7 @@ public class ReservationTimeAcceptanceTest {
     void 예약_시간_등록_성공() {
         ExtractableResponse<Response> response = 예약_시간_등록(request);
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(201);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ReservationTimeAcceptanceTest {
         RestAssured.given().log().all()
             .when().delete("/times/1")
             .then().log().all()
-            .statusCode(200);
+            .statusCode(204);
 
         ExtractableResponse<Response> responseAfterDelete = 예약_시간_조회();
         assertThat(responseAfterDelete.statusCode()).isEqualTo(200);
