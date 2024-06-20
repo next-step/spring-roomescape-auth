@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import roomescape.auth.exception.UnAuthorizedException;
 import roomescape.reservation.exception.PastDateReservationException;
 import roomescape.reservation.exception.ReservationAlreadyExistsException;
 import roomescape.theme.exception.ThemeHasReservationException;
@@ -23,6 +24,12 @@ import roomescape.user.exception.UserNotFoundException;
 public class GlobalExceptionHandler {
 
     private final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(UnAuthorizedException.class)
+    public ResponseEntity<ExceptionResponse> handleUnAuthorizedException(UnAuthorizedException e) {
+        log.warn("{}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ExceptionResponse.from(e.getMessage()));
+    }
 
     @ExceptionHandler({CannotDeleteReserveTimeException.class, ReservationAlreadyExistsException.class,
             NoSuchElementException.class, PastDateReservationException.class,

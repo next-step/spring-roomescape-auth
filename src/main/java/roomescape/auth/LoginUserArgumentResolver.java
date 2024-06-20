@@ -6,22 +6,25 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.core.MethodParameter;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import roomescape.auth.exception.UnAuthorizedException;
 import roomescape.jwt.JwtTokenProvider;
+import roomescape.user.domain.repository.UserRepository;
 
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
     private static final String TOKEN_COOKIE_NAME = "token";
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
 
-    public LoginUserArgumentResolver(JwtTokenProvider jwtTokenProvider) {
+    public LoginUserArgumentResolver(final JwtTokenProvider jwtTokenProvider, final UserRepository userRepository) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -34,10 +37,8 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         Cookie[] cookies = request.getCookies();
         String token = extractTokenFromCookie(cookies);
-        if (StringUtils.hasText(token)) {
-            return jwtTokenProvider.getEmail(token);
-        }
-        return null;
+        String email = jwtTokenProvider.getEmail(token);
+        return userRepository.findByEmail(email).orElseThrow(UnAuthorizedException::new);
     }
 
     private String extractTokenFromCookie(Cookie[] cookies) {

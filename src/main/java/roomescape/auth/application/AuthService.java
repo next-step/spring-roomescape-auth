@@ -22,7 +22,8 @@ public class AuthService {
     }
 
     public String login(LoginRequest loginRequest) {
-        User user = getUserByEmail(loginRequest.email());
+        User user = userRepository.findByEmail(loginRequest.email()).orElseThrow(UserNotFoundException::new);
+
         if (user.isNotMatchPassword(loginRequest.password())) {
             throw new PasswordNotMatchException();
         }
@@ -30,17 +31,7 @@ public class AuthService {
         return jwtTokenProvider.createJwt(user.getEmail());
     }
 
-    public CheckUserInfoResponse checkUserInfo(String email) {
-        User user = getUserByEmail(email);
+    public CheckUserInfoResponse checkUserInfo(User user) {
         return new CheckUserInfoResponse(user.getName());
-    }
-
-    public void logout(String email) {
-        getUserByEmail(email);
-    }
-
-    private User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(UserNotFoundException::new);
     }
 }

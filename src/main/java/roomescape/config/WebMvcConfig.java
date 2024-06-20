@@ -8,18 +8,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import roomescape.auth.LoginUserArgumentResolver;
 import roomescape.jwt.JwtTokenProvider;
+import roomescape.user.domain.repository.UserRepository;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
 
-    public WebMvcConfig(final JwtTokenProvider jwtTokenProvider) {
+    public WebMvcConfig(final JwtTokenProvider jwtTokenProvider, final UserRepository userRepository) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userRepository = userRepository;
     }
 
     @Override
     public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new LoginUserArgumentResolver(jwtTokenProvider));
+        resolvers.add(new LoginUserArgumentResolver(jwtTokenProvider, userRepository));
     }
 }

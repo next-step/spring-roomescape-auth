@@ -87,11 +87,10 @@ class AuthServiceTest {
     @Test
     void 사용자_정보를_조회한다() {
         // given
-        given(userRepository.findByEmail(anyString()))
-                .willReturn(Optional.of(new User(1L, "어드민", "password", "admin@email.com")));
+        User user = new User(1L, "어드민", "password", "admin@email.com");
 
         // when
-        CheckUserInfoResponse response = authService.checkUserInfo("accessToken");
+        CheckUserInfoResponse response = authService.checkUserInfo(user);
 
         // then
         assertThat(response.name()).isEqualTo("어드민");

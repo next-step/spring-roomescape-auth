@@ -1,7 +1,5 @@
 package roomescape.auth.presentation;
 
-import java.util.Arrays;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -15,6 +13,7 @@ import roomescape.auth.LoginUser;
 import roomescape.auth.application.AuthService;
 import roomescape.auth.dto.CheckUserInfoResponse;
 import roomescape.auth.dto.LoginRequest;
+import roomescape.user.domain.User;
 
 @RestController
 public class AuthController {
@@ -36,14 +35,13 @@ public class AuthController {
     }
 
     @GetMapping("/login/check")
-    public ResponseEntity<CheckUserInfoResponse> checkUserInfo(@LoginUser String email) {
-        CheckUserInfoResponse response = authService.checkUserInfo(email);
+    public ResponseEntity<CheckUserInfoResponse> checkUserInfo(@LoginUser User user) {
+        CheckUserInfoResponse response = authService.checkUserInfo(user);
         return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@LoginUser String email, HttpServletResponse response) {
-        authService.logout(email);
+    public ResponseEntity<Void> logout(@LoginUser User user, HttpServletResponse response) {
         Cookie cookie = createCookie("");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
@@ -55,13 +53,5 @@ public class AuthController {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         return cookie;
-    }
-
-    private String extractTokenFromCookie(Cookie[] cookies) {
-        return Arrays.stream(cookies)
-                .filter(cookie -> TOKEN_COOKIE_NAME.equals(cookie.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse("");
     }
 }
