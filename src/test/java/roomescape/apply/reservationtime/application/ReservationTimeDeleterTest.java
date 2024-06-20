@@ -5,13 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import roomescape.apply.member.application.MemberFinder;
-import roomescape.apply.member.application.MemberRoleFinder;
-import roomescape.apply.member.application.mock.MockPasswordHasher;
 import roomescape.apply.member.domain.Member;
 import roomescape.apply.member.domain.repository.MemberJDBCRepository;
 import roomescape.apply.member.domain.repository.MemberRepository;
-import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
 import roomescape.apply.reservation.application.ReservationFinder;
 import roomescape.apply.reservation.domain.Reservation;
 import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
@@ -45,11 +41,8 @@ class ReservationTimeDeleterTest extends BaseTestService {
         reservationRepository = new ReservationJDBCRepository(template);
         reservationTimeRepository = new ReservationTimeJDBCRepository(template);
         memberRepository = new MemberJDBCRepository(template);
-        var memberRoleRepository = new MemberRoleJDBCRepository(template);
 
-        var memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
-        var memberFinder = new MemberFinder(new MockPasswordHasher(), memberRepository, memberRoleFinder);
-        var reservationFinder = new ReservationFinder(reservationRepository, memberFinder);
+        var reservationFinder = new ReservationFinder(reservationRepository);
         reservationTimeDeleter = new ReservationTimeDeleter(reservationTimeRepository, reservationFinder);
     }
 
@@ -80,7 +73,8 @@ class ReservationTimeDeleterTest extends BaseTestService {
         // when
         reservationRepository.save(Reservation.of("사용중_테스트", "2999-12-31", time, theme, savedMember.getId()));
         // then
-        assertThatThrownBy(() -> reservationTimeDeleter.deleteReservationTimeBy(time.getId()))
+        Long timeId = time.getId();
+        assertThatThrownBy(() -> reservationTimeDeleter.deleteReservationTimeBy(timeId))
                 .isInstanceOf(ReservationTimeReferencedException.class)
                 .hasMessage(ReservationTimeReferencedException.DEFAULT_MESSAGE);
     }

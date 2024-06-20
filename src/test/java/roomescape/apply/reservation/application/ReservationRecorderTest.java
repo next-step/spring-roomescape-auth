@@ -2,6 +2,7 @@ package roomescape.apply.reservation.application;
 
 import org.junit.jupiter.api.*;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import roomescape.apply.auth.ui.dto.LoginMember;
 import roomescape.apply.member.application.MemberFinder;
 import roomescape.apply.member.application.MemberRoleFinder;
 import roomescape.apply.member.application.mock.MockPasswordHasher;
@@ -50,7 +51,7 @@ class ReservationRecorderTest extends BaseTestService {
         var reservationTimeFinder = new ReservationTimeFinder(reservationTimeRepository);
         var memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
         var memberFinder = new MemberFinder(new MockPasswordHasher(), memberRepository, memberRoleFinder);
-        var reservationFinder = new ReservationFinder(reservationRepository, memberFinder);
+        var reservationFinder = new ReservationFinder(reservationRepository);
         reservationRecorder = new ReservationRecorder(reservationRepository,
                 reservationTimeFinder,
                 themeFinder,
@@ -92,8 +93,9 @@ class ReservationRecorderTest extends BaseTestService {
         ReservationRequest request = reservationRequest(time.getId(), theme.getId());
         Member save = memberRepository.save(member());
         // when && then
-        assertDoesNotThrow(() -> reservationRecorder.recordReservationBy(request, loginMember(save)));
-        assertThatThrownBy(() -> reservationRecorder.recordReservationBy(request, loginMember(save)))
+        LoginMember loginMember = loginMember(save);
+        assertDoesNotThrow(() -> reservationRecorder.recordReservationBy(request, loginMember));
+        assertThatThrownBy(() -> reservationRecorder.recordReservationBy(request, loginMember))
                 .isInstanceOf(DuplicateReservationException.class)
                 .hasMessage(DuplicateReservationException.DEFAULT_MESSAGE);
     }
