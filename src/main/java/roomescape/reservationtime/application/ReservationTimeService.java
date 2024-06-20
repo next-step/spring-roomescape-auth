@@ -33,6 +33,11 @@ public class ReservationTimeService {
         return ReservationTimeResponse.from(time);
     }
 
+    public List<ReservationTimeResponse> findMatchWith(String date, Long themeId) {
+        List<ReservationTime> reservationTimes = reservationTimeRepository.findMatchWith(date, themeId);
+        return ReservationTimeResponse.fromReservationTimes(reservationTimes);
+    }
+
     public long add(ReservationTimeRequest request) {
         reservationTimeValidator.validateRequest(request);
         return reservationTimeRepository.save(request.getStartAt());

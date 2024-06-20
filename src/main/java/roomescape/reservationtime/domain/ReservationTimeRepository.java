@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface ReservationTimeRepository {
     List<ReservationTime> findAll();
+    List<ReservationTime> findMatchWith(String date, Long themeId);
     Optional<ReservationTime> findById(Long id);
     Optional<ReservationTime> findByStartAt(String startAt);
     Long countReservationMatchWith(Long id);

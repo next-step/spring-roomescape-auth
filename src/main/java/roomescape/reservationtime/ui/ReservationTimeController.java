@@ -25,6 +25,12 @@ public class ReservationTimeController {
         return ResponseEntity.status(HttpStatus.OK).body(reservationTimes);
     }
 
+    @GetMapping("/available")
+    public ResponseEntity<List<ReservationTimeResponse>> readAvailable(@RequestParam String date, @RequestParam Long themeId) {
+        List<ReservationTimeResponse> reservationTimes = reservationTimeService.findMatchWith(date, themeId);
+        return ResponseEntity.status(HttpStatus.OK).body(reservationTimes);
+    }
+
     @PostMapping
     public ResponseEntity<ReservationTimeResponse> create(@RequestBody @Valid ReservationTimeRequest request) {
         long id = reservationTimeService.add(request);

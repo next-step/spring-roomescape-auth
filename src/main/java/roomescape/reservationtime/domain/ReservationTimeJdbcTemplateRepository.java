@@ -36,6 +36,20 @@ public class ReservationTimeJdbcTemplateRepository implements ReservationTimeRep
     }
 
     @Override
+    public List<ReservationTime> findMatchWith(String date, Long themeId) {
+        String sql = """
+                select *
+                from reservation_time as t
+                left join reservation as r
+                    on t.id = r.time_id
+                    and r.date = ?
+                    and r.theme_id = ?
+                where r.time_id is null
+                """;
+        return jdbcTemplate.query(sql, rowMapper, date, themeId);
+    }
+
+    @Override
     public Optional<ReservationTime> findById(Long id) {
         String sql = """
                     select * from
