@@ -1,6 +1,7 @@
 package roomescape.apply.reservation.domain.repository;
 
 import roomescape.apply.reservation.domain.Reservation;
+import roomescape.apply.reservation.ui.dto.ReservationSearchParams;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,4 +21,6 @@ public interface ReservationRepository {
     Optional<Long> findIdByTimeId(long id);
 
     Optional<Long> findIdByThemeId(long themeId);
+
+    List<Reservation> searchReservationsBySearchParams(ReservationSearchParams searchParams);
 }

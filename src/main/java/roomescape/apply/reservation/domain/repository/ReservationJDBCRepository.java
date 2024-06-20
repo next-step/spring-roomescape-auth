@@ -89,7 +89,26 @@ public class ReservationJDBCRepository implements ReservationRepository {
                 LIMIT 1
             """;
 
-    private final JdbcTemplate template;
+    private static final String SEARCH_BASE_SQL = """
+            SELECT
+                r.id as reservation_id,
+                r.name as reservation_name,
+                r.date as reservation_date,
+                r.member_id as member_id,
+                rt.id as time_id,
+                rt.start_at as time_start_at,
+                th.id as theme_id,
+                th.name as theme_name,
+                th.description as theme_description,
+                th.thumbnail as theme_thumbnail
+            FROM reservation as r
+            INNER JOIN reservation_time as rt
+                ON r.time_id = rt.id
+            INNER JOIN theme as th
+                ON r.theme_id = th.id
+            WHERE 1=1
+            """;
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
 
@@ -177,6 +196,29 @@ public class ReservationJDBCRepository implements ReservationRepository {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<Reservation> searchReservationsBySearchParams(ReservationSearchParams searchParams) {
+        StringBuilder sql = new StringBuilder(SEARCH_BASE_SQL);
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        if (searchParams.themeId() != null) {
+            sql.append(" AND th.id = :theme_id");
+            parameters.addValue("theme_id", searchParams.themeId());
+        }
+        if (searchParams.memberId() != null) {
+            sql.append(" AND r.member_id = :member_id");
+            parameters.addValue("member_id", searchParams.memberId());
+        }
+        if (searchParams.dateFrom() != null) {
+            sql.append(" AND r.date >= :date_from");
+            parameters.addValue("date_from", searchParams.dateFrom());
+        }
+        if (searchParams.dateTo() != null) {
+            sql.append(" AND r.date <= :date_to");
+            parameters.addValue("date_to", searchParams.dateTo());
+        }
+        return jdbcTemplate.query(sql.toString(), parameters, reservationRowMapper());
     }
 
     private RowMapper<Reservation> reservationRowMapper() {
