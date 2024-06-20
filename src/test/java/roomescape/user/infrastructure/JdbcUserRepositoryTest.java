@@ -26,6 +26,19 @@ class JdbcUserRepositoryTest {
     }
 
     @Test
+    @DisplayName("아이디로 회원을 조회한다.")
+    void findById() {
+        // given
+        Long id = 1L;
+
+        // when
+        User user = userRepository.findById(id).get();
+
+        // then
+        assertThat(user.getId()).isEqualTo(id);
+    }
+
+    @Test
     @DisplayName("이메일로 회원을 조회한다.")
     void findByEmail() {
         // given
