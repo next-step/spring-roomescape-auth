@@ -31,6 +31,7 @@ public class ReservationTimeJdbcTemplateRepository implements ReservationTimeRep
         String sql = """
                     select *
                     from reservation_time
+                    order by start_at
                     """;
         return jdbcTemplate.query(sql, rowMapper);
     }
@@ -45,6 +46,7 @@ public class ReservationTimeJdbcTemplateRepository implements ReservationTimeRep
                     and r.date = ?
                     and r.theme_id = ?
                 where r.time_id is null
+                order by start_at
                 """;
         return jdbcTemplate.query(sql, rowMapper, date, themeId);
     }
