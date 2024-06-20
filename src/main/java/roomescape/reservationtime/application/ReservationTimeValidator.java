@@ -19,12 +19,8 @@ public class ReservationTimeValidator {
     }
 
     public void checkPresent(long id) {
-        try {
-            reservationTimeRepository.findById(id);
-        }
-        catch (EmptyResultDataAccessException exception) {
-            throw NotFoundException.of("존재하지 않는 예약 시간입니다.");
-        }
+        reservationTimeRepository.findById(id)
+                .orElseThrow(() -> NotFoundException.of("존재하지 않는 예약 시간입니다."));
     }
 
     public void validateRequest(ReservationTimeRequest reservationTimeRequest) {
@@ -44,11 +40,10 @@ public class ReservationTimeValidator {
     }
 
     private void checkDuplicated(String startAt) {
-        try {
-            reservationTimeRepository.findByStartAt(startAt);
+        boolean isDuplicated = reservationTimeRepository.findByStartAt(startAt).isPresent();
+
+        if (isDuplicated) {
             throw BadRequestException.of("이미 존재하는 시간입니다.");
-        }
-        catch (EmptyResultDataAccessException ignore) {
         }
     }
 }
