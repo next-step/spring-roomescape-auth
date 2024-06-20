@@ -27,7 +27,7 @@ public class ApiLoginController {
 
 
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody MemberLoginRequest memberLoginRequest) {
+    public ResponseEntity<Void> login(@RequestBody MemberLoginRequest memberLoginRequest) {
         String token = memberService.login(memberLoginRequest);
         ResponseCookie responseCookie = ResponseCookie.from(TOKEN, token)
                 .httpOnly(true)
@@ -38,7 +38,7 @@ public class ApiLoginController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<?> loginCheck(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<MemberResponse> loginCheck(HttpServletRequest httpServletRequest) {
         Cookie[] cookies = httpServletRequest.getCookies();
         Member member = memberService.findByToken(extractTokenFromCookie(cookies));
         MemberResponse memberResponse = new MemberResponse(member.getName());
