@@ -30,14 +30,12 @@ public class AuthService {
         return jwtTokenProvider.createJwt(user.getEmail());
     }
 
-    public CheckUserInfoResponse checkUserInfo(String accessToken) {
-        String email = jwtTokenProvider.getEmail(accessToken);
+    public CheckUserInfoResponse checkUserInfo(String email) {
         User user = getUserByEmail(email);
         return new CheckUserInfoResponse(user.getName());
     }
 
-    public void logout(String accessToken) {
-        String email = jwtTokenProvider.getEmail(accessToken);
+    public void logout(String email) {
         getUserByEmail(email);
     }
 
