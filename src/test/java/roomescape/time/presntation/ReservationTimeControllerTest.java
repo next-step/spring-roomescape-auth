@@ -14,6 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import roomescape.auth.dto.LoginRequest;
 import roomescape.reservation.dto.ReservationCreateRequest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -106,11 +107,22 @@ class ReservationTimeControllerTest {
                 .then().log().all()
                 .extract();
 
+        // 로그인
+        LoginRequest loginRequest = new LoginRequest("admin@email.com", "password");
+
+        String accessToken = RestAssured.given().log().all()
+                .body(loginRequest)
+                .contentType(ContentType.JSON)
+                .when().post("/login")
+                .then().log().all()
+                .extract().cookie("token");
+
         // Reservation 생성
-        ReservationCreateRequest request = new ReservationCreateRequest("브라운", LocalDate.now().plusDays(1).toString(), 1L, 1L);
+        ReservationCreateRequest request = new ReservationCreateRequest(LocalDate.now().plusDays(1).toString(), 1L, 1L);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", accessToken)
                 .body(request)
                 .when().post("/reservations")
                 .then().log().all()

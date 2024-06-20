@@ -14,6 +14,7 @@ import roomescape.theme.domain.Theme;
 import roomescape.theme.domain.repository.ThemeRepository;
 import roomescape.time.domain.ReservationTime;
 import roomescape.time.domain.repository.ReservationTimeRepository;
+import roomescape.user.domain.User;
 
 @Service
 public class ReservationService {
@@ -30,7 +31,7 @@ public class ReservationService {
         this.themeRepository = themeRepository;
     }
 
-    public ReservationResponse save(ReservationCreateRequest request) {
+    public ReservationResponse save(ReservationCreateRequest request, User user) {
         ReservationTime findReservationTime = reservationTimeRepository.findById(request.timeId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 예약 시간입니다."));
         Theme findTheme = themeRepository.findById(request.themeId())
@@ -40,7 +41,7 @@ public class ReservationService {
             throw new ReservationAlreadyExistsException();
         }
 
-        Reservation reservation = reservationRepository.save(request.toReservation(findReservationTime, findTheme));
+        Reservation reservation = reservationRepository.save(request.toReservation(user.getName(), findReservationTime, findTheme));
         return ReservationResponse.from(reservation);
     }
 

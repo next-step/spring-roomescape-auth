@@ -15,13 +15,16 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import roomescape.auth.dto.LoginRequest;
 import roomescape.reservation.dto.ReservationCreateRequest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ReservationControllerTest {
 
-    private String date = LocalDate.now().plusDays(1).toString();
+    private final String date = LocalDate.now().plusDays(1).toString();
+
+    private String accessToken;
 
     @BeforeEach
     void setUp() {
@@ -42,6 +45,15 @@ class ReservationControllerTest {
                 .body(params)
                 .when().post("/themes")
                 .then().log().all();
+
+        LoginRequest loginRequest = new LoginRequest("admin@email.com", "password");
+
+        accessToken = RestAssured.given().log().all()
+                .body(loginRequest)
+                .contentType(ContentType.JSON)
+                .when().post("/login")
+                .then().log().all()
+                .extract().cookie("token");
     }
 
     @Test
@@ -56,9 +68,10 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약을 생성한다.")
     void testCreateReservation() {
-        ReservationCreateRequest request = new ReservationCreateRequest("브라운", date, 1L, 1L);
+        ReservationCreateRequest request = new ReservationCreateRequest(date, 1L, 1L);
 
         RestAssured.given().log().all()
+                .cookie("token", accessToken)
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/reservations")
@@ -74,9 +87,10 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약을 생성 시 존재하지 않는 시간 ID로 생성하면 예외가 발생한다.")
     void testCreateReservation_InvalidTimeId() {
-        ReservationCreateRequest request = new ReservationCreateRequest("브라운", date, 2L, 1L);
+        ReservationCreateRequest request = new ReservationCreateRequest(date, 2L, 1L);
 
         RestAssured.given().log().all()
+                .cookie("token", accessToken)
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/reservations")
@@ -87,9 +101,10 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약을 생성 시 존재하지 않는 테마 ID로 생성하면 예외가 발생한다.")
     void testCreateReservation_InvalidThemeId() {
-        ReservationCreateRequest request = new ReservationCreateRequest("브라운", date, 1L, 2L);
+        ReservationCreateRequest request = new ReservationCreateRequest(date, 1L, 2L);
 
         RestAssured.given().log().all()
+                .cookie("token", accessToken)
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/reservations")
@@ -100,9 +115,10 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약을 생성 시 이미 예약된 시간으로 생성하면 예외가 발생한다.")
     void testCreateReservation_AlreadyExist() {
-        ReservationCreateRequest request = new ReservationCreateRequest("브라운", date, 1L, 1L);
+        ReservationCreateRequest request = new ReservationCreateRequest(date, 1L, 1L);
 
         RestAssured.given().log().all()
+                .cookie("token", accessToken)
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/reservations")
@@ -111,6 +127,7 @@ class ReservationControllerTest {
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", accessToken)
                 .body(request)
                 .when().post("/reservations")
                 .then().log().all()
@@ -120,24 +137,11 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약을 생성 시 지난 날짜로 생성하면 예외가 발생한다.")
     void testCreateReservation_PastDate() {
-        ReservationCreateRequest request = new ReservationCreateRequest("브라운", "2021-07-01", 1L, 1L);
+        ReservationCreateRequest request = new ReservationCreateRequest("2021-07-01", 1L, 1L);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
-                .body(request)
-                .when().post("/reservations")
-                .then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    @DisplayName("예약을 생성 시 이름이 없으면 예외가 발생한다.")
-    void testCreateReservation_InvalidName(String name) {
-        ReservationCreateRequest request = new ReservationCreateRequest(name, date, 1L, 1L);
-
-        RestAssured.given().log().all()
-                .contentType(ContentType.JSON)
+                .cookie("token", accessToken)
                 .body(request)
                 .when().post("/reservations")
                 .then().log().all()
@@ -148,10 +152,11 @@ class ReservationControllerTest {
     @NullAndEmptySource
     @DisplayName("예약을 생성 시 날짜가 없으면 예외가 발생한다.")
     void testCreateReservation_InvalidDate(String date) {
-        ReservationCreateRequest request = new ReservationCreateRequest("브라운", date, 1L, 1L);
+        ReservationCreateRequest request = new ReservationCreateRequest(date, 1L, 1L);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", accessToken)
                 .body(request)
                 .when().post("/reservations")
                 .then().log().all()
@@ -161,10 +166,11 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약을 취소한다.")
     void testCancelReservation() {
-        ReservationCreateRequest request = new ReservationCreateRequest("브라운", date, 1L, 1L);
+        ReservationCreateRequest request = new ReservationCreateRequest(date, 1L, 1L);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", accessToken)
                 .body(request)
                 .when().post("/reservations")
                 .then().log().all()
