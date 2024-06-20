@@ -73,7 +73,7 @@ public class ReservationTimeAcceptanceTest {
             .statusCode(201)
             .body("id", is(1));
 
-        ReservationRequest reservationRequest = new ReservationRequest("hhhhhwi", "2025-08-05", 1L,
+        ReservationRequest reservationRequest = new ReservationRequest("2025-08-05", 1L,
             1L);
         RestAssured.given().log().all()
             .contentType(ContentType.JSON)

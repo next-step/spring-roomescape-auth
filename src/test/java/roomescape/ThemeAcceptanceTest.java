@@ -64,7 +64,7 @@ public class ThemeAcceptanceTest {
             .then().log().all()
             .statusCode(201);
 
-        ReservationRequest reservationRequest = new ReservationRequest("hhhhhwi", "2025-08-05", 1L,
+        ReservationRequest reservationRequest = new ReservationRequest("2025-08-05", 1L,
             1L);
         RestAssured.given().log().all()
             .contentType(ContentType.JSON)
