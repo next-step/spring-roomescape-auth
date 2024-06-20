@@ -27,7 +27,8 @@ public class ReservationService {
     }
 
     public ReservationResponse findOne(Long id) {
-        Reservation reservation = reservationRepository.findById(id);
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> NotFoundException.of("id와 일치하는 예약이 없습니다."));
         return ReservationResponse.from(reservation);
     }
 

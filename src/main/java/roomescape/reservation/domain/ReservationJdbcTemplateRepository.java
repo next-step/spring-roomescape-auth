@@ -1,5 +1,6 @@
 package roomescape.reservation.domain;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -11,6 +12,7 @@ import roomescape.theme.domain.entity.Theme;
 
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ReservationJdbcTemplateRepository implements ReservationRepository {
@@ -63,7 +65,7 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
     }
 
     @Override
-    public Reservation findById(Long id) {
+    public Optional<Reservation> findById(Long id) {
         String sql = """
                     SELECT
                         r.id as reservation_id,
@@ -82,7 +84,14 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
                         ON r.theme_id = th.id
                     WHERE r.id = ?
                     """;
-        return jdbcTemplate.queryForObject(sql, rowMapper, id);
+
+        try {
+            Reservation reservation = jdbcTemplate.queryForObject(sql, rowMapper, id);
+            return Optional.ofNullable(reservation);
+        }
+        catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
     }
 
     @Override
