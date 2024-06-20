@@ -1,7 +1,7 @@
 package roomescape.apply.member.domain;
 
 public class Member {
-    private Long id;
+    private MemberId id;
     private String name;
     private String email;
     private String password;
@@ -11,7 +11,7 @@ public class Member {
     }
 
     public Member(Long id, String name, String email, String password) {
-        this.id = id;
+        this.id = MemberId.of(id);
         this.name = name;
         this.email = email;
         this.password = password;
@@ -26,11 +26,11 @@ public class Member {
     }
 
     public void changeId(long id) {
-        this.id = id;
+        this.id = MemberId.of(id);
     }
 
     public Long getId() {
-        return id;
+        return id.longValue();
     }
 
     public String getName() {

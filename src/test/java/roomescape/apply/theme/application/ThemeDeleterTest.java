@@ -8,7 +8,9 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import roomescape.apply.member.application.MemberFinder;
 import roomescape.apply.member.application.MemberRoleFinder;
 import roomescape.apply.member.application.mock.MockPasswordHasher;
+import roomescape.apply.member.domain.Member;
 import roomescape.apply.member.domain.repository.MemberJDBCRepository;
+import roomescape.apply.member.domain.repository.MemberRepository;
 import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
 import roomescape.apply.reservation.application.ReservationFinder;
 import roomescape.apply.reservation.domain.Reservation;
@@ -25,12 +27,14 @@ import roomescape.support.BaseTestService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static roomescape.support.MemberFixture.member;
 import static roomescape.support.ReservationsFixture.reservationTime;
 import static roomescape.support.ReservationsFixture.theme;
 
 class ThemeDeleterTest extends BaseTestService {
     private ThemeDeleter themeDeleter;
     private ThemeRepository themeRepository;
+    private MemberRepository memberRepository;
     private ReservationRepository reservationRepository;
     private ReservationTimeRepository reservationTimeRepository;
 
@@ -40,6 +44,8 @@ class ThemeDeleterTest extends BaseTestService {
         themeRepository = new ThemeJDBCRepository(template);
         reservationTimeRepository = new ReservationTimeJDBCRepository(template);
         reservationRepository = new ReservationJDBCRepository(template);
+        memberRepository = new MemberJDBCRepository(template);
+
         var memberRepository = new MemberJDBCRepository(template);
         var memberRoleRepository = new MemberRoleJDBCRepository(template);
 
@@ -70,10 +76,11 @@ class ThemeDeleterTest extends BaseTestService {
     @DisplayName("예약에서 사용중인 테마는 삭제할 수 없어야 한다.")
     void canNotDeletedTest() {
         // given
+        Member saveMember = memberRepository.save(member());
         Theme theme = themeRepository.save(theme());
         ReservationTime time = reservationTimeRepository.save(reservationTime());
         // when
-        reservationRepository.save(Reservation.of("사용중_테스트", "2999-12-31", time, theme));
+        reservationRepository.save(Reservation.of("사용중_테스트", "2999-12-31", time, theme, saveMember.getId()));
         // then
         assertThatThrownBy(() -> themeDeleter.deleteThemeBy(theme.getId()))
                 .isInstanceOf(ThemeReferencedException.class)

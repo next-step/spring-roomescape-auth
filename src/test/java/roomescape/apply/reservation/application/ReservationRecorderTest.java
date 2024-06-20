@@ -25,6 +25,7 @@ import roomescape.support.BaseTestService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static roomescape.support.MemberFixture.loginMember;
 import static roomescape.support.MemberFixture.member;
 import static roomescape.support.ReservationsFixture.*;
@@ -91,7 +92,7 @@ class ReservationRecorderTest extends BaseTestService {
         ReservationRequest request = reservationRequest(time.getId(), theme.getId());
         Member save = memberRepository.save(member());
         // when && then
-        Assertions.assertDoesNotThrow(() -> reservationRecorder.recordReservationBy(request, loginMember(save)));
+        assertDoesNotThrow(() -> reservationRecorder.recordReservationBy(request, loginMember(save)));
         assertThatThrownBy(() -> reservationRecorder.recordReservationBy(request, loginMember(save)))
                 .isInstanceOf(DuplicateReservationException.class)
                 .hasMessage(DuplicateReservationException.DEFAULT_MESSAGE);
