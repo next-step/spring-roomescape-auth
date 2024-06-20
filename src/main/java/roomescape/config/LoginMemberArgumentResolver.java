@@ -1,5 +1,6 @@
 package roomescape.config;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
@@ -9,21 +10,15 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import roomescape.domain.LoginMember;
-import roomescape.domain.Member;
-import roomescape.service.MemberService;
 import roomescape.util.CookieUtils;
 import roomescape.util.JwtTokenProvider;
 
-import java.util.Objects;
-
 @Component
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
-
-    private final MemberService memberService;
+    private static final String TOKEN = "token";
     private final JwtTokenProvider jwtTokenProvider;
 
-    public LoginMemberArgumentResolver(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
-        this.memberService = memberService;
+    public LoginMemberArgumentResolver(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -35,12 +30,15 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer
             , NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        Cookie[] cookies = Objects.requireNonNull(webRequest.getNativeRequest(HttpServletRequest.class)).getCookies();
-        String token = CookieUtils.extractCookieValue(cookies, "token");
+        HttpServletRequest httpServletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+        Cookie[] cookies = httpServletRequest == null ? null : httpServletRequest.getCookies();
 
-        String email = jwtTokenProvider.getPayload(token);
-        Member member = memberService.findByEmail(email);
+        String token = CookieUtils.extractCookieValue(cookies, TOKEN);
 
-        return new LoginMember(member.getId(), member.getEmail(), member.getName());
+        Claims body = jwtTokenProvider.getClaimsFromToken(token);
+        String email = jwtTokenProvider.getSubject(token);
+        String name = String.valueOf(body.get("name"));
+
+        return new LoginMember(email, name);
     }
 }

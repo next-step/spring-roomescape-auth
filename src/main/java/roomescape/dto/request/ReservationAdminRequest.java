@@ -1,10 +1,15 @@
 package roomescape.dto.request;
 
-public class ReservationAdminRequest {
+import jakarta.validation.constraints.NotBlank;
 
+public class ReservationAdminRequest {
+    @NotBlank(message = "날짜가 입력되지 않았습니다.")
     private String date;
+    @NotBlank(message = "테마가 선택되지 않았습니다.")
     private Long themeId;
+    @NotBlank(message = "예약 시간이 선택되지 않았습니다.")
     private Long timeId;
+    @NotBlank(message = "회원이 선택되지 않았습니다.")
     private Long memberId;
 
     public ReservationAdminRequest() {

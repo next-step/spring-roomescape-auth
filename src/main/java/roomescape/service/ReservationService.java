@@ -52,7 +52,6 @@ public class ReservationService {
         return this.convertToResponse(reservation);
     }
 
-
     public List<ReservationResponse> findAllReservations() {
         return reservationDao.findAll().stream()
                 .map(this::convertToResponse)

@@ -15,7 +15,9 @@ import roomescape.exception.custom.UserNotFoundException;
 import roomescape.repository.MemberDao;
 import roomescape.util.JwtTokenProvider;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MemberService {
@@ -31,15 +33,16 @@ public class MemberService {
 
     public String tokenLogin(LoginRequest request) {
         String email = request.getEmail();
-        String password = request.getPassword();
+        Member member = findByEmail(request.getEmail());
+        validateMemberCredentials(member, request.getPassword());
 
-        validateMemberCredentials(email, password);
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("name", member.getName());
 
-        return jwtTokenProvider.createToken(email);
+        return jwtTokenProvider.createToken(email, extraClaims);
     }
 
-    private void validateMemberCredentials(String email, String password) {
-        Member member = findByEmail(email);
+    private void validateMemberCredentials(Member member, String password) {
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new PasswordMismatchException();
         }
@@ -65,7 +68,7 @@ public class MemberService {
     public LoginResponse loginCheck(String token) {
         validateToken(token);
 
-        String email = jwtTokenProvider.getPayload(token);
+        String email = jwtTokenProvider.getSubject(token);
         Member member = findByEmail(email);
 
         return new LoginResponse(member.getName());
@@ -79,12 +82,16 @@ public class MemberService {
     }
 
     public MemberResponse signup(MemberRequest memberRequest) {
-        if (memberDao.findByEmail(memberRequest.getEmail()).isPresent()) {
-            throw new DuplicateMemberException();
-        }
+        validateSignupInformation(memberRequest);
 
         Member member = memberDao.save(this.convertToEntity(memberRequest));
         return this.convertToResponse(member);
+    }
+
+    private void validateSignupInformation(MemberRequest memberRequest) {
+        if (memberDao.findByEmail(memberRequest.getEmail()).isPresent()) {
+            throw new DuplicateMemberException();
+        }
     }
 
     private Member convertToEntity(MemberRequest request) {
