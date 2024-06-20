@@ -23,7 +23,7 @@ public class ReservationTimeValidator {
             reservationTimeRepository.findById(id);
         }
         catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException("존재하지 않는 예약 시간입니다.");
+            throw NotFoundException.of("존재하지 않는 예약 시간입니다.");
         }
     }
 
@@ -39,14 +39,14 @@ public class ReservationTimeValidator {
             LocalTime.parse(startAt);
         }
         catch (DateTimeParseException exception) {
-            throw new BadRequestException("유효하지 않은 시간 형식입니다.");
+            throw BadRequestException.of("유효하지 않은 시간 형식입니다.");
         }
     }
 
     private void checkDuplicated(String startAt) {
         try {
             reservationTimeRepository.findByStartAt(startAt);
-            throw new BadRequestException("이미 존재하는 시간입니다.");
+            throw BadRequestException.of("이미 존재하는 시간입니다.");
         }
         catch (EmptyResultDataAccessException ignore) {
         }

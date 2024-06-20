@@ -44,16 +44,16 @@ public class ReservationValidator {
             reservationDate = LocalDate.parse(date);
         }
         catch (DateTimeParseException exception) {
-            throw new BadRequestException("유효하지 않은 날짜 형식입니다.");
+            throw BadRequestException.of("유효하지 않은 날짜 형식입니다.");
         }
         if (!reservationDate.isAfter(now)) {
-            throw new BadRequestException("해당 날짜는 예약이 불가능합니다.");
+            throw BadRequestException.of("해당 날짜는 예약이 불가능합니다.");
         }
     }
 
     private void checkDuplicated(String date, Long timeId, Long themeId) {
         if (reservationRepository.countMatchWith(date, timeId, themeId) > 0) {
-            throw new BadRequestException("해당 방탈출은 이미 예약되었습니다.");
+            throw BadRequestException.of("해당 방탈출은 이미 예약되었습니다.");
         }
     }
 }

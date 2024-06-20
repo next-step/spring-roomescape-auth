@@ -42,13 +42,13 @@ public class ReservationTimeService {
         long deleteCount = reservationTimeRepository.deleteById(id);
 
         if (deleteCount == 0) {
-            throw new NotFoundException("id와 일치하는 예약 시간이 없습니다.");
+            throw NotFoundException.of("id와 일치하는 예약 시간이 없습니다.");
         }
     }
 
     private void checkReservationMatchWith(Long id) {
         if (reservationTimeRepository.countReservationMatchWith(id) > 0) {
-            throw new BadRequestException("해당 시간에 대한 예약이 존재합니다.");
+            throw BadRequestException.of("해당 시간에 대한 예약이 존재합니다.");
         }
     }
 }

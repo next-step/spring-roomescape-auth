@@ -45,7 +45,7 @@ public class ReservationService {
         long deleteCount = reservationRepository.deleteById(id);
 
         if (deleteCount == 0) {
-            throw new NotFoundException("id와 일치하는 예약이 없습니다.");
+            throw NotFoundException.of("id와 일치하는 예약이 없습니다.");
         }
     }
 }

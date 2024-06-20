@@ -46,13 +46,13 @@ public class ThemeService {
         long deleteCount = themeRepository.deleteById(id);
 
         if (deleteCount == 0) {
-            throw new NotFoundException("id에 일치하는 테마가 없습니다.");
+            throw NotFoundException.of("id에 일치하는 테마가 없습니다.");
         }
     }
 
     private void checkMatchingReservation(Long id) {
         if (themeRepository.countReservationMatchWith(id) > 0) {
-            throw new BadRequestException("해당 테마에 대한 예약이 존재합니다.");
+            throw BadRequestException.of("해당 테마에 대한 예약이 존재합니다.");
         }
     }
 }

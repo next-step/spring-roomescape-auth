@@ -20,7 +20,7 @@ public class ThemeValidator {
             themeRepository.findById(themeId);
         }
         catch (EmptyResultDataAccessException exception) {
-            throw new NotFoundException("존재하지 않는 테마입니다.");
+            throw NotFoundException.of("존재하지 않는 테마입니다.");
         }
     }
 
@@ -31,7 +31,7 @@ public class ThemeValidator {
     private void checkDuplicated(String name) {
         try {
             themeRepository.findByName(name);
-            throw new BadRequestException("이미 존재하는 테마입니다.");
+            throw BadRequestException.of("이미 존재하는 테마입니다.");
         }
         catch (EmptyResultDataAccessException ignored) {
         }
