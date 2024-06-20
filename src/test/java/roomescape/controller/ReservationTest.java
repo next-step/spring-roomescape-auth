@@ -2,6 +2,7 @@ package roomescape.controller;
 
 import static org.hamcrest.Matchers.is;
 import static roomescape.fixture.AuthFixture.사용자_로그인;
+import static roomescape.fixture.MemberFixture.회원가입;
 import static roomescape.fixture.ReservationFixture.예약을_생성한다;
 import static roomescape.fixture.ReservationFixture.예약을_생성한다_관리자;
 import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
@@ -25,6 +26,7 @@ import org.springframework.test.annotation.DirtiesContext;
 public class ReservationTest {
     private static final String EMAIL = "test@email.com";
     private static final String PASSWORD = "1234";
+    private static final String NAME = "테스트";
     private String token;
 
     @BeforeEach
@@ -40,6 +42,8 @@ public class ReservationTest {
         params.put("thumbnail", "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
 
         예약테마를_생성한다(params);
+
+        회원가입(EMAIL, PASSWORD, NAME);
 
         Response response = 사용자_로그인(EMAIL, PASSWORD);
         token = response.getCookie("token");

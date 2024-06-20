@@ -1,6 +1,6 @@
 package roomescape.service;
 
-import java.util.List;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 import roomescape.domain.Member;
@@ -8,19 +8,25 @@ import roomescape.dto.request.LoginRequest;
 import roomescape.dto.request.MemberRequest;
 import roomescape.dto.response.LoginResponse;
 import roomescape.dto.response.MemberResponse;
+import roomescape.exception.custom.DuplicateMemberException;
+import roomescape.exception.custom.PasswordMismatchException;
 import roomescape.exception.custom.TokenNotFoundException;
 import roomescape.exception.custom.UserNotFoundException;
 import roomescape.repository.MemberDao;
 import roomescape.util.JwtTokenProvider;
 
+import java.util.List;
+
 @Service
 public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberDao memberDao;
+    private final PasswordEncoder passwordEncoder;
 
-    public MemberService(JwtTokenProvider jwtTokenProvider, MemberDao memberDao) {
+    public MemberService(JwtTokenProvider jwtTokenProvider, MemberDao memberDao, PasswordEncoder passwordEncoder) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.memberDao = memberDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public String tokenLogin(LoginRequest request) {
@@ -34,7 +40,9 @@ public class MemberService {
 
     private void validateMemberCredentials(String email, String password) {
         Member member = findByEmail(email);
-        member.checkPassword(password);
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new PasswordMismatchException();
+        }
     }
 
     public Member findByEmail(String email) {
@@ -71,14 +79,17 @@ public class MemberService {
     }
 
     public MemberResponse signup(MemberRequest memberRequest) {
-        // TODO. 중복체크 필요
-        // TODO. 비밀번호 암호화 필요
+        if (memberDao.findByEmail(memberRequest.getEmail()).isPresent()) {
+            throw new DuplicateMemberException();
+        }
+
         Member member = memberDao.save(this.convertToEntity(memberRequest));
         return this.convertToResponse(member);
     }
 
     private Member convertToEntity(MemberRequest request) {
-        return new Member(request.getName(), request.getEmail(), request.getPassword());
+        String password = passwordEncoder.encode(request.getPassword());
+        return new Member(request.getName(), request.getEmail(), password);
     }
 
     private MemberResponse convertToResponse(Member member) {

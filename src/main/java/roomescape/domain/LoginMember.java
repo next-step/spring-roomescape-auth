@@ -2,6 +2,7 @@ package roomescape.domain;
 
 public class LoginMember {
 
+
     private Long id;
     private String email;
     private String name;

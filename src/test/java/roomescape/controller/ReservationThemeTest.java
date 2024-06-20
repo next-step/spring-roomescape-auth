@@ -2,6 +2,7 @@ package roomescape.controller;
 
 import static org.hamcrest.Matchers.is;
 import static roomescape.fixture.AuthFixture.사용자_로그인;
+import static roomescape.fixture.MemberFixture.회원가입;
 import static roomescape.fixture.ReservationFixture.예약을_생성한다;
 import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
 import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
@@ -29,11 +30,14 @@ public class ReservationThemeTest {
     private final String THUMBNAIL = "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg";
 
     private static final String EMAIL = "test@email.com";
+    private static final String MEMBER_NAME = "테스트";
     private static final String PASSWORD = "1234";
     private String token;
 
     @BeforeEach
     void init() {
+        회원가입(EMAIL, PASSWORD, MEMBER_NAME);
+
         Response response = 사용자_로그인(EMAIL, PASSWORD);
         token = response.getCookie("token");
     }

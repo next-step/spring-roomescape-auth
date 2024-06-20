@@ -1,6 +1,6 @@
 package roomescape.controller.api;
 
-import java.util.List;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import roomescape.dto.request.MemberRequest;
 import roomescape.dto.response.MemberResponse;
 import roomescape.service.MemberService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -27,7 +29,7 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<MemberResponse> signup(@RequestBody MemberRequest memberRequest) {
+    public ResponseEntity<MemberResponse> signup(@Valid @RequestBody MemberRequest memberRequest) {
         MemberResponse memberResponse = memberService.signup(memberRequest);
         return ResponseEntity.ok().body(memberResponse);
     }

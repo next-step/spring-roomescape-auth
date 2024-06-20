@@ -1,8 +1,6 @@
 package roomescape.domain;
 
 import java.util.Objects;
-import org.thymeleaf.util.StringUtils;
-import roomescape.exception.custom.PasswordMismatchException;
 
 public class Member {
 
@@ -64,11 +62,5 @@ public class Member {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public void checkPassword(String password) {
-        if (!StringUtils.equals(this.password, password)) {
-            throw new PasswordMismatchException();
-        }
     }
 }

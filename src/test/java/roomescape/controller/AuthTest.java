@@ -2,6 +2,7 @@ package roomescape.controller;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +13,7 @@ import roomescape.dto.request.LoginRequest;
 
 import static org.hamcrest.Matchers.is;
 import static roomescape.fixture.AuthFixture.사용자_로그인;
+import static roomescape.fixture.MemberFixture.회원가입;
 
 @DisplayName("인증 관련 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -22,6 +24,11 @@ public class AuthTest {
     public static final String TOKEN_COOKIE_NAME = "token";
     public static final String NAME = "테스트";
 
+    @BeforeEach
+    void init() {
+        회원가입(EMAIL, PASSWORD, NAME);
+    }
+
     @DisplayName("[로그인] - 유효한 자격 증명으로 로그인하여 토큰을 획득한다.")
     @Test
     void login() {
@@ -31,7 +38,6 @@ public class AuthTest {
                 .statusCode(HttpStatus.OK.value())
                 .cookie(TOKEN_COOKIE_NAME);
     }
-
 
 
     @DisplayName("[로그인] - 아이디 또는 비밀번호를 입력하지 않은 경우 에러가 발생한다.")
