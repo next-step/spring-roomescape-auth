@@ -26,22 +26,18 @@ public class MemberService {
 		if (isExists) {
 			throw new RoomEscapeException(ErrorCode.DUPLICATE_MEMBER);
 		}
-		else {
-			var savedMember = this.memberRepository.save(member);
-			return MemberResponse.from(savedMember);
-		}
+		var savedMember = this.memberRepository.save(member);
+		return MemberResponse.from(savedMember);
 	}
 
 	public MemberResponse findMemberByLoginRequest(LoginRequest request) {
 		var findedMember = this.memberRepository.findByEmail(request.email());
 
-		if (findedMember != null) {
-			checkPassword(request.password(), findedMember.getPassword());
-			return MemberResponse.from(findedMember);
-		}
-		else {
+		if (findedMember == null) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_MEMBER);
 		}
+		checkPassword(request.password(), findedMember.getPassword());
+		return MemberResponse.from(findedMember);
 	}
 
 	private void checkPassword(String inputPassword, String storedPassword) {

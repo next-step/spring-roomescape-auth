@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -128,17 +129,19 @@ class ReservationTimeTests {
 		assertThat(availableTimes).isNotNull();
 		assertThat(availableTimes).hasSize(reservationTimes.size());
 
-		assertThat(availableTimes.get(0)).isNotNull();
-		assertThat(availableTimes.get(0).startAt()).isEqualTo("10:00");
-		assertThat(availableTimes.get(0).alreadyBooked()).isTrue();
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(availableTimes.get(0)).isNotNull();
+			softly.assertThat(availableTimes.get(0).startAt()).isEqualTo("10:00");
+			softly.assertThat(availableTimes.get(0).alreadyBooked()).isTrue();
 
-		assertThat(availableTimes.get(1)).isNotNull();
-		assertThat(availableTimes.get(1).startAt()).isEqualTo("11:00");
-		assertThat(availableTimes.get(1).alreadyBooked()).isFalse();
+			softly.assertThat(availableTimes.get(1)).isNotNull();
+			softly.assertThat(availableTimes.get(1).startAt()).isEqualTo("11:00");
+			softly.assertThat(availableTimes.get(1).alreadyBooked()).isFalse();
 
-		assertThat(availableTimes.get(2)).isNotNull();
-		assertThat(availableTimes.get(2).startAt()).isEqualTo("12:00");
-		assertThat(availableTimes.get(2).alreadyBooked()).isTrue();
+			softly.assertThat(availableTimes.get(2)).isNotNull();
+			softly.assertThat(availableTimes.get(2).startAt()).isEqualTo("12:00");
+			softly.assertThat(availableTimes.get(2).alreadyBooked()).isTrue();
+		});
 	}
 
 }

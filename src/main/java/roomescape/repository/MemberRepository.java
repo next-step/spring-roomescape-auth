@@ -1,6 +1,5 @@
 package roomescape.repository;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.annotation.PostConstruct;
@@ -43,11 +42,14 @@ public class MemberRepository {
 	}
 
 	public Member save(Member member) {
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("name", member.getName());
-		parameters.put("email", member.getEmail());
-		parameters.put("password", member.getPassword());
-		parameters.put("role", MemberRole.USER.name());
+		// @formatter:off
+		Map<String, Object> parameters = Map.of(
+				"name", member.getName(),
+				"email", member.getEmail(),
+				"password", member.getPassword(),
+				"role", MemberRole.USER.name()
+		);
+		// @formatter:on
 
 		Number generatedId = this.jdbcInsert.executeAndReturnKey(parameters);
 		member.setId(generatedId.longValue());

@@ -82,7 +82,7 @@ class ThemeServiceTests {
 	}
 
 	@Test
-	void deleteException() {
+	void deleteWhenThemeNotFound() {
 		// given
 		long id = 1L;
 

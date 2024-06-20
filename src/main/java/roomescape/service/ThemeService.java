@@ -36,12 +36,10 @@ public class ThemeService {
 
 	public void delete(long id) {
 		var isExist = this.themeRepository.isExistId(id);
-		if (isExist) {
-			this.themeRepository.delete(id);
-		}
-		else {
+		if (!isExist) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_THEME);
 		}
+		this.themeRepository.delete(id);
 	}
 
 	public Theme getThemeById(long id) {

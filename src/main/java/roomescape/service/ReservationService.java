@@ -55,12 +55,10 @@ public class ReservationService {
 
 	public void cancel(long id) {
 		var isExist = this.reservationRepository.isExistId(id);
-		if (isExist) {
-			this.reservationRepository.delete(id);
-		}
-		else {
+		if (!isExist) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_RESERVATION);
 		}
+		this.reservationRepository.delete(id);
 	}
 
 	private void checkReservationAvailability(ReservationRequest request, String time) {

@@ -1,6 +1,5 @@
 package roomescape.repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +48,13 @@ public class ThemeRepository {
 	}
 
 	public Theme save(Theme theme) {
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("name", theme.getName());
-		parameters.put("description", theme.getDescription());
-		parameters.put("thumbnail", theme.getThumbnail());
+		// @formatter: off
+		Map<String, Object> parameters = Map.of(
+				"name", theme.getName(),
+				"description", theme.getDescription(),
+				"thumbnail", theme.getThumbnail()
+		);
+		// @formatter: on
 
 		Number generatedId = this.jdbcInsert.executeAndReturnKey(parameters);
 		theme.setId(generatedId.longValue());
