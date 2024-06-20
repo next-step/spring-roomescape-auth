@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import roomescape.user.domain.Role;
+
 class JwtTokenProviderTest {
 
     private JwtTokenProvider jwtTokenProvider;
@@ -21,9 +23,10 @@ class JwtTokenProviderTest {
     void createJwt() {
         // given
         String email = "email@email.com";
+        Role role = Role.USER;
 
         // when
-        String jwt = jwtTokenProvider.createJwt(email);
+        String jwt = jwtTokenProvider.createJwt(email, role);
 
         // then
         assertThat(jwt).isNotNull();
@@ -33,7 +36,8 @@ class JwtTokenProviderTest {
     void 토큰에서_이메일을_추출한다() {
         // given
         String email = "email@email.com";
-        String jwt = jwtTokenProvider.createJwt(email);
+        Role role = Role.USER;
+        String jwt = jwtTokenProvider.createJwt(email, role);
 
         // when
         String extractedEmail = jwtTokenProvider.getEmail(jwt);
@@ -52,5 +56,19 @@ class JwtTokenProviderTest {
 
         // then
         assertThat(extractedEmail).isNull();
+    }
+
+    @Test
+    void 토큰에서_유저의_ROLE을_추출한다() {
+        // given
+        String email = "email@email.com";
+        Role role = Role.ADMIN;
+        String jwt = jwtTokenProvider.createJwt(email, role);
+
+        // when
+        Role extractedRole = jwtTokenProvider.getRole(jwt);
+
+        // then
+        assertThat(extractedRole).isEqualTo(Role.ADMIN);
     }
 }

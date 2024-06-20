@@ -28,7 +28,7 @@ public class AuthService {
             throw new PasswordNotMatchException();
         }
 
-        return jwtTokenProvider.createJwt(user.getEmail());
+        return jwtTokenProvider.createJwt(user.getEmail(), user.getRole());
     }
 
     public CheckUserInfoResponse checkUserInfo(User user) {
