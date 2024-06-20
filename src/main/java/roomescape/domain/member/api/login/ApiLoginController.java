@@ -1,4 +1,4 @@
-package roomescape.domain.member.api;
+package roomescape.domain.member.api.login;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,11 +15,11 @@ import roomescape.domain.member.service.dto.MemberResponse;
 
 @RestController
 @RequestMapping("/login")
-public class ApiMemberController {
+public class ApiLoginController {
 
     private static final String TOKEN = "token";
 
-    public ApiMemberController(MemberService memberService) {
+    public ApiLoginController(MemberService memberService) {
         this.memberService = memberService;
     }
 
@@ -51,6 +51,6 @@ public class ApiMemberController {
                 return cookie.getValue();
             }
         }
-        throw new MemberException(MemberErrorCode.COOKIE_NOT_FOUND_ERROR);
+        throw new MemberException(MemberErrorCode.NO_MEMBER_ERROR);
     }
 }
