@@ -1,4 +1,4 @@
-package roomescape.login;
+package roomescape.login.dto;
 
 public class LoginRequest {
     private String email;

@@ -1,7 +1,9 @@
-package roomescape.login;
+package roomescape.login.service;
 
 import org.springframework.stereotype.Service;
-import roomescape.error.exception.PasswordNotMatchedException;
+import roomescape.login.JwtTokenProvider;
+import roomescape.login.LoginMember;
+import roomescape.login.dto.LoginResponse;
 import roomescape.member.service.MemberService;
 
 @Service
@@ -17,16 +19,12 @@ public class LoginService {
     }
 
     public String createToken(String email, String password) {
-        if (!memberService.isMember(email, password)) {
-            throw new PasswordNotMatchedException();
-        }
+        LoginMember member = memberService.getLoginMemberByEmailAndPassword(email, password);
 
-        return jwtTokenProvider.createToken(email);
+        return jwtTokenProvider.createToken(member.getId(), member.getEmail(), member.getName());
     }
 
     public LoginResponse checkToken(String token) {
-        String email = jwtTokenProvider.getPayload(token);
-
-        return new LoginResponse(memberService.findNameByEmail(email));
+        return new LoginResponse(jwtTokenProvider.getName(token));
     }
 }
