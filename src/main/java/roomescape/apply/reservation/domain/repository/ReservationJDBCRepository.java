@@ -3,10 +3,13 @@ package roomescape.apply.reservation.domain.repository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import roomescape.apply.reservation.domain.Reservation;
+import roomescape.apply.reservation.ui.dto.ReservationSearchParams;
 import roomescape.apply.reservationtime.domain.ReservationTime;
 import roomescape.apply.theme.domain.Theme;
 

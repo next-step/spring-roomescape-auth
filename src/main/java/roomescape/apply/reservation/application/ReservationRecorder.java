@@ -40,7 +40,7 @@ public class ReservationRecorder {
 
         final ReservationTime time = reservationTimeFinder.findOneById(request.timeId());
         final Theme theme = themeFinder.findOneById(request.themeId());
-        final Reservation reservation = Reservation.of(loginMember.name(), request.date(), time, theme);
+        final Reservation reservation = Reservation.of(loginMember.name(), request.date(), time, theme, loginMember.id());
         final Reservation saved = reservationRepository.save(reservation);
 
         return ReservationResponse.from(saved, theme, time);
@@ -52,7 +52,7 @@ public class ReservationRecorder {
         final Member member = memberFinder.findOneNameById(request.memberId());
         final ReservationTime time = reservationTimeFinder.findOneById(request.timeId());
         final Theme theme = themeFinder.findOneById(request.themeId());
-        final Reservation reservation = Reservation.of(member.getName(), request.date(), time, theme);
+        final Reservation reservation = Reservation.of(member.getName(), request.date(), time, theme, member.getId());
         final Reservation saved = reservationRepository.save(reservation);
 
         return ReservationAdminResponse.from(saved, theme, time, member);
