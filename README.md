@@ -36,10 +36,10 @@ Content-Type: application/json
 ```json
 POST /reservations HTTP/1.1
 content-type: application/json
+cookie: token=tokenvalue
 
 {
     "date": "2023-08-05",
-    "name": "브라운",
     "timeId": "1",
     "themeId" : "1"
 }
