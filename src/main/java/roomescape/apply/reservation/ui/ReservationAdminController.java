@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.apply.auth.application.annotation.NeedMemberRole;
-import roomescape.apply.auth.ui.dto.LoginMember;
 import roomescape.apply.member.domain.MemberRoleName;
 import roomescape.apply.reservation.application.ReservationCanceler;
 import roomescape.apply.reservation.application.ReservationFinder;
@@ -12,7 +11,6 @@ import roomescape.apply.reservation.application.ReservationRecorder;
 import roomescape.apply.reservation.application.ReservationSearcher;
 import roomescape.apply.reservation.ui.dto.ReservationAdminRequest;
 import roomescape.apply.reservation.ui.dto.ReservationAdminResponse;
-import roomescape.apply.reservation.ui.dto.ReservationResponse;
 import roomescape.apply.reservation.ui.dto.ReservationSearchParams;
 
 import java.util.List;
@@ -37,8 +35,8 @@ public class ReservationAdminController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReservationAdminResponse>> getReservations(LoginMember loginMember) {
-        return ResponseEntity.ok(reservationFinder.findAllForAdmin(loginMember));
+    public ResponseEntity<List<ReservationAdminResponse>> getReservations() {
+        return ResponseEntity.ok(reservationFinder.findAllForAdmin());
     }
 
     @PostMapping
@@ -58,7 +56,7 @@ public class ReservationAdminController {
 
     @GetMapping("/search")
     @NeedMemberRole(MemberRoleName.ADMIN)
-    public ResponseEntity<List<ReservationResponse>> searchReservations(
+    public ResponseEntity<List<ReservationAdminResponse>> searchReservations(
             @RequestParam(value = "themeId", required = false) Long themeId,
             @RequestParam(value = "memberId", required = false) Long memberId,
             @RequestParam(value = "dateFrom", required = false) String dateFrom,

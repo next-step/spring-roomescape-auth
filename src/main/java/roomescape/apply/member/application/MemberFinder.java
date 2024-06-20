@@ -33,7 +33,7 @@ public class MemberFinder {
     public List<MemberResponse> findAll() {
         return memberRepository.findAll()
                 .stream()
-                .map(MemberResponse::from)
+                .map(member -> MemberResponse.from(member.getId(), member.getName()))
                 .toList();
     }
 

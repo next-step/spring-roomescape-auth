@@ -1,10 +1,8 @@
 package roomescape.apply.member.ui.dto;
 
-import roomescape.apply.member.domain.Member;
-
 public record MemberResponse(long id, String name) {
 
-    public static MemberResponse from(Member member) {
-        return new MemberResponse(member.getId(), member.getName());
+    public static MemberResponse from(Long memberId, String name) {
+        return new MemberResponse(memberId, name);
     }
 }
