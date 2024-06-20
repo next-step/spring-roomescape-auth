@@ -134,8 +134,7 @@ function addInputRow() {
     row.remove();
     isEditing = false;
   }));
-  addDropdownOptions('theme', themesOptions, 'name');
-  addDropdownOptions('member', membersOptions, 'name');
+
 }
 
 function createInput(type) {
