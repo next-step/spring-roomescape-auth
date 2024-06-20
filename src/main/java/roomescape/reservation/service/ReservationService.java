@@ -38,14 +38,14 @@ public class ReservationService {
             .collect(Collectors.toList());
     }
 
-    public ReservationResponse saveReservation(ReservationRequest request) {
+    public ReservationResponse saveReservation(String name, ReservationRequest request) {
         ReservationTime reservationTime = Optional.ofNullable(
                 reservationTimeRepository.findById(request.getTimeId()))
                 .orElseThrow(ReservationTimeNotExistsException::new);
         Theme theme = Optional.ofNullable(themeRepository.findById(request.getThemeId()))
                                 .orElseThrow(ThemeNotExistsException::new);
 
-        Reservation reservation = new Reservation(request.getName(), request.getDate(),
+        Reservation reservation = new Reservation(name, request.getDate(),
             reservationTime, theme);
 
         if (reservation.isBeforeThanNow()) {
