@@ -1,7 +1,10 @@
 package roomescape;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class AdminController {
@@ -14,6 +17,12 @@ public class AdminController {
     @GetMapping("/admin/reservation")
     public String reservation() {
         return "admin/reservation";
+    }
+
+    @PostMapping("/admin/reservation")
+    @ResponseBody
+    public ResponseEntity<String> create() {
+        return ResponseEntity.ok("success");
     }
 
     @GetMapping("/admin/time")

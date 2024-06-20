@@ -38,7 +38,7 @@ class AuthServiceTest {
     @DisplayName("로그인에 성공한다.")
     void login() {
         // given
-        User user = new User(1L, "어드민", "admin@email.com", "password");
+        User user = User.createUser(1L, "어드민", "admin@email.com", "password");
 
         given(userRepository.findByEmail(anyString())).willReturn(Optional.of(user));
         given(jwtTokenProvider.createJwt(anyString())).willReturn("accessToken");
@@ -56,7 +56,7 @@ class AuthServiceTest {
     @DisplayName("사용자 로그인 실패 - 사용자를 찾을 수 없음")
     void userLoginFailure_UserNotFound() {
         // given
-        User user = new User(1L, "어드민", "admin@email.com", "password");
+        User user = User.createUser(1L, "어드민", "admin@email.com", "password");
 
         given(userRepository.findByEmail(anyString())).willThrow(new UserNotFoundException());
 
@@ -72,7 +72,7 @@ class AuthServiceTest {
     @DisplayName("사용자 로그인 실패 - 비밀번호가 일치하지 않음")
     void userLoginFailure_PasswordNotMatch() {
         // given
-        User user = new User(1L, "어드민", "admin@email.com", "password");
+        User user = User.createUser(1L, "어드민", "admin@email.com", "password");
 
         given(userRepository.findByEmail(anyString())).willReturn(Optional.of(user));
 
@@ -87,7 +87,7 @@ class AuthServiceTest {
     @Test
     void 사용자_정보를_조회한다() {
         // given
-        User user = new User(1L, "어드민", "password", "admin@email.com");
+        User user = User.createUser(1L, "어드민", "password", "admin@email.com");
 
         // when
         CheckUserInfoResponse response = authService.checkUserInfo(user);

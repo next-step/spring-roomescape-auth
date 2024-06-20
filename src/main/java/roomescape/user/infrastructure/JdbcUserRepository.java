@@ -26,7 +26,8 @@ public class JdbcUserRepository implements UserRepository {
                     resultSet.getLong("id"),
                     resultSet.getString("name"),
                     resultSet.getString("email"),
-                    resultSet.getString("password")
+                    resultSet.getString("password"),
+                    resultSet.getString("role")
             ), email);
             return Optional.ofNullable(findUser);
         } catch (EmptyResultDataAccessException e) {
