@@ -29,7 +29,7 @@ public class ApiLoginController {
     @PostMapping
     public ResponseEntity<?> login(@RequestBody MemberLoginRequest memberLoginRequest) {
         String token = memberService.login(memberLoginRequest);
-        ResponseCookie responseCookie = ResponseCookie.from("token", token)
+        ResponseCookie responseCookie = ResponseCookie.from(TOKEN, token)
                 .httpOnly(true)
                 .path("/")
                 .maxAge(60)

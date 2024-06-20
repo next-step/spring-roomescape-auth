@@ -2,12 +2,10 @@ package roomescape.domain.reservation.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import roomescape.domain.reservation.service.dto.ReservationRequest;
-import roomescape.domain.reservation.service.dto.ReservationResponse;
 import roomescape.domain.reservation.domain.Reservation;
 import roomescape.domain.reservation.service.ReservationService;
-import roomescape.domain.theme.service.ThemeService;
-import roomescape.domain.time.service.TimeService;
+import roomescape.domain.reservation.service.dto.ReservationRequest;
+import roomescape.domain.reservation.service.dto.ReservationResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,8 +16,7 @@ public class ApiReservationController {
 
     private final ReservationService reservationService;
 
-
-    public ApiReservationController(ReservationService reservationService, TimeService timeService, ThemeService themeService) {
+    public ApiReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
 

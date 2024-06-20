@@ -34,6 +34,7 @@ public class ThemeService {
         return themeRepository.findAll();
     }
 
+    @Transactional
     public void delete(Long id) {
         themeRepository.delete(id);
     }
