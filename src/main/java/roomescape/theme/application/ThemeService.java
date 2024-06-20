@@ -28,7 +28,8 @@ public class ThemeService {
     }
 
     public ThemeResponse findOne(Long id) {
-        Theme theme = themeRepository.findById(id);
+        Theme theme = themeRepository.findById(id)
+                .orElseThrow(() -> NotFoundException.of("id와 일치하는 테마가 없습니다."));
         return ThemeResponse.from(theme);
     }
 

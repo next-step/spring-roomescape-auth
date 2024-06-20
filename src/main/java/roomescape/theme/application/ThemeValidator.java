@@ -16,12 +16,8 @@ public class ThemeValidator {
     }
 
     public void checkPresent(Long themeId) {
-        try {
-            themeRepository.findById(themeId);
-        }
-        catch (EmptyResultDataAccessException exception) {
-            throw NotFoundException.of("존재하지 않는 테마입니다.");
-        }
+        themeRepository.findById(themeId)
+                .orElseThrow(() -> NotFoundException.of("존재하지 않는 테마입니다."));
     }
 
     public void validateRequest(ThemeRequest themeRequest) {
@@ -29,11 +25,10 @@ public class ThemeValidator {
     }
 
     private void checkDuplicated(String name) {
-        try {
-            themeRepository.findByName(name);
+        boolean isDuplicated = themeRepository.findByName(name).isPresent();
+
+        if (isDuplicated) {
             throw BadRequestException.of("이미 존재하는 테마입니다.");
-        }
-        catch (EmptyResultDataAccessException ignored) {
         }
     }
 }
