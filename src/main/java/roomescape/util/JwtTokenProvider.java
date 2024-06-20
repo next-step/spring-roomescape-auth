@@ -34,10 +34,11 @@ public class JwtTokenProvider {
     }
 
     public String getSubject(String token) {
+        validateToken(token);
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public void validateToken(String token) {
+    private void validateToken(String token) {
         Jws<Claims> claims;
         try {
             claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
@@ -51,6 +52,7 @@ public class JwtTokenProvider {
     }
 
     public Claims getClaimsFromToken(String token) {
+        validateToken(token);
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 }

@@ -78,7 +78,6 @@ public class MemberService {
         if (StringUtils.isEmpty(token)) {
             throw new TokenNotFoundException();
         }
-        jwtTokenProvider.validateToken(token);
     }
 
     public MemberResponse signup(MemberRequest memberRequest) {
