@@ -16,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import roomescape.auth.dto.LoginRequest;
-import roomescape.reservation.dto.ReservationCreateRequest;
+import roomescape.reservation.dto.UserReservationCreateRequest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -110,7 +110,7 @@ class ThemeControllerTest {
                 .then().log().all()
                 .extract().cookie("token");
 
-        ReservationCreateRequest request = new ReservationCreateRequest(LocalDate.now().plusDays(1).toString(), 1L, 1L);
+        UserReservationCreateRequest request = new UserReservationCreateRequest(LocalDate.now().plusDays(1).toString(), 1L, 1L);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
