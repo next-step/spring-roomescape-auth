@@ -34,7 +34,7 @@ public class ReservationTimeTest {
     private ThemeService themeService;
 
     @BeforeEach
-    void setUp() {
+    private void setPort() {
         RestAssured.port = 8888;
     }
 

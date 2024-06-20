@@ -2,6 +2,7 @@ package roomescape;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,12 @@ public class ThemeTest {
     private ReservationTimeService reservationTimeService;
     @Autowired
     private ThemeService themeService;
-    private final String URL = "http://localhost:8888";
 
+    @BeforeEach
+    private void setPort() {
+        RestAssured.port = 8888;
+    }
+    
     private long makeDummyReservation() {
         long timeId = reservationTimeService.add(ReservationTimeRequest.create("13:00"));
         long themeId = themeService.add(ThemeRequest.create("a", "b", "c"));
@@ -49,7 +54,7 @@ public class ThemeTest {
                 .given().log().all()
                 .body(ThemeRequest.create(name, description, thumbnail))
                 .contentType(ContentType.JSON)
-                .when().post(URL + "/themes")
+                .when().post("/themes")
                 .then().log().all().extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -71,7 +76,7 @@ public class ThemeTest {
                 .given().log().all()
                 .body(ThemeRequest.create(name, description, thumbnail))
                 .contentType(ContentType.JSON)
-                .when().post(URL + "/themes")
+                .when().post("/themes")
                 .then().log().all().extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -84,7 +89,7 @@ public class ThemeTest {
 
         var response = RestAssured
                 .given().log().all()
-                .when().get(URL + "/themes")
+                .when().get("/themes")
                 .then().log().all().extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -96,7 +101,7 @@ public class ThemeTest {
     void 등록된_예약_시간_없는_경우__예약_시간_조회() {
         var response = RestAssured
                 .given().log().all()
-                .when().get(URL + "/themes")
+                .when().get("/themes")
                 .then().log().all().extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -110,7 +115,7 @@ public class ThemeTest {
 
         var response = RestAssured
                 .given().log().all()
-                .when().delete(URL + "/themes/1")
+                .when().delete("/themes/1")
                 .then().log().all().extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
@@ -121,7 +126,7 @@ public class ThemeTest {
     void 존재하지_않는_테마_삭제() {
         var response = RestAssured
                 .given().log().all()
-                .when().delete(URL + "/themes/1")
+                .when().delete("/themes/1")
                 .then().log().all().extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
@@ -133,7 +138,7 @@ public class ThemeTest {
         long reservationId = makeDummyReservation();
         var response = RestAssured
                 .given().log().all()
-                .when().delete(URL + "/themes/" + reservationId)
+                .when().delete("/themes/" + reservationId)
                 .then().log().all().extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
