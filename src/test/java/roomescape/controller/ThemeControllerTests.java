@@ -59,7 +59,7 @@ class ThemeControllerTests {
 		ResponseEntity<ThemeResponse> responseEntity = this.themeController.create(themeRequest);
 
 		// then
-		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(responseEntity.getBody()).isEqualTo(themeResponse);
 	}
 
@@ -72,7 +72,7 @@ class ThemeControllerTests {
 		ResponseEntity<Void> responseEntity = this.themeController.delete(id);
 
 		// then
-		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 		verify(this.themeService).delete(id);
 	}
 

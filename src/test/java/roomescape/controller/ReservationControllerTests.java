@@ -12,6 +12,8 @@ import roomescape.controller.dto.ReservationRequest;
 import roomescape.controller.dto.ReservationResponse;
 import roomescape.controller.dto.ReservationTimeResponse;
 import roomescape.controller.dto.ThemeResponse;
+import roomescape.domain.LoginMember;
+import roomescape.domain.MemberRole;
 import roomescape.service.ReservationService;
 
 import org.springframework.http.HttpStatus;
@@ -62,14 +64,20 @@ class ReservationControllerTests {
 		var themeResponse = new ThemeResponse(1L, "방탈출1", "첫번째테마", "테마이미지");
 		var reservationResponse = new ReservationResponse(1L, "tester", "2024-06-06", reservationTimeResponse,
 				themeResponse);
+		var loginMember = LoginMember.builder()
+			.name("tester")
+			.email("tester@gmail.com")
+			.role(MemberRole.USER.name())
+			.build();
 
-		given(this.reservationService.create(reservationRequest)).willReturn(reservationResponse);
+		given(this.reservationService.create(reservationRequest, loginMember)).willReturn(reservationResponse);
 
 		// when
-		ResponseEntity<ReservationResponse> responseEntity = this.reservationController.create(reservationRequest);
+		ResponseEntity<ReservationResponse> responseEntity = this.reservationController.create(reservationRequest,
+				loginMember);
 
 		// then
-		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(responseEntity.getBody()).isEqualTo(reservationResponse);
 	}
 
@@ -82,7 +90,7 @@ class ReservationControllerTests {
 		ResponseEntity<Void> responseEntity = this.reservationController.cancel(id);
 
 		// then
-		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 		verify(this.reservationService).cancel(id);
 	}
 

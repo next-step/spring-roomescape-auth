@@ -3,7 +3,6 @@ package roomescape.integration;
 import org.junit.jupiter.api.Test;
 import roomescape.controller.dto.MemberRequest;
 import roomescape.controller.dto.MemberResponse;
-import roomescape.domain.MemberRole;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

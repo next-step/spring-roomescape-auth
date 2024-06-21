@@ -49,7 +49,7 @@ class ReservationTimeControllerTests {
 			.create(reservationTimeRequest);
 
 		// then
-		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(responseEntity.getBody()).isEqualTo(reservationTimeResponse);
 	}
 
@@ -78,7 +78,7 @@ class ReservationTimeControllerTests {
 		ResponseEntity<Void> responseEntity = this.reservationTimeController.delete(id);
 
 		// then
-		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 		verify(this.reservationTimeService).delete(id);
 	}
 

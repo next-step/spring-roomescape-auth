@@ -1,6 +1,9 @@
 package roomescape.repository;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -132,6 +135,51 @@ class MemberRepositoryTests {
 
 		// then
 		assertThat(foundMember).isNull();
+	}
+
+	@Test
+	void findById() {
+		// given
+		long id = 1L;
+		String email = "tester@gmail.com";
+		Member member = Member.builder()
+			.id(id)
+			.name("tester")
+			.email(email)
+			.password("encodedPassword")
+			.role(MemberRole.USER.name())
+			.build();
+
+		given(this.jdbcTemplate.queryForObject(anyString(), any(RowMapper.class), eq(id))).willReturn(member);
+
+		// when
+		Member foundMember = this.memberRepository.findById(id);
+
+		// then
+		assertThat(foundMember).isEqualTo(member);
+
+	}
+
+	@Test
+	void findAllMembersViaRoleUser() {
+		// given
+		Member member = Member.builder()
+			.id(1L)
+			.name("tester")
+			.email("tester@gmail.com")
+			.role(MemberRole.USER.name())
+			.build();
+
+		given(this.jdbcTemplate.query(anyString(), any(RowMapper.class), eq(MemberRole.USER.name())))
+			.willReturn(Collections.singletonList(member));
+
+		// when
+		List<Member> members = this.memberRepository.findAllMembersViaRoleUser();
+
+		// then
+		assertThat(members).isNotNull();
+		assertThat(members).hasSize(1);
+
 	}
 
 }
