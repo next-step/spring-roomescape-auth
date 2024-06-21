@@ -47,6 +47,12 @@ public class ThemeRepository {
 		return count > 0;
 	}
 
+	public boolean isExistName(String name) {
+		String sql = "SELECT COUNT(*) FROM theme WHERE id = ?";
+		int count = this.jdbcTemplate.queryForObject(sql, Integer.class, name);
+		return count > 0;
+	}
+
 	public Theme save(Theme theme) {
 		// @formatter: off
 		Map<String, Object> parameters = Map.of(

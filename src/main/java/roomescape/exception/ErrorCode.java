@@ -15,6 +15,7 @@ public enum ErrorCode {
 	DUPLICATE_RESERVATION("RES-2001", "중복 예약은 불가능합니다."),
 	PAST_RESERVATION("RES-2002", "지나간 날짜와 시간에 대한 예약 생성은 불가능합니다."),
 	DUPLICATE_MEMBER("RES-2003", "이미 가입한 계정입니다."),
+	DUPLICATE_THEME_NAME("RES-2004", "이미 등록된 이름입니다."),
 
 	NOT_FOUND_RESERVATION("RES-3001", "해당 예약이 없습니다."),
 	NOT_FOUND_RESERVATION_TIME("RES-3002", "해당 예약 시간이 없습니다."),

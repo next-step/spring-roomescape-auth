@@ -30,6 +30,11 @@ public class ThemeService {
 			.description(request.description())
 			.thumbnail(request.thumbnail())
 			.build();
+		var isExistName = this.themeRepository.isExistName(request.name());
+		if (isExistName) {
+			throw new RoomEscapeException(ErrorCode.DUPLICATE_THEME_NAME);
+		}
+
 		var savedTheme = this.themeRepository.save(theme);
 		return ThemeResponse.from(savedTheme);
 	}
