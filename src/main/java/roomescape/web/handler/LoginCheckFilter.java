@@ -20,7 +20,7 @@ public class LoginCheckFilter implements Filter {
 
 	private final JwtTokenProvider jwtTokenProvider;
 
-	LoginCheckFilter(JwtTokenProvider jwtTokenProvider) {
+	public LoginCheckFilter(JwtTokenProvider jwtTokenProvider) {
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
 

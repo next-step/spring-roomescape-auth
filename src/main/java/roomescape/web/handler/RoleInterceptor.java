@@ -15,7 +15,7 @@ public class RoleInterceptor implements HandlerInterceptor {
 
 	private final AuthService authService;
 
-	RoleInterceptor(AuthService authService) {
+	public RoleInterceptor(AuthService authService) {
 		this.authService = authService;
 	}
 
