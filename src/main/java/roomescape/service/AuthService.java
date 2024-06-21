@@ -4,7 +4,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import roomescape.auth.JwtCookieManager;
 import roomescape.auth.JwtTokenProvider;
-import roomescape.controller.dto.LoginCheckResponse;
+import roomescape.controller.dto.LoginResponse;
 import roomescape.controller.dto.LoginRequest;
 import roomescape.controller.dto.MemberResponse;
 import roomescape.domain.LoginMember;
@@ -40,10 +40,10 @@ public class AuthService {
 		return this.jwtTokenProvider.createToken(memberResponse);
 	}
 
-	public LoginCheckResponse findRoleByToken(Cookie[] cookies) {
+	public LoginResponse findRoleByToken(Cookie[] cookies) {
 		Claims claims = extractClaimsFromCookies(cookies);
 		String roleName = claims.get(ROLE, String.class);
-		return new LoginCheckResponse(roleName);
+		return new LoginResponse(roleName);
 	}
 
 	public LoginMember findMemberByToken(Cookie[] cookies) {

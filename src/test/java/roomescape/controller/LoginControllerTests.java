@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import roomescape.controller.dto.LoginCheckResponse;
+import roomescape.controller.dto.LoginResponse;
 import roomescape.controller.dto.LoginRequest;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
@@ -46,7 +46,7 @@ class LoginControllerTests {
 		given(this.authService.generateLoginToken(any(LoginRequest.class))).willReturn(mockToken);
 
 		// when
-		ResponseEntity<Void> responseEntity = this.loginController.login(loginRequest, mockResponse);
+		ResponseEntity<LoginResponse> responseEntity = this.loginController.login(loginRequest, mockResponse);
 
 		// then
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -87,19 +87,19 @@ class LoginControllerTests {
 	void checkLoginSuccess() {
 		// given
 		HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-		LoginCheckResponse loginCheckResponse = new LoginCheckResponse("USER");
+		LoginResponse loginResponse = new LoginResponse("USER");
 
 		Cookie cookie = new Cookie("token", "mock-token");
 		given(mockRequest.getCookies()).willReturn(new Cookie[] { cookie });
 
-		given(this.authService.findRoleByToken(any())).willReturn(loginCheckResponse);
+		given(this.authService.findRoleByToken(any())).willReturn(loginResponse);
 
 		// when
-		ResponseEntity<LoginCheckResponse> responseEntity = this.loginController.check(mockRequest);
+		ResponseEntity<LoginResponse> responseEntity = this.loginController.check(mockRequest);
 
 		// then
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(responseEntity.getBody()).isEqualTo(loginCheckResponse);
+		assertThat(responseEntity.getBody()).isEqualTo(loginResponse);
 	}
 
 	@Test

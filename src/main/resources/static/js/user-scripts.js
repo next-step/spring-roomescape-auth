@@ -87,10 +87,15 @@ function login() {
           signup()
           throw new Error('Login failed');
         }
+        return response.json();
       })
-      .then(() => {
+      .then(data => {
         updateUIBasedOnLogin(); // UI 업데이트
-        window.location.href = '/';
+        if (data.role === 'ADMIN') {
+          window.location.href = "/admin/reservation";
+        } else {
+          window.location.href = "/reservation";
+        }
       })
       .catch(error => {
         console.error('Error during login:', error);

@@ -1,9 +1,10 @@
 package roomescape.controller;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import roomescape.auth.JwtCookieManager;
-import roomescape.controller.dto.LoginCheckResponse;
+import roomescape.controller.dto.LoginResponse;
 import roomescape.controller.dto.LoginRequest;
 import roomescape.service.AuthService;
 
@@ -25,16 +26,17 @@ public class LoginController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<Void> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
 		LoginRequest.validateLoginInfo(request);
 		var token = this.authService.generateLoginToken(request);
 		var createCookie = JwtCookieManager.createCookie(token, COOKIE_MAX_AGE);
 		response.addCookie(createCookie);
-		return ResponseEntity.ok().build();
+		var loginResponse = this.authService.findRoleByToken(new Cookie[] {createCookie});
+		return ResponseEntity.ok().body(loginResponse);
 	}
 
 	@GetMapping("/login/check")
-	public ResponseEntity<LoginCheckResponse> check(HttpServletRequest request) {
+	public ResponseEntity<LoginResponse> check(HttpServletRequest request) {
 		return ResponseEntity.ok().body(this.authService.findRoleByToken(request.getCookies()));
 	}
 
