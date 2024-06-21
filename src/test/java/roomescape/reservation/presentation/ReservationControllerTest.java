@@ -87,7 +87,7 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약을 생성 시 존재하지 않는 시간 ID로 생성하면 예외가 발생한다.")
     void testCreateReservation_InvalidTimeId() {
-        UserReservationCreateRequest request = new UserReservationCreateRequest(date, 2L, 1L);
+        UserReservationCreateRequest request = new UserReservationCreateRequest(date, 10L, 1L);
 
         RestAssured.given().log().all()
                 .cookie("token", accessToken)
@@ -101,7 +101,7 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약을 생성 시 존재하지 않는 테마 ID로 생성하면 예외가 발생한다.")
     void testCreateReservation_InvalidThemeId() {
-        UserReservationCreateRequest request = new UserReservationCreateRequest(date, 1L, 2L);
+        UserReservationCreateRequest request = new UserReservationCreateRequest(date, 1L, 10L);
 
         RestAssured.given().log().all()
                 .cookie("token", accessToken)

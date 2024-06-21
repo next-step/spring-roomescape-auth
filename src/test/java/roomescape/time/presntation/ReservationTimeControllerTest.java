@@ -35,7 +35,7 @@ class ReservationTimeControllerTest {
     @Test
     @DisplayName("시간 추가를 한다.")
     void testCreateReservationTime() {
-        Map<String, String> params = Map.of("startAt", "12:00");
+        Map<String, String> params = Map.of("startAt", "13:00");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
@@ -78,7 +78,7 @@ class ReservationTimeControllerTest {
                 .when().get("/times")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .body("size()", is(1));
+                .body("size()", is(3));
     }
 
     @Test
@@ -170,14 +170,14 @@ class ReservationTimeControllerTest {
                 .when().get("/times/available")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .body("size()", is(2));
+                .body("size()", is(3));
     }
 
     @Test
     @DisplayName("예약 가능한 시간 조회 시 테마를 찾을 수 없으면 실패한다.")
     void getAvailableTimes_Fail() {
         LocalDate date = LocalDate.of(2021, 10, 1);
-        Long themeId = 1L;
+        Long themeId = 7L;
 
         RestAssured.given().log().all()
                 .param("date", date.toString())

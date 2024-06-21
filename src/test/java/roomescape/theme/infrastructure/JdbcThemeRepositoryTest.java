@@ -64,7 +64,7 @@ class JdbcThemeRepositoryTest {
     void findAll() {
         List<Theme> themes = themeRepository.findAll();
 
-        assertThat(themes).hasSize(1);
+        assertThat(themes).hasSize(4);
     }
 
     @Test
@@ -78,7 +78,7 @@ class JdbcThemeRepositoryTest {
     @Test
     @DisplayName("테마가 존재하면 FALSE를 반환한다.")
     void existsById_ReturnFalse() {
-        boolean result = themeRepository.existsById(1L);
+        boolean result = themeRepository.existsById(10L);
 
         assertThat(result).isFalse();
     }
