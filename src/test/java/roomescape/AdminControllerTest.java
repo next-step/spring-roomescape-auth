@@ -41,7 +41,7 @@ class AdminControllerTest {
                 .cookie("token", accessToken)
                 .contentType(ContentType.JSON)
                 .body(request)
-                .when().post("/admin/reservation")
+                .when().post("/admin/reservations")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value());
     }
