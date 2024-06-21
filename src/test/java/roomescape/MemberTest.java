@@ -61,7 +61,7 @@ public class MemberTest {
 
 
     @Test
-    void 아이디와_비밀번호로_로그인을_할_수_있다() {
+    void 아이디와_비밀번호로_로그인을_하고_쿠키를_전달_받는다() {
 
         회원가입을_한다();
         Map<String, Object> member = new HashMap<>();
@@ -86,7 +86,7 @@ public class MemberTest {
     void 쿠키의_토큰을_이용해서_사용자_정보를_조회_및_전달_할_수_있다() {
 
         //given
-        아이디와_비밀번호로_로그인을_할_수_있다();
+        아이디와_비밀번호로_로그인을_하고_쿠키를_전달_받는다();
 
         //when
         ExtractableResponse<Response> response = RestAssured.given().log().all()
