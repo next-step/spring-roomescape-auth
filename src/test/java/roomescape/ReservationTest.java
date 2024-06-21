@@ -30,13 +30,18 @@ public class ReservationTest {
     private static final String START_AT = "startAt";
     private static final String DESCRIPTION = "description";
     private static final String THUMBNAIL = "thumbnail";
+    private static final String EMAIL = "email";
+    private static final String PASSWORD = "password";
+    private static final String TOKEN = "token";
     private static final String CURRENT_DATE = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     private static final String REQUEST_TIME = LocalTime.now().plusMinutes(5L).format(DateTimeFormatter.ofPattern("HH:mm"));
 
+    private static String token = null;
 
     @BeforeEach
-    void 테마와_시간을_추가한다() {
+    void 테마와_시간을_추가하고_회원가입까지_마친_후_로그인을_통해_쿠키를_전달_받는다() {
 
+        /* 테마 추가 */
         //given
         Map<String, Object> theme = new HashMap<>();
         theme.put(NAME, "무시무시한 공포 테마");
@@ -55,6 +60,7 @@ public class ReservationTest {
         assertThat(themeResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(themeResponse.jsonPath().getLong(ID)).isEqualTo(1L);
 
+        /* 예약시간 추가 */
         //given
         Map<String, Object> time = new HashMap<>();
         time.put(DATE, CURRENT_DATE);
@@ -72,6 +78,44 @@ public class ReservationTest {
         //then
         assertThat(timeResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(timeResponse.jsonPath().getLong(ID)).isEqualTo(1);
+
+        /* 회원가입 */
+        //given
+        Map<String, Object> saveMember = new HashMap<>();
+        saveMember.put(EMAIL, "test@naver.com");
+        saveMember.put(PASSWORD, "password123");
+        saveMember.put(NAME, "박민욱");
+
+        //when
+        ExtractableResponse<Response> savedResponse = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(saveMember)
+                .when().post("/members")
+                .then().log().all()
+                .extract();
+
+        //then
+        assertThat(savedResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(savedResponse.jsonPath().getString(NAME)).isEqualTo("박민욱");
+
+        /* 로그인을 통해 쿠키 받기 */
+        //given
+        Map<String, Object> loginMember = new HashMap<>();
+        loginMember.put(EMAIL, "test@naver.com");
+        loginMember.put(PASSWORD, "password123");
+
+        //when
+        ExtractableResponse<Response> loginResponse = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(loginMember)
+                .when().post("/login")
+                .then().log().all()
+                .extract();
+
+        //then
+        assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(loginResponse.cookie(TOKEN)).isNotNull();
+        token = loginResponse.cookie(TOKEN);
     }
 
     @Test
@@ -79,7 +123,7 @@ public class ReservationTest {
 
         //when
         ExtractableResponse<Response> response = RestAssured.given().log().all()
-                .when().get("/admin/reservation")
+                .when().get("/reservation")
                 .then().log().all()
                 .extract();
 
@@ -93,7 +137,7 @@ public class ReservationTest {
 
         //given
         Map<String, Object> reservation = new HashMap<>();
-        reservation.put(NAME, "johnPark");
+        reservation.put(NAME, "박민욱");
         reservation.put(DATE, CURRENT_DATE);
         reservation.put(TIME_ID, 1L);
         reservation.put(THEME_ID, 1L);
@@ -101,6 +145,7 @@ public class ReservationTest {
         //when
         ExtractableResponse<Response> response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie(TOKEN, token)
                 .body(reservation)
                 .when().post("/reservations")
                 .then().log().all()
