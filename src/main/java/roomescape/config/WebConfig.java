@@ -2,8 +2,11 @@ package roomescape.config;
 
 import java.util.List;
 
+import roomescape.auth.JwtTokenProvider;
 import roomescape.service.AuthService;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -12,12 +15,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-	private final AuthService authService;
-
 	private final LoginMemberArgumentResolver loginMemberArgumentResolver;
 
-	WebConfig(LoginMemberArgumentResolver loginMemberArgumentResolver, AuthService authService) {
+	private final JwtTokenProvider jwtTokenProvider;
+
+	private final AuthService authService;
+
+	WebConfig(LoginMemberArgumentResolver loginMemberArgumentResolver, JwtTokenProvider jwtTokenProvider,
+			AuthService authService) {
 		this.loginMemberArgumentResolver = loginMemberArgumentResolver;
+		this.jwtTokenProvider = jwtTokenProvider;
 		this.authService = authService;
 	}
 
@@ -29,6 +36,16 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new RoleInterceptor(this.authService)).addPathPatterns("/admin/**");
+	}
+
+	@Bean
+	public FilterRegistrationBean<LoginCheckFilter> loginCheckFilter() {
+		FilterRegistrationBean<LoginCheckFilter> registrationBean = new FilterRegistrationBean<>();
+		registrationBean.setFilter(new LoginCheckFilter(this.jwtTokenProvider));
+		registrationBean.addUrlPatterns("/");
+		registrationBean.addUrlPatterns("/admin/*");
+		registrationBean.addUrlPatterns("/reservation/*");
+		return registrationBean;
 	}
 
 }
