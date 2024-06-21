@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import roomescape.DataTimeFormatterUtils;
 import roomescape.auth.JwtCookieManager;
 import roomescape.auth.JwtTokenProvider;
-import roomescape.controller.dto.MemberResponse;
+import roomescape.web.controller.dto.MemberResponse;
 import roomescape.domain.MemberRole;
 
 import org.springframework.beans.factory.annotation.Autowired;

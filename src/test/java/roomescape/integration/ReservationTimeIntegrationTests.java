@@ -3,8 +3,8 @@ package roomescape.integration;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import roomescape.controller.dto.ReservationTimeRequest;
-import roomescape.controller.dto.ReservationTimeResponse;
+import roomescape.web.controller.dto.ReservationTimeRequest;
+import roomescape.web.controller.dto.ReservationTimeResponse;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;

@@ -1,8 +1,8 @@
 package roomescape.integration;
 
 import org.junit.jupiter.api.Test;
-import roomescape.controller.dto.MemberRequest;
-import roomescape.controller.dto.MemberResponse;
+import roomescape.web.controller.dto.MemberRequest;
+import roomescape.web.controller.dto.MemberResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

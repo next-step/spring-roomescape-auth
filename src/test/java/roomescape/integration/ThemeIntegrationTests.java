@@ -3,8 +3,8 @@ package roomescape.integration;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import roomescape.controller.dto.ThemeRequest;
-import roomescape.controller.dto.ThemeResponse;
+import roomescape.web.controller.dto.ThemeRequest;
+import roomescape.web.controller.dto.ThemeResponse;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;

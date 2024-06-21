@@ -2,8 +2,8 @@ package roomescape.service;
 
 import java.util.List;
 
-import roomescape.controller.dto.ThemeRequest;
-import roomescape.controller.dto.ThemeResponse;
+import roomescape.web.controller.dto.ThemeRequest;
+import roomescape.web.controller.dto.ThemeResponse;
 import roomescape.domain.Theme;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;

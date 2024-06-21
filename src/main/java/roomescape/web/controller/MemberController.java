@@ -1,0 +1,41 @@
+package roomescape.web.controller;
+
+import java.util.List;
+
+import roomescape.web.controller.dto.MemberRequest;
+import roomescape.web.controller.dto.MemberResponse;
+import roomescape.service.MemberService;
+import roomescape.auth.PasswordEncoder;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/members")
+public class MemberController {
+
+	private final MemberService memberService;
+
+	MemberController(MemberService memberService) {
+		this.memberService = memberService;
+	}
+
+	@PostMapping
+	public ResponseEntity<MemberResponse> create(@RequestBody MemberRequest request) {
+		MemberRequest memberRequest = new MemberRequest(request.name(), request.email(),
+				PasswordEncoder.encode(request.password()));
+		MemberRequest.validateMember(memberRequest);
+		return new ResponseEntity<>(this.memberService.create(memberRequest), HttpStatus.CREATED);
+	}
+
+	@GetMapping
+	public ResponseEntity<List<MemberResponse>> findAllMembersViaRoleUser() {
+		return ResponseEntity.ok(this.memberService.findAllMembersViaRoleUser());
+	}
+
+}

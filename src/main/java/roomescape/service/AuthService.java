@@ -4,13 +4,13 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import roomescape.auth.JwtCookieManager;
 import roomescape.auth.JwtTokenProvider;
-import roomescape.controller.dto.LoginResponse;
-import roomescape.controller.dto.LoginRequest;
-import roomescape.controller.dto.MemberResponse;
+import roomescape.web.controller.dto.LoginResponse;
+import roomescape.web.controller.dto.LoginRequest;
+import roomescape.web.controller.dto.MemberResponse;
 import roomescape.domain.LoginMember;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
-import roomescape.support.PasswordEncoder;
+import roomescape.auth.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
 

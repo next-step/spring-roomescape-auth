@@ -5,10 +5,10 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import roomescape.controller.dto.CreateReservationRequest;
-import roomescape.controller.dto.ReservationAdminRequest;
-import roomescape.controller.dto.ReservationRequest;
-import roomescape.controller.dto.ReservationResponse;
+import roomescape.web.controller.dto.CreateReservationRequest;
+import roomescape.web.controller.dto.ReservationAdminRequest;
+import roomescape.web.controller.dto.ReservationRequest;
+import roomescape.web.controller.dto.ReservationResponse;
 import roomescape.domain.LoginMember;
 import roomescape.domain.Reservation;
 import roomescape.exception.ErrorCode;

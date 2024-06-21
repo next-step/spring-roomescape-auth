@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import roomescape.domain.Member;
 import roomescape.domain.MemberRole;
-import roomescape.support.PasswordEncoder;
+import roomescape.auth.PasswordEncoder;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

@@ -3,9 +3,9 @@ package roomescape.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import roomescape.controller.dto.LoginRequest;
-import roomescape.controller.dto.MemberRequest;
-import roomescape.controller.dto.MemberResponse;
+import roomescape.web.controller.dto.LoginRequest;
+import roomescape.web.controller.dto.MemberRequest;
+import roomescape.web.controller.dto.MemberResponse;
 import roomescape.domain.Member;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;

@@ -3,9 +3,9 @@ package roomescape.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import roomescape.controller.dto.AvailableReservationTimeResponse;
-import roomescape.controller.dto.ReservationTimeRequest;
-import roomescape.controller.dto.ReservationTimeResponse;
+import roomescape.web.controller.dto.AvailableReservationTimeResponse;
+import roomescape.web.controller.dto.ReservationTimeRequest;
+import roomescape.web.controller.dto.ReservationTimeResponse;
 import roomescape.domain.ReservationTime;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;

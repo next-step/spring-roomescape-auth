@@ -7,7 +7,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import roomescape.config.JwtProperties;
-import roomescape.controller.dto.MemberResponse;
+import roomescape.web.controller.dto.MemberResponse;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
 
