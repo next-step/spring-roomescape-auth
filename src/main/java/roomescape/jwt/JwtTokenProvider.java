@@ -18,6 +18,9 @@ import roomescape.user.domain.User;
 @Component
 public class JwtTokenProvider {
 
+    private static final String EMAIL_CLAIM = "email";
+    private static final String ROLE_CLAIM = "role";
+
     private final SecretKey secretKey;
     private final long expiredMilliseconds;
 
@@ -29,8 +32,8 @@ public class JwtTokenProvider {
     public String createJwt(User user) {
         return Jwts.builder()
                 .subject(user.getId().toString())
-                .claim("email", user.getEmail())
-                .claim("role", user.getRole())
+                .claim(EMAIL_CLAIM, user.getEmail())
+                .claim(ROLE_CLAIM, user.getRole())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMilliseconds))
                 .signWith(secretKey)
@@ -38,11 +41,11 @@ public class JwtTokenProvider {
     }
 
     public String getEmail(String accessToken) {
-        return extractPayload(accessToken).get("email", String.class);
+        return extractPayload(accessToken).get(EMAIL_CLAIM, String.class);
     }
 
     public Role getRole(String accessToken) {
-        String role = extractPayload(accessToken).get("role", String.class);
+        String role = extractPayload(accessToken).get(ROLE_CLAIM, String.class);
         return Role.valueOf(role);
     }
 
