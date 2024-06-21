@@ -112,7 +112,6 @@ class ThemeServiceTests {
 	@Test
 	void createExceptionWhenDuplicateThemeName() {
 		// given
-		Theme theme = Theme.builder().name("테마1").description("첫번째테마").thumbnail("썸네일이미지").build();
 		ThemeRequest request = new ThemeRequest("테마1", "첫번째테마", "썸네일이미지");
 
 		given(this.themeRepository.isExistName(request.name())).willReturn(true);
