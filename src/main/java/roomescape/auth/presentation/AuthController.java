@@ -9,11 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import roomescape.auth.LoginUser;
+import roomescape.auth.UserId;
 import roomescape.auth.application.AuthService;
 import roomescape.auth.dto.CheckUserInfoResponse;
 import roomescape.auth.dto.LoginRequest;
-import roomescape.user.domain.User;
 
 @RestController
 public class AuthController {
@@ -35,13 +34,14 @@ public class AuthController {
     }
 
     @GetMapping("/login/check")
-    public ResponseEntity<CheckUserInfoResponse> checkUserInfo(@LoginUser User user) {
-        CheckUserInfoResponse response = authService.checkUserInfo(user);
+    public ResponseEntity<CheckUserInfoResponse> checkUserInfo(@UserId Long userId) {
+        CheckUserInfoResponse response = authService.checkUserInfo(userId);
         return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@LoginUser User user, HttpServletResponse response) {
+    public ResponseEntity<Void> logout(@UserId Long userId, HttpServletResponse response) {
+        authService.logout(userId);
         Cookie cookie = createCookie("");
         cookie.setMaxAge(0);
         response.addCookie(cookie);

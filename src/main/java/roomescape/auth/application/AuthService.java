@@ -3,6 +3,7 @@ package roomescape.auth.application;
 import org.springframework.stereotype.Service;
 
 import roomescape.auth.dto.CheckUserInfoResponse;
+import roomescape.auth.exception.UnAuthorizedException;
 import roomescape.jwt.JwtTokenProvider;
 import roomescape.user.domain.User;
 import roomescape.user.domain.repository.UserRepository;
@@ -31,7 +32,16 @@ public class AuthService {
         return jwtTokenProvider.createJwt(user);
     }
 
-    public CheckUserInfoResponse checkUserInfo(User user) {
+    public CheckUserInfoResponse checkUserInfo(Long userId) {
+        User user = getUserById(userId);
         return new CheckUserInfoResponse(user.getName());
+    }
+
+    public void logout(Long userId) {
+        getUserById(userId);
+    }
+
+    private User getUserById(final Long userId) {
+        return userRepository.findById(userId).orElseThrow(UnAuthorizedException::new);
     }
 }

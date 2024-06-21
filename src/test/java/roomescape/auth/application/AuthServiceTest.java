@@ -89,9 +89,10 @@ class AuthServiceTest {
     void 사용자_정보를_조회한다() {
         // given
         User user = User.createUser(1L, "어드민", "password", "admin@email.com");
+        given(userRepository.findById(any())).willReturn(Optional.of(user));
 
         // when
-        CheckUserInfoResponse response = authService.checkUserInfo(user);
+        CheckUserInfoResponse response = authService.checkUserInfo(user.getId());
 
         // then
         assertThat(response.name()).isEqualTo("어드민");

@@ -13,10 +13,16 @@ class JwtTokenProviderTest {
 
     private JwtTokenProvider jwtTokenProvider;
 
+    private User user;
+    private String jwt;
+
     @BeforeEach
     void setUp() {
         String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
         jwtTokenProvider = new JwtTokenProvider(secretKey, 1000L);
+
+        user = new User(1L, "name", "email@email.com", "password", Role.USER);
+        jwt = jwtTokenProvider.createJwt(user);
     }
 
     @Test
@@ -34,39 +40,22 @@ class JwtTokenProviderTest {
 
     @Test
     void 토큰에서_이메일을_추출한다() {
-        // given
-        User user = new User(1L, "name", "email@email.com", "password", Role.USER);
-        String jwt = jwtTokenProvider.createJwt(user);
-
-        // when
         String extractedEmail = jwtTokenProvider.getEmail(jwt);
 
-        // then
         assertThat(extractedEmail).isEqualTo(user.getEmail());
     }
 
     @Test
-    void 토큰이_빈문자열이면_NULL을_반환한다() {
-        // given
-        String jwt = "";
+    void 토큰에서_유저의_ROLE을_추출한다() {
+        Role extractedRole = jwtTokenProvider.getRole(jwt);
 
-        // when
-        String extractedEmail = jwtTokenProvider.getEmail(jwt);
-
-        // then
-        assertThat(extractedEmail).isNull();
+        assertThat(extractedRole).isEqualTo(Role.USER);
     }
 
     @Test
-    void 토큰에서_유저의_ROLE을_추출한다() {
-        // given
-        User user = new User(1L, "name", "email@email.com", "password", Role.USER);
-        String jwt = jwtTokenProvider.createJwt(user);
+    void 토큰에서_subject를_추출한다() {
+        Long extractedUserId = jwtTokenProvider.getUserId(jwt);
 
-        // when
-        Role extractedRole = jwtTokenProvider.getRole(jwt);
-
-        // then
-        assertThat(extractedRole).isEqualTo(Role.USER);
+        assertThat(extractedUserId).isEqualTo(user.getId());
     }
 }

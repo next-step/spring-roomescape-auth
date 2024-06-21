@@ -11,7 +11,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import roomescape.auth.exception.UnAuthorizedException;
 import roomescape.jwt.JwtTokenProvider;
 import roomescape.user.domain.repository.UserRepository;
 
@@ -29,16 +28,16 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(LoginUser.class);
+        return parameter.hasParameterAnnotation(UserId.class);
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         Cookie[] cookies = request.getCookies();
         String token = extractTokenFromCookie(cookies);
-        String email = jwtTokenProvider.getEmail(token);
-        return userRepository.findByEmail(email).orElseThrow(UnAuthorizedException::new);
+        return jwtTokenProvider.getUserId(token);
     }
 
     private String extractTokenFromCookie(Cookie[] cookies) {
