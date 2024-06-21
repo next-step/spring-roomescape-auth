@@ -34,4 +34,5 @@ public class JwtProperties {
 	public void setClockSkewSeconds(long clockSkewSeconds) {
 		this.clockSkewSeconds = clockSkewSeconds;
 	}
+
 }
