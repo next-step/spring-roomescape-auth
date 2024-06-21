@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.time.LocalDate;
 import java.util.Map;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,22 +20,6 @@ import roomescape.reservation.dto.UserReservationCreateRequest;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ThemeControllerTest {
-
-    @BeforeEach
-    void setUp() {
-//        Map<String, String> params = Map.of(
-//                "name", "레벨2 탈출",
-//                "description", "우테코 레벨2를 탈출하는 내용입니다.",
-//                "thumbnail", "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg"
-//        );
-//
-//        RestAssured.given().log().all()
-//                .contentType(ContentType.JSON)
-//                .body(params)
-//                .when().post("/themes")
-//                .then().log().all()
-//                .statusCode(HttpStatus.CREATED.value());
-    }
 
     @Test
     @DisplayName("테마를 생성한다.")

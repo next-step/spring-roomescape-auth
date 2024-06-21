@@ -1,7 +1,6 @@
 package roomescape.reservation.presentation;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,24 +27,6 @@ class ReservationControllerTest {
 
     @BeforeEach
     void setUp() {
-        Map<String, String> param = Map.of("startAt", "10:00");
-
-        RestAssured.given().log().all()
-                .contentType(ContentType.JSON)
-                .body(param)
-                .when().post("/times")
-                .then().log().all();
-
-        Map<String, String> params = Map.of("name", "레벨1 탈출",
-                "description", "우테코 레벨1을 탈출하는 내용입니다.",
-                "thumbnail", "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
-
-        RestAssured.given().log().all()
-                .contentType(ContentType.JSON)
-                .body(params)
-                .when().post("/themes")
-                .then().log().all();
-
         LoginRequest loginRequest = new LoginRequest("admin@email.com", "password");
 
         accessToken = RestAssured.given().log().all()
