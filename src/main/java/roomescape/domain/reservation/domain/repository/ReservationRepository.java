@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import roomescape.domain.member.domain.Member;
 import roomescape.domain.reservation.domain.Reservation;
 import roomescape.domain.theme.domain.Theme;
 import roomescape.domain.time.domain.Time;
@@ -25,15 +26,21 @@ public class ReservationRepository {
                 t.id AS theme_id, 
                 t.name AS theme_name, 
                 t.description AS theme_description, 
-                t.thumbnail AS theme_thumbnail 
+                t.thumbnail AS theme_thumbnail,
+                m.id AS member_id,
+                m.name AS member_name,
+                m.email AS member_email,
+                m.password AS member_password
             FROM reservation r 
             INNER JOIN reservation_time rt 
                 ON r.time_id = rt.id 
             INNER JOIN theme t 
                 ON r.theme_id = t.id 
+            INNER JOIN member m 
+                ON r.member_id = m.id 
             WHERE r.id = ?;
             """;
-    private static final String SAVE_SQL = "INSERT INTO reservation (name, date, time_id, theme_id) VALUES (?, ?, ?, ?)";
+    private static final String SAVE_SQL = "INSERT INTO reservation (name, date, time_id, theme_id, member_id) VALUES (?, ?, ?, ?, ?)";
     private static final String FIND_ALL_SQL = """
             SELECT 
                 r.id AS reservation_id, 
@@ -44,12 +51,18 @@ public class ReservationRepository {
                 t.id AS theme_id, 
                 t.name AS theme_name, 
                 t.description AS theme_description, 
-                t.thumbnail AS theme_thumbnail 
+                t.thumbnail AS theme_thumbnail,
+                m.id AS member_id,
+                m.name AS member_name,
+                m.email AS member_email,
+                m.password AS member_password
             FROM reservation r 
             INNER JOIN reservation_time rt 
                 ON r.time_id = rt.id 
             INNER JOIN theme t 
                 ON r.theme_id = t.id 
+            INNER JOIN member m 
+                ON r.member_id = m.id;
             """;
     private static final String DELETE_SQL = "DELETE FROM reservation WHERE id = ?;";
     private static final String ID = "id";
@@ -62,6 +75,10 @@ public class ReservationRepository {
     private static final String THEME_NAME = "theme_name";
     private static final String THEME_DESCRIPTION = "theme_description";
     private static final String THEME_THUMBNAIL = "theme_thumbnail";
+    private static final String MEMBER_ID = "member_id";
+    private static final String MEMBER_NAME = "member_name";
+    private static final String MEMBER_EMAIL = "member_email";
+    private static final String MEMBER_PASSWORD = "member_password";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -82,11 +99,16 @@ public class ReservationRepository {
                         rs.getString(THEME_NAME),
                         rs.getString(THEME_DESCRIPTION),
                         rs.getString(THEME_THUMBNAIL)
-                )
-        ), reservationId);
+                ),
+                new Member(
+                        rs.getLong(MEMBER_ID),
+                        rs.getString(MEMBER_NAME),
+                        rs.getString(MEMBER_EMAIL),
+                        rs.getString(MEMBER_PASSWORD)
+                )), reservationId);
     }
 
-    public long save(Reservation reservation) {
+    public Long save(Reservation reservation) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(
@@ -97,6 +119,7 @@ public class ReservationRepository {
             preparedStatement.setString(2, reservation.getDate());
             preparedStatement.setLong(3, reservation.getTime().getId());
             preparedStatement.setLong(4, reservation.getTheme().getId());
+            preparedStatement.setLong(5, reservation.getMember().getId());
             return preparedStatement;
         }, keyHolder);
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
@@ -116,8 +139,13 @@ public class ReservationRepository {
                                 rs.getString(THEME_NAME),
                                 rs.getString(THEME_DESCRIPTION),
                                 rs.getString(THEME_THUMBNAIL)
-                        )
-                )
+                        ),
+                        new Member(
+                                rs.getLong(MEMBER_ID),
+                                rs.getString(MEMBER_NAME),
+                                rs.getString(MEMBER_EMAIL),
+                                rs.getString(MEMBER_PASSWORD)
+                        ))
         );
     }
 

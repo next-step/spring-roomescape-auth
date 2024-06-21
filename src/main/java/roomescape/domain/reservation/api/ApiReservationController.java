@@ -2,6 +2,8 @@ package roomescape.domain.reservation.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import roomescape.argumentResolver.annotation.CookieConverter;
+import roomescape.domain.member.domain.Member;
 import roomescape.domain.reservation.domain.Reservation;
 import roomescape.domain.reservation.service.ReservationService;
 import roomescape.domain.reservation.service.dto.ReservationRequest;
@@ -29,22 +31,22 @@ public class ApiReservationController {
                         reservation.getName(),
                         reservation.getDate(),
                         reservation.getTime(),
-                        reservation.getTheme()
-                )).collect(Collectors.toList());
+                        reservation.getTheme(),
+                        reservation.getMember())).collect(Collectors.toList());
         return ResponseEntity.ok().body(responses);
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> save(@RequestBody ReservationRequest reservationRequest) {
-        Reservation reservation = reservationService.save(reservationRequest);
+    public ResponseEntity<ReservationResponse> save(@CookieConverter Member loginMember, @RequestBody ReservationRequest reservationRequest) {
+        Reservation reservation = reservationService.save(reservationRequest, loginMember);
         return ResponseEntity.ok().body(
                 new ReservationResponse(
                         reservation.getId(),
                         reservation.getName(),
                         reservation.getDate(),
                         reservation.getTime(),
-                        reservation.getTheme()
-                ));
+                        reservation.getTheme(),
+                        reservation.getMember()));
     }
 
     @DeleteMapping("/{id}")
