@@ -12,18 +12,15 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import roomescape.jwt.JwtTokenProvider;
-import roomescape.user.domain.repository.UserRepository;
 
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
     private static final String TOKEN_COOKIE_NAME = "token";
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepository userRepository;
 
-    public LoginUserArgumentResolver(final JwtTokenProvider jwtTokenProvider, final UserRepository userRepository) {
+    public LoginUserArgumentResolver(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.userRepository = userRepository;
     }
 
     @Override
