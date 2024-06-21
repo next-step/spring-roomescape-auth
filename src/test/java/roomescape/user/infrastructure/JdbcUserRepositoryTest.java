@@ -2,6 +2,8 @@ package roomescape.user.infrastructure;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,5 +51,12 @@ class JdbcUserRepositoryTest {
 
         // then
         assertThat(user.getEmail()).isEqualTo(email);
+    }
+
+    @Test
+    void 가입된_모든_회원을_조회한다() {
+        List<User> users = userRepository.findAll();
+
+        assertThat(users).hasSize(2);
     }
 }
