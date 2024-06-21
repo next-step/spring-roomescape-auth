@@ -42,7 +42,7 @@ class AuthServiceTest {
         User user = User.createUser(1L, "어드민", "admin@email.com", "password");
 
         given(userRepository.findByEmail(anyString())).willReturn(Optional.of(user));
-        given(jwtTokenProvider.createJwt(anyString(), any())).willReturn("accessToken");
+        given(jwtTokenProvider.createJwt(any())).willReturn("accessToken");
 
         LoginRequest request = new LoginRequest(user.getEmail(), user.getPassword());
 

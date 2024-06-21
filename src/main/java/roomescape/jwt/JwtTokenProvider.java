@@ -11,6 +11,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 import roomescape.user.domain.Role;
+import roomescape.user.domain.User;
 
 @Component
 public class JwtTokenProvider {
@@ -23,10 +24,11 @@ public class JwtTokenProvider {
         this.expiredMilliseconds = validityInMilliseconds;
     }
 
-    public String createJwt(String email, Role role) {
+    public String createJwt(User user) {
         return Jwts.builder()
-                .claim("email", email)
-                .claim("role", role)
+                .subject(user.getId().toString())
+                .claim("email", user.getEmail())
+                .claim("role", user.getRole())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMilliseconds))
                 .signWith(secretKey)
