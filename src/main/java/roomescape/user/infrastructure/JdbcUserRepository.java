@@ -1,5 +1,6 @@
 package roomescape.user.infrastructure;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -50,5 +51,17 @@ public class JdbcUserRepository implements UserRepository {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<User> findAll() {
+        String sql = "SELECT * FROM users";
+        return jdbcTemplate.query(sql, (resultSet, rowNum) -> new User(
+                resultSet.getLong("id"),
+                resultSet.getString("name"),
+                resultSet.getString("email"),
+                resultSet.getString("password"),
+                resultSet.getString("role")
+        ));
     }
 }
