@@ -36,7 +36,7 @@ public class ApiLoginController {
 
     @GetMapping("/check")
     public ResponseEntity<MemberResponse> loginCheck(@CookieConverter Member loginMember) {
-        MemberResponse memberResponse = new MemberResponse(loginMember.getName());
+        MemberResponse memberResponse = new MemberResponse(loginMember.getId(), loginMember.getName());
         return ResponseEntity.ok().body(memberResponse);
     }
 }

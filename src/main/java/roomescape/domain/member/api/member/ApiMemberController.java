@@ -22,13 +22,13 @@ public class ApiMemberController {
     @PostMapping
     public ResponseEntity<MemberResponse> save(@RequestBody MemberRequest memberRequest) {
         Member member = memberService.save(memberRequest);
-        return ResponseEntity.ok().body(new MemberResponse(member.getName()));
+        return ResponseEntity.ok().body(new MemberResponse(member.getId(), member.getName()));
     }
 
     @GetMapping
     public ResponseEntity<List<MemberResponse>> findAll() {
         List<Member> members = memberService.findAll();
-        List<MemberResponse> memberResponses = members.stream().map(member -> new MemberResponse(member.getName())).toList();
+        List<MemberResponse> memberResponses = members.stream().map(member -> new MemberResponse(member.getId(), member.getName())).toList();
         return ResponseEntity.ok().body(memberResponses);
     }
 }
