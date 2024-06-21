@@ -2,10 +2,9 @@ package roomescape.web.controller;
 
 import java.util.List;
 
+import roomescape.service.MemberService;
 import roomescape.web.controller.dto.MemberRequest;
 import roomescape.web.controller.dto.MemberResponse;
-import roomescape.service.MemberService;
-import roomescape.auth.PasswordEncoder;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +26,8 @@ public class MemberController {
 
 	@PostMapping
 	public ResponseEntity<MemberResponse> create(@RequestBody MemberRequest request) {
-		MemberRequest memberRequest = new MemberRequest(request.name(), request.email(),
-				PasswordEncoder.encode(request.password()));
-		MemberRequest.validateMember(memberRequest);
-		return new ResponseEntity<>(this.memberService.create(memberRequest), HttpStatus.CREATED);
+		MemberRequest.validateMember(request);
+		return new ResponseEntity<>(this.memberService.create(request), HttpStatus.CREATED);
 	}
 
 	@GetMapping

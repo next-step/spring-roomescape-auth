@@ -3,14 +3,15 @@ package roomescape.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import roomescape.web.controller.dto.LoginRequest;
-import roomescape.web.controller.dto.MemberRequest;
-import roomescape.web.controller.dto.MemberResponse;
 import roomescape.domain.Member;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
 import roomescape.repository.MemberRepository;
+import roomescape.web.controller.dto.LoginRequest;
+import roomescape.web.controller.dto.MemberRequest;
+import roomescape.web.controller.dto.MemberResponse;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,12 +19,16 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 
-	MemberService(MemberRepository memberRepository) {
+	private final PasswordEncoder passwordEncoder;
+
+	MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
 		this.memberRepository = memberRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	public MemberResponse create(MemberRequest request) {
-		var member = Member.builder().name(request.name()).email(request.email()).password(request.password()).build();
+		var encodedPassword = this.passwordEncoder.encode(request.password());
+		var member = Member.builder().name(request.name()).email(request.email()).password(encodedPassword).build();
 
 		var isExists = this.memberRepository.isExists(request.name());
 		if (isExists) {
@@ -60,7 +65,7 @@ public class MemberService {
 	}
 
 	private void checkPassword(String inputPassword, String storedPassword) {
-		if (!inputPassword.equals(storedPassword)) {
+		if (!this.passwordEncoder.matches(inputPassword, storedPassword)) {
 			throw new RoomEscapeException(ErrorCode.INVALID_PASSWORD);
 		}
 	}

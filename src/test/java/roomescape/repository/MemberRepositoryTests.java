@@ -14,11 +14,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import roomescape.domain.Member;
 import roomescape.domain.MemberRole;
-import roomescape.auth.PasswordEncoder;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +41,9 @@ class MemberRepositoryTests {
 
 	@Mock
 	private DataSource dataSource;
+
+	@Mock
+	private PasswordEncoder passwordEncoder;
 
 	@BeforeEach
 	void setUp() {
@@ -80,12 +83,15 @@ class MemberRepositoryTests {
 	@Test
 	void save() {
 		// given
+		String encodedPassword = "$2a$10$D9JmY9b3iD9Oa1HlB3fGkO8poYm6wE4FzQ/tO/2a8JlR1XtGfb0b2";
+		given(this.passwordEncoder.encode("1234")).willReturn(encodedPassword);
+
 		Member member = Member.builder()
-			.name("tester")
-			.email("tester@gmail.com")
-			.password(PasswordEncoder.encode("1234"))
-			.role(MemberRole.USER.name())
-			.build();
+				.name("tester")
+				.email("tester@gmail.com")
+				.password(encodedPassword)
+				.role(MemberRole.USER.name())
+				.build();
 
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("name", member.getName());

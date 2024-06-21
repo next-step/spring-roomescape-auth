@@ -34,6 +34,7 @@ public class LoginCheckFilter implements Filter {
 
 		if (ObjectUtils.isEmpty(token)) {
 			httpResponse.sendRedirect("/login");
+			return;
 		}
 
 		try {

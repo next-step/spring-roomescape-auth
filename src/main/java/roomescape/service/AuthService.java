@@ -4,13 +4,12 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import roomescape.auth.JwtCookieManager;
 import roomescape.auth.JwtTokenProvider;
-import roomescape.web.controller.dto.LoginResponse;
-import roomescape.web.controller.dto.LoginRequest;
-import roomescape.web.controller.dto.MemberResponse;
 import roomescape.domain.LoginMember;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
-import roomescape.auth.PasswordEncoder;
+import roomescape.web.controller.dto.LoginRequest;
+import roomescape.web.controller.dto.LoginResponse;
+import roomescape.web.controller.dto.MemberResponse;
 
 import org.springframework.stereotype.Service;
 
@@ -34,9 +33,7 @@ public class AuthService {
 
 	public String generateLoginToken(LoginRequest request) {
 		LoginRequest.validateLoginInfo(request);
-		String encodedPassword = PasswordEncoder.encode(request.password());
-		LoginRequest loginRequest = new LoginRequest(request.email(), encodedPassword);
-		MemberResponse memberResponse = this.memberService.findMemberByLoginRequest(loginRequest);
+		MemberResponse memberResponse = this.memberService.findMemberByLoginRequest(request);
 		return this.jwtTokenProvider.createToken(memberResponse);
 	}
 
