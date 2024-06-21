@@ -54,13 +54,13 @@ public class ThemeRepository {
 	}
 
 	public Theme save(Theme theme) {
-		// @formatter: off
+		// @formatter:off
 		Map<String, Object> parameters = Map.of(
 				"name", theme.getName(),
 				"description", theme.getDescription(),
 				"thumbnail", theme.getThumbnail()
 		);
-		// @formatter: on
+		// @formatter:on
 
 		Number generatedId = this.jdbcInsert.executeAndReturnKey(parameters);
 		theme.setId(generatedId.longValue());

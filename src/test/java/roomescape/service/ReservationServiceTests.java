@@ -11,7 +11,6 @@ import org.mockito.MockitoAnnotations;
 import roomescape.DataTimeFormatterUtils;
 import roomescape.controller.dto.ReservationAdminRequest;
 import roomescape.controller.dto.ReservationRequest;
-import roomescape.controller.dto.ReservationResponse;
 import roomescape.domain.LoginMember;
 import roomescape.domain.Member;
 import roomescape.domain.MemberRole;
