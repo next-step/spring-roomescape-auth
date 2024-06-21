@@ -48,7 +48,7 @@ public class ThemeRepository {
 	}
 
 	public boolean isExistName(String name) {
-		String sql = "SELECT COUNT(*) FROM theme WHERE id = ?";
+		String sql = "SELECT COUNT(*) FROM theme WHERE name = ?";
 		int count = this.jdbcTemplate.queryForObject(sql, Integer.class, name);
 		return count > 0;
 	}
