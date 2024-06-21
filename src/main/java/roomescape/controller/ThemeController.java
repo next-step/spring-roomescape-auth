@@ -6,6 +6,8 @@ import roomescape.controller.dto.ThemeRequest;
 import roomescape.controller.dto.ThemeResponse;
 import roomescape.service.ThemeService;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,13 +37,13 @@ public class ThemeController {
 	@PostMapping
 	public ResponseEntity<ThemeResponse> create(@RequestBody ThemeRequest request) {
 		validateThemeRequest(request);
-		return ResponseEntity.ok().body(this.themeService.create(request));
+		return new ResponseEntity<>(this.themeService.create(request), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable("id") long id) {
 		this.themeService.delete(id);
-		return ResponseEntity.ok().build();
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 }

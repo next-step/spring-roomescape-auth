@@ -61,7 +61,7 @@ public class Member {
 
 	@Override
 	public String toString() {
-		// @formatter: off
+		// @formatter:off
 		return "Member{" +
 				"id=" + this.id +
 				", name='" + this.name + '\'' +
@@ -69,7 +69,7 @@ public class Member {
 				", password='" + this.password + '\'' +
 				", role='" + this.role + '\'' +
 				'}';
-		// @formatter: on
+		// @formatter:on
 	}
 
 	public static final class Builder {
@@ -108,5 +108,7 @@ public class Member {
 		public Member build() {
 			return this.member;
 		}
+
 	}
+
 }

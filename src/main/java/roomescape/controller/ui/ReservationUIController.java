@@ -25,4 +25,5 @@ public class ReservationUIController {
 	public String signup() {
 		return "/signup";
 	}
+
 }
