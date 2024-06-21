@@ -1,5 +1,7 @@
 package roomescape.controller;
 
+import java.util.List;
+
 import roomescape.controller.dto.MemberRequest;
 import roomescape.controller.dto.MemberResponse;
 import roomescape.service.MemberService;
@@ -7,6 +9,7 @@ import roomescape.support.PasswordEncoder;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +31,11 @@ public class MemberController {
 				PasswordEncoder.encode(request.password()));
 		MemberRequest.validateMember(memberRequest);
 		return new ResponseEntity<>(this.memberService.create(memberRequest), HttpStatus.CREATED);
+	}
+
+	@GetMapping
+	public ResponseEntity<List<MemberResponse>> findAllMembersViaRoleUser() {
+		return ResponseEntity.ok(this.memberService.findAllMembersViaRoleUser());
 	}
 
 }

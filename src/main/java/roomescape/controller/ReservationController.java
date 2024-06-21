@@ -4,8 +4,10 @@ import java.util.List;
 
 import roomescape.controller.dto.ReservationRequest;
 import roomescape.controller.dto.ReservationResponse;
+import roomescape.domain.LoginMember;
 import roomescape.service.ReservationService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,15 +33,15 @@ public class ReservationController {
 	}
 
 	@PostMapping
-	public ResponseEntity<ReservationResponse> create(@RequestBody ReservationRequest request) {
-		ReservationRequest.validateReservation(request);
-		return ResponseEntity.ok().body(this.reservationService.create(request));
+	public ResponseEntity<ReservationResponse> create(@RequestBody ReservationRequest request,
+			LoginMember loginMember) {
+		return new ResponseEntity<>(this.reservationService.create(request, loginMember), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> cancel(@PathVariable("id") long id) {
 		this.reservationService.cancel(id);
-		return ResponseEntity.ok().build();
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 }

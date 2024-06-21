@@ -66,6 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			case NOT_FOUND_RESERVATION, NOT_FOUND_RESERVATION_TIME, NOT_FOUND_THEME, NOT_FOUND_MEMBER ->
 				HttpStatus.NOT_FOUND;
 			case EXPIRED_LOGIN_TOKEN, INVALID_PASSWORD, NEEDS_LOGIN -> HttpStatus.UNAUTHORIZED;
+			case FORBIDDEN -> HttpStatus.FORBIDDEN;
 		};
 	}
 

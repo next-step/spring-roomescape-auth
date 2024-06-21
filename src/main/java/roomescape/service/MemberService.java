@@ -1,5 +1,8 @@
 package roomescape.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import roomescape.controller.dto.LoginRequest;
 import roomescape.controller.dto.MemberRequest;
 import roomescape.controller.dto.MemberResponse;
@@ -38,6 +41,22 @@ public class MemberService {
 		}
 		checkPassword(request.password(), findedMember.getPassword());
 		return MemberResponse.from(findedMember);
+	}
+
+	public List<MemberResponse> findAllMembersViaRoleUser() {
+		return this.memberRepository.findAllMembersViaRoleUser()
+			.stream()
+			.map((member) -> new MemberResponse(member.getId(), member.getName(), member.getEmail(), member.getRole()))
+			.collect(Collectors.toList());
+	}
+
+	public Member findById(Long id) {
+		var findedMember = this.memberRepository.findById(id);
+
+		if (findedMember == null) {
+			throw new RoomEscapeException(ErrorCode.NOT_FOUND_MEMBER);
+		}
+		return findedMember;
 	}
 
 	private void checkPassword(String inputPassword, String storedPassword) {
