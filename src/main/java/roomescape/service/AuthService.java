@@ -7,6 +7,7 @@ import roomescape.auth.JwtTokenProvider;
 import roomescape.controller.dto.LoginCheckResponse;
 import roomescape.controller.dto.LoginRequest;
 import roomescape.controller.dto.MemberResponse;
+import roomescape.domain.LoginMember;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
 import roomescape.support.PasswordEncoder;
@@ -16,7 +17,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
+	private static final String NAME = "name";
+
 	private static final String ROLE = "role";
+
+	private static final String EMAIL = "email";
 
 	private final MemberService memberService;
 
@@ -36,16 +41,25 @@ public class AuthService {
 	}
 
 	public LoginCheckResponse findRoleByToken(Cookie[] cookies) {
+		Claims claims = extractClaimsFromCookies(cookies);
+		String roleName = claims.get(ROLE, String.class);
+		return new LoginCheckResponse(roleName);
+	}
 
+	public LoginMember findMemberByToken(Cookie[] cookies) {
+		Claims claims = extractClaimsFromCookies(cookies);
+		String name = claims.get(NAME, String.class);
+		String email = claims.get(EMAIL, String.class);
+		String role = claims.get(ROLE, String.class);
+		return LoginMember.builder().name(name).email(email).role(role).build();
+	}
+
+	private Claims extractClaimsFromCookies(Cookie[] cookies) {
 		if (cookies == null || cookies.length == 0) {
 			throw new RoomEscapeException(ErrorCode.NEEDS_LOGIN);
 		}
-		var token = JwtCookieManager.extractTokenFromCookie(cookies);
-
-		Claims role = this.jwtTokenProvider.validateToken(token);
-		String roleName = role.get(ROLE, String.class);
-
-		return new LoginCheckResponse(roleName);
+		String token = JwtCookieManager.extractTokenFromCookie(cookies);
+		return this.jwtTokenProvider.validateToken(token);
 	}
 
 }
