@@ -2,7 +2,6 @@ package roomescape.admin;
 
 import java.time.LocalDate;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -18,25 +17,22 @@ import roomescape.reservation.dto.ReservationCreateRequest;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AdminControllerTest {
 
-    private String accessToken;
-
-    @BeforeEach
-    void setUp() {
+    @Test
+    void 어드민_계정으로_예약을_한다() {
+        // given
         LoginRequest loginRequest = new LoginRequest("admin@email.com", "password");
 
-        accessToken = RestAssured.given().log().all()
+        String accessToken = RestAssured.given().log().all()
                 .body(loginRequest)
                 .contentType(ContentType.JSON)
                 .when().post("/login")
                 .then().log().all()
                 .extract().cookie("token");
-    }
 
-    @Test
-    void 어드민_계정으로_예약을_한다() {
         String date = LocalDate.now().plusDays(1).toString();
         ReservationCreateRequest request = new ReservationCreateRequest(date, 1L, 1L, 1L);
 
+        // when & then
         RestAssured.given().log().all()
                 .cookie("token", accessToken)
                 .contentType(ContentType.JSON)
@@ -44,5 +40,26 @@ class AdminControllerTest {
                 .when().post("/admin/reservations")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value());
+    }
+
+    @Test
+    void 사용자_계정으로_어드민_페이지에_접근하면_예외가_발생한다() {
+        // given
+        LoginRequest loginRequest = new LoginRequest("user@email.com", "password");
+
+        String accessToken = RestAssured.given().log().all()
+                .body(loginRequest)
+                .contentType(ContentType.JSON)
+                .when().post("/login")
+                .then().log().all()
+                .extract().cookie("token");
+
+        // when & then
+        RestAssured.given().log().all()
+                .cookie("token", accessToken)
+                .contentType(ContentType.JSON)
+                .when().post("/admin/reservations")
+                .then().log().all()
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 }
