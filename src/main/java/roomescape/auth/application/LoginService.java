@@ -12,27 +12,27 @@ public class LoginService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CookieUtils cookieUtils;
 
     public LoginService(
             MemberRepository memberRepository,
             PasswordEncoder passwordEncoder,
-            JwtTokenProvider jwtTokenProvider) {
+            JwtTokenProvider jwtTokenProvider,
+            CookieUtils cookieUtils) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.cookieUtils = cookieUtils;
     }
 
     public Cookie login(LoginRequest loginRequest) {
         Long memberId = memberRepository.findByEmailAndPassword(
                         loginRequest.email(),
                         passwordEncoder.encode(loginRequest.password()))
-                .orElseThrow(() -> BadRequestException.of("이메일 또는 비밀번호를 잘못 입력했습니다."))
+                .orElseThrow(() -> BadRequestException.of("이메일 또는 비밀번호를 확인해주세요."))
                 .getId();
 
         String token = jwtTokenProvider.createToken(memberId);
-        Cookie cookie = new Cookie("token", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        return cookie;
+        return cookieUtils.createCookie("token", token);
     }
 }
