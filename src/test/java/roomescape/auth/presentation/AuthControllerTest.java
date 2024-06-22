@@ -77,6 +77,14 @@ class AuthControllerTest {
     }
 
     @Test
+    void 로그인을_하지_않은_상태에서_사용자_정보_조회를_하면_실패한다() {
+        RestAssured.given().log().all()
+                .when().get("/login/check")
+                .then().log().all()
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
+    }
+
+    @Test
     void 로그아웃을_한다() {
         LoginRequest loginRequest = new LoginRequest("admin@email.com", "password");
 
