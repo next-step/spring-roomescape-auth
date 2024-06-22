@@ -9,7 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import roomescape.DataTimeFormatterUtils;
-import roomescape.controller.dto.ReservationRequest;
+import roomescape.web.controller.dto.ReservationAdminRequest;
+import roomescape.web.controller.dto.ReservationRequest;
+import roomescape.domain.LoginMember;
+import roomescape.domain.Member;
+import roomescape.domain.MemberRole;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
@@ -33,6 +37,9 @@ class ReservationServiceTests {
 
 	@Mock
 	private ThemeService themeService;
+
+	@Mock
+	private MemberService memberService;
 
 	@Mock
 	private ReservationRepository reservationRepository;
@@ -105,8 +112,14 @@ class ReservationServiceTests {
 		given(this.reservationTimeRepository.findById(1L)).willReturn(reservationTime);
 		given(this.reservationRepository.save(any(Reservation.class))).willReturn(reservation);
 
+		var loginMember = LoginMember.builder()
+			.name("tester")
+			.email("tester@gmail.com")
+			.role(MemberRole.USER.name())
+			.build();
+
 		// when
-		var createdReservation = this.reservationService.create(request);
+		var createdReservation = this.reservationService.create(request, loginMember);
 
 		// then
 		assertThat(createdReservation).isNotNull();
@@ -121,6 +134,38 @@ class ReservationServiceTests {
 		assertThat(createdReservation.theme().name()).isEqualTo("테마1");
 		assertThat(createdReservation.theme().description()).isEqualTo("첫번째테마");
 		assertThat(createdReservation.theme().thumbnail()).isEqualTo("테마이미지");
+	}
+
+	@Test
+	void createReservationByAdmin() {
+		// given
+
+		ReservationAdminRequest request = new ReservationAdminRequest("예약자이름", "2024-06-30", 1L, 1L, 1L);
+
+		var member = Member.builder().id(1L).name("예약자이름").email("admin@nextstep.com").role("ADMIN").build();
+
+		var reservationTime = ReservationTime.builder().id(1L).startAt("10:00").build();
+
+		var theme = Theme.builder().id(1L).name("테마1").description("테마 설명").thumbnail("테마 이미지").build();
+
+		given(this.memberService.findById(1L)).willReturn(member);
+		given(this.reservationTimeService.getReservationTimeById(1L)).willReturn(reservationTime);
+		given(this.themeService.getThemeById(1L)).willReturn(theme);
+		given(this.reservationRepository.save(any())).willAnswer((invocation) -> {
+			Reservation reservation = invocation.getArgument(0);
+			reservation.setId(1L);
+			return reservation;
+		});
+
+		// when
+		var createdReservation = this.reservationService.createByAdmin(request);
+
+		// then
+		assertThat(createdReservation).isNotNull();
+		assertThat(createdReservation.name()).isEqualTo("예약자이름");
+		assertThat(createdReservation.date()).isEqualTo("2024-06-30");
+		assertThat(createdReservation.time().id()).isEqualTo(1L);
+		assertThat(createdReservation.theme().id()).isEqualTo(1L);
 	}
 
 	@Test

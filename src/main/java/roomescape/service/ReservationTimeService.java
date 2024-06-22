@@ -3,15 +3,14 @@ package roomescape.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import roomescape.controller.dto.AvailableReservationTimeResponse;
-import roomescape.controller.dto.ReservationTimeRequest;
-import roomescape.controller.dto.ReservationTimeResponse;
+import roomescape.web.controller.dto.AvailableReservationTimeResponse;
+import roomescape.web.controller.dto.ReservationTimeRequest;
+import roomescape.web.controller.dto.ReservationTimeResponse;
 import roomescape.domain.ReservationTime;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
 import roomescape.repository.ReservationTimeRepository;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,21 +37,19 @@ public class ReservationTimeService {
 
 	public void delete(long id) {
 		var isExist = this.reservationTimeRepository.isExistId(id);
-		if (isExist) {
-			this.reservationTimeRepository.delete(id);
-		}
-		else {
+		if (!isExist) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_RESERVATION_TIME);
 		}
+		this.reservationTimeRepository.delete(id);
 	}
 
 	public ReservationTime getReservationTimeById(long id) {
-		try {
-			return this.reservationTimeRepository.findById(id);
-		}
-		catch (EmptyResultDataAccessException ex) {
+		var findedReservationTime = this.reservationTimeRepository.findById(id);
+
+		if (findedReservationTime == null) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_RESERVATION_TIME);
 		}
+		return findedReservationTime;
 	}
 
 	public List<AvailableReservationTimeResponse> getAvailableReservationTimes(String date, long themeId) {

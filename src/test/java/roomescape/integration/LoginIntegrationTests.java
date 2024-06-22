@@ -2,8 +2,8 @@ package roomescape.integration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import roomescape.controller.dto.LoginCheckResponse;
-import roomescape.controller.dto.LoginRequest;
+import roomescape.web.controller.dto.LoginResponse;
+import roomescape.web.controller.dto.LoginRequest;
 import roomescape.domain.MemberRole;
 
 import org.springframework.boot.test.context.SpringBootTest;
@@ -78,7 +78,7 @@ class LoginIntegrationTests {
 		// login check
 		// when
 		var checkResponse = this.restTemplate.exchange("http://localhost:" + this.port + "/login/check", HttpMethod.GET,
-				new HttpEntity<>(this.headers), LoginCheckResponse.class);
+				new HttpEntity<>(this.headers), LoginResponse.class);
 
 		// then
 		assertThat(checkResponse.getStatusCode()).isEqualTo(HttpStatus.OK);

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import roomescape.controller.dto.ThemeRequest;
+import roomescape.web.controller.dto.ThemeRequest;
 import roomescape.domain.Theme;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
@@ -61,14 +61,14 @@ class ThemeServiceTests {
 	void create() {
 		// given
 		Theme theme = Theme.builder().name("테마1").description("첫번째테마").thumbnail("썸네일이미지").build();
+		ThemeRequest request = new ThemeRequest("테마1", "첫번째테마", "썸네일이미지");
 
+		given(this.themeRepository.isExistName(request.name())).willReturn(false);
 		given(this.themeRepository.save(theme)).willAnswer((invocationOnMock) -> {
 			Theme savedTheme = invocationOnMock.getArgument(0);
 			savedTheme.setId(1L);
 			return savedTheme;
 		});
-
-		ThemeRequest request = new ThemeRequest("테마1", "첫번째테마", "썸네일이미지");
 
 		// when
 		var createdTheme = this.themeService.create(request);
@@ -82,7 +82,7 @@ class ThemeServiceTests {
 	}
 
 	@Test
-	void deleteException() {
+	void deleteWhenThemeNotFound() {
 		// given
 		long id = 1L;
 
@@ -107,6 +107,18 @@ class ThemeServiceTests {
 		assertThat(resultThemeById.getName()).isEqualTo("테마1");
 		assertThat(resultThemeById.getDescription()).isEqualTo("첫번째테마");
 		assertThat(resultThemeById.getThumbnail()).isEqualTo("썸네일이미지");
+	}
+
+	@Test
+	void createExceptionWhenDuplicateThemeName() {
+		// given
+		ThemeRequest request = new ThemeRequest("테마1", "첫번째테마", "썸네일이미지");
+
+		given(this.themeRepository.isExistName(request.name())).willReturn(true);
+
+		// when, then
+		assertThatThrownBy(() -> this.themeService.create(request)).isInstanceOf(RoomEscapeException.class)
+			.hasMessage(ErrorCode.DUPLICATE_THEME_NAME.getMessage());
 	}
 
 }

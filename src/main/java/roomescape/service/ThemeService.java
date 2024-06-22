@@ -2,8 +2,8 @@ package roomescape.service;
 
 import java.util.List;
 
-import roomescape.controller.dto.ThemeRequest;
-import roomescape.controller.dto.ThemeResponse;
+import roomescape.web.controller.dto.ThemeRequest;
+import roomescape.web.controller.dto.ThemeResponse;
 import roomescape.domain.Theme;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
@@ -30,18 +30,21 @@ public class ThemeService {
 			.description(request.description())
 			.thumbnail(request.thumbnail())
 			.build();
+		var isExistName = this.themeRepository.isExistName(request.name());
+		if (isExistName) {
+			throw new RoomEscapeException(ErrorCode.DUPLICATE_THEME_NAME);
+		}
+
 		var savedTheme = this.themeRepository.save(theme);
 		return ThemeResponse.from(savedTheme);
 	}
 
 	public void delete(long id) {
 		var isExist = this.themeRepository.isExistId(id);
-		if (isExist) {
-			this.themeRepository.delete(id);
-		}
-		else {
+		if (!isExist) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_THEME);
 		}
+		this.themeRepository.delete(id);
 	}
 
 	public Theme getThemeById(long id) {

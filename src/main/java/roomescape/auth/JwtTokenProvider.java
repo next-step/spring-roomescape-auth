@@ -7,7 +7,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import roomescape.config.JwtProperties;
-import roomescape.controller.dto.MemberResponse;
+import roomescape.web.controller.dto.MemberResponse;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
 
@@ -20,6 +20,8 @@ public class JwtTokenProvider {
 
 	private static final String ROLE = "role";
 
+	private static final String EMAIL = "email";
+
 	private final JwtProperties jwtProperties;
 
 	JwtTokenProvider(JwtProperties jwtProperties) {
@@ -31,6 +33,7 @@ public class JwtTokenProvider {
 			.subject(memberResponse.email())
 			.claim(NAME, memberResponse.name())
 			.claim(ROLE, memberResponse.role())
+			.claim(EMAIL, memberResponse.email())
 			.issuedAt(new Date())
 			.expiration(new Date(System.currentTimeMillis() + this.jwtProperties.getTokenExpireLength()))
 			.signWith(Keys.hmacShaKeyFor(this.jwtProperties.getTokenSecretKey().getBytes()))

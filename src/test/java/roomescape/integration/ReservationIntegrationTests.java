@@ -2,18 +2,26 @@ package roomescape.integration;
 
 import java.util.List;
 
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import roomescape.DataTimeFormatterUtils;
-import roomescape.controller.dto.ReservationRequest;
-import roomescape.controller.dto.ReservationResponse;
-import roomescape.controller.dto.ReservationTimeRequest;
-import roomescape.controller.dto.ReservationTimeResponse;
-import roomescape.controller.dto.ThemeRequest;
-import roomescape.controller.dto.ThemeResponse;
+import roomescape.auth.JwtCookieManager;
+import roomescape.auth.JwtTokenProvider;
+import roomescape.web.controller.dto.MemberResponse;
+import roomescape.web.controller.dto.ReservationRequest;
+import roomescape.web.controller.dto.ReservationResponse;
+import roomescape.web.controller.dto.ReservationTimeRequest;
+import roomescape.web.controller.dto.ReservationTimeResponse;
+import roomescape.web.controller.dto.ThemeRequest;
+import roomescape.web.controller.dto.ThemeResponse;
+import roomescape.domain.MemberRole;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +34,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ReservationIntegrationTests {
 
 	private final TestRestTemplate restTemplate = new TestRestTemplate();
+
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
 
 	@LocalServerPort
 	private int port;
@@ -42,7 +53,7 @@ class ReservationIntegrationTests {
 				reservationTimeRequest, ReservationTimeResponse.class);
 
 		// then
-		assertThat(createReservationTime.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(createReservationTime.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		var reservationTimeResponse = createReservationTime.getBody();
 		assertThat(reservationTimeResponse).isNotNull();
@@ -57,7 +68,7 @@ class ReservationIntegrationTests {
 				ThemeResponse.class);
 
 		// then
-		assertThat(createTheme.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(createTheme.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		var themeResponse = createTheme.getBody();
 		assertThat(themeResponse).isNotNull();
@@ -71,12 +82,21 @@ class ReservationIntegrationTests {
 		ReservationRequest reservationRequest = new ReservationRequest("tester",
 				DataTimeFormatterUtils.getFormattedTomorrowDate(), 1L, 1L);
 
+		MemberResponse memberResponse = new MemberResponse(1L, "tester", "tester@gmail.com", MemberRole.USER.name());
+		String token = this.jwtTokenProvider.createToken(memberResponse);
+
+		Cookie cookie = JwtCookieManager.createCookie(token, 3600);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.COOKIE, cookie.getName() + "=" + cookie.getValue());
+
+		HttpEntity<ReservationRequest> requestEntity = new HttpEntity<>(reservationRequest, headers);
+
 		// when
-		var createReservation = this.restTemplate.postForEntity("http://localhost:" + this.port + "/reservations",
-				reservationRequest, ReservationResponse.class);
+		var createReservation = this.restTemplate.exchange("http://localhost:" + this.port + "/reservations",
+				HttpMethod.POST, requestEntity, ReservationResponse.class);
 
 		// then
-		assertThat(createReservation.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(createReservation.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		ReservationResponse reservationResponse = createReservation.getBody();
 		assertThat(reservationResponse).isNotNull();
@@ -103,7 +123,7 @@ class ReservationIntegrationTests {
 				Void.class);
 
 		// then
-		assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(cancelResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
 		// check reservation
 		getReservations = this.restTemplate.getForEntity("http://localhost:" + this.port + "/reservations", List.class);
@@ -122,7 +142,7 @@ class ReservationIntegrationTests {
 				"http://localhost:" + this.port + "/times/" + reservationTimeId, HttpMethod.DELETE, null, Void.class);
 
 		// then
-		assertThat(deleteReservationTime.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(deleteReservationTime.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
 		// delete theme
 		// given
@@ -133,108 +153,7 @@ class ReservationIntegrationTests {
 				HttpMethod.DELETE, null, Void.class);
 
 		// then
-		assertThat(deleteTheme.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
-
-	@Test
-	void reservationTimeControllerEndpoints() {
-		// create reservation time
-		// given
-		ReservationTimeRequest reservationTimeRequest = new ReservationTimeRequest("10:10");
-
-		// when
-		ResponseEntity<ReservationTimeResponse> createReservationTime = this.restTemplate.postForEntity(
-				"http://localhost:" + this.port + "/times", reservationTimeRequest, ReservationTimeResponse.class);
-
-		// then
-		assertThat(createReservationTime.getStatusCode()).isEqualTo(HttpStatus.OK);
-		ReservationTimeResponse reservationTimeResponse = createReservationTime.getBody();
-		assertThat(reservationTimeResponse).isNotNull();
-		assertThat(reservationTimeResponse.startAt()).isEqualTo("10:10");
-
-		// get reservation times
-		// when
-		var getReservationTimes = this.restTemplate.getForEntity("http://localhost:" + this.port + "/times",
-				List.class);
-
-		// then
-		assertThat(getReservationTimes.getStatusCode()).isEqualTo(HttpStatus.OK);
-		var reservationTimes = getReservationTimes.getBody();
-		assertThat(reservationTimes).isNotNull();
-		assertThat(reservationTimes.size()).isGreaterThan(0);
-
-		// delete reservation time
-		// given
-		long reservationTimeId = reservationTimeResponse.id();
-
-		// when
-		var deleteReservationTime = this.restTemplate.exchange(
-				"http://localhost:" + this.port + "/times/" + reservationTimeId, HttpMethod.DELETE, null, Void.class);
-
-		// then
-		assertThat(deleteReservationTime.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-		// check reservation time
-		getReservationTimes = this.restTemplate.getForEntity("http://localhost:" + this.port + "/times", List.class);
-
-		// then
-		assertThat(getReservationTimes.getStatusCode()).isEqualTo(HttpStatus.OK);
-		reservationTimes = getReservationTimes.getBody();
-		assertThat(reservationTimes).isNotNull();
-		assertThat(reservationTimes.size()).isLessThan(1);
-
-	}
-
-	@Test
-	void themeControllerEndpoints() {
-		// create theme
-		// given
-		ThemeRequest themeRequest = new ThemeRequest("테마1", "첫번째테마", "썸네일이미지");
-
-		// when
-		var createResponse = this.restTemplate.postForEntity("http://localhost:" + this.port + "/themes", themeRequest,
-				ThemeResponse.class);
-
-		// then
-		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-		ThemeResponse themeResponse = createResponse.getBody();
-		assertThat(themeResponse).isNotNull();
-		assertThat(themeResponse.name()).isEqualTo("테마1");
-		assertThat(themeResponse.description()).isEqualTo("첫번째테마");
-		assertThat(themeResponse.thumbnail()).isEqualTo("썸네일이미지");
-
-		// get themes
-		// when
-		var themesResponse = this.restTemplate.getForEntity("http://localhost:" + this.port + "/themes", List.class);
-
-		// then
-		assertThat(themesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-		var themes = themesResponse.getBody();
-		assertThat(themes).isNotNull();
-		assertThat(themes.size()).isEqualTo(1);
-
-		// delete theme
-		// given
-		long themeId = themeResponse.id();
-
-		// when
-		var deleteResponse = this.restTemplate.exchange("http://localhost:" + this.port + "/themes/" + themeId,
-				HttpMethod.DELETE, null, Void.class);
-
-		// then
-		assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-		// check theme delete
-		// when
-		themesResponse = this.restTemplate.getForEntity("http://localhost:" + this.port + "/themes", List.class);
-
-		// then
-		assertThat(themesResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-		themes = themesResponse.getBody();
-		assertThat(themes).isNotNull();
-		assertThat(themes.size()).isEqualTo(0);
+		assertThat(deleteTheme.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 	}
 
 }

@@ -1,6 +1,6 @@
 package roomescape.repository;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.PostConstruct;
@@ -21,6 +21,8 @@ public class MemberRepository {
 	private static final Logger logger = LoggerFactory.getLogger(MemberRepository.class);
 
 	private static final RowMapper<Member> MEMBER_ROW_MAPPER;
+
+	private static final RowMapper<Member> MEMBER_ROW_MAPPER_WITHOUT_PASSWORD;
 
 	private final JdbcTemplate jdbcTemplate;
 
@@ -43,11 +45,14 @@ public class MemberRepository {
 	}
 
 	public Member save(Member member) {
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("name", member.getName());
-		parameters.put("email", member.getEmail());
-		parameters.put("password", member.getPassword());
-		parameters.put("role", MemberRole.USER.name());
+		// @formatter:off
+		Map<String, Object> parameters = Map.of(
+				"name", member.getName(),
+				"email", member.getEmail(),
+				"password", member.getPassword(),
+				"role", MemberRole.USER.name()
+		);
+		// @formatter:on
 
 		Number generatedId = this.jdbcInsert.executeAndReturnKey(parameters);
 		member.setId(generatedId.longValue());
@@ -65,6 +70,22 @@ public class MemberRepository {
 		}
 	}
 
+	public Member findById(long id) {
+		try {
+			String sql = "SELECT m.id, m.name, m.email, m.role FROM member m WHERE m.id = ?";
+			return this.jdbcTemplate.queryForObject(sql, MEMBER_ROW_MAPPER_WITHOUT_PASSWORD, id);
+		}
+		catch (EmptyResultDataAccessException ex) {
+			logger.warn("Not Found Member. id: {}, ", id, ex);
+			return null;
+		}
+	}
+
+	public List<Member> findAllMembersViaRoleUser() {
+		String sql = "SELECT m.id, m.name, m.email, m.role FROM member m WHERE m.role = ?";
+		return this.jdbcTemplate.query(sql, MEMBER_ROW_MAPPER_WITHOUT_PASSWORD, MemberRole.USER.name());
+	}
+
 	static {
 		MEMBER_ROW_MAPPER = (resultSet, rowNum) -> {
 			long id = resultSet.getLong("id");
@@ -73,6 +94,16 @@ public class MemberRepository {
 			String password = resultSet.getString("password");
 			String role = resultSet.getString("role");
 			return Member.builder().id(id).name(name).email(email).password(password).role(role).build();
+		};
+	}
+
+	static {
+		MEMBER_ROW_MAPPER_WITHOUT_PASSWORD = (resultSet, rowNum) -> {
+			long id = resultSet.getLong("id");
+			String name = resultSet.getString("name");
+			String email = resultSet.getString("email");
+			String role = resultSet.getString("role");
+			return Member.builder().id(id).name(name).email(email).role(role).build();
 		};
 	}
 

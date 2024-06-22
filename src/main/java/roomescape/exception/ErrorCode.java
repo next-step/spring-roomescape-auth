@@ -15,6 +15,7 @@ public enum ErrorCode {
 	DUPLICATE_RESERVATION("RES-2001", "중복 예약은 불가능합니다."),
 	PAST_RESERVATION("RES-2002", "지나간 날짜와 시간에 대한 예약 생성은 불가능합니다."),
 	DUPLICATE_MEMBER("RES-2003", "이미 가입한 계정입니다."),
+	DUPLICATE_THEME_NAME("RES-2004", "이미 등록된 이름입니다."),
 
 	NOT_FOUND_RESERVATION("RES-3001", "해당 예약이 없습니다."),
 	NOT_FOUND_RESERVATION_TIME("RES-3002", "해당 예약 시간이 없습니다."),
@@ -22,7 +23,8 @@ public enum ErrorCode {
 	NOT_FOUND_MEMBER("RES-3004", "등록되지 않은 사용자입니다."),
 
 	EXPIRED_LOGIN_TOKEN("RES-4001", "로그인 토큰이 만료되었습니다."),
-	NEEDS_LOGIN("RES-4002", "로그인이 필요합니다.");
+	NEEDS_LOGIN("RES-4002", "로그인이 필요합니다."),
+	FORBIDDEN("RES-4003", "접근 권한이 없습니다.");
 	// @formatter:on
 
 	private final String code;

@@ -42,10 +42,6 @@ function updateUIBasedOnLogin() {
         document.getElementById('profile-name').textContent = 'Profile'; // 기본 텍스트로 재설정
         document.querySelector('.nav-item.dropdown').style.display = 'none'; // 드롭다운 메뉴 숨김
         document.querySelector('.nav-item a[href="/login"]').parentElement.style.display = 'block'; // 로그인 버튼 표시
-
-        if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
-          window.location.href = '/login';
-        }
       });
 }
 
@@ -87,10 +83,15 @@ function login() {
           signup()
           throw new Error('Login failed');
         }
+        return response.json();
       })
-      .then(() => {
+      .then(data => {
         updateUIBasedOnLogin(); // UI 업데이트
-        window.location.href = '/';
+        if (data.role === 'ADMIN') {
+          window.location.href = "/admin/reservation";
+        } else {
+          window.location.href = "/reservation";
+        }
       })
       .catch(error => {
         console.error('Error during login:', error);

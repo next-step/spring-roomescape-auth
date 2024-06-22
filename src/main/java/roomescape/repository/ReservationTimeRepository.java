@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import roomescape.domain.ReservationTime;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class ReservationTimeRepository {
+
+	private static final Logger logger = LoggerFactory.getLogger(ReservationTimeRepository.class);
 
 	private static final RowMapper<ReservationTime> RESERVATION_TIME_ROW_MAPPER;
 
@@ -48,8 +53,15 @@ public class ReservationTimeRepository {
 	}
 
 	public ReservationTime findById(long id) {
-		String sql = "SELECT rt.id, rt.start_at FROM reservation_time rt WHERE rt.id = ?";
-		return this.jdbcTemplate.queryForObject(sql, RESERVATION_TIME_ROW_MAPPER, id);
+		try {
+			String sql = "SELECT rt.id, rt.start_at FROM reservation_time rt WHERE rt.id = ?";
+			return this.jdbcTemplate.queryForObject(sql, RESERVATION_TIME_ROW_MAPPER, id);
+		}
+		catch (EmptyResultDataAccessException ex) {
+			logger.warn("Not Found ReservationTime. id: {}, ", id, ex);
+			return null;
+		}
+
 	}
 
 	public boolean isExistId(long id) {

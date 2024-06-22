@@ -1,6 +1,5 @@
 package roomescape.repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,11 +47,20 @@ public class ThemeRepository {
 		return count > 0;
 	}
 
+	public boolean isExistName(String name) {
+		String sql = "SELECT COUNT(*) FROM theme WHERE name = ?";
+		int count = this.jdbcTemplate.queryForObject(sql, Integer.class, name);
+		return count > 0;
+	}
+
 	public Theme save(Theme theme) {
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("name", theme.getName());
-		parameters.put("description", theme.getDescription());
-		parameters.put("thumbnail", theme.getThumbnail());
+		// @formatter:off
+		Map<String, Object> parameters = Map.of(
+				"name", theme.getName(),
+				"description", theme.getDescription(),
+				"thumbnail", theme.getThumbnail()
+		);
+		// @formatter:on
 
 		Number generatedId = this.jdbcInsert.executeAndReturnKey(parameters);
 		theme.setId(generatedId.longValue());
