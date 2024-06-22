@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.exception.custom.DuplicateTimeException;
+import roomescape.exception.custom.ReservationTimeConflictException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -55,9 +57,11 @@ public class ReservationTimeTest {
         Map<String, Object> params = new HashMap<>();
         params.put("startAt", "");
 
+        String message = "시간은 필수 값입니다.";
         Response response = 예약시간을_생성한다(params);
         response.then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -66,9 +70,11 @@ public class ReservationTimeTest {
         Map<String, Object> params = new HashMap<>();
         params.put("startAt", "kk:12");
 
+        String message = "HH:mm 형식이 아닙니다.";
         Response response = 예약시간을_생성한다(params);
         response.then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -82,9 +88,11 @@ public class ReservationTimeTest {
                 .statusCode(HttpStatus.CREATED.value())
                 .body("id", is(1));
 
+        String message = new DuplicateTimeException().getMessage();
         Response secondCreateResponse = 예약시간을_생성한다(params);
         secondCreateResponse.then().log().all()
-                .statusCode(HttpStatus.CONFLICT.value());
+                .statusCode(HttpStatus.CONFLICT.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -142,12 +150,14 @@ public class ReservationTimeTest {
         params.put("themeId", 1L);
         예약을_생성한다(params, token);
 
+        String message = new ReservationTimeConflictException().getMessage();
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(params)
                 .when().delete("/times/1")
                 .then().log().all()
-                .statusCode(HttpStatus.CONFLICT.value());
+                .statusCode(HttpStatus.CONFLICT.value())
+                .body("message", is(message));
     }
 
     @DisplayName("테마의 예약가능 시간 목록을 조회한다.")

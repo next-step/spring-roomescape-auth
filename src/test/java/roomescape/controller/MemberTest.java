@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.exception.custom.DuplicateMemberException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -37,8 +38,10 @@ public class MemberTest {
 
         Response response = 회원가입(EMAIL, PASSWORD, NAME);
 
+        String message = new DuplicateMemberException().getMessage();
         response.then().log().all()
-                .statusCode(HttpStatus.CONFLICT.value());
+                .statusCode(HttpStatus.CONFLICT.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -46,8 +49,10 @@ public class MemberTest {
     void signupIncorrectValue() {
         Response response = 회원가입("", PASSWORD, NAME);
 
+        String message = "이메일은 필수 값입니다.";
         response.then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @Test

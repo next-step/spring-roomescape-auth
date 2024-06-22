@@ -19,6 +19,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.exception.custom.ExistingReservationException;
+import roomescape.exception.custom.InvalidReservationThemeException;
+import roomescape.exception.custom.InvalidReservationTimeException;
+import roomescape.exception.custom.PastDateReservationException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -70,16 +74,18 @@ public class ReservationTest {
     void createReservationIsDateExpired() {
         Map<String, Object> params = new HashMap<>();
         params.put("date", "2023-08-05");
-        params.put("timeId", "1");
-        params.put("themeId", "1");
+        params.put("timeId", 1L);
+        params.put("themeId", 1L);
 
+        String message = new PastDateReservationException().getMessage();
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
-                .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
+                .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -87,16 +93,18 @@ public class ReservationTest {
     void createReservationException() {
         Map<String, Object> params = new HashMap<>();
         params.put("date", "");
-        params.put("timeId", "1");
-        params.put("themeId", "1");
+        params.put("timeId", 1L);
+        params.put("themeId", 1L);
 
+        String message = "날짜는 필수 값입니다.";
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -104,16 +112,18 @@ public class ReservationTest {
     void createReservationDateException() {
         Map<String, Object> params = new HashMap<>();
         params.put("date", "2023-kk-05");
-        params.put("timeId", "1");
-        params.put("themeId", "1");
+        params.put("timeId", 1L);
+        params.put("themeId", 1L);
 
+        String message = "yyyy-MM-dd 형식이 아닙니다.";
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -121,16 +131,18 @@ public class ReservationTest {
     void createReservationEmptyTimeId() {
         Map<String, Object> params = new HashMap<>();
         params.put("date", "2024-06-25");
-        params.put("timeId", "3");
-        params.put("themeId", "1");
+        params.put("timeId", 3L);
+        params.put("themeId", 1L);
 
+        String message = new InvalidReservationTimeException().getMessage();
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -138,16 +150,18 @@ public class ReservationTest {
     void createReservationEmptyThemeId() {
         Map<String, Object> params = new HashMap<>();
         params.put("date", "2024-06-25");
-        params.put("timeId", "1");
-        params.put("themeId", "3");
+        params.put("timeId", 1L);
+        params.put("themeId", 3L);
 
+        String message = new InvalidReservationThemeException().getMessage();
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -155,8 +169,8 @@ public class ReservationTest {
     void createReservationDateAndTimeStartAtDuplicate() {
         Map<String, Object> params = new HashMap<>();
         params.put("date", "2024-06-25");
-        params.put("timeId", "1");
-        params.put("themeId", "1");
+        params.put("timeId", 1L);
+        params.put("themeId", 1L);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
@@ -166,13 +180,15 @@ public class ReservationTest {
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value());
 
+        String message = new ExistingReservationException().getMessage();
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .cookie("token", token)
                 .body(params)
                 .when().post("/reservations")
                 .then().log().all()
-                .statusCode(HttpStatus.CONFLICT.value());
+                .statusCode(HttpStatus.CONFLICT.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -180,8 +196,8 @@ public class ReservationTest {
     void findAllReservations() {
         Map<String, Object> params = new HashMap<>();
         params.put("date", "2024-06-25");
-        params.put("timeId", "1");
-        params.put("themeId", "1");
+        params.put("timeId", 1L);
+        params.put("themeId", 1L);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
@@ -221,7 +237,7 @@ public class ReservationTest {
         params.put("date", "2024-06-25");
         params.put("timeId", 1L);
         params.put("themeId", 1L);
-        params.put("memberId", "1");
+        params.put("memberId", 1L);
 
         Response response = 예약을_생성한다_관리자(params, token);
 

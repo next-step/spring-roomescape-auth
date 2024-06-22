@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.dto.request.LoginRequest;
+import roomescape.exception.custom.PasswordMismatchException;
+import roomescape.exception.custom.TokenNotFoundException;
 
 @DisplayName("인증 관련 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -43,6 +45,8 @@ public class AuthTest {
     @DisplayName("[로그인] - 아이디 또는 비밀번호를 입력하지 않은 경우 에러가 발생한다.")
     @Test
     void loginRequiredValueException() {
+        String message = "비밀번호는 필수 값입니다.";
+
         RestAssured
                 .given().log().all()
                 .body(new LoginRequest(EMAIL, ""))
@@ -50,12 +54,15 @@ public class AuthTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/login")
                 .then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @DisplayName("[로그인] - 아이디(이메일) 또는 비밀번호가 일치하지 않는 경우 에러가 발생한다.")
     @Test
     void loginMismatchValueException() {
+        String message = new PasswordMismatchException().getMessage();
+
         RestAssured
                 .given().log().all()
                 .body(new LoginRequest(EMAIL, "12345"))
@@ -63,7 +70,8 @@ public class AuthTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/login")
                 .then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @DisplayName("[로그인 체크] - 유효한 토큰으로 로그인 사용자의 인증정보를 조회한다")
@@ -94,6 +102,8 @@ public class AuthTest {
     @DisplayName("[로그인 체크] - 올바르지 않은 쿠키인 경우 로그인 체크시 에러가 발생한다.")
     @Test
     void loginCheckIncorrectTokenException() {
+        String message = new TokenNotFoundException().getMessage();
+
         RestAssured
                 .given().log().all()
                 .cookie(TOKEN_COOKIE_NAME, "")
@@ -101,6 +111,7 @@ public class AuthTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().get("/login/check")
                 .then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 }

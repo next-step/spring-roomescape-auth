@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.exception.custom.DuplicateThemeException;
+import roomescape.exception.custom.ReservationThemeConflictException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -68,8 +70,10 @@ public class ReservationThemeTest {
 
         Response response = 예약테마를_생성한다(params);
 
+        String message = "테마이름은 필수 값입니다.";
         response.then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -87,8 +91,10 @@ public class ReservationThemeTest {
 
         Response secondCreateResponse = 예약테마를_생성한다(params);
 
+        String message = new DuplicateThemeException().getMessage();
         secondCreateResponse.then().log().all()
-                .statusCode(HttpStatus.CONFLICT.value());
+                .statusCode(HttpStatus.CONFLICT.value())
+                .body("message", is(message));
     }
 
     @Test
@@ -146,15 +152,17 @@ public class ReservationThemeTest {
         params.clear();
         params.put("name", "브라운");
         params.put("date", "2024-06-25");
-        params.put("timeId", "1");
-        params.put("themeId", "1");
+        params.put("timeId", 1L);
+        params.put("themeId", 1L);
         예약을_생성한다(params, token);
 
+        String message = new ReservationThemeConflictException().getMessage();
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(params)
                 .when().delete("/themes/1")
                 .then().log().all()
-                .statusCode(HttpStatus.CONFLICT.value());
+                .statusCode(HttpStatus.CONFLICT.value())
+                .body("message", is(message));
     }
 }
