@@ -30,9 +30,8 @@ public class LoginService {
     }
 
     public Cookie login(LoginRequest loginRequest) {
-        Long memberId = memberRepository.findByEmailAndPassword(
-                        loginRequest.email(),
-                        passwordEncoder.encode(loginRequest.password()))
+        String encodedPassword = passwordEncoder.encode(loginRequest.password());
+        Long memberId = memberRepository.findByEmailAndPassword(loginRequest.email(), encodedPassword)
                 .orElseThrow(() -> BadRequestException.of("이메일 또는 비밀번호를 확인해주세요."))
                 .getId();
 

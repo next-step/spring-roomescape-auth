@@ -21,10 +21,7 @@ public class SignUpService {
 
     public void signUp(MemberRequest memberRequest) {
         memberValidator.validateRequest(memberRequest);
-        memberRepository.save(
-                memberRequest.name(),
-                memberRequest.email(),
-                passwordEncoder.encode(memberRequest.password())
-        );
+        String encodedPassword = passwordEncoder.encode(memberRequest.password());
+        memberRepository.save(memberRequest.name(), memberRequest.email(), encodedPassword);
     }
 }
