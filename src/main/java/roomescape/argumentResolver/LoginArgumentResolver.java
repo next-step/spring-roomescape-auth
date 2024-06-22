@@ -9,25 +9,25 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import roomescape.argumentResolver.annotation.CookieConverter;
+import roomescape.argumentResolver.annotation.Login;
 import roomescape.domain.member.error.exception.MemberErrorCode;
 import roomescape.domain.member.error.exception.MemberException;
 import roomescape.domain.member.service.MemberService;
 
 @Component
-public class CookieConverterArgumentResolver implements HandlerMethodArgumentResolver {
+public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
 
     private static final String TOKEN = "token";
 
     private final MemberService memberService;
 
-    public CookieConverterArgumentResolver(MemberService memberService) {
+    public LoginArgumentResolver(MemberService memberService) {
         this.memberService = memberService;
     }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(CookieConverter.class);
+        return parameter.hasParameterAnnotation(Login.class);
     }
 
     @Override

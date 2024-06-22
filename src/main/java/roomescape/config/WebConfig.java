@@ -3,7 +3,7 @@ package roomescape.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import roomescape.argumentResolver.CookieConverterArgumentResolver;
+import roomescape.argumentResolver.LoginArgumentResolver;
 import roomescape.domain.member.service.MemberService;
 
 import java.util.List;
@@ -19,6 +19,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new CookieConverterArgumentResolver(memberService));
+        resolvers.add(new LoginArgumentResolver(memberService));
     }
 }

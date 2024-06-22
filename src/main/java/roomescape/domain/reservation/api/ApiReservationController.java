@@ -2,7 +2,7 @@ package roomescape.domain.reservation.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import roomescape.argumentResolver.annotation.CookieConverter;
+import roomescape.argumentResolver.annotation.Login;
 import roomescape.domain.member.domain.Member;
 import roomescape.domain.reservation.domain.Reservation;
 import roomescape.domain.reservation.service.ReservationService;
@@ -37,7 +37,7 @@ public class ApiReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> save(@CookieConverter Member loginMember, @RequestBody ReservationRequest reservationRequest) {
+    public ResponseEntity<ReservationResponse> save(@Login Member loginMember, @RequestBody ReservationRequest reservationRequest) {
         Reservation reservation = reservationService.save(reservationRequest, loginMember);
         return ResponseEntity.ok().body(
                 new ReservationResponse(
