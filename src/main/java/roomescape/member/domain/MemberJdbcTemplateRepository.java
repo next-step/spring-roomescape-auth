@@ -61,6 +61,24 @@ public class MemberJdbcTemplateRepository implements MemberRepository {
     }
 
     @Override
+    public Optional<Member> findByEmailAndPassword(String email, String password) {
+        String sql = """
+                select *
+                from member
+                where email = ?
+                and password = ?
+                """;
+
+        try {
+            Member member = jdbcTemplate.queryForObject(sql, rowMapper, email, password);
+            return Optional.ofNullable(member);
+        }
+        catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public long save(String name, String email, String password) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
