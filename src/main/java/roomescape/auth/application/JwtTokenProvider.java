@@ -1,7 +1,6 @@
 package roomescape.auth.application;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -33,5 +32,16 @@ public class JwtTokenProvider {
                 .getBody()
                 .getSubject();
         return Long.valueOf(memberId);
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jws<Claims> claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+
+            return !claim.getBody().getExpiration().before(new Date());
+        }
+        catch (JwtException | IllegalArgumentException exception) {
+            return false;
+        }
     }
 }
