@@ -26,4 +26,11 @@ public class CookieUtils {
         }
         return Optional.empty();
     }
+
+    public Cookie deleteCookie(String name) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        return cookie;
+    }
 }
