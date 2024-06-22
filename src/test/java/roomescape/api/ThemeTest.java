@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.api;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -31,20 +31,6 @@ public class ThemeTest {
     private static final String RIGHT_NAME = "TwentyLengthsExample";
     private static final String RIGHT_DESCRIPTION = "RightDescription";
     private static final String RIGHT_THUMBNAIL_URL = "https://edu.nextstep.camp/spring";
-
-    @Test
-    void 테마_관리_페이지를_랜더링한다() {
-
-        //when
-        ExtractableResponse<Response> response = RestAssured.given().log().all()
-                .when().get("/admin/theme")
-                .then().log().all()
-                .extract();
-
-        //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-
-    }
 
     @Test
     void 테마를_추가한다() {

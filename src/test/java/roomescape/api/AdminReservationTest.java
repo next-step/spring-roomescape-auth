@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.api;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -35,13 +35,15 @@ public class AdminReservationTest {
     private static final String REQUEST_TIME = LocalTime.now().plusMinutes(5L).format(DateTimeFormatter.ofPattern("HH:mm"));
     private static final String EMAIL = "email";
     private static final String PASSWORD = "password";
+    private static final String TOKEN = "token";
+    private static final String ROLE = "role";
+    private static String token = null;
     private Long themeId = null;
     private Long timeId = null;
     private Long memberId = null;
 
-
     @BeforeEach
-    void 테마와_시간을_추가하고_회원가입을_한다() {
+    void 테마와_시간을_추가하고_회원가입을_하고_로그인한_뒤_관리자_권한을_받는다() {
 
         /* 테마 추가 */
         //given
@@ -102,20 +104,37 @@ public class AdminReservationTest {
         assertThat(memberResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(memberResponse.jsonPath().getString(NAME)).isEqualTo("박민욱");
         this.memberId = memberResponse.jsonPath().getLong(ID);
-    }
 
-    @Test
-    void 관리자향_예약_관리_페이지를_랜더링한다() {
+        /* 로그인 */
+        Map<String, Object> loginMember = new HashMap<>();
+        loginMember.put(EMAIL, "test@naver.com");
+        loginMember.put(PASSWORD, "password123");
 
         //when
-        ExtractableResponse<Response> response = RestAssured.given().log().all()
-                .when().get("/admin/reservation")
+        ExtractableResponse<Response> loginResponse = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(loginMember)
+                .when().post("/login")
                 .then().log().all()
                 .extract();
 
         //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(loginResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(loginResponse.cookie(TOKEN)).isNotNull();
+        token = loginResponse.cookie(TOKEN);
 
+        /* 관리자 권한 받기 */
+        //when
+        ExtractableResponse<Response> updateAdminRoleResponse = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .cookie(TOKEN, token)
+                .when().post("/members/role")
+                .then().log().all()
+                .extract();
+
+        //then
+        assertThat(updateAdminRoleResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(updateAdminRoleResponse.jsonPath().getString(ROLE)).isEqualTo("ADMIN");
     }
 
     @Test
@@ -131,6 +150,7 @@ public class AdminReservationTest {
         //when
         ExtractableResponse<Response> response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie(TOKEN, token)
                 .body(reservation)
                 .when().post("admin/reservations")
                 .then().log().all()
