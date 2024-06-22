@@ -1,5 +1,6 @@
 package roomescape.domain.reservation.domain;
 
+import roomescape.domain.member.domain.Member;
 import roomescape.domain.theme.domain.Theme;
 import roomescape.domain.time.domain.Time;
 
@@ -14,14 +15,16 @@ public class Reservation {
     private String date;
     private Time time;
     private Theme theme;
+    private Member member;
 
-    public Reservation(Long id, String name, String date, Time time, Theme theme) {
+    public Reservation(Long id, String name, String date, Time time, Theme theme, Member member) {
         validationCheck(name, date, time);
         this.id = id;
         this.name = name;
         this.date = date;
         this.time = time;
         this.theme = theme;
+        this.member = member;
     }
 
     private static void validationCheck(String name, String date, Time time) {
@@ -48,5 +51,9 @@ public class Reservation {
 
     public Theme getTheme() {
         return theme;
+    }
+
+    public Member getMember() {
+        return member;
     }
 }

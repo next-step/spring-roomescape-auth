@@ -29,7 +29,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public String login(MemberLoginRequest memberLoginRequest) {
-        Member member = memberRepository.login(memberLoginRequest.getEmail(), memberLoginRequest.getPassword()).orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_MEMBER_DETAILS_ERROR));
+        Member member = memberRepository.login(memberLoginRequest.getEmail(), memberLoginRequest.getPassword()).orElseThrow(() -> new MemberException(MemberErrorCode.INVALID_EMAIL_OR_PASSWORD_ERROR));
         return Jwts.builder()
                 .claim(ID, member.getId())
                 .claim(EMAIL, member.getEmail())

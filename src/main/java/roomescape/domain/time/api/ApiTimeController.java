@@ -30,6 +30,18 @@ public class ApiTimeController {
         );
     }
 
+    @GetMapping()
+    public ResponseEntity<List<TimeResponse>> findAll() {
+        List<Time> times = timeService.findAll();
+        List<TimeResponse> responses = times.stream().map(
+                time -> new TimeResponse(
+                        time.getId(),
+                        time.getStartAt()
+                )
+        ).toList();
+        return ResponseEntity.ok().body(responses);
+    }
+
     @GetMapping("/available")
     public ResponseEntity<List<TimeResponse>> findByThemeIdAndDate(@RequestParam("date") String date, @RequestParam("themeId") String themeId) {
         List<Time> times = timeService.findByThemeIdAndDate(themeId, date);
