@@ -16,7 +16,7 @@ class UserControllerTest {
     @Test
     void 모든_회원을_조회한다() {
         RestAssured.given().log().all()
-                .when().get("/members")
+                .when().get("/users")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .body("size()", is(2));

@@ -11,7 +11,7 @@ import roomescape.user.application.UserService;
 import roomescape.user.dto.UserResponse;
 
 @RestController
-@RequestMapping("/members")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
