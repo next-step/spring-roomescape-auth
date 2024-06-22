@@ -44,8 +44,8 @@ public class LoginService {
         String token = cookieUtils
                 .getCookieByName(cookies, "token")
                 .orElseThrow(() -> UnauthorizedException.of("토큰이 없습니다."))
-                .toString();
-        boolean isInvalidToken = jwtTokenProvider.validateToken(token);
+                .getValue();
+        boolean isInvalidToken = !jwtTokenProvider.validateToken(token);
 
         if (isInvalidToken) {
             throw UnauthorizedException.of("토큰이 만료되었습니다.");
