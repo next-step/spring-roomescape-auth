@@ -14,6 +14,8 @@ import roomescape.domain.member.error.exception.MemberErrorCode;
 import roomescape.domain.member.error.exception.MemberException;
 import roomescape.domain.member.service.MemberService;
 
+import java.util.Arrays;
+
 @Component
 public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -32,23 +34,33 @@ public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+        HttpServletRequest httpServletRequest = getHttpServletRequest(webRequest);
+        Cookie[] cookies = getCookies(httpServletRequest);
+        String token = extractTokenFromCookie(cookies);
+        return memberService.findByToken(token);
+    }
+
+    private HttpServletRequest getHttpServletRequest(NativeWebRequest webRequest) {
         HttpServletRequest httpServletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
-        if (httpServletRequest != null) {
-            Cookie[] cookies = httpServletRequest.getCookies();
-            if (cookies != null) {
-                return memberService.findByToken(extractTokenFromCookie(cookies));
-            }
+        if (httpServletRequest == null) {
+            throw new InternalException();
+        }
+        return httpServletRequest;
+    }
+
+    private Cookie[] getCookies(HttpServletRequest httpServletRequest) {
+        Cookie[] cookies = httpServletRequest.getCookies();
+        if (cookies == null) {
             throw new MemberException(MemberErrorCode.INVALID_MEMBER_DETAILS_ERROR);
         }
-        throw new InternalException();
+        return cookies;
     }
 
     private String extractTokenFromCookie(Cookie[] cookies) {
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(TOKEN)) {
-                return cookie.getValue();
-            }
-        }
-        throw new MemberException(MemberErrorCode.NOT_FOUND_COOKIE_ERROR);
+        return Arrays.stream(cookies)
+                .filter(cookie -> TOKEN.equals(cookie.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_COOKIE_ERROR));
     }
 }
