@@ -29,7 +29,7 @@ public class JwtTokenProvider {
     public Long extractMemberId(String token) {
         String memberId = Jwts.parser()
                 .setSigningKey(secretKey)
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
         return Long.valueOf(memberId);
