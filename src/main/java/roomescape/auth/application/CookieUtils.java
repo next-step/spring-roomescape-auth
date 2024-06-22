@@ -15,9 +15,9 @@ public class CookieUtils {
         return cookie;
     }
 
-    public Optional<Cookie> getCookieByName(Cookie[] cookies, String name) {
+    public Optional<Cookie> getOneCookieByName(Cookie[] cookies, String name) {
         if (cookies == null) {
-            throw UnauthorizedException.of("쿠키에 토큰이 없습니다.");
+            throw UnauthorizedException.of(name + "과 일치하는 쿠키가 없습니다.");
         }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(name)) {

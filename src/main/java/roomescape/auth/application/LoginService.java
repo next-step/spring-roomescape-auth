@@ -41,7 +41,7 @@ public class LoginService {
 
     public Long getMemberIdFromCookies(Cookie[] cookies) {
         String token = cookieUtils
-                .getCookieByName(cookies, "token")
+                .getOneCookieByName(cookies, "token")
                 .orElseThrow(() -> UnauthorizedException.of("토큰이 없습니다."))
                 .getValue();
         boolean isInvalidToken = !jwtTokenProvider.validateToken(token);
