@@ -2,7 +2,10 @@ package roomescape.jwt;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.util.Arrays;
 import java.util.Date;
+
+import jakarta.servlet.http.Cookie;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -11,7 +14,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
-import roomescape.auth.exception.UnAuthorizedException;
 import roomescape.user.domain.Role;
 import roomescape.user.domain.User;
 
@@ -20,6 +22,8 @@ public class JwtTokenProvider {
 
     private static final String EMAIL_CLAIM = "email";
     private static final String ROLE_CLAIM = "role";
+    private static final String TOKEN_COOKIE_NAME = "token";
+    private static final String EMPTY_TOKEN = "";
 
     private final SecretKey secretKey;
     private final long expiredMilliseconds;
@@ -40,21 +44,23 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getEmail(String accessToken) {
-        return extractPayload(accessToken).get(EMAIL_CLAIM, String.class);
-    }
-
-    public Role getRole(String accessToken) {
-        String role = extractPayload(accessToken).get(ROLE_CLAIM, String.class);
+    public Role getRoleFromCookies(Cookie[] cookies) {
+        String token = extractTokenFromCookie(cookies);
+        String role = extractPayload(token).get(ROLE_CLAIM, String.class);
         return Role.valueOf(role);
     }
 
-    public Long getUserId(String accessToken) {
-        String userId = extractPayload(accessToken).getSubject();
-        if (userId == null) {
-            throw new UnAuthorizedException();
-        }
-        return Long.parseLong(userId);
+    public Long getUserIdFromCookies(Cookie[] cookies) {
+        String token = extractTokenFromCookie(cookies);
+        return Long.parseLong(extractPayload(token).getSubject());
+    }
+
+    private String extractTokenFromCookie(Cookie[] cookies) {
+        return Arrays.stream(cookies)
+                .filter(cookie -> TOKEN_COOKIE_NAME.equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(EMPTY_TOKEN);
     }
 
     private Claims extractPayload(final String accessToken) {

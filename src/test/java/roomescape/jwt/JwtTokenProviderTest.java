@@ -2,6 +2,8 @@ package roomescape.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import jakarta.servlet.http.Cookie;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ class JwtTokenProviderTest {
 
     private User user;
     private String jwt;
+    private Cookie[] cookies;
 
     @BeforeEach
     void setUp() {
@@ -23,6 +26,11 @@ class JwtTokenProviderTest {
 
         user = new User(1L, "name", "email@email.com", "password", Role.USER);
         jwt = jwtTokenProvider.createJwt(user);
+
+        Cookie cookie = new Cookie("token", jwt);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookies = new Cookie[]{cookie};
     }
 
     @Test
@@ -39,22 +47,15 @@ class JwtTokenProviderTest {
     }
 
     @Test
-    void 토큰에서_이메일을_추출한다() {
-        String extractedEmail = jwtTokenProvider.getEmail(jwt);
-
-        assertThat(extractedEmail).isEqualTo(user.getEmail());
-    }
-
-    @Test
-    void 토큰에서_유저의_ROLE을_추출한다() {
-        Role extractedRole = jwtTokenProvider.getRole(jwt);
+    void 쿠키에서_추출한_토큰에서_유저의_ROLE을_추출한다() {
+        Role extractedRole = jwtTokenProvider.getRoleFromCookies(cookies);
 
         assertThat(extractedRole).isEqualTo(Role.USER);
     }
 
     @Test
-    void 토큰에서_subject를_추출한다() {
-        Long extractedUserId = jwtTokenProvider.getUserId(jwt);
+    void 쿠키에서_추출한_토큰에서_subject를_추출한다() {
+        Long extractedUserId = jwtTokenProvider.getUserIdFromCookies(cookies);
 
         assertThat(extractedUserId).isEqualTo(user.getId());
     }

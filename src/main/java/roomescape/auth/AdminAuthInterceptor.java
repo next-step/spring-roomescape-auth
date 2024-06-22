@@ -1,7 +1,5 @@
 package roomescape.auth;
 
-import java.util.Arrays;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,10 +20,9 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Cookie[] cookies = request.getCookies();
-        String token = extractTokenFromCookie(cookies);
-        Role role = jwtTokenProvider.getRole(token);
+        Role role = jwtTokenProvider.getRoleFromCookies(cookies);
 
         if (role.isNotAdmin()) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -33,13 +30,5 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
         }
 
         return true;
-    }
-
-    private String extractTokenFromCookie(Cookie[] cookies) {
-        return Arrays.stream(cookies)
-                .filter(cookie -> TOKEN_COOKIE_NAME.equals(cookie.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse("");
     }
 }

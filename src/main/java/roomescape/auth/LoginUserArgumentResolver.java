@@ -1,7 +1,5 @@
 package roomescape.auth;
 
-import java.util.Arrays;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -14,8 +12,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import roomescape.jwt.JwtTokenProvider;
 
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
-
-    private static final String TOKEN_COOKIE_NAME = "token";
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -33,15 +29,6 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         Cookie[] cookies = request.getCookies();
-        String token = extractTokenFromCookie(cookies);
-        return jwtTokenProvider.getUserId(token);
-    }
-
-    private String extractTokenFromCookie(Cookie[] cookies) {
-        return Arrays.stream(cookies)
-                .filter(cookie -> TOKEN_COOKIE_NAME.equals(cookie.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse("");
+        return jwtTokenProvider.getUserIdFromCookies(cookies);
     }
 }
