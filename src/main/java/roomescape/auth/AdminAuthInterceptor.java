@@ -11,8 +11,6 @@ import roomescape.user.domain.Role;
 
 public class AdminAuthInterceptor implements HandlerInterceptor {
 
-    private static final String TOKEN_COOKIE_NAME = "token";
-
     private final JwtTokenProvider jwtTokenProvider;
 
     public AdminAuthInterceptor(JwtTokenProvider jwtTokenProvider) {

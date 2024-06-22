@@ -9,6 +9,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import roomescape.auth.exception.UnAuthorizedException;
 import roomescape.jwt.JwtTokenProvider;
 
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
@@ -29,6 +30,9 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            throw new UnAuthorizedException();
+        }
         return jwtTokenProvider.getUserIdFromCookies(cookies);
     }
 }
