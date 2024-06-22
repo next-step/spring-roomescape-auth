@@ -1,7 +1,9 @@
 package roomescape.controller.api;
 
-import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,12 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import roomescape.annotations.ValidationSequence;
 import roomescape.dto.request.ReservationTimeRequest;
 import roomescape.dto.response.ReservationTimeResponse;
 import roomescape.service.ReservationTimeService;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/times")
@@ -29,7 +29,7 @@ public class ReservationTimeController {
 
     @PostMapping
     public ResponseEntity<ReservationTimeResponse> createReservationTime(
-            @Valid @RequestBody ReservationTimeRequest reservationTimeRequest) {
+            @Validated(ValidationSequence.class) @RequestBody ReservationTimeRequest reservationTimeRequest) {
         ReservationTimeResponse newReservationTime = reservationTimeService.createReservationTime(
                 reservationTimeRequest);
 

@@ -22,6 +22,7 @@ dependencies {
     implementation 'com.sun.xml.bind:jaxb-impl:4.0.1'
     implementation 'com.sun.xml.bind:jaxb-core:4.0.1'
     implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+    implementation 'org.springframework.security:spring-security-crypto:6.2.2'
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.rest-assured:rest-assured:5.3.1'

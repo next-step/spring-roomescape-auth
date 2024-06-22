@@ -1,7 +1,5 @@
 package roomescape.domain;
 
-import org.thymeleaf.util.StringUtils;
-
 import java.util.Objects;
 
 public class Member {
@@ -16,6 +14,21 @@ public class Member {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public Member(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Member(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -36,8 +49,12 @@ public class Member {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Member member = (Member) o;
         return Objects.equals(id, member.id);
     }
@@ -45,9 +62,5 @@ public class Member {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public boolean checkPassword(String password) {
-        return StringUtils.equals(this.password, password);
     }
 }

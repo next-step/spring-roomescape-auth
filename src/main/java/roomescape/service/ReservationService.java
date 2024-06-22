@@ -5,9 +5,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import roomescape.domain.LoginMember;
+import roomescape.domain.Member;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTheme;
 import roomescape.domain.ReservationTime;
+import roomescape.dto.request.ReservationAdminRequest;
 import roomescape.dto.request.ReservationRequest;
 import roomescape.dto.response.ReservationResponse;
 import roomescape.exception.custom.ExistingReservationException;
@@ -32,10 +35,20 @@ public class ReservationService {
         this.reservationThemeDao = reservationThemeDao;
     }
 
-    public ReservationResponse createReservation(ReservationRequest reservationRequest) {
+    public ReservationResponse createReservation(ReservationRequest reservationRequest, LoginMember loginMember) {
         validateReservationCreation(reservationRequest);
 
-        Reservation reservation = reservationDao.save(this.convertToEntity(reservationRequest));
+        Reservation reservation = reservationDao.save(this.convertToEntity(reservationRequest, loginMember.getName()));
+        return this.convertToResponse(reservation);
+    }
+
+    public ReservationResponse createAdminReservation(ReservationAdminRequest request, Member member) {
+        ReservationRequest reservationRequest = new ReservationRequest(request.getDate()
+                , request.getTimeId()
+                , request.getThemeId());
+        validateReservationCreation(reservationRequest);
+
+        Reservation reservation = reservationDao.save(this.convertToEntity(reservationRequest, member.getName()));
         return this.convertToResponse(reservation);
     }
 
@@ -71,23 +84,25 @@ public class ReservationService {
                 reservation.getTime().getStartAt(), reservation.getTheme().getName());
     }
 
-    private Reservation convertToEntity(ReservationRequest reservationRequest) {
+    private Reservation convertToEntity(ReservationRequest reservationRequest, String name) {
         ReservationTime reservationTime = findReservationTimeById(reservationRequest.getTimeId());
         ReservationTheme reservationTheme = findReservationThemeById(reservationRequest.getThemeId());
 
-        return new Reservation(reservationRequest.getName(), reservationRequest.getDate(), reservationTime,
-                reservationTheme);
+        return new Reservation(name
+                , reservationRequest.getDate()
+                , reservationTime
+                , reservationTheme);
     }
 
-    private ReservationTime findReservationTimeById(String timeId) {
+    private ReservationTime findReservationTimeById(Long timeId) {
         return reservationTimeDao
-                .findById(Long.parseLong(timeId))
+                .findById(timeId)
                 .orElseThrow(InvalidReservationTimeException::new);
     }
 
-    private ReservationTheme findReservationThemeById(String themeId) {
+    private ReservationTheme findReservationThemeById(Long themeId) {
         return reservationThemeDao
-                .findById(Long.parseLong(themeId))
+                .findById(themeId)
                 .orElseThrow(InvalidReservationThemeException::new);
     }
 

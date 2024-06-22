@@ -1,5 +1,7 @@
 package roomescape.repository;
 
+import java.util.List;
+import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -8,9 +10,6 @@ import org.springframework.stereotype.Repository;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTheme;
 import roomescape.domain.ReservationTime;
-
-import javax.sql.DataSource;
-import java.util.List;
 
 @Repository
 public class ReservationDao {
@@ -78,7 +77,7 @@ public class ReservationDao {
         jdbcTemplate.update(sql, id);
     }
 
-    public Long countByDateAndTimeIdAndThemeId(String date, String timeId, String themeId) {
+    public Long countByDateAndTimeIdAndThemeId(String date, Long timeId, Long themeId) {
         final String sql = """
                     SELECT count(*) 
                     FROM reservation r 
