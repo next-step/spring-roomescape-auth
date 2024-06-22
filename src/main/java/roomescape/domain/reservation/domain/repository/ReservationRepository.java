@@ -30,7 +30,8 @@ public class ReservationRepository {
                 m.id AS member_id,
                 m.name AS member_name,
                 m.email AS member_email,
-                m.password AS member_password
+                m.password AS member_password,
+                m.role AS member_role
             FROM reservation r 
             INNER JOIN reservation_time rt 
                 ON r.time_id = rt.id 
@@ -55,7 +56,8 @@ public class ReservationRepository {
                 m.id AS member_id,
                 m.name AS member_name,
                 m.email AS member_email,
-                m.password AS member_password
+                m.password AS member_password,
+                m.role AS member_role
             FROM reservation r 
             INNER JOIN reservation_time rt 
                 ON r.time_id = rt.id 
@@ -79,6 +81,7 @@ public class ReservationRepository {
     private static final String MEMBER_NAME = "member_name";
     private static final String MEMBER_EMAIL = "member_email";
     private static final String MEMBER_PASSWORD = "member_password";
+    private static final String MEMBER_ROLE = "member_role";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -104,7 +107,9 @@ public class ReservationRepository {
                         rs.getLong(MEMBER_ID),
                         rs.getString(MEMBER_NAME),
                         rs.getString(MEMBER_EMAIL),
-                        rs.getString(MEMBER_PASSWORD)
+                        rs.getString(MEMBER_PASSWORD),
+                        rs.getString(MEMBER_ROLE)
+
                 )), reservationId);
     }
 
@@ -144,7 +149,8 @@ public class ReservationRepository {
                                 rs.getLong(MEMBER_ID),
                                 rs.getString(MEMBER_NAME),
                                 rs.getString(MEMBER_EMAIL),
-                                rs.getString(MEMBER_PASSWORD)
+                                rs.getString(MEMBER_PASSWORD),
+                                rs.getString(MEMBER_ROLE)
                         ))
         );
     }

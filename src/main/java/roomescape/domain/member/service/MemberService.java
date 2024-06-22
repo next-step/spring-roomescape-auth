@@ -50,7 +50,7 @@ public class MemberService {
 
     @Transactional
     public Member save(MemberRequest memberRequest) {
-        Long id = memberRepository.save(new Member(null, memberRequest.getName(), memberRequest.getEmail(), memberRequest.getPassword()));
+        Long id = memberRepository.save(new Member(null, memberRequest.getName(), memberRequest.getEmail(), memberRequest.getPassword(), "USER"));
         return findById(id);
     }
 
@@ -62,9 +62,15 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<Member> findAll() {
         List<Member> members = memberRepository.findAll();
-        if(members.isEmpty()) {
+        if (members.isEmpty()) {
             throw new MemberException(MemberErrorCode.NO_MEMBER_ERROR);
         }
         return members;
+    }
+
+    @Transactional
+    public Member updateAdminRole(Long memberId) {
+        Long id = memberRepository.updateAdminRole(memberId);
+        return findById(id);
     }
 }
