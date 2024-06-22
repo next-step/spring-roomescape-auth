@@ -2,6 +2,7 @@ package roomescape.auth.application;
 
 import jakarta.servlet.http.Cookie;
 import org.springframework.stereotype.Component;
+import roomescape.exception.UnauthorizedException;
 
 import java.util.Optional;
 
@@ -15,6 +16,9 @@ public class CookieUtils {
     }
 
     public Optional<Cookie> getCookieByName(Cookie[] cookies, String name) {
+        if (cookies == null) {
+            throw UnauthorizedException.of("쿠키에 토큰이 없습니다.");
+        }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(name)) {
                 return Optional.of(cookie);
