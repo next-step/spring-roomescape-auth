@@ -23,4 +23,14 @@ public class JwtTokenTest {
 
         assertThat(memberIdFromToken).isEqualTo(memberId);
     }
+
+    @Test
+    @DisplayName("JwtTokenProvider - validateToken()")
+    void 토큰_유효성_검증() {
+        String token = jwtTokenProvider.createToken(1L);
+
+        boolean isValidOrNot = jwtTokenProvider.validateToken(token);
+
+        assertThat(isValidOrNot).isTrue();
+    }
 }
