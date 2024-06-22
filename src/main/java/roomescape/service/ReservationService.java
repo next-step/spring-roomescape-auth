@@ -44,8 +44,8 @@ public class ReservationService {
 
     public ReservationResponse createAdminReservation(ReservationAdminRequest request, Member member) {
         ReservationRequest reservationRequest = new ReservationRequest(request.getDate()
-                , String.valueOf(request.getTimeId())
-                , String.valueOf(request.getThemeId()));
+                , request.getTimeId()
+                , request.getThemeId());
         validateReservationCreation(reservationRequest);
 
         Reservation reservation = reservationDao.save(this.convertToEntity(reservationRequest, member.getName()));
@@ -94,15 +94,15 @@ public class ReservationService {
                 , reservationTheme);
     }
 
-    private ReservationTime findReservationTimeById(String timeId) {
+    private ReservationTime findReservationTimeById(Long timeId) {
         return reservationTimeDao
-                .findById(Long.parseLong(timeId))
+                .findById(timeId)
                 .orElseThrow(InvalidReservationTimeException::new);
     }
 
-    private ReservationTheme findReservationThemeById(String themeId) {
+    private ReservationTheme findReservationThemeById(Long themeId) {
         return reservationThemeDao
-                .findById(Long.parseLong(themeId))
+                .findById(themeId)
                 .orElseThrow(InvalidReservationThemeException::new);
     }
 

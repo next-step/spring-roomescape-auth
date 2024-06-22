@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class ReservationThemeFixture {
 
-    public static Response 예약테마를_생성한다(Map<String, String> params) {
+    public static Response 예약테마를_생성한다(Map<String, Object> params) {
         return RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(params)

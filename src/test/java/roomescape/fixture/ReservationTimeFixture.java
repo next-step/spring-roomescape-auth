@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class ReservationTimeFixture {
 
-    public static Response 예약시간을_생성한다(Map<String, String> params) {
+    public static Response 예약시간을_생성한다(Map<String, Object> params) {
         return RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(params)

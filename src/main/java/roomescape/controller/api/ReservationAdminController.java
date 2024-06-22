@@ -1,5 +1,7 @@
 package roomescape.controller.api;
 
+import jakarta.validation.Valid;
+import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,8 +11,6 @@ import roomescape.dto.request.ReservationAdminRequest;
 import roomescape.dto.response.ReservationResponse;
 import roomescape.service.MemberService;
 import roomescape.service.ReservationService;
-
-import java.net.URI;
 
 @RestController
 public class ReservationAdminController {
@@ -24,7 +24,7 @@ public class ReservationAdminController {
     }
 
     @PostMapping("/admin/reservations")
-    public ResponseEntity<ReservationResponse> createReservation(@RequestBody ReservationAdminRequest request) {
+    public ResponseEntity<ReservationResponse> createReservation(@Valid @RequestBody ReservationAdminRequest request) {
         Member member = memberService.findById(request.getMemberId());
 
         ReservationResponse reservation = reservationService.createAdminReservation(request, member);

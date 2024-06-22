@@ -1,5 +1,9 @@
 package roomescape.controller;
 
+import static org.hamcrest.Matchers.is;
+import static roomescape.fixture.AuthFixture.사용자_로그인;
+import static roomescape.fixture.MemberFixture.회원가입;
+
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,10 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.dto.request.LoginRequest;
-
-import static org.hamcrest.Matchers.is;
-import static roomescape.fixture.AuthFixture.사용자_로그인;
-import static roomescape.fixture.MemberFixture.회원가입;
 
 @DisplayName("인증 관련 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)

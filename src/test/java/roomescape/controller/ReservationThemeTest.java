@@ -12,7 +12,6 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +44,7 @@ public class ReservationThemeTest {
     @Test
     @DisplayName("예약테마를 생성한다.")
     void createReservationTheme() {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("name", NAME);
         params.put("description", DESCRIPTION);
         params.put("thumbnail", THUMBNAIL);
@@ -62,7 +61,7 @@ public class ReservationThemeTest {
     @Test
     @DisplayName("예약테마를 생성할 때 필수값이 없는 경우 에러가 발생한다.")
     void missingRequiredFieldsThrowsErrorOnThemeCreation() {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("name", "");
         params.put("description", DESCRIPTION);
         params.put("thumbnail", THUMBNAIL);
@@ -76,7 +75,7 @@ public class ReservationThemeTest {
     @Test
     @DisplayName("예약테마를 생성할 때 테마이름이 중복인 경우 에러가 발생한다.")
     void createReservationThemeDuplicate() {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("name", NAME);
         params.put("description", DESCRIPTION);
         params.put("thumbnail", THUMBNAIL);
@@ -95,7 +94,7 @@ public class ReservationThemeTest {
     @Test
     @DisplayName("예약테마 목록을 조회한다.")
     void findAllReservationThemes() {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("name", NAME);
         params.put("description", DESCRIPTION);
         params.put("thumbnail", THUMBNAIL);
@@ -114,7 +113,7 @@ public class ReservationThemeTest {
     @Test
     @DisplayName("예약테마를 삭제한다.")
     void deleteReservationTheme() {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("name", NAME);
         params.put("description", DESCRIPTION);
         params.put("thumbnail", THUMBNAIL);
@@ -132,7 +131,7 @@ public class ReservationThemeTest {
     @Test
     @DisplayName("예약테마를 삭제할 때 사용중인 예약이 있는 경우 에러가 발생한다.")
     void deleteReservationThemeExistReservation() {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("name", NAME);
         params.put("description", DESCRIPTION);
         params.put("thumbnail", THUMBNAIL);

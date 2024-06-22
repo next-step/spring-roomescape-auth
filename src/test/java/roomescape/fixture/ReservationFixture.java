@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class ReservationFixture {
 
-    public static Response 예약을_생성한다(Map<String, String> params, String token) {
+    public static Response 예약을_생성한다(Map<String, Object> params, String token) {
         return RestAssured.given().log().all()
                 .cookie("token", token)
                 .contentType(ContentType.JSON)
@@ -15,7 +15,7 @@ public class ReservationFixture {
                 .when().post("/reservations");
     }
 
-    public static Response 예약을_생성한다_관리자(Map<String, String> params, String token) {
+    public static Response 예약을_생성한다_관리자(Map<String, Object> params, String token) {
         return RestAssured.given().log().all()
                 .cookie("token", token)
                 .contentType(ContentType.JSON)
