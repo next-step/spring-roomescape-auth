@@ -2,10 +2,14 @@ package roomescape.auth.application;
 
 import jakarta.servlet.http.Cookie;
 import org.springframework.stereotype.Service;
+import roomescape.auth.ui.dto.LoginCheckResponse;
 import roomescape.auth.ui.dto.LoginRequest;
 import roomescape.exception.BadRequestException;
+import roomescape.exception.NotFoundException;
+import roomescape.exception.UnauthorizedException;
 import roomescape.member.application.PasswordEncoder;
 import roomescape.member.domain.MemberRepository;
+import roomescape.member.domain.entity.Member;
 
 @Service
 public class LoginService {
@@ -34,5 +38,24 @@ public class LoginService {
 
         String token = jwtTokenProvider.createToken(memberId);
         return cookieUtils.createCookie("token", token);
+    }
+
+    public Long getMemberIdFromCookies(Cookie[] cookies) {
+        String token = cookieUtils
+                .getCookieByName(cookies, "token")
+                .orElseThrow(() -> UnauthorizedException.of("토큰이 없습니다."))
+                .toString();
+        boolean isInvalidToken = jwtTokenProvider.validateToken(token);
+
+        if (isInvalidToken) {
+            throw UnauthorizedException.of("토큰이 만료되었습니다.");
+        }
+        return jwtTokenProvider.extractMemberId(token);
+    }
+
+    public LoginCheckResponse findMemberById(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> NotFoundException.of("id에 일치하는 사용자를 찾을 수 없습니다."));
+        return new LoginCheckResponse(member.getName());
     }
 }
