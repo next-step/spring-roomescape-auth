@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.test;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -15,6 +15,7 @@ import roomescape.theme.dto.ThemeRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static roomescape.step.ReservationStep.예약_등록;
 
 @DisplayName("예약 관련 api 호출 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -49,14 +50,6 @@ public class ReservationAcceptanceTest {
         ExtractableResponse<Response> response = 예약_등록(request);
 
         assertThat(response.statusCode()).isEqualTo(200);
-    }
-
-    @Test
-    void 이름이_빈_값이면_예약_등록_실패() {
-        ReservationRequest requestWithBlank = new ReservationRequest("2025-08-05", 1L, 1L);
-        ExtractableResponse<Response> response = 예약_등록(requestWithBlank);
-
-        assertThat(response.statusCode()).isEqualTo(400);
     }
 
     @Test
@@ -108,15 +101,6 @@ public class ReservationAcceptanceTest {
     private ExtractableResponse<Response> 예약_조회() {
         return RestAssured.given().log().all()
             .when().get("/reservations")
-            .then().log().all()
-            .extract();
-    }
-
-    private ExtractableResponse<Response> 예약_등록(ReservationRequest request) {
-        return RestAssured.given().log().all()
-            .contentType(ContentType.JSON)
-            .body(request)
-            .when().post("/reservations")
             .then().log().all()
             .extract();
     }
