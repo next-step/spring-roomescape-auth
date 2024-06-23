@@ -30,14 +30,8 @@ public class AuthService {
     }
 
     public void checkMember(Member member) {
-
-        boolean existByEmail = memberRepository.isExistByEmail(member);
-        if (!existByEmail) {
-            throw new AuthorizationException("해당하는 회원 정보가 없습니다.");
-        }
-
-        boolean exsitByEmailAndPassword = memberRepository.isExistMemBerByEmailAndPassword(member.getEmail(), member.getPassword());
-        if (!exsitByEmailAndPassword) {
+        boolean existByEmailAndPassword = memberRepository.isExistMemBerByEmailAndPassword(member.getEmail(), member.getPassword());
+        if (!existByEmailAndPassword) {
             throw new AuthorizationException("해당하는 회원 정보가 없습니다.");
         }
     }
