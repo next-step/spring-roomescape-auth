@@ -12,7 +12,7 @@ import roomescape.reservation.dto.ReservationResponse;
 import roomescape.reservation.service.ReservationService;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/reservations")
 public class AdminReservationController {
 
     private final ReservationService reservationService;
@@ -21,7 +21,7 @@ public class AdminReservationController {
         this.reservationService = reservationService;
     }
 
-    @PostMapping("/reservations")
+    @PostMapping
     public ResponseEntity<ReservationResponse> saveReservationByAdmin(
         @RequestBody @Valid AdminReservationRequest request) {
         return ResponseEntity.created(URI.create("/reservations"))
