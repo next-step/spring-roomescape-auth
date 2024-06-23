@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.reservation.dto.AdminReservationRequest;
 import roomescape.reservation.dto.ReservationRequest;
 import roomescape.reservationTime.dto.ReservationTimeRequest;
 import roomescape.theme.dto.ThemeRequest;
@@ -50,6 +51,16 @@ public class ReservationAcceptanceTest {
         ExtractableResponse<Response> response = 예약_등록(request);
 
         assertThat(response.statusCode()).isEqualTo(200);
+    }
+
+    @Test
+    void 관리자용_예약_등록_성공() {
+        RestAssured.given().log().all()
+            .contentType(ContentType.JSON)
+            .body(new AdminReservationRequest(1L, "2025-08-05", 1L, 1L))
+            .when().post("/admin/reservations")
+            .then().log().all()
+            .statusCode(201);
     }
 
     @Test
