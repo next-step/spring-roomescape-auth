@@ -1,11 +1,14 @@
 package roomescape.member.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import roomescape.error.exception.MemberNotExistsException;
 import roomescape.error.exception.PasswordNotMatchedException;
 import roomescape.login.LoginMember;
 import roomescape.member.Member;
+import roomescape.member.dto.MemberResponse;
 
 @Service
 public class MemberService {
@@ -16,11 +19,17 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
+    public List<MemberResponse> findMembers() {
+        return memberRepository.find().stream()
+            .map(member -> new MemberResponse(member.getId(), member.getEmail(), member.getName()))
+            .collect(Collectors.toList());
+    }
+
     public LoginMember getLoginMemberByEmailAndPassword(String email, String password) {
         Member member = Optional.ofNullable(memberRepository.findByEmail(email))
             .orElseThrow(MemberNotExistsException::new);
 
-        if(!member.isMatchedPassword(password)) {
+        if (!member.isMatchedPassword(password)) {
             throw new PasswordNotMatchedException();
         }
 
