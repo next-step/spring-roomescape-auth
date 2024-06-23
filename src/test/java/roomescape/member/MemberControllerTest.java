@@ -10,6 +10,7 @@ import roomescape.member.dto.LoginMemberRequestDto;
 import roomescape.member.dto.MemberResponseDto;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.CoreMatchers.notNullValue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class MemberControllerTest {
@@ -24,16 +25,16 @@ class MemberControllerTest {
         final LoginMemberRequestDto loginMemberRequestDto = new LoginMemberRequestDto(EMAIL, PASSOWORD);
 
         // when
-        final Response response = RestAssured
+        RestAssured
                 .given().log().all()
                 .body(loginMemberRequestDto)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/login")
-                .then().log().all().extract().response();
+                .then().log().all()
+                .assertThat()
+                .cookie("token", notNullValue());
 
-        //then
-        assertThat(response.cookie("token")).isNotEmpty();
 
     }
 
