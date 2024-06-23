@@ -15,18 +15,18 @@ import roomescape.domain.Member;
 public class MemberDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert memberInsert;
 
     public MemberDao(JdbcTemplate jdbcTemplate, DataSource source) {
         this.jdbcTemplate = jdbcTemplate;
-        this.jdbcInsert = new SimpleJdbcInsert(source)
+        this.memberInsert = new SimpleJdbcInsert(source)
                 .withTableName("MEMBER")
                 .usingGeneratedKeyColumns("id");
     }
 
     public Member save(Member member) {
         SqlParameterSource params = new BeanPropertySqlParameterSource(member);
-        Long id = jdbcInsert.executeAndReturnKey(params).longValue();
+        Long id = memberInsert.executeAndReturnKey(params).longValue();
 
         return member.toEntity(member, id);
     }

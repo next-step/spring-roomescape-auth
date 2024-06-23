@@ -1,43 +1,57 @@
 package roomescape.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 import roomescape.domain.Member;
+import roomescape.domain.Role;
+import roomescape.domain.RoleType;
 import roomescape.dto.request.LoginRequest;
 import roomescape.dto.request.MemberRequest;
 import roomescape.dto.response.LoginResponse;
 import roomescape.dto.response.MemberResponse;
 import roomescape.exception.custom.DuplicateMemberException;
+import roomescape.exception.custom.InvalidRoleTypeException;
 import roomescape.exception.custom.PasswordMismatchException;
 import roomescape.exception.custom.TokenNotFoundException;
 import roomescape.exception.custom.UserNotFoundException;
 import roomescape.repository.MemberDao;
+import roomescape.repository.MemberRoleDao;
+import roomescape.repository.RoleDao;
 import roomescape.util.JwtTokenProvider;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
-    private final MemberDao memberDao;
     private final PasswordEncoder passwordEncoder;
+    private final MemberDao memberDao;
+    private final MemberRoleDao memberRoleDao;
+    private final RoleDao roleDao;
 
-    public MemberService(JwtTokenProvider jwtTokenProvider, MemberDao memberDao, PasswordEncoder passwordEncoder) {
+    public MemberService(JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder, MemberDao memberDao,
+                         MemberRoleDao memberRoleDao, RoleDao roleDao) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.memberDao = memberDao;
         this.passwordEncoder = passwordEncoder;
+        this.memberDao = memberDao;
+        this.memberRoleDao = memberRoleDao;
+        this.roleDao = roleDao;
     }
 
     public String tokenLogin(LoginRequest request) {
         String email = request.getEmail();
         Member member = findByEmail(request.getEmail());
+        RoleType roleType = memberRoleDao
+                .findRoleByMemberId(member.getId())
+                .orElseThrow(() -> new InvalidRoleTypeException());
+
         validateMemberCredentials(member, request.getPassword());
 
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("name", member.getName());
+        extraClaims.put("role", roleType.name());
 
         return jwtTokenProvider.createToken(email, extraClaims);
     }
@@ -84,6 +98,11 @@ public class MemberService {
         validateSignupInformation(memberRequest);
 
         Member member = memberDao.save(this.convertToEntity(memberRequest));
+        Role role = roleDao
+                .findByName(RoleType.MEMBER.name())
+                .orElseThrow(() -> new InvalidRoleTypeException());
+        memberRoleDao.save(member.getId(), role.getId());
+
         return this.convertToResponse(member);
     }
 

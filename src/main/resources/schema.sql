@@ -34,3 +34,19 @@ CREATE TABLE member
     password VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE role
+(
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE member_role
+(
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    member_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    FOREIGN KEY (member_id) REFERENCES member (id),
+    FOREIGN KEY (role_id) REFERENCES role (id)
+);
