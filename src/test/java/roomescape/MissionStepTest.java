@@ -2,6 +2,7 @@ package roomescape;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -24,6 +25,7 @@ public class MissionStepTest {
                 .statusCode(200);
     }
 
+    @DisplayName("시간, 테마 등록 및 예약 등록, 전체조회, 삭제 테스트를 수행합니다.")
     @Test
     void reservation() {
         Map<String, Object> params = new HashMap<>();
@@ -84,5 +86,4 @@ public class MissionStepTest {
                 .statusCode(200)
                 .body("size()", is(0));
     }
-
 }

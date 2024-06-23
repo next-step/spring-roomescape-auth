@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import roomescape.reservationTheme.domain.ReservationTheme;
+import roomescape.reservationTheme.infra.ReservationThemeRepository;
 
 import java.util.List;
 
@@ -21,12 +23,9 @@ class ReservationThemeRepositoryTest {
 
     @BeforeEach
     void setUp() {
-
         reservationThemeRepository = new ReservationThemeRepository(jdbcTemplate);
-
         jdbcTemplate.execute("DROP TABLE IF EXISTS reservation");
         jdbcTemplate.execute("DROP TABLE IF EXISTS theme");
-
         jdbcTemplate.execute("""
                 CREATE TABLE theme (
                             id BIGINT NOT NULL AUTO_INCREMENT,
@@ -37,8 +36,7 @@ class ReservationThemeRepositoryTest {
                 """);
     }
 
-
-    @DisplayName("테마를 저장할 수 있다.")
+    @DisplayName("테마를 저장할 수 있습니다.")
     @Test
     void save() {
         //given
@@ -47,7 +45,6 @@ class ReservationThemeRepositoryTest {
                 .description("게임을 시작하지~! (-_-)b")
                 .thumbnail("https://soo1.com")
                 .build();
-
         final Long id = reservationThemeRepository.save(theme);
 
         //when
@@ -57,7 +54,7 @@ class ReservationThemeRepositoryTest {
         assertThat(savedTheme.getName()).isEqualTo(theme.getName());
     }
 
-    @DisplayName("모든 테마를 조회할 수 있다.")
+    @DisplayName("모든 테마를 조회할 수 있습니다.")
     @Test
     void findAll() {
         //given
@@ -72,7 +69,6 @@ class ReservationThemeRepositoryTest {
                 .description("게임을 시작안하지~! (-_-)b")
                 .thumbnail("https://soo2.com")
                 .build();
-
         reservationThemeRepository.save(theme1);
         reservationThemeRepository.save(theme2);
 
@@ -81,20 +77,17 @@ class ReservationThemeRepositoryTest {
 
         //then
         assertThat(savedThemes.size()).isEqualTo(2);
-
     }
 
-    @DisplayName("테마를 조회할 수 있다.")
+    @DisplayName("테마를 조회할 수 있습니다.")
     @Test
     void findById() {
-
         //given
         final ReservationTheme theme = new ReservationTheme.Builder()
                 .name("쏘우1")
                 .description("게임을 시작하지~! (-_-)b")
                 .thumbnail("https://soo1.com")
                 .build();
-
         final Long id = reservationThemeRepository.save(theme);
 
         //when
@@ -104,7 +97,7 @@ class ReservationThemeRepositoryTest {
         assertThat(savedTheme.getName()).isEqualTo(theme.getName());
     }
 
-    @DisplayName("테마를 삭제할 수 있다.")
+    @DisplayName("테마를 삭제할 수 있습니다.")
     @Test
     void deleteById() {
         //given
@@ -123,7 +116,7 @@ class ReservationThemeRepositoryTest {
         assertThat(reservationThemeRepository.existById(id)).isFalse();
     }
 
-    @DisplayName("테마가 존재하는지 확인할 수 있다.")
+    @DisplayName("테마가 존재하는지 확인할 수 있습니다.")
     @Test
     void existById() {
         //given
@@ -132,7 +125,6 @@ class ReservationThemeRepositoryTest {
                 .description("게임을 시작하지~! (-_-)b")
                 .thumbnail("https://soo1.com")
                 .build();
-
         final Long id = reservationThemeRepository.save(theme);
 
         //when
@@ -141,5 +133,4 @@ class ReservationThemeRepositoryTest {
         //then
         assertThat(isExisted).isTrue();
     }
-
 }

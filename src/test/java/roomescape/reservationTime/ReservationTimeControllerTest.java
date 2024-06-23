@@ -2,6 +2,7 @@ package roomescape.reservationTime;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
-import roomescape.reservation.ReservationPolicy;
+import roomescape.reservationTime.domain.ReservationTime;
+import roomescape.reservationTime.dto.ReservationTimeRequestDto;
+import roomescape.reservationTime.dto.ReservationTimeResponseDto;
+import roomescape.reservationTime.infra.ReservationTimeRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +36,6 @@ class ReservationTimeControllerTest {
         reservationTimeRepository = new ReservationTimeRepository(jdbcTemplate);
         jdbcTemplate.execute("DROP TABLE IF EXISTS reservation");
         jdbcTemplate.execute("DROP TABLE IF EXISTS reservation_time");
-
         jdbcTemplate.execute(
                 """
                         CREATE TABLE reservation_time (
@@ -42,7 +45,6 @@ class ReservationTimeControllerTest {
                         )
                         """
         );
-
         jdbcTemplate.execute(
                 """
                         CREATE TABLE reservation (
@@ -60,100 +62,97 @@ class ReservationTimeControllerTest {
     @DisplayName("전체 예약을 조회 합니다.")
     @Test
     void getTimes() {
+        //given
         final ReservationTime request1 = new ReservationTime("15:40");
         final ReservationTime request2 = new ReservationTime("16:40");
-        List<Object[]> reservationTimes = Arrays.asList(request1, request2).stream()
+        final List<Object[]> reservationTimes = Arrays.asList(request1, request2).stream()
                 .map(reservationTime -> new Object[]{reservationTime.getStartAt()})
                 .collect(Collectors.toList());
 
         jdbcTemplate.batchUpdate("INSERT INTO reservation_time(start_at) VALUES (?)", reservationTimes);
 
-        var response = RestAssured
+        //when
+        final Response response = RestAssured
                 .given().log().all()
                 .when().get("/times")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
+        //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(2);
     }
 
-    @DisplayName("시간 추가하기")
+    @DisplayName("시간 추가할 수 있습니다.")
     @Test
     void addTime() {
-
         // given
         final ReservationTimeRequestDto request = new ReservationTimeRequestDto("15:40");
 
         // when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/times")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        ReservationTimeResponseDto responseDto = response.as(ReservationTimeResponseDto.class);
+        final ReservationTimeResponseDto responseDto = response.as(ReservationTimeResponseDto.class);
         assertThat(responseDto.getStartAt()).isEqualTo(request.getStartAt());
     }
 
-    @DisplayName("시간 삭제하기")
+    @DisplayName("시간을 삭제할 수 있습니다.")
     @Test
     void deleteTime() {
         // given
         final ReservationTimeRequestDto request = new ReservationTimeRequestDto("15:40");
 
         // when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/times")
-                .then().log().all().extract();
-
-
+                .then().log().all().extract().response();
         final ReservationTimeResponseDto responseDto = response.as(ReservationTimeResponseDto.class);
-
-        var response2 = RestAssured.given().log().all()
+        final Response response2 = RestAssured.given().log().all()
                 .when().delete("/times/" + responseDto.getId())
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // then
         assertThat(response2.statusCode()).isEqualTo(HttpStatus.OK.value());
 
     }
 
-    @DisplayName("시간 형식이 적절하지 못하면 예외가 발생한다.")
+    @DisplayName("시간 형식이 적절하지 못하면 예외가 발생합니다.")
     @Test
     void addTimeException() {
-
         // given
         final ReservationTimeRequestDto request = new ReservationTimeRequestDto("30:40");
 
         // when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/times")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
-    @DisplayName("시간이 null 이면 예외가 발생한다.")
+    @DisplayName("시간이 null 이면 예외가 발생합니다.")
     @ParameterizedTest
     @NullAndEmptySource
     void addTimeException3(final String startAt) {
-
         // given
         final ReservationTimeRequestDto request = new ReservationTimeRequestDto(startAt);
 
         // when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/times")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());

@@ -2,7 +2,7 @@ package roomescape.reservationTheme;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import org.assertj.core.api.Assertions;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,16 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
-import roomescape.reservation.ReservationRepository;
-import roomescape.reservationTime.ReservationTime;
-import roomescape.reservationTime.ReservationTimeResponseDto;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import roomescape.reservationTheme.dto.ReservationThemeRequestDto;
+import roomescape.reservationTheme.dto.ReservationThemeResponseDto;
+import roomescape.reservationTheme.infra.ReservationThemeRepository;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ReservationThemeControllerTest {
@@ -48,27 +43,24 @@ class ReservationThemeControllerTest {
 
     }
 
-    @DisplayName("모든 테마를 조회할 수 있다.")
+    @DisplayName("모든 테마를 조회할 수 있습니다.")
     @Test
     void getThemes() {
         //given
         final ReservationThemeRequestDto requestDto1 = new ReservationThemeRequestDto("쏘우1", "게임을 시작하지~! (-_-)b", "https://soo1.com");
-
-
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(requestDto1)
                 .when().post("/themes")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // when
-        var themes = RestAssured.given().log().all()
-                .when().get("/themes")
-                .then().log().all().extract().as(ReservationThemeResponseDto[].class);
+        final ReservationThemeResponseDto[] reservationThemeResponseDtos = RestAssured.given().log().all()
+                .when().get("/themes").then().log().all().extract().as(ReservationThemeResponseDto[].class);
 
         // then
-        assertThat(requestDto1.getName()).isEqualTo(themes[0].getName());
-        assertThat(requestDto1.getDescription()).isEqualTo(themes[0].getDescription());
+        assertThat(requestDto1.getName()).isEqualTo(reservationThemeResponseDtos[0].getName());
+        assertThat(requestDto1.getDescription()).isEqualTo(reservationThemeResponseDtos[0].getDescription());
     }
 
     @DisplayName("테마를 저장할 수 있다.")
@@ -76,42 +68,43 @@ class ReservationThemeControllerTest {
     void createTheme() {
 
         //given
-        final ReservationThemeRequestDto requestDto1 = new ReservationThemeRequestDto("쏘우1", "게임을 시작하지~! (-_-)b", "https://soo1.com");
+        final ReservationThemeRequestDto requestDto1 = new ReservationThemeRequestDto("쏘우1",
+                "게임을 시작하지~! (-_-)b", "https://soo1.com");
 
         //when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(requestDto1)
                 .when().post("/themes")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         //then
         assertThat(response.statusCode()).isEqualTo(201);
         assertThat(response.jsonPath().getString("name")).isEqualTo(requestDto1.getName());
     }
 
-    @DisplayName("테마를 삭제할 수 있다.")
+    @DisplayName("테마를 삭제할 수 있습니다.")
     @Test
     void deleteTheme() {
         //given
-        final ReservationThemeRequestDto requestDto1 = new ReservationThemeRequestDto("쏘우1", "게임을 시작하지~! (-_-)b", "https://soo1.com");
-
-        var response = RestAssured.given().log().all()
+        final ReservationThemeRequestDto requestDto1 = new ReservationThemeRequestDto("쏘우1",
+                "게임을 시작하지~! (-_-)b", "https://soo1.com");
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(requestDto1)
                 .when().post("/themes")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         //when
-        var response2 = RestAssured.given().log().all()
+        final Response response2 = RestAssured.given().log().all()
                 .when().delete("/themes/1")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         //then
         assertThat(response2.statusCode()).isEqualTo(204);
     }
 
-    @DisplayName("테마 이름이 null이거나 빈 문자열이면 예외가 발생한다.")
+    @DisplayName("테마 이름이 null이거나 빈 문자열이면 예외가 발생합니다.")
     @ParameterizedTest
     @NullAndEmptySource
     void createThemeEmptyName(final String name) {
@@ -119,18 +112,18 @@ class ReservationThemeControllerTest {
         final ReservationThemeRequestDto requestDto1 = new ReservationThemeRequestDto(name, "게임을 시작하지~! (-_-)b", "https://soo1.com");
 
         //when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(requestDto1)
                 .when().post("/themes")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(response.jsonPath().getString("name")).isEqualTo("테마명을 입력 해주세요");
     }
 
-    @DisplayName("테마 설명이 null이거나 빈 문자열이면 예외가 발생한다.")
+    @DisplayName("테마 설명이 null이거나 빈 문자열이면 예외가 발생합니다.")
     @ParameterizedTest
     @NullAndEmptySource
     void createThemeEmptyDescription(final String description) {
@@ -138,18 +131,18 @@ class ReservationThemeControllerTest {
         final ReservationThemeRequestDto requestDto1 = new ReservationThemeRequestDto("쏘우1", description, "https://soo1.com");
 
         //when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(requestDto1)
                 .when().post("/themes")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(response.jsonPath().getString("description")).isEqualTo("테마에 대한 설명을 입력해주세요");
     }
 
-    @DisplayName("테마 썸네일이 null이거나 빈 문자열이면 예외가 발생한다.")
+    @DisplayName("테마 썸네일이 null이거나 빈 문자열이면 예외가 발생합니다.")
     @ParameterizedTest
     @NullAndEmptySource
     void createThemeEmptyThumbnail(final String thumbnail) {
@@ -157,11 +150,11 @@ class ReservationThemeControllerTest {
         final ReservationThemeRequestDto requestDto1 = new ReservationThemeRequestDto("쏘우1", "게임을 시작하지~! (-_-)b", thumbnail);
 
         //when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(requestDto1)
                 .when().post("/themes")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());

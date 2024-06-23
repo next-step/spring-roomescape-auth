@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import roomescape.member.AuthorizationException;
+import roomescape.member.infra.AuthorizationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         return new ResponseEntity<>("Invalid argument provided : " + ex.getMessage(), HttpStatus.BAD_REQUEST);
-
     }
 
     @ExceptionHandler(NullPointerException.class)

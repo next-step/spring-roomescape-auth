@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import roomescape.reservationTime.domain.ReservationTime;
+import roomescape.reservationTime.domain.ReservationTimePolicy;
+import roomescape.reservationTime.infra.ReservationTimeRepository;
 
 import java.util.List;
 
@@ -14,8 +17,6 @@ import static org.assertj.core.api.Assertions.*;
 @JdbcTest
 class ReservationTimeRepositoryTest {
 
-    ReservationTimePolicy reservationTimePolicy = new ReservationTimePolicy();
-
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -23,17 +24,14 @@ class ReservationTimeRepositoryTest {
 
     @BeforeEach
     void setUp() {
-
         reservationTimeRepository = new ReservationTimeRepository(jdbcTemplate);
 
         jdbcTemplate.execute("DROP TABLE IF EXISTS reservation");
         jdbcTemplate.execute("DROP TABLE IF EXISTS reservation_time");
-
         jdbcTemplate.execute("CREATE TABLE reservation_time (" +
                 "id BIGINT NOT NULL AUTO_INCREMENT, " +
                 "start_at VARCHAR(255) NOT NULL, " +
                 "PRIMARY KEY (id))");
-
         jdbcTemplate.execute("CREATE TABLE reservation (" +
                 "id BIGINT NOT NULL AUTO_INCREMENT, " +
                 "name VARCHAR(255) NOT NULL, " +
@@ -42,9 +40,9 @@ class ReservationTimeRepositoryTest {
                 "PRIMARY KEY (id))");  // 외래키 제거
     }
 
-    @DisplayName("예약 시간을 등록할 수 있습니다")
+    @DisplayName("예약 시간을 등록할 수 있습니다.")
     @Test
-    void creatTime(){
+    void creatTime() {
         // given
         final ReservationTime request = new ReservationTime("15:40");
 
@@ -56,9 +54,9 @@ class ReservationTimeRepositoryTest {
         assertThat(actual.getStartAt()).isEqualTo(request.getStartAt());
     }
 
-    @DisplayName("예약 시간을 삭제할 수 있습니다")
+    @DisplayName("예약 시간을 삭제할 수 있습니다.")
     @Test
-    void deleteTime(){
+    void deleteTime() {
         // given
         final ReservationTime request = new ReservationTime("15:40");
         final Long id = reservationTimeRepository.save(request);
@@ -70,9 +68,9 @@ class ReservationTimeRepositoryTest {
         assertThat(reservationTimeRepository.existsById(id)).isFalse();
     }
 
-    @DisplayName("예약 시간을 조회할 수 있습니다")
+    @DisplayName("예약 시간을 조회할 수 있습니다.")
     @Test
-    void findAll(){
+    void findAll() {
         // given
         final ReservationTime reservationTime1 = new ReservationTime("15:40");
         final ReservationTime reservationTime2 = new ReservationTime("16:40");
@@ -90,9 +88,9 @@ class ReservationTimeRepositoryTest {
         assertThat(actual.get(1).getStartAt()).isEqualTo(reservationTime2.getStartAt());
     }
 
-    @DisplayName("예약 시간을 조회할 수 있습니다")
+    @DisplayName("예약 시간을 조회할 수 있습니다.")
     @Test
-    void findById(){
+    void findById() {
         // given
         final ReservationTime reservationTime = new ReservationTime("15:40");
         final Long id = reservationTimeRepository.save(reservationTime);

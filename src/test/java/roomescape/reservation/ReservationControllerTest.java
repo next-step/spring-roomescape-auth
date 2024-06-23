@@ -2,26 +2,27 @@ package roomescape.reservation;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
-import roomescape.reservationTheme.ReservationTheme;
-import roomescape.reservationTheme.ReservationThemeRequestDto;
-import roomescape.reservationTheme.ReservationThemeResponseDto;
-import roomescape.reservationTime.ReservationTime;
-import roomescape.reservationTime.ReservationTimePolicy;
-import roomescape.reservationTime.ReservationTimeRequestDto;
-import roomescape.reservationTime.ReservationTimeResponseDto;
+import roomescape.reservation.domain.Reservation;
+import roomescape.reservation.dto.ReservationRequestDto;
+import roomescape.reservation.dto.ReservationResponseDto;
+import roomescape.reservation.infra.ReservationRepository;
+import roomescape.reservationTheme.domain.ReservationTheme;
+import roomescape.reservationTheme.dto.ReservationThemeRequestDto;
+import roomescape.reservationTheme.dto.ReservationThemeResponseDto;
+import roomescape.reservationTime.domain.ReservationTime;
+import roomescape.reservationTime.dto.ReservationTimeRequestDto;
+import roomescape.reservationTime.dto.ReservationTimeResponseDto;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +48,6 @@ class ReservationControllerTest {
     private String theme2Name;
     private String theme2Thumbnail;
     private String theme2description;
-
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -94,7 +94,7 @@ class ReservationControllerTest {
                         """
         );
 
-        List<Object[]> reservationTimes = Arrays.asList(
+        final List<Object[]> reservationTimes = Arrays.asList(
                         new ReservationTime("10:00"),
                         new ReservationTime("12:00"),
                         new ReservationTime("14:00"))
@@ -103,12 +103,12 @@ class ReservationControllerTest {
                 .collect(Collectors.toList());
         jdbcTemplate.batchUpdate("INSERT INTO reservation_time(start_at) VALUES (?)", reservationTimes);
 
-        var response1 = RestAssured
+        final Response response1 = RestAssured
                 .given().log().all()
                 .when().get("/times")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
-        List<ReservationTimeResponseDto> timeResponseDtos = response1.jsonPath().getList(".", ReservationTimeResponseDto.class);
+        final List<ReservationTimeResponseDto> timeResponseDtos = response1.jsonPath().getList(".", ReservationTimeResponseDto.class);
         time1Id = timeResponseDtos.get(0).getId();
         time2Id = timeResponseDtos.get(1).getId();
         time3Id = timeResponseDtos.get(2).getId();
@@ -118,17 +118,17 @@ class ReservationControllerTest {
 
         final ReservationTheme theme1 = new ReservationTheme("테마1", "설명1", "썸네일1");
         final ReservationTheme theme2 = new ReservationTheme("테마2", "설명2", "썸네일2");
-        List<Object[]> themes = Arrays.asList(theme1, theme2).stream()
+        final List<Object[]> themes = Arrays.asList(theme1, theme2).stream()
                 .map(theme -> new Object[]{theme.getName(), theme.getDescription(), theme.getThumbnail()})
                 .collect(Collectors.toList());
         jdbcTemplate.batchUpdate("INSERT INTO theme(name, description, thumbnail) VALUES (?,?,?)", themes);
 
-        var response2 = RestAssured
+        final Response response2 = RestAssured
                 .given().log().all()
                 .when().get("/themes")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
-        List<ReservationThemeResponseDto> themeResponseDtos = response2.jsonPath().getList(".", ReservationThemeResponseDto.class);
+        final List<ReservationThemeResponseDto> themeResponseDtos = response2.jsonPath().getList(".", ReservationThemeResponseDto.class);
         theme1Id = themeResponseDtos.get(0).getId();
         theme1Name = themeResponseDtos.get(0).getName();
         theme1Thumbnail = themeResponseDtos.get(0).getThumbnail();
@@ -140,7 +140,7 @@ class ReservationControllerTest {
         final ReservationTheme savedTheme = new ReservationTheme.Builder().id(theme1Id).name(theme1Name).thumbnail(theme1Thumbnail).description(theme1Thumbnail).build();
         final Reservation savedReservation = new Reservation("김준성", "2024-12-25", savedTime, savedTheme);
 
-        List<Object[]> reservations = Arrays.asList(savedReservation).stream()
+        final List<Object[]> reservations = Arrays.asList(savedReservation).stream()
                 .map(reservation -> new Object[]{
                         reservation.getName(),
                         reservation.getDate(),
@@ -149,8 +149,6 @@ class ReservationControllerTest {
                 .collect(Collectors.toList());
 
         jdbcTemplate.batchUpdate("INSERT INTO reservation(name, date, time_id, theme_id) VALUES (?,?,?,?)", reservations);
-
-
     }
 
     @DisplayName("예약을 생성합니다.")
@@ -162,24 +160,25 @@ class ReservationControllerTest {
                 new ReservationThemeRequestDto(theme1Id));
 
         // when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/reservations")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        ReservationResponseDto responseDto = response.as(ReservationResponseDto.class);
+
+        final ReservationResponseDto responseDto = response.as(ReservationResponseDto.class);
         assertThat(responseDto.getName()).isEqualTo(request.getName());
         assertThat(responseDto.getDate()).isEqualTo(request.getDate());
-        assertThat(responseDto.getReservationTimeResponseDto().getStartAt()).isEqualTo(request.getReservationTimeRequestDto().getStartAt());
+        assertThat(responseDto.getReservationTimeResponseDto().getStartAt())
+                .isEqualTo(request.getReservationTimeRequestDto().getStartAt());
     }
 
     @DisplayName("전체 예약을 조회 합니다.")
     @Test
     void readReservation() {
-
         var response = RestAssured
                 .given().log().all()
                 .when().get("/reservations")
@@ -198,18 +197,18 @@ class ReservationControllerTest {
                 new ReservationThemeRequestDto(theme2Id, theme2Name, theme2description, theme2Thumbnail));
 
         // when
-        var response1 = RestAssured.given().log().all()
+        final Response response1 = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/reservations")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // when
-        var response2 = RestAssured.given().log().all()
+        final Response response2 = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().delete("/reservations/" + response1.as(ReservationResponseDto.class).getId())
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // then
         assertThat(response2.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -225,11 +224,11 @@ class ReservationControllerTest {
                 new ReservationThemeRequestDto(theme1Id, theme1Name, theme1description, theme1Thumbnail));
 
         // when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/reservations")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -246,11 +245,11 @@ class ReservationControllerTest {
                 new ReservationThemeRequestDto(theme1Id, theme1Name, theme1description, theme1Thumbnail));
 
         // when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/reservations")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -267,26 +266,23 @@ class ReservationControllerTest {
         final String date2 = "2025-12-31";
         final Long themeId2 = theme1Id;
 
-
         // when
-        var response = RestAssured.given().log().all()
+        final Response response = RestAssured.given().log().all()
                 .queryParam("date", date)
                 .queryParam("themeId", themeId)
                 .when().get("/times/available")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
-        var response2 = RestAssured.given().log().all()
+        final Response response2 = RestAssured.given().log().all()
                 .queryParam("date", date2)
                 .queryParam("themeId", themeId2)
                 .when().get("/times/available")
-                .then().log().all().extract();
+                .then().log().all().extract().response();
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(2);
-
         assertThat(response2.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response2.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(3);
     }
-
 }
