@@ -230,3 +230,28 @@ DELETE /themes/1 HTTP/1.1
 ```
 HTTP/1.1 204
 ```
+
+### 회원 조회 API
+- request
+```json
+GET /members HTTP/1.1
+```
+
+- response
+```json
+HTTP/1.1 200
+Content-Type: application/json
+
+[
+  {
+    "id": 1,
+    "email" : "test1@test.com",
+    "name" : "test1"
+  },
+  {
+    "id": 2,
+    "email" : "test2@test.com",
+    "name" : "test2"
+  }
+]
+```
