@@ -1,6 +1,7 @@
 package roomescape.member.service;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,15 +30,17 @@ public class MemberRepository {
         return jdbcTemplate.query(SELECT_STR, rowMapper);
     }
 
-    public Member findById(Long id) {
+    public Optional<Member> findById(Long id) {
         String sql = SELECT_STR + "WHERE id = ?";
 
-        return DataAccessUtils.singleResult(jdbcTemplate.query(sql, rowMapper, id));
+        return Optional.ofNullable(
+            DataAccessUtils.singleResult(jdbcTemplate.query(sql, rowMapper, id)));
     }
 
-    public Member findByEmail(String email) {
+    public Optional<Member> findByEmail(String email) {
         String sql = SELECT_STR + "WHERE email = ?";
 
-        return DataAccessUtils.singleResult(jdbcTemplate.query(sql, rowMapper, email));
+        return Optional.ofNullable(
+            DataAccessUtils.singleResult(jdbcTemplate.query(sql, rowMapper, email)));
     }
 }

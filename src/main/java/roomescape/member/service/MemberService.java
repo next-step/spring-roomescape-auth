@@ -1,7 +1,6 @@
 package roomescape.member.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import roomescape.error.exception.MemberNotExistsException;
@@ -26,7 +25,7 @@ public class MemberService {
     }
 
     public LoginMember getLoginMemberByEmailAndPassword(String email, String password) {
-        Member member = Optional.ofNullable(memberRepository.findByEmail(email))
+        Member member = memberRepository.findByEmail(email)
             .orElseThrow(MemberNotExistsException::new);
 
         if (!member.isMatchedPassword(password)) {

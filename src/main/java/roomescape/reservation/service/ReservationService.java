@@ -18,7 +18,6 @@ import roomescape.theme.Theme;
 import roomescape.theme.service.ThemeRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,11 +44,10 @@ public class ReservationService {
     }
 
     public ReservationResponse saveReservationByAdmin(String name, ReservationRequest request) {
-        ReservationTime reservationTime = Optional.ofNullable(
-                reservationTimeRepository.findById(request.getTimeId()))
-                .orElseThrow(ReservationTimeNotExistsException::new);
-        Theme theme = Optional.ofNullable(themeRepository.findById(request.getThemeId()))
-                                .orElseThrow(ThemeNotExistsException::new);
+        ReservationTime reservationTime = reservationTimeRepository.findById(request.getTimeId())
+            .orElseThrow(ReservationTimeNotExistsException::new);
+        Theme theme = themeRepository.findById(request.getThemeId())
+            .orElseThrow(ThemeNotExistsException::new);
 
         Reservation reservation = new Reservation(name, request.getDate(),
             reservationTime, theme);
@@ -67,7 +65,7 @@ public class ReservationService {
     }
 
     public ReservationResponse saveReservationByAdmin(AdminReservationRequest request) {
-        Member member = Optional.ofNullable(memberRepository.findById(request.getMemberId()))
+        Member member = memberRepository.findById(request.getMemberId())
             .orElseThrow(MemberNotExistsException::new);
         return saveReservationByAdmin(member.getName(), request);
     }

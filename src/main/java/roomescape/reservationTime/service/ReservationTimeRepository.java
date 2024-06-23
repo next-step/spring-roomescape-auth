@@ -1,6 +1,7 @@
 package roomescape.reservationTime.service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -36,14 +37,15 @@ public class ReservationTimeRepository {
             reservationTime.getStartAt());
     }
 
-    public ReservationTime findById(Long id) {
+    public Optional<ReservationTime> findById(Long id) {
         RowMapper<ReservationTime> rowMapper = (rs, rowNum) -> new ReservationTime(
             rs.getLong(1),
             rs.getTime(2).toLocalTime());
 
-        return DataAccessUtils.singleResult(
-            jdbcTemplate.query("SELECT id, start_at FROM reservation_time where id = ?",
-                rowMapper, id));
+        return Optional.ofNullable(
+            DataAccessUtils.singleResult(
+                jdbcTemplate.query("SELECT id, start_at FROM reservation_time where id = ?",
+                    rowMapper, id)));
     }
 
     public List<ReservationTime> find() {
@@ -71,6 +73,7 @@ public class ReservationTimeRepository {
             """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) ->
-            new ReservationTime(rs.getLong("id"), rs.getTime("start_at").toLocalTime()), date, themeId);
+                new ReservationTime(rs.getLong("id"), rs.getTime("start_at").toLocalTime()), date,
+            themeId);
     }
 }

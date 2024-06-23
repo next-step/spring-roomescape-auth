@@ -1,12 +1,13 @@
 package roomescape.theme.service;
 
 import org.springframework.stereotype.Service;
-import roomescape.error.exception.ReferenceException;
+import roomescape.error.exception.ThemeNotExistsException;
 import roomescape.error.exception.ThemeReferenceException;
 import roomescape.reservation.service.ReservationRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import roomescape.theme.Theme;
 import roomescape.theme.dto.ThemeRequest;
 import roomescape.theme.dto.ThemeResponse;
 
@@ -34,7 +35,8 @@ public class ThemeService {
     }
 
     public ThemeResponse findTheme(Long id) {
-        return new ThemeResponse(themeRepository.findById(id));
+        Theme theme = themeRepository.findById(id).orElseThrow(ThemeNotExistsException::new);
+        return new ThemeResponse(theme);
     }
 
     public void deleteTheme(long id) {
