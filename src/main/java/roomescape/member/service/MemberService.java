@@ -16,17 +16,6 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public boolean isMember(String email, String password) {
-        Member member = Optional.ofNullable(memberRepository.findByEmail(email))
-            .orElseThrow(MemberNotExistsException::new);
-
-        return member.isMatchedPassword(password);
-    }
-
-    public String findNameByEmail(String email) {
-        return memberRepository.findByEmail(email).getName();
-    }
-
     public LoginMember getLoginMemberByEmailAndPassword(String email, String password) {
         Member member = Optional.ofNullable(memberRepository.findByEmail(email))
             .orElseThrow(MemberNotExistsException::new);
