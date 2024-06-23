@@ -12,9 +12,11 @@ public class JwtTokenProvider {
     @Value("${security.token.secret-key}")
     private String secretKey;
 
+    private final long validTime = 1000 * 60 * 60 * 24;
+
     public String createToken(Long id, String email, String name) {
         Date now = new Date();
-        Date exp = new Date(now.getTime() + (1000 * 60 * 60 * 24));
+        Date exp = new Date(now.getTime() + validTime);
 
         return Jwts.builder()
             .claim("id", id)
