@@ -32,9 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class ReservationControllerTest {
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
-
     @DisplayName("예약을 생성합니다.")
     @Test
     void createReservation() {

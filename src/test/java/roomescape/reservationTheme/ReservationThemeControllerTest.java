@@ -27,9 +27,6 @@ import static org.assertj.core.api.Assertions.*;
 @Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class ReservationThemeControllerTest {
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
-
     @DisplayName("모든 테마를 조회할 수 있습니다.")
     @Test
     void getThemes() {
