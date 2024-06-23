@@ -6,6 +6,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.reservation.dto.ReservationRequestDto;
+import roomescape.reservationTheme.dto.ReservationThemeRequestDto;
+import roomescape.reservationTime.dto.ReservationTimeRequestDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +20,7 @@ import static org.hamcrest.Matchers.is;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class MissionStepTest {
 
+    @DisplayName("루트 경로('/') 호출 시 200 statusCode를 반환합니다.")
     @Test
     void page() {
         RestAssured.given().log().all()
@@ -28,42 +32,33 @@ public class MissionStepTest {
     @DisplayName("시간, 테마 등록 및 예약 등록, 전체조회, 삭제 테스트를 수행합니다.")
     @Test
     void reservation() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", "브라운");
-        params.put("date", "2025-08-05");
-
-        Map<String, Object> time = new HashMap<>();
-        time.put("startAt", "15:40");
-        time.put("id", 1);
-
-        Map<String, Object> theme = new HashMap<>();
-        theme.put("id", 1);
-        theme.put("name", "테마1");
-        theme.put("description", "설명1");
-        theme.put("thumbnail", "썸네일1");
-
-        params.put("reservationTimeRequestDto", time);
-        params.put("reservationThemeRequestDto", theme);
+        final ReservationTimeRequestDto reservationTimeRequestDto = new ReservationTimeRequestDto((long) 1, "15:40");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
-                .body(time)
+                .body(reservationTimeRequestDto)
                 .when().post("/times")
                 .then().log().all()
                 .statusCode(200)
                 .body("id", is(1));
 
+        final ReservationThemeRequestDto reservationThemeRequestDto = new ReservationThemeRequestDto(
+                (long) 1, "테마1", "설명1", "썸네일1");
+
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
-                .body(theme)
+                .body(reservationThemeRequestDto)
                 .when().post("/themes")
                 .then().log().all()
                 .statusCode(201)
                 .body("id", is(1));
 
+        final ReservationRequestDto reservationRequestDto = new ReservationRequestDto(
+                "브라운", "2025-08-05", reservationTimeRequestDto, reservationThemeRequestDto);
+
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
-                .body(params)
+                .body(reservationRequestDto)
                 .when().post("/reservations")
                 .then().log().all()
                 .statusCode(200)
