@@ -1,19 +1,22 @@
 package roomescape.web.controller;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import roomescape.web.controller.ReservationAdminController;
-import roomescape.web.controller.dto.ReservationAdminRequest;
-import roomescape.web.controller.dto.ReservationResponse;
-import roomescape.web.controller.dto.ReservationTimeResponse;
-import roomescape.web.controller.dto.ThemeResponse;
 import roomescape.domain.Member;
 import roomescape.domain.MemberRole;
 import roomescape.service.MemberService;
 import roomescape.service.ReservationService;
+import roomescape.web.controller.dto.ReservationAdminRequest;
+import roomescape.web.controller.dto.ReservationResponse;
+import roomescape.web.controller.dto.ReservationSearchRequest;
+import roomescape.web.controller.dto.ReservationTimeResponse;
+import roomescape.web.controller.dto.ThemeResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,6 +65,27 @@ class ReservationAdminControllerTests {
 		// then
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(responseEntity.getBody()).isEqualTo(reservationResponse);
+	}
+
+	@Test
+	void searchReservations() {
+		// given
+		var searchRequest = new ReservationSearchRequest(1L, 1L, "2024-06-01", "2024-06-30");
+		var reservationTimeResponse = new ReservationTimeResponse(1L, "10:00");
+		var themeResponse = new ThemeResponse(1L, "방탈출1", "첫번째테마", "테마이미지");
+		var reservationResponse = new ReservationResponse(1L, "tester", "2024-06-06", reservationTimeResponse,
+				themeResponse);
+		List<ReservationResponse> reservationResponses = Collections.singletonList(reservationResponse);
+
+		given(this.reservationService.searchReservations(searchRequest)).willReturn(reservationResponses);
+
+		// when
+		ResponseEntity<List<ReservationResponse>> responseEntity = this.reservationAdminController
+			.searchReservations(searchRequest);
+
+		// then
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(responseEntity.getBody()).isEqualTo(reservationResponses);
 	}
 
 }

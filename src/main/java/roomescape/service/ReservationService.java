@@ -14,6 +14,7 @@ import roomescape.web.controller.dto.CreateReservationRequest;
 import roomescape.web.controller.dto.ReservationAdminRequest;
 import roomescape.web.controller.dto.ReservationRequest;
 import roomescape.web.controller.dto.ReservationResponse;
+import roomescape.web.controller.dto.ReservationSearchRequest;
 
 import org.springframework.stereotype.Service;
 
@@ -98,6 +99,11 @@ public class ReservationService {
 		if (this.reservationRepository.isDuplicateReservation(date, themeId)) {
 			throw new RoomEscapeException(ErrorCode.DUPLICATE_RESERVATION);
 		}
+	}
+
+	public List<ReservationResponse> searchReservations(ReservationSearchRequest request) {
+		return ReservationResponse.from(this.reservationRepository.findReservations(request.memberId(),
+				request.themeId(), request.dateFrom(), request.dateTo()));
 	}
 
 }
