@@ -35,8 +35,8 @@ public class ReservationThemeRepository {
         return jdbcTemplate.query(sql, reservationThemeRowMapper);
     }
 
-    public Long save(ReservationTheme theme) {
-        Map<String, Object> parameters = new HashMap<>();
+    public Long save(final ReservationTheme theme) {
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put("name", theme.getName());
         parameters.put("description", theme.getDescription());
         parameters.put("thumbnail", theme.getThumbnail());
@@ -44,17 +44,17 @@ public class ReservationThemeRepository {
         return simpleJdbcInsert.executeAndReturnKey(parameters).longValue();
     }
 
-    public ReservationTheme findById(Long id) {
+    public ReservationTheme findById(final Long id) {
         final String sql = "SELECT id, name, description, thumbnail FROM theme WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, reservationThemeRowMapper, id);
     }
 
-    public Boolean existById(Long id) {
+    public Boolean existById(final Long id) {
         final String sql = "SELECT EXISTS(SELECT 1 FROM theme WHERE id = ?)";
         return jdbcTemplate.queryForObject(sql, Boolean.class, id);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(final Long id) {
         final String sql = "DELETE FROM theme WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }

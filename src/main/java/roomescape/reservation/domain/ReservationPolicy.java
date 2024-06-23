@@ -10,7 +10,7 @@ public class ReservationPolicy {
     }
 
     public boolean isPastDate(String date) {
-        LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        final LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return parsedDate.isBefore(LocalDate.now());
     }
 

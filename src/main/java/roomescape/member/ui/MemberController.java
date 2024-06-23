@@ -26,11 +26,11 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginMemberRequestDto loginMemberRequestDto, HttpServletResponse response) {
+    public ResponseEntity<Void> login(final @Valid @RequestBody LoginMemberRequestDto loginMemberRequestDto, final HttpServletResponse response) {
         log.info("loginMemberID : {}", loginMemberRequestDto.getEmail());
-        TokenResponseDto tokenResponseDto = authService.createToken(loginMemberRequestDto);
+        final TokenResponseDto tokenResponseDto = authService.createToken(loginMemberRequestDto);
 
-        Cookie cookie = new Cookie("token", tokenResponseDto.getAccessToken());
+        final Cookie cookie = new Cookie("token", tokenResponseDto.getAccessToken());
         cookie.setMaxAge(1800);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
@@ -40,15 +40,15 @@ public class MemberController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<MemberResponseDto> getMember(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String token = extractTokenFromCookie(cookies);
-        MemberResponseDto memberResponseDto = authService.findMemberName(token);
+    public ResponseEntity<MemberResponseDto> getMember(final HttpServletRequest request) {
+        final Cookie[] cookies = request.getCookies();
+        final String token = extractTokenFromCookie(cookies);
+        final MemberResponseDto memberResponseDto = authService.findMemberName(token);
         log.info("로그인 계정의 Name : {}", memberResponseDto.getName());
         return ResponseEntity.ok().body(memberResponseDto);
     }
 
-    private String extractTokenFromCookie(Cookie[] cookies) {
+    private String extractTokenFromCookie(final Cookie[] cookies) {
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("token")) {
                 return cookie.getValue();

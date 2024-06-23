@@ -26,7 +26,7 @@ public class ReservationTimeService {
     }
 
     @Transactional
-    public ReservationTimeResponseDto addTime(ReservationTimeRequestDto reservationTimeRequestDto) {
+    public ReservationTimeResponseDto addTime(final ReservationTimeRequestDto reservationTimeRequestDto) {
         final ReservationTime reservationTime = new ReservationTime(reservationTimeRequestDto.getStartAt());
         final Long savedTimeId = reservationTimeRepository.save(reservationTime);
         final ReservationTime savedTime = reservationTimeRepository.findById(savedTimeId);
@@ -34,7 +34,7 @@ public class ReservationTimeService {
     }
 
     @Transactional
-    public void deleteTime(Long id) {
+    public void deleteTime(final Long id) {
         final boolean isExistedTime = reservationTimeRepository.existsById(id);
         if (!isExistedTime) {
             throw new IllegalArgumentException("해당 시간이 존재하지 않습니다.");

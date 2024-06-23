@@ -70,7 +70,7 @@ public class ReservationRepository {
     }
 
     public Long save(Reservation reservation) {
-        Map<String, Object> parameters = new HashMap<>();
+        final Map<String, Object> parameters = new HashMap<>();
         parameters.put("name", reservation.getName());
         parameters.put("date", reservation.getDate());
         parameters.put("time_id", reservation.getReservationTime().getId());

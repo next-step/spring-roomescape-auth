@@ -14,12 +14,12 @@ public class AvailableTimesController {
 
     private final ReservationService reservationService;
 
-    public AvailableTimesController(ReservationService reservationService) {
+    public AvailableTimesController(final ReservationService reservationService) {
         this.reservationService = reservationService;
     }
 
     @GetMapping("/times/available")
-    public ResponseEntity<List<ReservationTimeResponseDto>> getAvaliableTimes(@RequestParam String date, @RequestParam Long themeId) {
+    public ResponseEntity<List<ReservationTimeResponseDto>> getAvaliableTimes(final @RequestParam String date, final @RequestParam Long themeId) {
         final List<ReservationTimeResponseDto> reservationTimeResponseDtos = reservationService.findAvaliableTimes(date, themeId);
         return ResponseEntity.ok().body(reservationTimeResponseDtos);
     }

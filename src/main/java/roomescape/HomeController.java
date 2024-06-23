@@ -18,17 +18,13 @@ public class HomeController {
     }
 
     @GetMapping("/admin/theme")
-    public String theme(Model model) {
+    public String theme(final Model model) {
         return "admin/theme";
     }
 
     @GetMapping("/reservation")
-    public String reservation(Model model) {
-        return "reservation";
-    }
+    public String reservation(final Model model) { return "reservation"; }
 
     @GetMapping("/login")
-    public String goLoginPage(Model model) {
-        return "login";
-    }
+    public String goLoginPage(Model model) { return "login"; }
 }

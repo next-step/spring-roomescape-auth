@@ -25,14 +25,14 @@ public class ReservationService {
     }
 
     public List<ReservationResponseDto> findAll() {
-        List<Reservation> reservations = reservationRepository.findAll();
+        final List<Reservation> reservations = reservationRepository.findAll();
         return reservations.stream()
                 .map(reservation -> reservationResponseDtoFromReservation(reservation)
                 ).toList();
     }
 
     @Transactional
-    public ReservationResponseDto save(ReservationRequestDto reservationRequestDto) {
+    public ReservationResponseDto save(final ReservationRequestDto reservationRequestDto) {
         final Reservation reservation = new Reservation.Builder()
                 .name(reservationRequestDto.getName())
                 .date(reservationRequestDto.getDate())
@@ -54,7 +54,7 @@ public class ReservationService {
 
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(final Long id) {
         final boolean isExistedReservation = reservationRepository.existsById(id);
         if (!isExistedReservation) {
             throw new IllegalArgumentException("해당 예약이 존재하지 않습니다.");
@@ -63,14 +63,14 @@ public class ReservationService {
     }
 
 
-    public ReservationResponseDto findById(Long id) {
-        Reservation reservation = reservationRepository.findById(id);
+    public ReservationResponseDto findById(final Long id) {
+        final Reservation reservation = reservationRepository.findById(id);
         return reservationResponseDtoFromReservation(reservation);
     }
 
 
     public List<ReservationTimeResponseDto> findAvaliableTimes(final String date, final Long themeId) {
-        List<ReservationTime> availableReservationTimes = reservationRepository.getAvailableReservationTimes(date, themeId);
+        final List<ReservationTime> availableReservationTimes = reservationRepository.getAvailableReservationTimes(date, themeId);
         return availableReservationTimes.stream()
                 .map(reservationTime -> new ReservationTimeResponseDto(
                     reservationTime.getId(),

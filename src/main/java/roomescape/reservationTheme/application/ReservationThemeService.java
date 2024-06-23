@@ -27,7 +27,7 @@ public class ReservationThemeService {
     }
 
     @Transactional
-    public ReservationThemeResponseDto createTheme(ReservationThemeRequestDto requestDto) {
+    public ReservationThemeResponseDto createTheme(final ReservationThemeRequestDto requestDto) {
         final ReservationTheme theme = new ReservationTheme.Builder()
                 .name(requestDto.getName())
                 .description(requestDto.getDescription())
@@ -41,7 +41,7 @@ public class ReservationThemeService {
     }
 
     @Transactional
-    public void deleteTheme(Long id) {
+    public void deleteTheme(final Long id) {
         final Boolean isExistedTheme = reservationThemeRepository.existById(id);
         if (!isExistedTheme) {
             throw new IllegalArgumentException("해당 테마가 존재하지 않습니다.");

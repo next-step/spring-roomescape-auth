@@ -31,9 +31,9 @@ public class ReservationThemeController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationThemeResponseDto> createTheme(@Valid @RequestBody ReservationThemeRequestDto requestDto) {
+    public ResponseEntity<ReservationThemeResponseDto> createTheme(final @Valid @RequestBody ReservationThemeRequestDto requestDto) {
         final ReservationThemeResponseDto theme = reservationThemeService.createTheme(requestDto);
-        HttpHeaders header = new HttpHeaders();
+        final HttpHeaders header = new HttpHeaders();
         header.add("Location", "/theme/" + theme.getId());
         return new ResponseEntity<>(theme, header, HttpStatus.CREATED);
     }
