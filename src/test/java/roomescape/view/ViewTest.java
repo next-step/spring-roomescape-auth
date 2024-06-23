@@ -26,7 +26,6 @@ public class ViewTest {
     private static final String ROLE = "role";
     private static String token = null;
 
-
     @BeforeEach
     void 회원가입을_하고_로그인한_뒤_관리자_권한을_받는다() {
 

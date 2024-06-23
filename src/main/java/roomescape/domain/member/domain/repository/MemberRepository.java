@@ -5,6 +5,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import roomescape.domain.member.domain.Member;
+import roomescape.domain.member.domain.Role;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -104,7 +105,7 @@ public class MemberRepository {
                     UPDATE_ADMIN_ROLE_SQL,
                     new String[]{ID}
             );
-            preparedStatement.setString(1, "ADMIN");
+            preparedStatement.setString(1, Role.ADMIN.getRole());
             preparedStatement.setLong(2, id);
             return preparedStatement;
         }, keyHolder);

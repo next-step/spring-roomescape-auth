@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.domain.member.domain.Member;
+import roomescape.domain.member.domain.Role;
 import roomescape.domain.member.domain.repository.MemberRepository;
 import roomescape.domain.member.error.exception.MemberErrorCode;
 import roomescape.domain.member.error.exception.MemberException;
@@ -50,7 +51,7 @@ public class MemberService {
 
     @Transactional
     public Member save(MemberRequest memberRequest) {
-        Long id = memberRepository.save(new Member(null, memberRequest.getName(), memberRequest.getEmail(), memberRequest.getPassword(), "USER"));
+        Long id = memberRepository.save(new Member(null, memberRequest.getName(), memberRequest.getEmail(), memberRequest.getPassword(), Role.USER.getRole()));
         return findById(id);
     }
 
