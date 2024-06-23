@@ -1,7 +1,7 @@
 package roomescape.controller;
 
 import static org.hamcrest.Matchers.is;
-import static roomescape.fixture.AuthFixture.사용자_로그인;
+import static roomescape.fixture.AuthFixture.로그인;
 import static roomescape.fixture.MemberFixture.회원가입;
 
 import io.restassured.RestAssured;
@@ -17,24 +17,25 @@ import roomescape.dto.request.LoginRequest;
 import roomescape.exception.custom.PasswordMismatchException;
 import roomescape.exception.custom.TokenNotFoundException;
 
-@DisplayName("인증 관련 테스트")
+@DisplayName("인증 및 인가 관련 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AuthTest {
-    private static final String EMAIL = "test@email.com";
+    private static final String MEMBER_EMAIL = "test@email.com";
+    private static final String ADMIN_EMAIL = "admin@email.com";
     private static final String PASSWORD = "1234";
     public static final String TOKEN_COOKIE_NAME = "token";
     public static final String NAME = "테스트";
 
     @BeforeEach
     void init() {
-        회원가입(EMAIL, PASSWORD, NAME);
+        회원가입(MEMBER_EMAIL, PASSWORD, NAME);
     }
 
     @DisplayName("[로그인] - 유효한 자격 증명으로 로그인하여 토큰을 획득한다.")
     @Test
     void login() {
-        Response response = 사용자_로그인(EMAIL, PASSWORD);
+        Response response = 로그인(MEMBER_EMAIL, PASSWORD);
 
         response.then().log().all()
                 .statusCode(HttpStatus.OK.value())
@@ -49,7 +50,7 @@ public class AuthTest {
 
         RestAssured
                 .given().log().all()
-                .body(new LoginRequest(EMAIL, ""))
+                .body(new LoginRequest(MEMBER_EMAIL, ""))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/login")
@@ -65,7 +66,7 @@ public class AuthTest {
 
         RestAssured
                 .given().log().all()
-                .body(new LoginRequest(EMAIL, "12345"))
+                .body(new LoginRequest(MEMBER_EMAIL, "12345"))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/login")
@@ -79,7 +80,7 @@ public class AuthTest {
     void loginCheck() {
         String token = RestAssured
                 .given().log().all()
-                .body(new LoginRequest(EMAIL, PASSWORD))
+                .body(new LoginRequest(MEMBER_EMAIL, PASSWORD))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/login")
@@ -113,5 +114,41 @@ public class AuthTest {
                 .then().log().all()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
                 .body("message", is(message));
+    }
+
+    @DisplayName("[권한] - 관리자 권한이 있는 경우 관리자 페이지에 접근에 성공한다.")
+    @Test
+    void adminPageAccessSuccess() {
+        Response response = 로그인(ADMIN_EMAIL, PASSWORD);
+        String token = response.then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract().cookie(TOKEN_COOKIE_NAME);
+
+        RestAssured
+                .given().log().all()
+                .cookie(TOKEN_COOKIE_NAME, token)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .when().get("/admin/reservation")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @DisplayName("[권한] - 관리자 페이지 접근 시 권한이 없는 경우 에러가 발생한다.")
+    @Test
+    void adminPageAccessUnauthorized() {
+        Response response = 로그인(MEMBER_EMAIL, PASSWORD);
+        String token = response.then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract().cookie(TOKEN_COOKIE_NAME);
+
+        RestAssured
+                .given().log().all()
+                .cookie(TOKEN_COOKIE_NAME, token)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .when().get("/admin/reservation")
+                .then().log().all()
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
     }
 }

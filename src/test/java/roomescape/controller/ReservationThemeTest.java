@@ -1,7 +1,7 @@
 package roomescape.controller;
 
 import static org.hamcrest.Matchers.is;
-import static roomescape.fixture.AuthFixture.사용자_로그인;
+import static roomescape.fixture.AuthFixture.로그인;
 import static roomescape.fixture.MemberFixture.회원가입;
 import static roomescape.fixture.ReservationFixture.예약을_생성한다;
 import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
@@ -41,7 +41,7 @@ public class ReservationThemeTest {
     void init() {
         회원가입(EMAIL, PASSWORD, MEMBER_NAME);
 
-        Response response = 사용자_로그인(EMAIL, PASSWORD);
+        Response response = 로그인(EMAIL, PASSWORD);
         token = response.getCookie("token");
     }
 
