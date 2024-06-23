@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.format.DateTimeParseException;
+import roomescape.error.exception.AuthenticationException;
 import roomescape.error.exception.NotExistsException;
 import roomescape.error.exception.PasswordNotMatchedException;
 import roomescape.error.exception.PastDateTimeException;
@@ -20,17 +21,17 @@ public class RoomescapeExceptionHandler {
     public ResponseEntity<RoomescapeExceptionResponse> IllegalArgumentException(
         IllegalArgumentException e) {
         return new ResponseEntity<>(RoomescapeExceptionResponse.from(e.getMessage(),
-                                        RoomescapeErrorMessage.ILLEGAL_INPUT_VALUE_EXCEPTION),
-                                    HttpStatus.BAD_REQUEST);
+            RoomescapeErrorMessage.ILLEGAL_INPUT_VALUE_EXCEPTION),
+            HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<RoomescapeExceptionResponse> handleMethodArgumentNotValidException(
         MethodArgumentNotValidException e) {
         return new ResponseEntity<>(RoomescapeExceptionResponse.from(
-                                        e.getBindingResult().getFieldError().getDefaultMessage(),
-                                        RoomescapeErrorMessage.ILLEGAL_INPUT_VALUE_EXCEPTION),
-                                    HttpStatus.BAD_REQUEST);
+            e.getBindingResult().getFieldError().getDefaultMessage(),
+            RoomescapeErrorMessage.ILLEGAL_INPUT_VALUE_EXCEPTION),
+            HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DuplicateRequestException.class)
@@ -70,9 +71,17 @@ public class RoomescapeExceptionHandler {
     }
 
     @ExceptionHandler(PasswordNotMatchedException.class)
-    public ResponseEntity<RoomescapeExceptionResponse> handleFailedLoginException(
+    public ResponseEntity<RoomescapeExceptionResponse> handlePasswordNotMatchedException(
         PasswordNotMatchedException e) {
         return new ResponseEntity<>(RoomescapeExceptionResponse.of(e.getMessage()),
                                     HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<RoomescapeExceptionResponse> hadleAuthenticationException(
+        AuthenticationException e) {
+        return new ResponseEntity<>(RoomescapeExceptionResponse.of(e.getMessage()),
+                                    HttpStatus.UNAUTHORIZED);
+    }
+
 }

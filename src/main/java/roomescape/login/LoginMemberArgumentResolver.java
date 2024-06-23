@@ -8,6 +8,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import roomescape.error.exception.AuthenticationException;
 
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -27,18 +28,18 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
         if (servletRequest == null) {
-            // TODO Custom Exception 호출
+            throw new AuthenticationException();
         }
         Cookie[] cookies = servletRequest.getCookies();
 
         if (cookies == null || cookies.length == 0) {
-            // TODO Custom Exception 호출
+            throw new AuthenticationException();
         }
 
         String token = Arrays.stream(cookies)
                             .filter(cookie -> "token".equals(cookie.getName()))
                             .findFirst()
-                            .orElseThrow(Exception::new) // TODO Custom Exception으로 변경 예정
+                            .orElseThrow(AuthenticationException::new)
                             .getValue();
 
         return jwtTokenProvider.getLoginMember(token);
