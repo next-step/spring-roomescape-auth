@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import roomescape.domain.member.domain.Member;
-import roomescape.domain.member.domain.Role;
 import roomescape.domain.member.error.exception.MemberErrorCode;
 import roomescape.domain.member.error.exception.MemberException;
 import roomescape.domain.member.service.MemberService;
@@ -28,8 +27,7 @@ public class RoleCheckInterceptor implements HandlerInterceptor {
         String token = extractTokenFromCookie(cookies);
         Member member = memberService.findByToken(token);
         if (member == null || member.isAdmin()) {
-            response.setStatus(401);
-            return false;
+            throw new MemberException(MemberErrorCode.NOT_FOUND_COOKIE_ERROR);
         }
         return true;
     }
