@@ -26,8 +26,10 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> saveReservations(LoginMember loginMember, @RequestBody @Valid ReservationRequest request) {
-        return ResponseEntity.ok().body(reservationService.saveReservation(loginMember.getName(), request));
+    public ResponseEntity<ReservationResponse> saveReservationByMember(LoginMember loginMember,
+        @RequestBody @Valid ReservationRequest request) {
+        return ResponseEntity.ok()
+            .body(reservationService.saveReservationByAdmin(loginMember.getName(), request));
     }
 
     @DeleteMapping("/{id}")

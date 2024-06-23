@@ -49,7 +49,7 @@ host: localhost:8080
 
 - Response
 ```json
-HTTP/1.1 200
+HTTP/1.1 201
 Content-Type: application/json
 
 {

@@ -2,10 +2,14 @@ package roomescape.reservation.service;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import org.springframework.stereotype.Service;
+import roomescape.error.exception.MemberNotExistsException;
 import roomescape.error.exception.PastDateTimeException;
 import roomescape.error.exception.ReservationTimeNotExistsException;
 import roomescape.error.exception.ThemeNotExistsException;
+import roomescape.member.Member;
+import roomescape.member.service.MemberRepository;
 import roomescape.reservation.Reservation;
+import roomescape.reservation.dto.AdminReservationRequest;
 import roomescape.reservation.dto.ReservationRequest;
 import roomescape.reservation.dto.ReservationResponse;
 import roomescape.reservationTime.ReservationTime;
@@ -23,13 +27,15 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ReservationTimeRepository reservationTimeRepository;
     private final ThemeRepository themeRepository;
+    private final MemberRepository memberRepository;
 
     public ReservationService(ReservationRepository reservationRepository,
-                                ReservationTimeRepository reservationTimeRepository,
-                                ThemeRepository themeRepository) {
+        ReservationTimeRepository reservationTimeRepository, ThemeRepository themeRepository,
+        MemberRepository memberRepository) {
         this.reservationRepository = reservationRepository;
         this.reservationTimeRepository = reservationTimeRepository;
         this.themeRepository = themeRepository;
+        this.memberRepository = memberRepository;
     }
 
     public List<ReservationResponse> findReservations() {
@@ -38,7 +44,7 @@ public class ReservationService {
             .collect(Collectors.toList());
     }
 
-    public ReservationResponse saveReservation(String name, ReservationRequest request) {
+    public ReservationResponse saveReservationByAdmin(String name, ReservationRequest request) {
         ReservationTime reservationTime = Optional.ofNullable(
                 reservationTimeRepository.findById(request.getTimeId()))
                 .orElseThrow(ReservationTimeNotExistsException::new);
@@ -58,6 +64,12 @@ public class ReservationService {
         }
 
         return new ReservationResponse(reservationRepository.save(reservation));
+    }
+
+    public ReservationResponse saveReservationByAdmin(AdminReservationRequest request) {
+        Member member = Optional.ofNullable(memberRepository.findById(request.getMemberId()))
+            .orElseThrow(MemberNotExistsException::new);
+        return saveReservationByAdmin(member.getName(), request);
     }
 
     public void deleteReservation(long id) {
