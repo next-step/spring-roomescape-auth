@@ -32,7 +32,7 @@ public class MissionStepTest {
     @DisplayName("시간, 테마 등록 및 예약 등록, 전체조회, 삭제 테스트를 수행합니다.")
     @Test
     void reservation() {
-        final ReservationTimeRequestDto reservationTimeRequestDto = new ReservationTimeRequestDto((long) 1, "15:40");
+        final ReservationTimeRequestDto reservationTimeRequestDto = new ReservationTimeRequestDto(1L, "15:40");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
@@ -43,7 +43,7 @@ public class MissionStepTest {
                 .body("id", is(1));
 
         final ReservationThemeRequestDto reservationThemeRequestDto = new ReservationThemeRequestDto(
-                (long) 1, "테마1", "설명1", "썸네일1");
+                1L, "테마1", "설명1", "썸네일1");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
