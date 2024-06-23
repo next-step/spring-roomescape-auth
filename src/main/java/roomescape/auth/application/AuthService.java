@@ -3,6 +3,7 @@ package roomescape.auth.application;
 import org.springframework.stereotype.Service;
 
 import roomescape.auth.dto.CheckUserInfoResponse;
+import roomescape.auth.exception.UnAuthorizedException;
 import roomescape.jwt.JwtTokenProvider;
 import roomescape.user.domain.User;
 import roomescape.user.domain.repository.UserRepository;
@@ -22,27 +23,25 @@ public class AuthService {
     }
 
     public String login(LoginRequest loginRequest) {
-        User user = getUserByEmail(loginRequest.email());
+        User user = userRepository.findByEmail(loginRequest.email()).orElseThrow(UserNotFoundException::new);
+
         if (user.isNotMatchPassword(loginRequest.password())) {
             throw new PasswordNotMatchException();
         }
 
-        return jwtTokenProvider.createJwt(user.getEmail());
+        return jwtTokenProvider.createJwt(user);
     }
 
-    public CheckUserInfoResponse checkUserInfo(String accessToken) {
-        String email = jwtTokenProvider.getEmail(accessToken);
-        User user = getUserByEmail(email);
+    public CheckUserInfoResponse checkUserInfo(Long userId) {
+        User user = getUserById(userId);
         return new CheckUserInfoResponse(user.getName());
     }
 
-    public void logout(String accessToken) {
-        String email = jwtTokenProvider.getEmail(accessToken);
-        getUserByEmail(email);
+    public void logout(Long userId) {
+        getUserById(userId);
     }
 
-    private User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(UserNotFoundException::new);
+    private User getUserById(final Long userId) {
+        return userRepository.findById(userId).orElseThrow(UnAuthorizedException::new);
     }
 }

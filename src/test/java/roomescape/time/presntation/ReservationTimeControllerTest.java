@@ -14,7 +14,8 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import roomescape.reservation.dto.ReservationCreateRequest;
+import roomescape.auth.dto.LoginRequest;
+import roomescape.reservation.dto.UserReservationCreateRequest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -34,7 +35,7 @@ class ReservationTimeControllerTest {
     @Test
     @DisplayName("시간 추가를 한다.")
     void testCreateReservationTime() {
-        Map<String, String> params = Map.of("startAt", "12:00");
+        Map<String, String> params = Map.of("startAt", "13:00");
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
@@ -77,7 +78,7 @@ class ReservationTimeControllerTest {
                 .when().get("/times")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .body("size()", is(1));
+                .body("size()", is(3));
     }
 
     @Test
@@ -106,11 +107,22 @@ class ReservationTimeControllerTest {
                 .then().log().all()
                 .extract();
 
+        // 로그인
+        LoginRequest loginRequest = new LoginRequest("admin@email.com", "password");
+
+        String accessToken = RestAssured.given().log().all()
+                .body(loginRequest)
+                .contentType(ContentType.JSON)
+                .when().post("/login")
+                .then().log().all()
+                .extract().cookie("token");
+
         // Reservation 생성
-        ReservationCreateRequest request = new ReservationCreateRequest("브라운", LocalDate.now().plusDays(1).toString(), 1L, 1L);
+        UserReservationCreateRequest request = new UserReservationCreateRequest(LocalDate.now().plusDays(1).toString(), 1L, 1L);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", accessToken)
                 .body(request)
                 .when().post("/reservations")
                 .then().log().all()
@@ -158,14 +170,14 @@ class ReservationTimeControllerTest {
                 .when().get("/times/available")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .body("size()", is(2));
+                .body("size()", is(3));
     }
 
     @Test
     @DisplayName("예약 가능한 시간 조회 시 테마를 찾을 수 없으면 실패한다.")
     void getAvailableTimes_Fail() {
         LocalDate date = LocalDate.of(2021, 10, 1);
-        Long themeId = 1L;
+        Long themeId = 7L;
 
         RestAssured.given().log().all()
                 .param("date", date.toString())

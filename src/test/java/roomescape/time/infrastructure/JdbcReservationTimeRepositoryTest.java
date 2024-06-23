@@ -30,16 +30,13 @@ class JdbcReservationTimeRepositoryTest {
     @BeforeEach
     void setUp() {
         reservationTimeRepository = new JdbcReservationTimeRepository(jdbcTemplate, dataSource);
-        jdbcTemplate.execute("ALTER TABLE reservation_time ALTER COLUMN id RESTART WITH 1");
-
-        jdbcTemplate.execute("INSERT INTO reservation_time(start_at) VALUES ('15:40')");
     }
 
     @Test
     @DisplayName("예약 시간을 저장한다.")
     void testSaveReservationTime() {
         // given
-        ReservationTime reservationTime = new ReservationTime(LocalTime.parse("10:00"));
+        ReservationTime reservationTime = new ReservationTime(LocalTime.parse("10:30"));
 
         // when
         ReservationTime savedReservationTime = reservationTimeRepository.save(reservationTime);
@@ -53,7 +50,7 @@ class JdbcReservationTimeRepositoryTest {
     void testFindById() {
         ReservationTime reservationTime = reservationTimeRepository.findById(1L).get();
 
-        assertThat(reservationTime.getStartAt()).isEqualTo(LocalTime.parse("15:40"));
+        assertThat(reservationTime.getStartAt()).isEqualTo(LocalTime.parse("10:00"));
     }
 
     @Test
@@ -61,13 +58,13 @@ class JdbcReservationTimeRepositoryTest {
     void testFindAll() {
         List<ReservationTime> reservationTimes = reservationTimeRepository.findAll();
 
-        assertThat(reservationTimes).hasSize(1);
+        assertThat(reservationTimes).hasSize(3);
     }
 
     @Test
     @DisplayName("예약 시간이 존재하면 TRUE를 반환한다.")
     void existsByStartAt() {
-        boolean exists = reservationTimeRepository.existsByStartAt(LocalTime.parse("15:40"));
+        boolean exists = reservationTimeRepository.existsByStartAt(LocalTime.parse("10:00"));
 
         assertThat(exists).isTrue();
     }

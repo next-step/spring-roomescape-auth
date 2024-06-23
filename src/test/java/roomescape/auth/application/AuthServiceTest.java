@@ -2,6 +2,7 @@ package roomescape.auth.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
@@ -38,10 +39,10 @@ class AuthServiceTest {
     @DisplayName("로그인에 성공한다.")
     void login() {
         // given
-        User user = new User(1L, "어드민", "admin@email.com", "password");
+        User user = User.createUser(1L, "어드민", "admin@email.com", "password");
 
         given(userRepository.findByEmail(anyString())).willReturn(Optional.of(user));
-        given(jwtTokenProvider.createJwt(anyString())).willReturn("accessToken");
+        given(jwtTokenProvider.createJwt(any())).willReturn("accessToken");
 
         LoginRequest request = new LoginRequest(user.getEmail(), user.getPassword());
 
@@ -56,7 +57,7 @@ class AuthServiceTest {
     @DisplayName("사용자 로그인 실패 - 사용자를 찾을 수 없음")
     void userLoginFailure_UserNotFound() {
         // given
-        User user = new User(1L, "어드민", "admin@email.com", "password");
+        User user = User.createUser(1L, "어드민", "admin@email.com", "password");
 
         given(userRepository.findByEmail(anyString())).willThrow(new UserNotFoundException());
 
@@ -72,7 +73,7 @@ class AuthServiceTest {
     @DisplayName("사용자 로그인 실패 - 비밀번호가 일치하지 않음")
     void userLoginFailure_PasswordNotMatch() {
         // given
-        User user = new User(1L, "어드민", "admin@email.com", "password");
+        User user = User.createUser(1L, "어드민", "admin@email.com", "password");
 
         given(userRepository.findByEmail(anyString())).willReturn(Optional.of(user));
 
@@ -87,12 +88,11 @@ class AuthServiceTest {
     @Test
     void 사용자_정보를_조회한다() {
         // given
-        given(jwtTokenProvider.getEmail(anyString())).willReturn("admin@email.com");
-        given(userRepository.findByEmail(anyString()))
-                .willReturn(Optional.of(new User(1L, "어드민", "password", "admin@email.com")));
+        User user = User.createUser(1L, "어드민", "password", "admin@email.com");
+        given(userRepository.findById(any())).willReturn(Optional.of(user));
 
         // when
-        CheckUserInfoResponse response = authService.checkUserInfo("accessToken");
+        CheckUserInfoResponse response = authService.checkUserInfo(user.getId());
 
         // then
         assertThat(response.name()).isEqualTo("어드민");

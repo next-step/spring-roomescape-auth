@@ -1,5 +1,6 @@
 package roomescape.user.infrastructure;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,6 +20,23 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findById(final Long id) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        try {
+            User findUser = jdbcTemplate.queryForObject(sql, (resultSet, rowNum) -> new User(
+                    resultSet.getLong("id"),
+                    resultSet.getString("name"),
+                    resultSet.getString("email"),
+                    resultSet.getString("password"),
+                    resultSet.getString("role")
+            ), id);
+            return Optional.ofNullable(findUser);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
         try {
@@ -26,11 +44,24 @@ public class JdbcUserRepository implements UserRepository {
                     resultSet.getLong("id"),
                     resultSet.getString("name"),
                     resultSet.getString("email"),
-                    resultSet.getString("password")
+                    resultSet.getString("password"),
+                    resultSet.getString("role")
             ), email);
             return Optional.ofNullable(findUser);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<User> findAll() {
+        String sql = "SELECT * FROM users";
+        return jdbcTemplate.query(sql, (resultSet, rowNum) -> new User(
+                resultSet.getLong("id"),
+                resultSet.getString("name"),
+                resultSet.getString("email"),
+                resultSet.getString("password"),
+                resultSet.getString("role")
+        ));
     }
 }
