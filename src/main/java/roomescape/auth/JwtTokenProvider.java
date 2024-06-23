@@ -49,7 +49,7 @@ public class JwtTokenProvider {
 				.parseSignedClaims(token)
 				.getPayload();
 		}
-		catch (ExpiredJwtException ex) {
+		catch (IllegalArgumentException | ExpiredJwtException ex) {
 			throw new RoomEscapeException(ErrorCode.EXPIRED_LOGIN_TOKEN);
 		}
 	}

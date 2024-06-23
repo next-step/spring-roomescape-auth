@@ -5,15 +5,15 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import roomescape.web.controller.dto.CreateReservationRequest;
-import roomescape.web.controller.dto.ReservationAdminRequest;
-import roomescape.web.controller.dto.ReservationRequest;
-import roomescape.web.controller.dto.ReservationResponse;
 import roomescape.domain.LoginMember;
 import roomescape.domain.Reservation;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
 import roomescape.repository.ReservationRepository;
+import roomescape.web.controller.dto.CreateReservationRequest;
+import roomescape.web.controller.dto.ReservationAdminRequest;
+import roomescape.web.controller.dto.ReservationRequest;
+import roomescape.web.controller.dto.ReservationResponse;
 
 import org.springframework.stereotype.Service;
 
@@ -37,10 +37,7 @@ public class ReservationService {
 	}
 
 	public List<ReservationResponse> getReservations() {
-		return this.reservationRepository.findAll()
-			.stream()
-			.map((reservation) -> ReservationResponse.from(reservation, reservation.getTime(), reservation.getTheme()))
-			.toList();
+		return this.reservationRepository.findAll().stream().map(ReservationResponse::from).toList();
 	}
 
 	public ReservationResponse create(ReservationRequest request, LoginMember loginMember) {

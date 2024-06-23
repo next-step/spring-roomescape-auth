@@ -3,10 +3,10 @@ package roomescape.web.config;
 import java.util.List;
 
 import roomescape.auth.JwtTokenProvider;
+import roomescape.service.AuthService;
 import roomescape.web.handler.LoginCheckFilter;
 import roomescape.web.handler.LoginMemberArgumentResolver;
 import roomescape.web.handler.RoleInterceptor;
-import roomescape.service.AuthService;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
