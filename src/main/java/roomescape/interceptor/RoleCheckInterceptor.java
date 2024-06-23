@@ -27,7 +27,7 @@ public class RoleCheckInterceptor implements HandlerInterceptor {
         Cookie[] cookies = request.getCookies();
         String token = extractTokenFromCookie(cookies);
         Member member = memberService.findByToken(token);
-        if (member == null || !member.getRole().equals(Role.ADMIN.getRole())) {
+        if (member == null || member.isAdmin()) {
             response.setStatus(401);
             return false;
         }

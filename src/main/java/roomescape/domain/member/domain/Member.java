@@ -16,6 +16,10 @@ public class Member {
         this.role = role;
     }
 
+    public boolean isAdmin() {
+        return !this.role.equals(Role.ADMIN.getRole());
+    }
+
     public Long getId() {
         return id;
     }
@@ -35,4 +39,6 @@ public class Member {
     public String getRole() {
         return role;
     }
+
+
 }
