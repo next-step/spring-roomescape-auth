@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
+import roomescape.admin.dto.SearchRequest;
 import roomescape.reservation.dto.ReservationCreateRequest;
 import roomescape.reservation.domain.Reservation;
 import roomescape.reservation.domain.repository.ReservationRepository;
@@ -59,6 +60,14 @@ public class ReservationService {
 
     public List<ReservationResponse> getReservations() {
         List<Reservation> reservations = reservationRepository.findAll();
+        return reservations.stream()
+                .map(ReservationResponse::from)
+                .toList();
+    }
+
+    public List<ReservationResponse> search(SearchRequest request) {
+        List<Reservation> reservations = reservationRepository.findAllByUserIdAndThemeIdAndDateBetween(
+                request.userId(), request.themeId(), LocalDate.parse(request.dateFrom()), LocalDate.parse(request.dateTo()));
         return reservations.stream()
                 .map(ReservationResponse::from)
                 .toList();

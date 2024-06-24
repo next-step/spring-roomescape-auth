@@ -1,5 +1,6 @@
 package roomescape.reservation.infrastructure;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -75,6 +76,44 @@ public class JdbcReservationRepository implements ReservationRepository {
                         resultSet.getString("thumbnail")
                 )
         ));
+    }
+
+    @Override
+    public List<Reservation> findAllByUserIdAndThemeIdAndDateBetween(Long userId, Long themeId, LocalDate dateFrom, LocalDate DateTo) {
+        String sql = """
+                SELECT r.id , r.date, t.id as time_id, t.start_at,
+                th.id as theme_id, th.name as theme_name, th.description, th.thumbnail,
+                u.id as user_id, u.name as user_name, u.email, u.password, u.role
+                FROM reservation as r
+                INNER JOIN reservation_time as t
+                ON r.time_id = t.id
+                INNER JOIN theme as th
+                ON r.theme_id = th.id
+                INNER JOIN users as u
+                ON r.user_id = u.id
+                WHERE r.user_id = ? AND r.theme_id = ? AND r.date BETWEEN ? AND ?
+                """;
+        return jdbcTemplate.query(sql, (resultSet, rowNum) -> new Reservation(
+                resultSet.getLong("id"),
+                resultSet.getString("date"),
+                new User(
+                        resultSet.getLong("user_id"),
+                        resultSet.getString("user_name"),
+                        resultSet.getString("email"),
+                        resultSet.getString("password"),
+                        resultSet.getString("role")
+                ),
+                new ReservationTime(
+                        resultSet.getLong("time_id"),
+                        resultSet.getString("start_at")
+                ),
+                new Theme(
+                        resultSet.getLong("theme_id"),
+                        resultSet.getString("theme_name"),
+                        resultSet.getString("description"),
+                        resultSet.getString("thumbnail")
+                )
+        ), userId, themeId, dateFrom, DateTo);
     }
 
     @Override
