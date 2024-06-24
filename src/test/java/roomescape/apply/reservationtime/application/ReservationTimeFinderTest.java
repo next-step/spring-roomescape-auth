@@ -5,6 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import roomescape.apply.member.domain.Member;
+import roomescape.apply.member.domain.repository.MemberJDBCRepository;
+import roomescape.apply.member.domain.repository.MemberRepository;
 import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
 import roomescape.apply.reservation.domain.repository.ReservationRepository;
 import roomescape.apply.reservationtime.domain.repository.ReservationTimeJDBCRepository;
@@ -18,12 +21,14 @@ import roomescape.support.BaseTestService;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static roomescape.support.MemberFixture.member;
 import static roomescape.support.ReservationsFixture.*;
 
 class ReservationTimeFinderTest extends BaseTestService {
 
     private ReservationTimeFinder reservationTimeFinder;
     private ThemeRepository themeRepository;
+    private MemberRepository memberRepository;
     private ReservationRepository reservationRepository;
     private ReservationTimeRepository reservationTimeRepository;
 
@@ -33,7 +38,7 @@ class ReservationTimeFinderTest extends BaseTestService {
         reservationTimeRepository = new ReservationTimeJDBCRepository(template);
         reservationRepository = new ReservationJDBCRepository(template);
         themeRepository = new ThemeJDBCRepository(template);
-
+        memberRepository = new MemberJDBCRepository(template);
         reservationTimeFinder = new ReservationTimeFinder(reservationTimeRepository);
     }
 
@@ -60,6 +65,7 @@ class ReservationTimeFinderTest extends BaseTestService {
     @DisplayName("테마의 시간들을 예약 여부와 함께 가져온다.")
     void asd() {
         // given
+        Member saveMember = memberRepository.save(member());
         List.of("10:00", "12:00", "14:00", "16:00")
                 .forEach(it -> reservationTimeRepository.save(reservationTime(it)));
 
@@ -67,7 +73,7 @@ class ReservationTimeFinderTest extends BaseTestService {
         reservationTimeRepository.save(reservationTime);
         String date = "2099-01-01";
         Theme savedTheme = themeRepository.save(theme());
-        reservationRepository.save(reservation(reservationTime, savedTheme, date));
+        reservationRepository.save(reservation(reservationTime, savedTheme, date, saveMember.getId()));
         // when
         var responses = reservationTimeFinder.findAvailableTimesBy(date, savedTheme.getId().toString());
         // then

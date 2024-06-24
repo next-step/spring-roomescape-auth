@@ -38,7 +38,7 @@ public class MemberAdder {
                 .collect(Collectors.toSet());
         memberRoleSaver.saveAll(memberRoles);
 
-        return MemberResponse.from(saved);
+        return MemberResponse.from(saved.getId(), saved.getName());
     }
 
 }

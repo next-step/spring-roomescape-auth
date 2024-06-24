@@ -1,9 +1,7 @@
 package roomescape.apply.reservation.application;
 
 import org.springframework.stereotype.Service;
-import roomescape.apply.auth.ui.dto.LoginMember;
-import roomescape.apply.member.application.MemberFinder;
-import roomescape.apply.member.domain.Member;
+import roomescape.apply.member.ui.dto.MemberResponse;
 import roomescape.apply.reservation.domain.repository.ReservationRepository;
 import roomescape.apply.reservation.ui.dto.ReservationAdminResponse;
 import roomescape.apply.reservation.ui.dto.ReservationResponse;
@@ -15,11 +13,9 @@ import java.util.Optional;
 public class ReservationFinder {
 
     private final ReservationRepository reservationRepository;
-    private final MemberFinder memberFinder;
 
-    public ReservationFinder(ReservationRepository reservationRepository, MemberFinder memberFinder) {
+    public ReservationFinder(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
-        this.memberFinder = memberFinder;
     }
 
     public List<ReservationResponse> findAll() {
@@ -29,11 +25,14 @@ public class ReservationFinder {
                 .toList();
     }
 
-    public List<ReservationAdminResponse> findAllForAdmin(LoginMember loginMember) {
-        Member member = memberFinder.findOneNameById(loginMember.id());
+    public List<ReservationAdminResponse> findAllForAdmin() {
         return reservationRepository.findAll()
                 .stream()
-                .map(it -> ReservationAdminResponse.from(it, it.getTheme(), it.getTime(), member))
+                .map(it -> ReservationAdminResponse.from(it,
+                        it.getTheme(),
+                        it.getTime(),
+                        MemberResponse.from(it.getMemberId(), it.getName()))
+                )
                 .toList();
     }
 

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import roomescape.apply.auth.ui.dto.LoginMember;
 import roomescape.apply.member.application.MemberFinder;
 import roomescape.apply.member.domain.Member;
+import roomescape.apply.member.ui.dto.MemberResponse;
 import roomescape.apply.reservation.application.excpetion.DuplicateReservationException;
 import roomescape.apply.reservation.domain.Reservation;
 import roomescape.apply.reservation.domain.repository.ReservationRepository;
@@ -40,7 +41,7 @@ public class ReservationRecorder {
 
         final ReservationTime time = reservationTimeFinder.findOneById(request.timeId());
         final Theme theme = themeFinder.findOneById(request.themeId());
-        final Reservation reservation = Reservation.of(loginMember.name(), request.date(), time, theme);
+        final Reservation reservation = Reservation.of(loginMember.name(), request.date(), time, theme, loginMember.id());
         final Reservation saved = reservationRepository.save(reservation);
 
         return ReservationResponse.from(saved, theme, time);
@@ -52,10 +53,10 @@ public class ReservationRecorder {
         final Member member = memberFinder.findOneNameById(request.memberId());
         final ReservationTime time = reservationTimeFinder.findOneById(request.timeId());
         final Theme theme = themeFinder.findOneById(request.themeId());
-        final Reservation reservation = Reservation.of(member.getName(), request.date(), time, theme);
+        final Reservation reservation = Reservation.of(member.getName(), request.date(), time, theme, member.getId());
         final Reservation saved = reservationRepository.save(reservation);
 
-        return ReservationAdminResponse.from(saved, theme, time, member);
+        return ReservationAdminResponse.from(saved, theme, time, MemberResponse.from(member.getId(), member.getName()));
     }
 
     private void validateNotDuplicateReservation(long timeId, long themeId) {

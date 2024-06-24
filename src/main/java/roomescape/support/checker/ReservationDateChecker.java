@@ -17,12 +17,16 @@ public class ReservationDateChecker {
             throw new IllegalArgumentException(message);
         }
 
-        if (!date.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
-            throw new IllegalArgumentException("Date must be in the format yyyy-MM-dd");
-        }
+        validateDateFormat(date);
 
         if (ReservationDateChecker.isAvailableDateTime(date)) {
             throw new IllegalArgumentException("이미 종료된 예약입니다");
+        }
+    }
+
+    public static void validateDateFormat(String date) {
+        if (!date.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
+            throw new IllegalArgumentException("Date must be in the format yyyy-MM-dd");
         }
     }
 

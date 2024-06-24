@@ -5,11 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import roomescape.apply.member.application.MemberFinder;
-import roomescape.apply.member.application.MemberRoleFinder;
-import roomescape.apply.member.application.mock.MockPasswordHasher;
+import roomescape.apply.member.domain.Member;
 import roomescape.apply.member.domain.repository.MemberJDBCRepository;
-import roomescape.apply.member.domain.repository.MemberRoleJDBCRepository;
+import roomescape.apply.member.domain.repository.MemberRepository;
 import roomescape.apply.reservation.application.ReservationFinder;
 import roomescape.apply.reservation.domain.Reservation;
 import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
@@ -25,11 +23,13 @@ import roomescape.support.BaseTestService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static roomescape.support.MemberFixture.member;
 import static roomescape.support.ReservationsFixture.reservationTime;
 import static roomescape.support.ReservationsFixture.theme;
 
 class ReservationTimeDeleterTest extends BaseTestService {
     private ThemeRepository themeRepository;
+    private MemberRepository memberRepository;
     private ReservationRepository reservationRepository;
     private ReservationTimeDeleter reservationTimeDeleter;
     private ReservationTimeRepository reservationTimeRepository;
@@ -40,12 +40,9 @@ class ReservationTimeDeleterTest extends BaseTestService {
         themeRepository = new ThemeJDBCRepository(template);
         reservationRepository = new ReservationJDBCRepository(template);
         reservationTimeRepository = new ReservationTimeJDBCRepository(template);
-        var memberRepository = new MemberJDBCRepository(template);
-        var memberRoleRepository = new MemberRoleJDBCRepository(template);
+        memberRepository = new MemberJDBCRepository(template);
 
-        var memberRoleFinder = new MemberRoleFinder(memberRoleRepository);
-        var memberFinder = new MemberFinder(new MockPasswordHasher(), memberRepository, memberRoleFinder);
-        var reservationFinder = new ReservationFinder(reservationRepository, memberFinder);
+        var reservationFinder = new ReservationFinder(reservationRepository);
         reservationTimeDeleter = new ReservationTimeDeleter(reservationTimeRepository, reservationFinder);
     }
 
@@ -70,12 +67,14 @@ class ReservationTimeDeleterTest extends BaseTestService {
     @DisplayName("예약에서 사용중인 예약 시간은 삭제할 수 없어야 한다.")
     void canNotDeletedTest() {
         // given
+        Member savedMember = memberRepository.save(member());
         Theme theme = themeRepository.save(theme());
         ReservationTime time = reservationTimeRepository.save(reservationTime());
         // when
-        reservationRepository.save(Reservation.of("사용중_테스트", "2999-12-31", time, theme));
+        reservationRepository.save(Reservation.of("사용중_테스트", "2999-12-31", time, theme, savedMember.getId()));
         // then
-        assertThatThrownBy(() -> reservationTimeDeleter.deleteReservationTimeBy(time.getId()))
+        Long timeId = time.getId();
+        assertThatThrownBy(() -> reservationTimeDeleter.deleteReservationTimeBy(timeId))
                 .isInstanceOf(ReservationTimeReferencedException.class)
                 .hasMessage(ReservationTimeReferencedException.DEFAULT_MESSAGE);
     }

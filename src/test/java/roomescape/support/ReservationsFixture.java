@@ -2,6 +2,7 @@ package roomescape.support;
 
 import roomescape.apply.reservation.domain.Reservation;
 import roomescape.apply.reservation.ui.dto.ReservationRequest;
+import roomescape.apply.reservation.ui.dto.ReservationSearchParams;
 import roomescape.apply.reservationtime.domain.ReservationTime;
 import roomescape.apply.reservationtime.ui.dto.ReservationTimeRequest;
 import roomescape.apply.theme.domain.Theme;
@@ -32,8 +33,8 @@ public class ReservationsFixture {
         return theme("레벨2 탈출", "우테코 레벨2를 탈출하는 내용입니다.");
     }
 
-    public static Reservation reservation(ReservationTime time, Theme theme, String date) {
-        return Reservation.of("테스트_예약자", date, time, theme);
+    public static Reservation reservation(ReservationTime time, Theme theme, String date, Long memberId) {
+        return Reservation.of("테스트_예약자", date, time, theme, memberId);
     }
 
     public static ReservationTimeRequest reservationTimeRequest() {
@@ -48,5 +49,37 @@ public class ReservationsFixture {
 
     public static ReservationRequest reservationRequest(long timeId, long themeId) {
         return new ReservationRequest("2099-01-12", timeId, themeId, 1L);
+    }
+
+    public static ReservationSearchParams reservationSearchParams(Long memberId) {
+        return reservationSearchParams(null, memberId);
+    }
+
+    public static ReservationSearchParams reservationSearchParams(Long themeId, Long memberId) {
+        return new ReservationSearchParams(themeId, memberId, null, null);
+    }
+
+    public static ReservationSearchParams reservationSearchParams(String dateFrom) {
+        return reservationSearchParams(dateFrom, null);
+    }
+
+    public static ReservationSearchParams reservationSearchParamsDateTo(String dateTo) {
+        return reservationSearchParams(null, dateTo);
+    }
+
+    public static ReservationSearchParams reservationSearchParams(String dateFrom, String dateTo) {
+        return new ReservationSearchParams(null, null, dateFrom, dateTo);
+    }
+
+    public static ReservationSearchParams reservationSearchParams(Long themeId,
+                                                                  Long memberId,
+                                                                  String dateFrom,
+                                                                  String dateTo
+    ) {
+        return new ReservationSearchParams(themeId, memberId, dateFrom, dateTo);
+    }
+
+    public static ReservationSearchParams reservationSearchParamsThemeId(Long themeId) {
+        return reservationSearchParams(themeId, null);
     }
 }

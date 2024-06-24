@@ -9,6 +9,7 @@ const membersOptions = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('add-button').addEventListener('click', addInputRow);
+  document.getElementById('filter-form').addEventListener('submit', applyFilter);
 
   requestRead(RESERVATION_API_ENDPOINT)
       .then(render)
@@ -133,8 +134,7 @@ function addInputRow() {
     row.remove();
     isEditing = false;
   }));
-  addDropdownOptions('theme', themesOptions, 'name');
-  addDropdownOptions('member', membersOptions, 'name');
+
 }
 
 function createInput(type) {
@@ -229,4 +229,36 @@ function requestRead(endpoint) {
           throw new Error('Read failed: ' + body.message);
         });
       });
+}
+
+function applyFilter(event) {
+  event.preventDefault();
+
+  const themeId = document.getElementById('theme').value;
+  const memberId = document.getElementById('member').value;
+  const dateFrom = document.getElementById('date-from').value;
+  const dateTo = document.getElementById('date-to').value;
+
+  const params = new URLSearchParams();
+
+  if (themeId) params.append('themeId', themeId);
+  if (memberId) params.append('memberId', memberId);
+  if (dateFrom) params.append('dateFrom', dateFrom);
+  if (dateTo) params.append('dateTo', dateTo);
+
+  const searchUrl = `/admin/reservations/search?${params.toString()}`;
+
+  fetch(searchUrl, { // 예약 검색 API 호출
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then(response => {
+    if (response.status === 200) return response.json();
+    return response.json().then(body => {
+      alert('Read failed: ' + body.message);
+      throw new Error('Read failed: ' + body.message);
+    });
+  }).then(render)
+      .catch(error => console.error("Error fetching available times:", error.message));
 }

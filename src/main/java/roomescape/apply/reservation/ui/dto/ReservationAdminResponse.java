@@ -1,6 +1,5 @@
 package roomescape.apply.reservation.ui.dto;
 
-import roomescape.apply.member.domain.Member;
 import roomescape.apply.member.ui.dto.MemberResponse;
 import roomescape.apply.reservation.domain.Reservation;
 import roomescape.apply.reservationtime.domain.ReservationTime;
@@ -18,9 +17,9 @@ public record ReservationAdminResponse(
     public static ReservationAdminResponse from(Reservation reservation,
                                                 Theme theme,
                                                 ReservationTime reservationTime,
-                                                Member member
+                                                MemberResponse memberResponse
     ) {
-        return new ReservationAdminResponse(reservation.getId(), MemberResponse.from(member), reservation.getDate(),
+        return new ReservationAdminResponse(reservation.getId(), memberResponse, reservation.getDate(),
                 ThemeResponse.from(theme), ReservationTimeResponse.from(reservationTime));
     }
 }
