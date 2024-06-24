@@ -26,7 +26,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> saveReservationByMember(LoginMember loginMember,
+    public ResponseEntity<ReservationResponse> saveReservation(LoginMember loginMember,
         @RequestBody @Valid ReservationRequest request) {
         return ResponseEntity.ok()
             .body(reservationService.saveReservation(loginMember.getId(), request));

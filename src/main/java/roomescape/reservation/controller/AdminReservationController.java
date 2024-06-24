@@ -22,9 +22,9 @@ public class AdminReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> saveReservationByAdmin(
+    public ResponseEntity<ReservationResponse> saveReservation(
         @RequestBody @Valid AdminReservationRequest request) {
         return ResponseEntity.created(URI.create("/reservations"))
-            .body(reservationService.saveReservationByAdmin(request));
+            .body(reservationService.saveReservation(request.getMemberId(), request));
     }
 }

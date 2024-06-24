@@ -9,7 +9,6 @@ import roomescape.error.exception.ThemeNotExistsException;
 import roomescape.member.Member;
 import roomescape.member.service.MemberRepository;
 import roomescape.reservation.Reservation;
-import roomescape.reservation.dto.AdminReservationRequest;
 import roomescape.reservation.dto.ReservationRequest;
 import roomescape.reservation.dto.ReservationResponse;
 import roomescape.reservationTime.ReservationTime;
@@ -43,14 +42,16 @@ public class ReservationService {
             .collect(Collectors.toList());
     }
 
-    public ReservationResponse saveReservationByAdmin(String name, ReservationRequest request) {
+    public ReservationResponse saveReservation(Long memberId, ReservationRequest request) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(MemberNotExistsException::new);
+
         ReservationTime reservationTime = reservationTimeRepository.findById(request.getTimeId())
             .orElseThrow(ReservationTimeNotExistsException::new);
         Theme theme = themeRepository.findById(request.getThemeId())
             .orElseThrow(ThemeNotExistsException::new);
 
-        Reservation reservation = new Reservation(name, request.getDate(),
-            reservationTime, theme);
+        Reservation reservation = new Reservation(member, request.getDate(), reservationTime, theme);
 
         if (reservation.isBeforeThanNow()) {
             throw new PastDateTimeException();
@@ -62,12 +63,6 @@ public class ReservationService {
         }
 
         return new ReservationResponse(reservationRepository.save(reservation));
-    }
-
-    public ReservationResponse saveReservationByAdmin(AdminReservationRequest request) {
-        Member member = memberRepository.findById(request.getMemberId())
-            .orElseThrow(MemberNotExistsException::new);
-        return saveReservationByAdmin(member.getName(), request);
     }
 
     public void deleteReservation(long id) {
