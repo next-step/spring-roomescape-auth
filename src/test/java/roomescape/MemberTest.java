@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class MemberTest {
     @BeforeEach
-    private void setPort() {
+    public void setPort() {
         RestAssured.port = 8888;
     }
 

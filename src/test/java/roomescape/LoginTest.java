@@ -1,8 +1,8 @@
 package roomescape;
 
 import io.restassured.RestAssured;
-
 import jakarta.servlet.http.Cookie;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,8 @@ public class LoginTest {
     private final String EMAIL = "anna862700@gmail.com";
     private final String PASSWORD = "password";
 
-    public LoginTest() {
+    @BeforeEach
+    public void setPort() {
         RestAssured.port = 8888;
     }
 

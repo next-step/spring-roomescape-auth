@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.reservation.ui.dto.ReservationRequest;
-import roomescape.reservationtime.ui.dto.ReservationTimeRequest;
 import roomescape.reservation.application.ReservationService;
+import roomescape.reservation.ui.dto.ReservationRequest;
 import roomescape.reservationtime.application.ReservationTimeService;
+import roomescape.reservationtime.ui.dto.ReservationTimeRequest;
 import roomescape.theme.application.ThemeService;
 import roomescape.theme.ui.dto.ThemeRequest;
 import roomescape.theme.ui.dto.ThemeResponse;
@@ -32,7 +32,7 @@ public class ThemeTest {
     private ThemeService themeService;
 
     @BeforeEach
-    private void setPort() {
+    public void setPort() {
         RestAssured.port = 8888;
     }
     

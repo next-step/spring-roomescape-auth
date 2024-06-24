@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.reservation.application.ReservationService;
 import roomescape.reservation.ui.dto.ReservationRequest;
+import roomescape.reservationtime.application.ReservationTimeService;
 import roomescape.reservationtime.ui.dto.ReservationTimeRequest;
 import roomescape.reservationtime.ui.dto.ReservationTimeResponse;
-import roomescape.theme.ui.dto.ThemeRequest;
-import roomescape.reservation.application.ReservationService;
-import roomescape.reservationtime.application.ReservationTimeService;
 import roomescape.theme.application.ThemeService;
+import roomescape.theme.ui.dto.ThemeRequest;
 
 import java.time.LocalDate;
 
@@ -34,7 +34,7 @@ public class ReservationTimeTest {
     private ThemeService themeService;
 
     @BeforeEach
-    private void setPort() {
+    public void setPort() {
         RestAssured.port = 8888;
     }
 
