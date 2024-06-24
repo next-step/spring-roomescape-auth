@@ -16,7 +16,7 @@ public class LogoutService {
 
     public Cookie logout(Cookie[] cookies) {
         String token = cookieUtils
-                .getOneCookieByName(cookies, "token")
+                .getCookieByName(cookies, "token")
                 .orElseThrow(() -> UnauthorizedException.of("쿠키에 토큰이 없습니다."))
                 .getValue();
         boolean isInvalidToken = !jwtTokenProvider.validateToken(token);

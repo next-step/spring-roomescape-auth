@@ -42,7 +42,7 @@ public class CookieTest {
     void 쿠키_배열에서_특정_쿠키_가져오기() {
         Cookie[] cookies = makeDummyCookies();
 
-        Cookie cookie = cookieUtils.getOneCookieByName(cookies, "1").get();
+        Cookie cookie = cookieUtils.getCookieByName(cookies, "1").get();
 
         assertThat(cookie.getName()).isEqualTo("1");
         assertThat(cookie.getValue()).isEqualTo("100");

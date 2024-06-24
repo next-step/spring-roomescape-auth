@@ -19,7 +19,7 @@ public class CookieUtils {
         return cookie;
     }
 
-    public Optional<Cookie> getOneCookieByName(Cookie[] cookies, String name) {
+    public Optional<Cookie> getCookieByName(Cookie[] cookies, String name) {
         if (cookies == null) {
             throw UnauthorizedException.of("쿠키가 없습니다.");
         }
