@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.api;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -22,20 +22,8 @@ public class MemberTest {
     private static final String PASSWORD = "password";
     private static final String NAME = "name";
     private static final String TOKEN = "token";
+    private static final String ROLE = "role";
     private static String token = null;
-
-    @Test
-    void 로그인_페이지를_랜더링한다() {
-
-        //when
-        ExtractableResponse<Response> response = RestAssured.given().log().all()
-                .when().get("/login")
-                .then().log().all()
-                .extract();
-
-        //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-    }
 
     @Test
     void 회원가입을_한다() {
@@ -99,5 +87,24 @@ public class MemberTest {
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.jsonPath().getString(NAME)).isEqualTo("박민욱");
+    }
+
+    @Test
+    void 관리자_권한을_받을_수_있다() {
+
+        //given
+        아이디와_비밀번호로_로그인을_하고_쿠키를_전달_받는다();
+
+        //when
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .cookie(TOKEN, token)
+                .when().post("/members/role")
+                .then().log().all()
+                .extract();
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getString(ROLE)).isEqualTo("ADMIN");
     }
 }

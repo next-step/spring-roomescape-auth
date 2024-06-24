@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.api;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -27,8 +27,6 @@ public class TimeTest {
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";
     private static final String THUMBNAIL = "thumbnail";
-    private static final String THEME_ID = "themeId";
-    private static final String DATE = "date";
     private static final long THEME_VALUE = 1L;
     private static final String CURRENT_DATE = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     private static final String REQUEST_TIME = LocalTime.now().plusMinutes(5L).format(DateTimeFormatter.ofPattern("HH:mm"));
@@ -53,20 +51,6 @@ public class TimeTest {
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.jsonPath().getLong(ID)).isEqualTo(1L);
-    }
-
-    @Test
-    void 시간_관리_페이지를_랜더링한다() {
-
-        //when
-        ExtractableResponse<Response> response = RestAssured.given().log().all()
-                .when().get("/admin/time")
-                .then().log().all()
-                .extract();
-
-        //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-
     }
 
     @Test

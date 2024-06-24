@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.domain.member.domain.Member;
+import roomescape.domain.member.domain.Role;
 import roomescape.domain.member.domain.repository.MemberRepository;
 import roomescape.domain.member.error.exception.MemberErrorCode;
 import roomescape.domain.member.error.exception.MemberException;
@@ -50,7 +51,7 @@ public class MemberService {
 
     @Transactional
     public Member save(MemberRequest memberRequest) {
-        Long id = memberRepository.save(new Member(null, memberRequest.getName(), memberRequest.getEmail(), memberRequest.getPassword()));
+        Long id = memberRepository.save(new Member(null, memberRequest.getName(), memberRequest.getEmail(), memberRequest.getPassword(), Role.USER.getRole()));
         return findById(id);
     }
 
@@ -62,9 +63,15 @@ public class MemberService {
     @Transactional(readOnly = true)
     public List<Member> findAll() {
         List<Member> members = memberRepository.findAll();
-        if(members.isEmpty()) {
+        if (members.isEmpty()) {
             throw new MemberException(MemberErrorCode.NO_MEMBER_ERROR);
         }
         return members;
+    }
+
+    @Transactional
+    public Member updateAdminRole(Long memberId) {
+        Long id = memberRepository.updateAdminRole(memberId);
+        return findById(id);
     }
 }
