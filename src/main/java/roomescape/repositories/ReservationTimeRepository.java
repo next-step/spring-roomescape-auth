@@ -8,6 +8,7 @@ import roomescape.entities.ReservationTime;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -53,5 +54,21 @@ public class ReservationTimeRepository {
         rs.getLong("id"),
         rs.getString("start_at")
       ), id);
+  }
+
+  public List<ReservationTime> findAvailableTimes(String date, Long themeId){
+    final String sql = """
+    SELECT id, start_at FROM RESERVATION_TIME
+    WHERE id NOT IN 
+    (SELECT time_id 
+    FROM RESERVATION 
+    WHERE date = ? AND theme_id = ?)
+    """;
+
+    return jdbcTemplate.query(
+      sql, (rs, rowNum) -> new ReservationTime(
+        rs.getLong("id"),
+        rs.getString("start_at")
+      ), date, themeId);
   }
 }

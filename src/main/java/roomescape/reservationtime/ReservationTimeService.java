@@ -7,6 +7,7 @@ import roomescape.errors.ErrorCode;
 import roomescape.exceptions.RoomEscapeException;
 import roomescape.repositories.ReservationRepository;
 import roomescape.repositories.ReservationTimeRepository;
+import roomescape.reservationtime.data.AvailableTimeResponse;
 import roomescape.reservationtime.data.ReservationTimeAddRequestDto;
 
 import java.util.List;
@@ -36,8 +37,16 @@ public class ReservationTimeService {
 
     public void cancelReservationTime(Long id){
         if (reservationRepository.findByReservationTimeId(id).isPresent()) {
-            throw new RoomEscapeException(ErrorCode.RESERVATION_TIME_CANNOT_BE_DELETED, "Reservation time cannot be deleted because it is used in a reservation");
+            throw new RoomEscapeException(
+              ErrorCode.RESERVATION_TIME_CANNOT_BE_DELETED,
+              "Reservation time cannot be deleted because it is used in a reservation"
+            );
         }
         reservationTimeRepository.deleteById(id);
+    }
+
+    public List<AvailableTimeResponse> findAvailableTimes(String date, Long themeId){
+        return AvailableTimeResponse.listOf(
+          reservationTimeRepository.findAvailableTimes(date, themeId));
     }
 }
