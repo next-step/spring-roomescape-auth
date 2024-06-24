@@ -41,8 +41,8 @@ function renderTheme(themes) {
           response 명세에 맞춰 createSlot 함수 호출 시 값 설정
           createSlot('theme', theme name, theme id) 형태로 호출
     */
-    const name = '';
-    const themeId = '';
+    const name = theme.name;
+    const themeId = theme.id;
     themeSlots.appendChild(createSlot('theme', name, themeId));
   });
 }
@@ -91,7 +91,7 @@ function fetchAvailableTimes(date, themeId) {
   TODO: [1단계] 사용자 예약 - 예약 가능 시간 조회 API 호출
         요청 포맷에 맞게 설정
   */
-  fetch('/', { // 예약 가능 시간 조회 API endpoint
+  fetch('/times/available?date=' + date + '&themeId=' + themeId, { // 예약 가능 시간 조회 API endpoint
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -120,8 +120,8 @@ function renderAvailableTimes(times) {
     TODO: [1단계] 사용자 예약 - 예약 가능 시간 조회 API 호출 후 렌더링
           response 명세에 맞춰 createSlot 함수 호출 시 값 설정
     */
-    const startAt = '';
-    const timeId = '';
+    const startAt = time.startAt;
+    const timeId = time.timeId;
     const alreadyBooked = false;
 
     const div = createSlot('time', startAt, timeId, alreadyBooked); // createSlot('time', 시작 시간, time id, 예약 여부)
