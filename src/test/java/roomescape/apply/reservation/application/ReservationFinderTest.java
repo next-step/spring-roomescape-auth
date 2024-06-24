@@ -8,6 +8,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import roomescape.apply.member.domain.Member;
 import roomescape.apply.member.domain.repository.MemberJDBCRepository;
 import roomescape.apply.member.domain.repository.MemberRepository;
+import roomescape.apply.reservation.domain.Reservation;
 import roomescape.apply.reservation.domain.repository.ReservationJDBCRepository;
 import roomescape.apply.reservation.domain.repository.ReservationRepository;
 import roomescape.apply.reservation.ui.dto.ReservationResponse;
@@ -20,6 +21,7 @@ import roomescape.apply.theme.domain.repository.ThemeRepository;
 import roomescape.support.BaseTestService;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static roomescape.support.MemberFixture.member;
@@ -54,16 +56,19 @@ class ReservationFinderTest extends BaseTestService {
     void findAllTest() {
         // given
         Member saveMember = memberRepository.save(member());
-        List<String> times = List.of("10:00", "11:00", "12:00", "13:00", "14:00");
-        for (String time : times) {
+        List<Reservation> reservations = Stream.of("10:00", "11:00", "12:00", "13:00", "14:00").map(time -> {
             ReservationTime saveReservationTime = reservationTimeRepository.save(reservationTime(time));
             Theme saveTheme = themeRepository.save(theme());
-            reservationRepository.save(reservation(saveReservationTime, saveTheme, "2099-01-01", saveMember.getId()));
+            return reservation(saveReservationTime, saveTheme, "2099-01-01", saveMember.getId());
+        }).toList();
+
+        for (Reservation reservation : reservations) {
+            reservationRepository.save(reservation);
         }
         // when
         List<ReservationResponse> responses = reservationFinder.findAll();
         // then
-        assertThat(responses).isNotEmpty().hasSize(times.size());
+        assertThat(responses).isNotEmpty().hasSize(reservations.size());
     }
 
 }
