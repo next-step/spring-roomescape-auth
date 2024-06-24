@@ -9,6 +9,7 @@ const membersOptions = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('add-button').addEventListener('click', addInputRow);
+  document.getElementById('filter-form').addEventListener('submit', applyFilter);
 
   requestRead(RESERVATION_API_ENDPOINT)
       .then(render)
@@ -214,4 +215,24 @@ function requestRead(endpoint) {
         if (response.status === 200) return response.json();
         throw new Error('Read failed');
       });
+}
+
+function applyFilter(event) {
+  event.preventDefault();
+
+  const themeId = document.getElementById('theme').value;
+  const memberId = document.getElementById('member').value;
+  const dateFrom = document.getElementById('date-from').value;
+  const dateTo = document.getElementById('date-to').value;
+
+  fetch('/admin/reservations?userId=' + memberId + "&themeId=" + themeId + "&dateFrom=" + dateFrom + "&dateTo=" + dateTo, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then(response => {
+    if (response.status === 200) return response.json();
+    throw new Error('Read failed');
+  }).then(render)
+      .catch(error => console.error("Error fetching available times:", error));
 }
