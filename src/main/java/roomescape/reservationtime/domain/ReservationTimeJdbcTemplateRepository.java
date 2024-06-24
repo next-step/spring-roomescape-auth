@@ -26,6 +26,7 @@ public class ReservationTimeJdbcTemplateRepository implements ReservationTimeRep
                 resultSet.getString("start_at")
         );
     };
+
     @Override
     public List<ReservationTime> findAll() {
         String sql = """
