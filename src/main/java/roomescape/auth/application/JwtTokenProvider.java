@@ -3,6 +3,7 @@ package roomescape.auth.application;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import roomescape.exception.UnauthorizedException;
 
 import java.util.Date;
 
@@ -35,6 +36,9 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
+        if (token.isEmpty()) {
+            throw UnauthorizedException.of("토큰이 비어있습니다.");
+        }
         try {
             Jws<Claims> claim = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
 
