@@ -23,9 +23,6 @@ import java.util.Date;
 @RequestMapping("/login")
 public class LoginController {
 
-  @Value("${jwt.secret}")
-  private String token;
-
   @GetMapping
   public String login() {
     return "login";
