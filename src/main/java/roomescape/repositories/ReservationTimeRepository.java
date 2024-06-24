@@ -8,7 +8,6 @@ import roomescape.entities.ReservationTime;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
-import java.util.Collections;
 import java.util.List;
 
 @Repository
