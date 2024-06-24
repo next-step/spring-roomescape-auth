@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import roomescape.member.Member;
 import roomescape.reservation.Reservation;
 import roomescape.reservationTime.ReservationTime;
 import roomescape.theme.Theme;
@@ -25,7 +26,10 @@ public class ReservationRepository {
         String sql = """ 
             SELECT
                 r.id as reservation_id,
-                r.name as reservation_name,
+                m.id as member_id,
+                m.email as member_email,
+                m.password as member_password,
+                m.name as member_name,
                 r.date as reservation_date,
                 t.id as time_id,
                 t.start_at as time_start_at,
@@ -34,6 +38,8 @@ public class ReservationRepository {
                 th.description as theme_description,
                 th.thumbnail as theme_thumbnail
             FROM reservation as r
+            inner join member as m
+                on r.member_id = m.id
             inner join reservation_time as t
                 on r.time_id = t.id
             inner join theme as th
@@ -42,7 +48,10 @@ public class ReservationRepository {
 
         return jdbcTemplate.query(sql, (rs, rowNum) ->
             new Reservation(rs.getLong("reservation_id"),
-                rs.getString("reservation_name"),
+                new Member(rs.getLong("member_id"),
+                    rs.getString("member_email"),
+                    rs.getString("member_password"),
+                    rs.getString("member_name")),
                 rs.getDate("reservation_date").toLocalDate(),
                 new ReservationTime(rs.getLong("time_id"),
                     rs.getTime("time_start_at").toLocalTime()),
@@ -72,9 +81,9 @@ public class ReservationRepository {
 
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(
-                "INSERT INTO reservation(name, date, time_id, theme_id) VALUES (?, ?, ?, ?)",
+                "INSERT INTO reservation(member_id, date, time_id, theme_id) VALUES (?, ?, ?, ?)",
                 new String[]{"id"});
-            ps.setString(1, reservation.getName());
+            ps.setLong(1, reservation.getMember().getId());
             ps.setString(2, reservation.getDate().toString());
             ps.setLong(3, reservation.getReservationTime().getId());
             ps.setLong(4, reservation.getTheme().getId());
@@ -83,7 +92,7 @@ public class ReservationRepository {
         }, keyHolder);
 
         return new Reservation(keyHolder.getKey().longValue(),
-            reservation.getName(),
+            reservation.getMember(),
             reservation.getDate(),
             reservation.getReservationTime(),
             reservation.getTheme());

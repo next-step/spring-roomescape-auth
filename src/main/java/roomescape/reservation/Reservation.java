@@ -1,5 +1,6 @@
 package roomescape.reservation;
 
+import roomescape.member.Member;
 import roomescape.reservationTime.ReservationTime;
 import roomescape.theme.Theme;
 
@@ -10,7 +11,7 @@ public class Reservation {
 
     private Long id;
 
-    private String name;
+    private Member member;
 
     private LocalDate date;
 
@@ -18,16 +19,16 @@ public class Reservation {
 
     private Theme theme;
 
-    public Reservation(Long id, String name, LocalDate date, ReservationTime reservationTime, Theme theme) {
+    public Reservation(Long id, Member member, LocalDate date, ReservationTime reservationTime, Theme theme) {
         this.id = id;
-        this.name = name;
+        this.member = member;
         this.date = date;
         this.reservationTime = reservationTime;
         this.theme = theme;
     }
 
-    public Reservation(String name, String date, ReservationTime reservationTime, Theme theme) {
-        this(null, name, LocalDate.parse(date), reservationTime, theme);
+    public Reservation(Member member, String date, ReservationTime reservationTime, Theme theme) {
+        this(null, member, LocalDate.parse(date), reservationTime, theme);
     }
 
     public boolean isBeforeThanNow() {
@@ -38,8 +39,8 @@ public class Reservation {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public Member getMember() {
+        return member;
     }
 
     public LocalDate getDate() {

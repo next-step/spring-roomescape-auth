@@ -29,7 +29,7 @@ public class ReservationController {
     public ResponseEntity<ReservationResponse> saveReservationByMember(LoginMember loginMember,
         @RequestBody @Valid ReservationRequest request) {
         return ResponseEntity.ok()
-            .body(reservationService.saveReservationByAdmin(loginMember.getName(), request));
+            .body(reservationService.saveReservation(loginMember.getId(), request));
     }
 
     @DeleteMapping("/{id}")
