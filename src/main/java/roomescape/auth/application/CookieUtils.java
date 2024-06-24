@@ -1,6 +1,7 @@
 package roomescape.auth.application;
 
 import jakarta.servlet.http.Cookie;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import roomescape.exception.UnauthorizedException;
 
@@ -8,6 +9,9 @@ import java.util.Optional;
 
 @Component
 public class CookieUtils {
+    @Value("${security.jwt.token.expire-length.hour}")
+    private int maxAge;
+
     public Cookie createCookie(String name, String value) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
@@ -17,7 +21,7 @@ public class CookieUtils {
 
     public Optional<Cookie> getOneCookieByName(Cookie[] cookies, String name) {
         if (cookies == null) {
-            throw UnauthorizedException.of(name + "과 일치하는 쿠키가 없습니다.");
+            throw UnauthorizedException.of("쿠키가 없습니다.");
         }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(name)) {
@@ -31,6 +35,7 @@ public class CookieUtils {
         Cookie cookie = new Cookie(name, null);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
+        cookie.setMaxAge(maxAge);
         return cookie;
     }
 }
