@@ -65,6 +65,21 @@ class JdbcReservationRepositoryTest {
     }
 
     @Test
+    void 예약을_검색한다() {
+        // given
+        Long userId = 1L;
+        Long themeId = 1L;
+        LocalDate dateFrom = LocalDate.of(2024, 6, 1);
+        LocalDate dateTo = LocalDate.of(2024, 6, 30);
+
+        // when
+        List<Reservation> reservations = reservationRepository.findAllByUserIdAndThemeIdAndDateBetween(userId, themeId, dateFrom, dateTo);
+
+        // then
+        assertThat(reservations).hasSize(1);
+    }
+
+    @Test
     @DisplayName("예약을 삭제한다.")
     void testDeleteById() {
         reservationRepository.deleteById(1L);
