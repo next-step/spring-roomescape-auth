@@ -31,6 +31,10 @@ public class ReservationResponse {
         );
     }
 
+    public static List<ReservationResponse> fromReservations(List<Reservation> reservations) {
+        return reservations.stream().map(ReservationResponse::from).toList();
+    }
+
     public Long getId() {
         return id;
     }
@@ -49,9 +53,5 @@ public class ReservationResponse {
 
     public ThemeResponse getTheme() {
         return theme;
-    }
-
-    public static List<ReservationResponse> fromReservations(List<Reservation> reservations) {
-        return reservations.stream().map(ReservationResponse::from).toList();
     }
 }

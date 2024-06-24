@@ -26,6 +26,10 @@ public class ThemeResponse {
         );
     }
 
+    public static List<ThemeResponse> fromThemes(List<Theme> themes) {
+        return themes.stream().map(ThemeResponse::from).toList();
+    }
+
     public Long getId() {
         return id;
     }
@@ -40,9 +44,5 @@ public class ThemeResponse {
 
     public String getThumbnail() {
         return thumbnail;
-    }
-
-    public static List<ThemeResponse> fromThemes(List<Theme> themes) {
-        return themes.stream().map(ThemeResponse::from).toList();
     }
 }

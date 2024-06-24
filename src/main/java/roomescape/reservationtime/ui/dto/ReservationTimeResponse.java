@@ -20,15 +20,15 @@ public class ReservationTimeResponse {
         );
     }
 
+    public static List<ReservationTimeResponse> fromReservationTimes(List<ReservationTime> reservationTimes) {
+        return reservationTimes.stream().map(ReservationTimeResponse::from).toList();
+    }
+
     public Long getId() {
         return id;
     }
 
     public String getStartAt() {
         return this.startAt;
-    }
-
-    public static List<ReservationTimeResponse> fromReservationTimes(List<ReservationTime> reservationTimes) {
-        return reservationTimes.stream().map(ReservationTimeResponse::from).toList();
     }
 }
