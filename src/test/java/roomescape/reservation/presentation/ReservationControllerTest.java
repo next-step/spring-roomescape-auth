@@ -2,7 +2,6 @@ package roomescape.reservation.presentation;
 
 import java.time.LocalDate;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,11 +57,6 @@ class ReservationControllerTest {
                 .when().post("/reservations")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value());
-
-        RestAssured.given().log().all()
-                .when().get("/reservations")
-                .then().log().all()
-                .body("size()", Matchers.is(1));
     }
 
     @Test

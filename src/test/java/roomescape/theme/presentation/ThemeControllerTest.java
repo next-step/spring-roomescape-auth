@@ -3,7 +3,6 @@ package roomescape.theme.presentation;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +14,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import roomescape.auth.dto.LoginRequest;
-import roomescape.reservation.dto.UserReservationCreateRequest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -53,12 +51,12 @@ class ThemeControllerTest {
     @DisplayName("테마를 삭제한다.")
     void deleteTheme() {
         RestAssured.given().log().all()
-                .when().delete("/themes/1")
+                .when().delete("/themes/3")
                 .then().log().all()
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
         RestAssured.given().log().all()
-                .when().delete("/themes/1")
+                .when().delete("/themes/3")
                 .then().log().all()
                 .statusCode(HttpStatus.NOT_FOUND.value());
     }
@@ -92,17 +90,8 @@ class ThemeControllerTest {
                 .then().log().all()
                 .extract().cookie("token");
 
-        UserReservationCreateRequest request = new UserReservationCreateRequest(LocalDate.now().plusDays(1).toString(), 1L, 1L);
-
         RestAssured.given().log().all()
-                .contentType(ContentType.JSON)
                 .cookie("token", accessToken)
-                .body(request)
-                .when().post("/reservations")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value());
-
-        RestAssured.given().log().all()
                 .when().delete("/themes/1")
                 .then().log().all()
                 .statusCode(HttpStatus.NOT_FOUND.value())

@@ -80,8 +80,8 @@ class JdbcReservationTimeRepositoryTest {
     @Test
     @DisplayName("예약 시간을 삭제한다.")
     void testDeleteById() {
-        reservationTimeRepository.deleteById(1L);
+        reservationTimeRepository.deleteById(3L);
 
-        assertThat(reservationTimeRepository.findById(1L)).isEmpty();
+        assertThat(reservationTimeRepository.findById(3L)).isEmpty();
     }
 }

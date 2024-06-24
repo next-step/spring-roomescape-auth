@@ -29,7 +29,7 @@ class AdminControllerTest {
                 .then().log().all()
                 .extract().cookie("token");
 
-        String date = LocalDate.now().plusDays(1).toString();
+        String date = LocalDate.now().plusDays(2).toString();
         ReservationCreateRequest request = new ReservationCreateRequest(date, 1L, 1L, 1L);
 
         // when & then
