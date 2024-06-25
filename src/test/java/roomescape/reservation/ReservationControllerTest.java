@@ -25,6 +25,9 @@ import roomescape.reservationtime.dto.ReservationTimeRequestDto;
 import roomescape.reservationtime.dto.ReservationTimeResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:test-application.yml")
@@ -36,7 +39,7 @@ class ReservationControllerTest {
     private int port;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         RestAssured.port = port;
     }
 
@@ -55,23 +58,30 @@ class ReservationControllerTest {
         final ReservationResponseDto responseDto = response.as(ReservationResponseDto.class);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(responseDto.getName()).isEqualTo(request.getName());
-        assertThat(responseDto.getDate()).isEqualTo(request.getDate());
-        assertThat(responseDto.getReservationTimeResponseDto().getStartAt())
-                .isEqualTo(request.getReservationTimeRequestDto().getStartAt());
+        assertAll(
+                () -> assertEquals(HttpStatus.OK.value(), response.statusCode()),
+                () -> assertEquals(request.getName(), responseDto.getName()),
+                () -> assertEquals(request.getDate(), responseDto.getDate()),
+                () -> assertEquals(request.getReservationTimeRequestDto().getStartAt(),
+                        responseDto.getReservationTimeResponseDto().getStartAt())
+        );
     }
 
     @DisplayName("전체 예약을 조회 합니다.")
     @Test
     void readReservation() {
+        // when
         var response = RestAssured
                 .given().log().all()
                 .when().get("/reservations")
                 .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.jsonPath().getList(".", ReservationResponseDto.class)).hasSize(1);
+        // then
+        assertSoftly(
+                softAssertions -> {
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+                    assertThat(response.jsonPath().getList(".", ReservationResponseDto.class)).hasSize(1);
+                }
+        );
     }
 
     @DisplayName("예약을 삭제합니다.")
@@ -115,8 +125,12 @@ class ReservationControllerTest {
                 .then().log().all().extract().response();
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.jsonPath().getString("name")).isEqualTo("예약자 명 입력해주세요");
+        assertSoftly(
+                softAssertions -> {
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+                    assertThat(response.jsonPath().getString("name")).isEqualTo("예약자 명 입력해주세요");
+                }
+        );
     }
 
     @DisplayName("예약일자가 null이거나 빈 문자열이면 예외가 발생합니다.")
@@ -136,8 +150,12 @@ class ReservationControllerTest {
                 .then().log().all().extract().response();
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(response.jsonPath().getString("date")).isEqualTo("예약일자를 입력해주세요");
+        assertSoftly(
+                softAssertions -> {
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+                    assertThat(response.jsonPath().getString("date")).isEqualTo("예약일자를 입력해주세요");
+                }
+        );
     }
 
     @DisplayName("특정 일자와 테마 선택 시 기 예약된 시간을 제외한 시간을 반환한다.")
@@ -151,7 +169,11 @@ class ReservationControllerTest {
                 .when().get("/times/available")
                 .then().log().all().extract().response();
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(size);
+        assertSoftly(
+                softAssertions -> {
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+                    assertThat(response.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(size);
+                }
+        );
     }
 }
