@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,6 +18,9 @@ import roomescape.service.ReservationTimeService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -35,6 +39,8 @@ class ReservationTimeControllerTests {
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 	}
 
 	@Test
@@ -51,7 +57,11 @@ class ReservationTimeControllerTests {
 
 		// then
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-		assertThat(responseEntity.getBody()).isEqualTo(reservationTimeResponse);
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(responseEntity.getBody()).isNotNull();
+			softly.assertThat(responseEntity.getBody().id()).isEqualTo(reservationTimeResponse.id());
+			softly.assertThat(responseEntity.getBody().startAt()).isEqualTo(reservationTimeResponse.startAt());
+		});
 	}
 
 	@Test
@@ -68,6 +78,10 @@ class ReservationTimeControllerTests {
 		// then
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(responseEntity.getBody()).isEqualTo(reservationTimes);
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(responseEntity.getBody()).isNotNull();
+			softly.assertThat(responseEntity.getBody()).isEqualTo(reservationTimes);
+		});
 	}
 
 	@Test
@@ -100,14 +114,18 @@ class ReservationTimeControllerTests {
 
 		// then
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(responseEntity.getBody()).isNotEmpty();
-		assertThat(responseEntity.getBody()).isEqualTo(responses);
-		assertThat(responseEntity.getBody().get(0).timeId()).isEqualTo(1L);
-		assertThat(responseEntity.getBody().get(0).startAt()).isEqualTo("10:00");
-		assertThat(responseEntity.getBody().get(0).alreadyBooked()).isEqualTo(true);
-		assertThat(responseEntity.getBody().get(1).timeId()).isEqualTo(2L);
-		assertThat(responseEntity.getBody().get(1).startAt()).isEqualTo("11:00");
-		assertThat(responseEntity.getBody().get(1).alreadyBooked()).isEqualTo(false);
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(responseEntity.getBody()).isNotEmpty();
+			softly.assertThat(responseEntity.getBody()).isEqualTo(responses);
+
+			softly.assertThat(responseEntity.getBody().get(0).timeId()).isEqualTo(1L);
+			softly.assertThat(responseEntity.getBody().get(0).startAt()).isEqualTo("10:00");
+			softly.assertThat(responseEntity.getBody().get(0).alreadyBooked()).isEqualTo(true);
+
+			softly.assertThat(responseEntity.getBody().get(1).timeId()).isEqualTo(2L);
+			softly.assertThat(responseEntity.getBody().get(1).startAt()).isEqualTo("11:00");
+			softly.assertThat(responseEntity.getBody().get(1).alreadyBooked()).isEqualTo(false);
+		});
 
 	}
 

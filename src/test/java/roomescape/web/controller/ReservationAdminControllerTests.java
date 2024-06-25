@@ -2,7 +2,9 @@ package roomescape.web.controller;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,6 +22,9 @@ import roomescape.web.controller.dto.ThemeResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -38,6 +43,8 @@ class ReservationAdminControllerTests {
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 	}
 
 	@Test
@@ -64,7 +71,18 @@ class ReservationAdminControllerTests {
 
 		// then
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-		assertThat(responseEntity.getBody()).isEqualTo(reservationResponse);
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(responseEntity.getBody()).isNotNull();
+			softly.assertThat(responseEntity.getBody().id()).isEqualTo(reservationResponse.id());
+			softly.assertThat(responseEntity.getBody().name()).isEqualTo(reservationResponse.name());
+			softly.assertThat(responseEntity.getBody().date()).isEqualTo(reservationResponse.date());
+			softly.assertThat(responseEntity.getBody().time().id()).isEqualTo(reservationResponse.time().id());
+			softly.assertThat(responseEntity.getBody().time().startAt()).isEqualTo(reservationResponse.time().startAt());
+			softly.assertThat(responseEntity.getBody().theme().id()).isEqualTo(reservationResponse.theme().id());
+			softly.assertThat(responseEntity.getBody().theme().name()).isEqualTo(reservationResponse.theme().name());
+			softly.assertThat(responseEntity.getBody().theme().description()).isEqualTo(reservationResponse.theme().description());
+			softly.assertThat(responseEntity.getBody().theme().thumbnail()).isEqualTo(reservationResponse.theme().thumbnail());
+		});
 	}
 
 	@Test
@@ -85,7 +103,21 @@ class ReservationAdminControllerTests {
 
 		// then
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-		assertThat(responseEntity.getBody()).isEqualTo(reservationResponses);
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(responseEntity.getBody()).isNotNull();
+			softly.assertThat(responseEntity.getBody()).hasSize(1);
+
+			ReservationResponse response = responseEntity.getBody().get(0);
+			softly.assertThat(response.id()).isEqualTo(reservationResponse.id());
+			softly.assertThat(response.name()).isEqualTo(reservationResponse.name());
+			softly.assertThat(response.date()).isEqualTo(reservationResponse.date());
+			softly.assertThat(response.time().id()).isEqualTo(reservationResponse.time().id());
+			softly.assertThat(response.time().startAt()).isEqualTo(reservationResponse.time().startAt());
+			softly.assertThat(response.theme().id()).isEqualTo(reservationResponse.theme().id());
+			softly.assertThat(response.theme().name()).isEqualTo(reservationResponse.theme().name());
+			softly.assertThat(response.theme().description()).isEqualTo(reservationResponse.theme().description());
+			softly.assertThat(response.theme().thumbnail()).isEqualTo(reservationResponse.theme().thumbnail());
+		});
 	}
 
 }

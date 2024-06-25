@@ -1,6 +1,7 @@
 package roomescape.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -217,6 +218,27 @@ class ReservationServiceTests {
 			assertThat(resultReservation.theme().id()).isEqualTo(1L);
 			assertThat(resultReservation.date()).isBetween("2024-06-01", "2024-06-30");
 		});
+	}
+
+	@Test
+	void searchReservationsEmptyResult() {
+
+		// given
+		long memberId = 1L;
+		long themeId = 1L;
+		String dateFrom = "2024-06-01";
+		String dateTo = "2024-06-30";
+
+		ReservationSearchRequest request = new ReservationSearchRequest(memberId, themeId, dateFrom, dateTo);
+
+		given(this.reservationRepository.findReservations(anyLong(), anyLong(), anyString(), anyString()))
+				.willReturn(Collections.emptyList());
+
+		// when
+		List<ReservationResponse> searchReservations = this.reservationService.searchReservations(request);
+
+		// then
+		assertThat(searchReservations).isEmpty();
 	}
 
 }

@@ -16,7 +16,10 @@ import roomescape.service.AuthService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,6 +38,8 @@ class LoginControllerTests {
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 	}
 
 	@Test

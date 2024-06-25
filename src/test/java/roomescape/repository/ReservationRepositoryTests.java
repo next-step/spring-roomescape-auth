@@ -130,12 +130,12 @@ class ReservationRepositoryTests {
 				.willReturn(reservations);
 
 		// when
-		var findedReservations = this.reservationRepository.findReservations(memberId, themeId, dateFrom, dateTo);
+		var foundReservations = this.reservationRepository.findReservations(memberId, themeId, dateFrom, dateTo);
 
 		// then
-		assertThat(findedReservations).isEqualTo(reservations);
-		assertThat(findedReservations).isEqualTo(reservations);
-		assertThat(findedReservations).allSatisfy((resultReservation) -> {
+		assertThat(foundReservations).isEqualTo(reservations);
+		assertThat(foundReservations).isEqualTo(reservations);
+		assertThat(foundReservations).allSatisfy((resultReservation) -> {
 			assertThat(resultReservation.getName()).isEqualTo("tester");
 			assertThat(resultReservation.getTheme().getId()).isEqualTo(1L);
 			assertThat(resultReservation.getDate()).isBetween("2024-06-01", "2024-06-30");

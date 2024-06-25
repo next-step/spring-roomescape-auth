@@ -54,8 +54,12 @@ class ReservationTimeTests {
 
 		// then
 		assertThat(createdReservationTime).isNotNull();
-		assertThat(createdReservationTime.id()).isEqualTo(1L);
-		assertThat(createdReservationTime.startAt()).isEqualTo("10:00");
+
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(createdReservationTime).isNotNull();
+			softly.assertThat(createdReservationTime.id()).isEqualTo(1L);
+			softly.assertThat(createdReservationTime.startAt()).isEqualTo("10:00");
+		});
 	}
 
 	@Test
@@ -103,8 +107,12 @@ class ReservationTimeTests {
 
 		// then
 		assertThat(resultReservationTimeById).isNotNull();
-		assertThat(resultReservationTimeById.getId()).isEqualTo(1L);
-		assertThat(resultReservationTimeById.getStartAt()).isEqualTo("10:00");
+
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(resultReservationTimeById).isNotNull();
+			softly.assertThat(resultReservationTimeById.getId()).isEqualTo(1L);
+			softly.assertThat(resultReservationTimeById.getStartAt()).isEqualTo("10:00");
+		});
 	}
 
 	@Test
