@@ -1,5 +1,6 @@
 package roomescape.domain.theme;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,14 +14,11 @@ import roomescape.domain.theme.data.ThemeAddRequestDto;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/themes")
 public class ThemeController {
   final private ThemeService themeService;
-
-  public ThemeController(ThemeService themeService) {
-    this.themeService = themeService;
-  }
 
   @GetMapping
   public ResponseEntity<List<Theme>> findAllThemes(){

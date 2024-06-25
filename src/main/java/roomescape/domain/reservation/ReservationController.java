@@ -1,6 +1,7 @@
 package roomescape.domain.reservation;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,20 +20,13 @@ import roomescape.entities.Theme;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
   private final ReservationService reservationService;
   private final ReservationTimeService reservationTimeService;
   private final ThemeService themeService;
-
-  public ReservationController(ReservationService reservationService,
-                               ReservationTimeService reservationTimeService,
-                               ThemeService themeService){
-    this.reservationService = reservationService;
-    this.reservationTimeService = reservationTimeService;
-    this.themeService = themeService;
-  }
 
   @GetMapping
   public ResponseEntity<List<ReservationResponseDto>> findAllReservations(){

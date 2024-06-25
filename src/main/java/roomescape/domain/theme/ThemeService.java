@@ -1,5 +1,6 @@
 package roomescape.domain.theme;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import roomescape.domain.theme.data.ThemeAddRequestDto;
 import roomescape.entities.Theme;
@@ -7,13 +8,10 @@ import roomescape.repositories.ThemeRepository;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class ThemeService {
   final private ThemeRepository themeRepository;
-
-  public ThemeService(ThemeRepository themeRepository) {
-    this.themeRepository = themeRepository;
-  }
 
   public List<Theme> findAllThemes() {
     return themeRepository.findAllThemes();

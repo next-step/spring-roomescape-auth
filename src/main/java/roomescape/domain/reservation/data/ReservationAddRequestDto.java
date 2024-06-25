@@ -1,7 +1,11 @@
 package roomescape.domain.reservation.data;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class ReservationAddRequestDto {
     private String name;
@@ -11,17 +15,4 @@ public class ReservationAddRequestDto {
     private Long timeId;
 
     private Long themeId;
-
-    public ReservationAddRequestDto() {
-    }
-
-    public ReservationAddRequestDto(String name,
-                                    String date,
-                                    Long timeId,
-                                    Long themeId) {
-        this.name = name;
-        this.date = date;
-        this.timeId = timeId;
-        this.themeId = themeId;
-    }
 }

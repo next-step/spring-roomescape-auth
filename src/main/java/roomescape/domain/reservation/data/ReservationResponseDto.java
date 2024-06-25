@@ -1,5 +1,6 @@
 package roomescape.domain.reservation.data;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import roomescape.entities.Reservation;
 import roomescape.entities.ReservationTime;
@@ -8,6 +9,7 @@ import roomescape.entities.Theme;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Getter
 public class ReservationResponseDto {
     private Long id;
@@ -19,14 +21,6 @@ public class ReservationResponseDto {
     private String date;
 
     private ReservationTime time;
-
-    public ReservationResponseDto(Long id, String name, Theme theme, String date, ReservationTime time) {
-        this.id = id;
-        this.name = name;
-        this.theme = theme;
-        this.date = date;
-        this.time = time;
-    }
 
     public static ReservationResponseDto fromEntity(Reservation reservation) {
         return new ReservationResponseDto(

@@ -1,5 +1,6 @@
 package roomescape.domain.reservationtime;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,14 +16,11 @@ import roomescape.entities.ReservationTime;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/times")
 public class ReservationTimeController {
   private final ReservationTimeService reservationTimeService;
-
-  public ReservationTimeController(ReservationTimeService reservationTimeService) {
-    this.reservationTimeService = reservationTimeService;
-  }
 
   @PostMapping
   public ResponseEntity<ReservationTime> saveTime(

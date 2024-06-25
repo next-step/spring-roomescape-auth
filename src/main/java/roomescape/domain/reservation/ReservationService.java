@@ -1,5 +1,6 @@
 package roomescape.domain.reservation;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import roomescape.domain.reservation.data.ReservationResponseDto;
 import roomescape.entities.Reservation;
@@ -10,13 +11,10 @@ import roomescape.repositories.ReservationRepository;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class ReservationService {
   private final ReservationRepository reservationRepository;
-
-  public ReservationService(ReservationRepository reservationRepository) {
-    this.reservationRepository = reservationRepository;
-  }
 
   public List<ReservationResponseDto> findAllReservations() {
     List<Reservation> reservations = reservationRepository.findAll();
