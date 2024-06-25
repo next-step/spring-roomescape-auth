@@ -1,6 +1,8 @@
 package roomescape.entities;
 
-public class User {
+import lombok.Builder;
+@Builder
+public class Member {
   private String name;
 
   private String email;
