@@ -44,12 +44,12 @@ public class ReservationTimeService {
 	}
 
 	public ReservationTime getReservationTimeById(long id) {
-		var findedReservationTime = this.reservationTimeRepository.findById(id);
+		var foundReservationTime = this.reservationTimeRepository.findById(id);
 
-		if (findedReservationTime == null) {
+		if (foundReservationTime == null) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_RESERVATION_TIME);
 		}
-		return findedReservationTime;
+		return foundReservationTime;
 	}
 
 	public List<AvailableReservationTimeResponse> getAvailableReservationTimes(String date, long themeId) {

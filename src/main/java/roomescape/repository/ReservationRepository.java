@@ -85,7 +85,7 @@ public class ReservationRepository {
 		this.jdbcTemplate.update(sql, id);
 	}
 
-	public List<Reservation> findReservations(long memberId, Long themeId, String dateFrom, String dateTo) {
+	public List<Reservation> findReservations(long memberId, long themeId, String dateFrom, String dateTo) {
 		String sql = """
 					SELECT
 						r.id AS reservation_id,

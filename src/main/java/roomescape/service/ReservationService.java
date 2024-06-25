@@ -52,12 +52,12 @@ public class ReservationService {
 	}
 
 	public ReservationResponse createByAdmin(ReservationAdminRequest request) {
-		var findedMember = this.memberService.findById(request.memberId());
+		var foundMember = this.memberService.findById(request.memberId());
 		var createReservationRequest = CreateReservationRequest.builder()
 			.date(request.date())
 			.timeId(request.timeId())
 			.themeId(request.themeId())
-			.memberName(findedMember.getName())
+			.memberName(foundMember.getName())
 			.build();
 		return createReservation(createReservationRequest);
 	}
