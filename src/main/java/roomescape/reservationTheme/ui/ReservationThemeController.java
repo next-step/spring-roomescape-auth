@@ -11,6 +11,7 @@ import roomescape.reservationTheme.dto.ReservationThemeRequestDto;
 import roomescape.reservationTheme.dto.ReservationThemeResponseDto;
 import roomescape.reservationTheme.application.ReservationThemeService;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -33,9 +34,7 @@ public class ReservationThemeController {
     @PostMapping
     public ResponseEntity<ReservationThemeResponseDto> createTheme(final @Valid @RequestBody ReservationThemeRequestDto requestDto) {
         final ReservationThemeResponseDto theme = reservationThemeService.createTheme(requestDto);
-        final HttpHeaders header = new HttpHeaders();
-        header.add("Location", "/theme/" + theme.getId());
-        return new ResponseEntity<>(theme, header, HttpStatus.CREATED);
+        return ResponseEntity.created(URI.create("/theme/" + theme.getId())).body(theme);
     }
 
     @DeleteMapping("/{id}")
