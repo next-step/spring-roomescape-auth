@@ -68,6 +68,11 @@ public class SignController {
     return ResponseEntity.ok().body(new LoginCheckResponse(email));
   }
 
+  @GetMapping("/signup")
+  public String signup(){
+    return "signup";
+  }
+
   @PostMapping("/signup")
   public ResponseEntity signup(SignupRequest signupRequest){
     memberService.save(signupRequest);
