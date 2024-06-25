@@ -7,7 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
@@ -139,32 +141,17 @@ class ReservationControllerTest {
     }
 
     @DisplayName("특정 일자와 테마 선택 시 기 예약된 시간을 제외한 시간을 반환한다.")
-    @Test
-    void getAvaliableTimes() {
-        // given
-        final String date = "2024-12-25";
-        final Long themeId = 1l;
-
-        final String date2 = "2025-12-31";
-        final Long themeId2 = 2l;
-
+    @ParameterizedTest
+    @CsvSource(value = {"2024-12-25, 1, 2", "2025-12-31, 2, 3",})
+    void getAvaliableTimes(String date, Long themeId, int size) {
         // when
         final Response response = RestAssured.given().log().all()
                 .queryParam("date", date)
                 .queryParam("themeId", themeId)
                 .when().get("/times/available")
                 .then().log().all().extract().response();
-
-        final Response response2 = RestAssured.given().log().all()
-                .queryParam("date", date2)
-                .queryParam("themeId", themeId2)
-                .when().get("/times/available")
-                .then().log().all().extract().response();
-
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(2);
-        assertThat(response2.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response2.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(3);
+        assertThat(response.jsonPath().getList(".", ReservationTimeResponseDto.class)).hasSize(size);
     }
 }
