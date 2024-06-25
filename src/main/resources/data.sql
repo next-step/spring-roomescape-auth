@@ -8,3 +8,6 @@ INSERT INTO reservation_time (start_at) VALUES ('12:00');
 INSERT INTO theme (name, description, thumbnail) VALUES ('Theme 1', 'Description 1', 'thumbnail1.jpg');
 INSERT INTO theme (name, description, thumbnail) VALUES ('Theme 2', 'Description 1', 'thumbnail1.jpg');
 INSERT INTO theme (name, description, thumbnail) VALUES ('Theme 3', 'Description 1', 'thumbnail1.jpg');
+
+INSERT INTO reservation (date, user_id, time_id, theme_id) VALUES ('2024-06-23', 1, 1, 1);
+INSERT INTO reservation (date, user_id, time_id, theme_id) VALUES ('2024-06-24', 1, 1, 2);
