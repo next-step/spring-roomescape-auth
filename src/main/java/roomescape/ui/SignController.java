@@ -22,7 +22,7 @@ import java.util.Date;
 @PropertySource("classpath:application.yml")
 @Controller
 @RequestMapping("/login")
-public class LoginController {
+public class SignController {
 
   @Value("${jwt.secret}")
   private String secretKey;
