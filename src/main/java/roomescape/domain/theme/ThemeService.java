@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class ThemeService {
-  final private ThemeRepository themeRepository;
+  private final ThemeRepository themeRepository;
 
   public List<Theme> findAllThemes() {
     return themeRepository.findAllThemes();
