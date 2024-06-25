@@ -4,6 +4,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import roomescape.member.dto.LoginMemberRequestDto;
@@ -13,7 +15,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class MemberControllerTest {
+class MemberIntegrationTest {
 
     private static final String EMAIL = "json@email.com";
     private static final String PASSOWORD = "1234";
@@ -34,17 +36,16 @@ class MemberControllerTest {
                 .then().log().all()
                 .assertThat()
                 .cookie("token", notNullValue());
-
-
     }
 
     @DisplayName("잘못된 계정정보로 로그인 요청을 하면 예외가 발생합니다.")
-    @Test
-    void basicLoginException1() {
-        //given1
-        final LoginMemberRequestDto loginMemberRequestDto = new LoginMemberRequestDto(EMAIL, "4312");
+    @ParameterizedTest
+    @CsvSource(value = {"json@email.com, 1234!@#$", "error@error.com, 1234"})
+    void basicLoginException(String email, String password) {
+        //given
+        final LoginMemberRequestDto loginMemberRequestDto = new LoginMemberRequestDto(email, password);
 
-        //when1
+        //when
         final Response response = RestAssured
                 .given().log().all()
                 .body(loginMemberRequestDto)
@@ -53,23 +54,8 @@ class MemberControllerTest {
                 .then().log().all().extract().response();
         String responseBody = response.getBody().asString();
 
-        //then1
+        //then
         assertThat(responseBody).isEqualTo("Authorization Exception: 해당하는 회원 정보가 없습니다.");
-
-        //given2
-        final LoginMemberRequestDto loginMemberRequestDto2 = new LoginMemberRequestDto("test@test.com", PASSOWORD);
-
-        //when2
-        final Response response2 = RestAssured
-                .given().log().all()
-                .body(loginMemberRequestDto2)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().post("/login")
-                .then().log().all().extract().response();
-        final String responseBody2 = response2.getBody().asString();
-
-        //then2
-        assertThat(responseBody2).isEqualTo("Authorization Exception: 해당하는 회원 정보가 없습니다.");
     }
 
     @DisplayName("쿠키를 이용하여 로그인 사용자 이름을 응답받습니다.")
