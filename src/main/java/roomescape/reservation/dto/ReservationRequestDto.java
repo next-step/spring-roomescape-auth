@@ -1,8 +1,8 @@
 package roomescape.reservation.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import roomescape.reservationTheme.dto.ReservationThemeRequestDto;
-import roomescape.reservationTime.dto.ReservationTimeRequestDto;
+import roomescape.reservationtheme.dto.ReservationThemeRequestDto;
+import roomescape.reservationtime.dto.ReservationTimeRequestDto;
 
 public class ReservationRequestDto {
 

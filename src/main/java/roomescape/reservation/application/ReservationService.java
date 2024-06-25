@@ -6,10 +6,9 @@ import roomescape.reservation.infra.ReservationRepository;
 import roomescape.reservation.dto.ReservationRequestDto;
 import roomescape.reservation.dto.ReservationResponseDto;
 import roomescape.reservation.domain.Reservation;
-import roomescape.reservationTheme.domain.ReservationTheme;
-import roomescape.reservationTheme.dto.ReservationThemeResponseDto;
-import roomescape.reservationTime.domain.ReservationTime;
-import roomescape.reservationTime.dto.ReservationTimeResponseDto;
+import roomescape.reservationtheme.domain.ReservationTheme;
+import roomescape.reservationtime.domain.ReservationTime;
+import roomescape.reservationtime.dto.ReservationTimeResponseDto;
 
 import java.util.List;
 

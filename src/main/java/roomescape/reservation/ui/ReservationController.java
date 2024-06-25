@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import roomescape.reservation.dto.ReservationRequestDto;
 import roomescape.reservation.dto.ReservationResponseDto;
 import roomescape.reservation.application.ReservationService;
-import roomescape.reservationTime.dto.ReservationTimeResponseDto;
 
 import java.util.List;
 

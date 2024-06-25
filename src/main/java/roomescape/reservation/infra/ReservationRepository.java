@@ -5,8 +5,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import roomescape.reservation.domain.Reservation;
-import roomescape.reservationTheme.domain.ReservationTheme;
-import roomescape.reservationTime.domain.ReservationTime;
+import roomescape.reservationtheme.domain.ReservationTheme;
+import roomescape.reservationtime.domain.ReservationTime;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,7 +1,7 @@
 package roomescape.reservation.domain;
 
-import roomescape.reservationTheme.domain.ReservationTheme;
-import roomescape.reservationTime.domain.ReservationTime;
+import roomescape.reservationtheme.domain.ReservationTheme;
+import roomescape.reservationtime.domain.ReservationTime;
 
 import java.util.Objects;
 

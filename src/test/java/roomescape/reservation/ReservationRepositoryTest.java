@@ -7,14 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import roomescape.GloblaFixture.entity.ReservationFixture;
+import roomescape.globalfixture.entity.ReservationFixture;
 import roomescape.reservation.domain.Reservation;
 import roomescape.reservation.infra.ReservationRepository;
-import roomescape.reservationTheme.infra.ReservationThemeRepository;
-import roomescape.reservationTime.infra.ReservationTimeRepository;
+import roomescape.reservationtheme.infra.ReservationThemeRepository;
+import roomescape.reservationtime.infra.ReservationTimeRepository;
 
 import java.util.List;
 
