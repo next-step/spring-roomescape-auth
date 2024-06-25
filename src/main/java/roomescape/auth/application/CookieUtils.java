@@ -16,6 +16,7 @@ public class CookieUtils {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
+        cookie.setMaxAge(maxAge * 60 * 60);
         return cookie;
     }
 
@@ -35,7 +36,7 @@ public class CookieUtils {
         Cookie cookie = new Cookie(name, null);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setMaxAge(maxAge);
+        cookie.setMaxAge(maxAge * 60 * 60);
         return cookie;
     }
 }
