@@ -17,7 +17,7 @@ public class ReservationThemeRepository {
     private final RowMapper<ReservationTheme> reservationThemeRowMapper;
     private final SimpleJdbcInsert simpleJdbcInsert;
 
-    public ReservationThemeRepository(JdbcTemplate jdbcTemplate) {
+    public ReservationThemeRepository(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.reservationThemeRowMapper = (resultSet, rowNum) -> new ReservationTheme.Builder()
                 .id(resultSet.getLong("id"))

@@ -17,7 +17,7 @@ public class ReservationTimeRepository {
     private final SimpleJdbcInsert simpleJdbcInsert;
     private final RowMapper<ReservationTime> rowMapper;
 
-    public ReservationTimeRepository(JdbcTemplate jdbcTemplate) {
+    public ReservationTimeRepository(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.rowMapper = (resultSet, rowNum) -> new ReservationTime(
                 resultSet.getLong("id"),

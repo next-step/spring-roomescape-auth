@@ -21,7 +21,7 @@ public class ReservationRepository {
     private final RowMapper<Reservation> reservationRowMapper;
     private final RowMapper<ReservationTime> reservationTimeRowMapper;
 
-    public ReservationRepository(JdbcTemplate jdbcTemplate) {
+    public ReservationRepository(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("reservation")
@@ -78,13 +78,13 @@ public class ReservationRepository {
         return simpleJdbcInsert.executeAndReturnKey(parameters).longValue();
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(final Long id) {
         final String sql = "DELETE FROM reservation WHERE id = ?";
         jdbcTemplate.update(sql, Long.valueOf(id));
     }
 
 
-    public Reservation findById(Long id) {
+    public Reservation findById(final Long id) {
         final String sql = """
                 SELECT r.id AS reservation_id, 
                         r.name AS reservation_name, 
@@ -105,12 +105,12 @@ public class ReservationRepository {
 
     }
 
-    public boolean existsById(Long id) {
+    public boolean existsById(final Long id) {
         final String sql = "SELECT EXISTS(SELECT 1 FROM reservation WHERE id = ?)";
         return jdbcTemplate.queryForObject(sql, Boolean.class, id);
     }
 
-    public List<ReservationTime> getAvailableReservationTimes(String date, Long themeId) {
+    public List<ReservationTime> getAvailableReservationTimes(final String date, final Long themeId) {
         String sql = """
                 SELECT rt.id AS reservation_time_id, rt.start_at AS start_at
                 FROM reservation_time rt
