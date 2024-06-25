@@ -21,6 +21,7 @@ import roomescape.reservationtime.dto.ReservationTimeResponseDto;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:test-application.yml")
@@ -47,8 +48,12 @@ class ReservationTimeControllerTest {
         List<ReservationTimeResponseDto> reservations = response.as(new TypeRef<List<ReservationTimeResponseDto>>() {});
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(reservations.size()).isEqualTo(3);
+        assertSoftly(
+                softAssertions ->{
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+                    assertThat(reservations.size()).isEqualTo(3);
+                }
+        );
     }
 
     @DisplayName("시간 추가할 수 있습니다.")
@@ -63,26 +68,25 @@ class ReservationTimeControllerTest {
                 .body(request)
                 .when().post("/times")
                 .then().log().all().extract().response();
+        final ReservationTimeResponseDto responseDto = response.as(ReservationTimeResponseDto.class);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        final ReservationTimeResponseDto responseDto = response.as(ReservationTimeResponseDto.class);
-        assertThat(responseDto.getStartAt()).isEqualTo(request.getStartAt());
+        assertSoftly(
+                softAssertions -> {
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+                    assertThat(responseDto.getStartAt()).isEqualTo(request.getStartAt());
+                }
+        );
     }
 
     @DisplayName("시간을 삭제할 수 있습니다.")
     @Test
     void deleteTime() {
         // given
-        final ReservationTimeRequestDto request = ReservationTimeDtoFixture.createReservationTimeRequestDto();
+        final Response response = createTime(ReservationTimeDtoFixture.createReservationTimeRequestDto());
+        final ReservationTimeResponseDto responseDto = response.as(ReservationTimeResponseDto.class);
 
         // when
-        final Response response = RestAssured.given().log().all()
-                .contentType(ContentType.JSON)
-                .body(request)
-                .when().post("/times")
-                .then().log().all().extract().response();
-        final ReservationTimeResponseDto responseDto = response.as(ReservationTimeResponseDto.class);
         final Response response2 = RestAssured.given().log().all()
                 .when().delete("/times/" + responseDto.getId())
                 .then().log().all().extract().response();
@@ -122,11 +126,22 @@ class ReservationTimeControllerTest {
                 .body(request)
                 .when().post("/times")
                 .then().log().all().extract().response();
-
         final ReservationTimeRequestDto reservationTimeRequestDto = response.as(ReservationTimeRequestDto.class);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(reservationTimeRequestDto.getStartAt()).isEqualTo("예약 시간을 입력해주세요");
+        assertSoftly(
+                softAssertions -> {
+                    assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+                    assertThat(reservationTimeRequestDto.getStartAt()).isEqualTo("예약 시간을 입력해주세요");
+                }
+        );
+    }
+
+    private Response createTime(ReservationTimeRequestDto request){
+        return RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when().post("/times")
+                .then().log().all().extract().response();
     }
 }
