@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +14,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import roomescape.domain.member.MemberService;
 import roomescape.ui.data.LoginCheckResponse;
 import roomescape.ui.data.LoginRequest;
+import roomescape.ui.data.SignupRequest;
 import roomescape.util.TokenUtil;
 
 import java.util.Date;
 
+@RequiredArgsConstructor
 @PropertySource("classpath:application.yml")
 @Controller
 @RequestMapping
 public class SignController {
+
+  private final MemberService memberService;
 
   @Value("${jwt.secret}")
   private String secretKey;
@@ -60,5 +66,11 @@ public class SignController {
       .getSubject();
 
     return ResponseEntity.ok().body(new LoginCheckResponse(email));
+  }
+
+  @PostMapping("/signup")
+  public ResponseEntity signup(SignupRequest signupRequest){
+    memberService.save(signupRequest);
+    return ResponseEntity.ok().build();
   }
 }
