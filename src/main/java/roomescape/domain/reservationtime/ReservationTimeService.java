@@ -1,4 +1,4 @@
-package roomescape.reservationtime;
+package roomescape.domain.reservationtime;
 
 
 import org.springframework.stereotype.Service;
@@ -7,8 +7,8 @@ import roomescape.errors.ErrorCode;
 import roomescape.exceptions.RoomEscapeException;
 import roomescape.repositories.ReservationRepository;
 import roomescape.repositories.ReservationTimeRepository;
-import roomescape.reservationtime.data.AvailableTimeResponse;
-import roomescape.reservationtime.data.ReservationTimeAddRequestDto;
+import roomescape.domain.reservationtime.data.AvailableTimeResponse;
+import roomescape.domain.reservationtime.data.ReservationTimeAddRequestDto;
 
 import java.util.List;
 

@@ -1,9 +1,9 @@
-package roomescape.theme;
+package roomescape.domain.theme;
 
 import org.springframework.stereotype.Service;
+import roomescape.domain.theme.data.ThemeAddRequestDto;
 import roomescape.entities.Theme;
 import roomescape.repositories.ThemeRepository;
-import roomescape.theme.data.ThemeAddRequestDto;
 
 import java.util.List;
 

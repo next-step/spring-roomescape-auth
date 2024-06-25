@@ -5,9 +5,9 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.reservation.data.ReservationAddRequestDto;
-import roomescape.reservationtime.data.ReservationTimeAddRequestDto;
-import roomescape.theme.data.ThemeAddRequestDto;
+import roomescape.domain.reservation.data.ReservationAddRequestDto;
+import roomescape.domain.reservationtime.data.ReservationTimeAddRequestDto;
+import roomescape.domain.theme.data.ThemeAddRequestDto;
 
 import java.time.LocalDate;
 

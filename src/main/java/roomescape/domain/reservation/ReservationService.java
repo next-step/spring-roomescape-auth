@@ -1,11 +1,11 @@
-package roomescape.reservation;
+package roomescape.domain.reservation;
 
 import org.springframework.stereotype.Service;
+import roomescape.domain.reservation.data.ReservationResponseDto;
 import roomescape.entities.Reservation;
 import roomescape.errors.ErrorCode;
 import roomescape.exceptions.RoomEscapeException;
 import roomescape.repositories.ReservationRepository;
-import roomescape.reservation.data.ReservationResponseDto;
 
 import java.util.List;
 import java.util.Optional;

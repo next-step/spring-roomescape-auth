@@ -1,4 +1,4 @@
-package roomescape.reservation;
+package roomescape.domain.reservation;
 
 
 import org.springframework.http.ResponseEntity;
@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import roomescape.domain.reservation.data.ReservationAddRequestDto;
+import roomescape.domain.reservation.data.ReservationResponseDto;
+import roomescape.domain.reservationtime.ReservationTimeService;
+import roomescape.domain.theme.ThemeService;
 import roomescape.entities.Reservation;
 import roomescape.entities.ReservationTime;
 import roomescape.entities.Theme;
-import roomescape.reservation.data.ReservationAddRequestDto;
-import roomescape.reservation.data.ReservationResponseDto;
-import roomescape.reservationtime.ReservationTimeService;
-import roomescape.theme.ThemeService;
 
 import java.util.List;
 

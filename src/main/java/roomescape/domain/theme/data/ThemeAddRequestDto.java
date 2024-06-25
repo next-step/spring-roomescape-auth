@@ -1,4 +1,4 @@
-package roomescape.theme.data;
+package roomescape.domain.theme.data;
 
 public class ThemeAddRequestDto {
   private String name;
