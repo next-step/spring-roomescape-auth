@@ -21,18 +21,18 @@ import java.util.Date;
 
 @PropertySource("classpath:application.yml")
 @Controller
-@RequestMapping("/login")
+@RequestMapping
 public class SignController {
 
   @Value("${jwt.secret}")
   private String secretKey;
 
-  @GetMapping
+  @GetMapping("/login")
   public String login() {
     return "login";
   }
 
-  @PostMapping
+  @PostMapping("/login")
   public ResponseEntity<Cookie> login(
     @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
     String accessToken = Jwts.builder()
@@ -48,7 +48,7 @@ public class SignController {
     return ResponseEntity.ok().body(cookie);
   }
 
-  @GetMapping("/check")
+  @GetMapping("/login/check")
   public ResponseEntity<LoginCheckResponse> check(HttpServletRequest request) {
     Cookie[] cookies = request.getCookies();
     String token = TokenUtil.extractTokenFromCookie(cookies);
