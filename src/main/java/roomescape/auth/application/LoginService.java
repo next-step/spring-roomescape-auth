@@ -31,11 +31,10 @@ public class LoginService {
 
     public Cookie login(LoginRequest loginRequest) {
         String encodedPassword = passwordEncoder.encode(loginRequest.password());
-        Long memberId = memberRepository.findByEmailAndPassword(loginRequest.email(), encodedPassword)
-                .orElseThrow(() -> BadRequestException.of("이메일 또는 비밀번호를 확인해주세요."))
-                .getId();
+        Member member = memberRepository.findByEmailAndPassword(loginRequest.email(), encodedPassword)
+                .orElseThrow(() -> BadRequestException.of("이메일 또는 비밀번호를 확인해주세요."));
 
-        String token = jwtTokenProvider.createToken(memberId);
+        String token = jwtTokenProvider.createToken(member);
         return cookieUtils.createCookie("token", token);
     }
 
