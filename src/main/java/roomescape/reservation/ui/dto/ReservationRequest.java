@@ -5,16 +5,13 @@ import jakarta.validation.constraints.NotNull;
 
 public class ReservationRequest {
     @NotBlank
-    private String name;
+    private final String name;
     @NotBlank
-    private String date;
+    private final String date;
     @NotNull
-    private Long timeId;
+    private final Long timeId;
     @NotNull
-    private Long themeId;
-
-    private ReservationRequest() {
-    }
+    private final Long themeId;
 
     private ReservationRequest(String name, String date, Long timeId, Long themeId) {
         this.name = name;
