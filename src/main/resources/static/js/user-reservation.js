@@ -42,7 +42,7 @@ function renderTheme(themes) {
           createSlot('theme', theme name, theme id) 형태로 호출
     */
     const name = theme.name;
-    const themeId = theme.id;
+    const themeId = theme.themeId;
     themeSlots.appendChild(createSlot('theme', name, themeId));
   });
 }
@@ -149,24 +149,44 @@ function checkDateAndThemeAndTime() {
   }
 }
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
+
 function onReservationButtonClick() {
   const selectedDate = document.getElementById("datepicker").value;
   const selectedThemeId = document.querySelector('.theme-slot.active')?.getAttribute('data-theme-id');
   const selectedTimeId = document.querySelector('.time-slot.active')?.getAttribute('data-time-id');
-  const name = document.getElementById('user-name').value;
+  // const name = document.getElementById('user-name').value;
 
   if (selectedDate && selectedThemeId && selectedTimeId) {
+    const timeData = {
+      timeId: selectedTimeId,
+      startAt: null
+    }
+    const themeData = {
+      themeId: selectedThemeId,
+      name: null,
+      description: null,
+      thumbnail: null
+    }
     const reservationData = {
       date: selectedDate,
-      themeId: selectedThemeId,
-      timeId: selectedTimeId,
-      name: name
+      reservationTimeRequestDto: timeData,
+      reservationThemeRequestDto: themeData
+  //    name: name
     };
+    const token = getCookie('token');
 
     fetch('/reservations', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'token': `${token}` // 토큰을 Authorization 헤더에 추가
       },
       body: JSON.stringify(reservationData)
     })
