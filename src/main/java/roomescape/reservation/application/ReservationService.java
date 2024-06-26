@@ -42,7 +42,6 @@ public class ReservationService {
                 .reservationTheme(new ReservationTheme(
                     reservationRequestDto.getReservationThemeRequestDto().getThemeId()))
                 .build();
-        log.info("reservation : {}", reservation);
         final Long savedId = reservationRepository.save(reservation);
         final Reservation savedReservation = reservationRepository.findById(savedId);
 
