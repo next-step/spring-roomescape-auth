@@ -1,20 +1,29 @@
 package roomescape.reservation.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import roomescape.member.dto.MemberResponseDto;
 import roomescape.reservation.domain.Reservation;
 import roomescape.reservationtheme.dto.ReservationThemeResponseDto;
 import roomescape.reservationtime.dto.ReservationTimeResponseDto;
 
 public class ReservationResponseDto {
 
+    @JsonProperty("id")
     private Long id;
-    private String name;
+    @JsonProperty("member")
+    private MemberResponseDto memberResponseDto;
+    @JsonProperty("date")
     private String date;
+    @JsonProperty("time")
     private ReservationTimeResponseDto reservationTimeResponseDto;
+    @JsonProperty("theme")
     private ReservationThemeResponseDto reservationThemeResponseDto;
 
-    public ReservationResponseDto(Long id, String name, String date, ReservationTimeResponseDto reservationTimeResponseDto, ReservationThemeResponseDto reservationThemeResponseDto) {
+    public ReservationResponseDto(Long id, MemberResponseDto memberResponseDto, String date,
+                                  ReservationTimeResponseDto reservationTimeResponseDto,
+                                  ReservationThemeResponseDto reservationThemeResponseDto) {
         this.id = id;
-        this.name = name;
+        this.memberResponseDto = memberResponseDto;
         this.date = date;
         this.reservationTimeResponseDto = reservationTimeResponseDto;
         this.reservationThemeResponseDto = reservationThemeResponseDto;
@@ -22,7 +31,7 @@ public class ReservationResponseDto {
 
     public static class Builder {
         private Long id;
-        private String name;
+        private MemberResponseDto memberResponseDto;
         private String date;
         private ReservationTimeResponseDto reservationTimeResponseDto;
         private ReservationThemeResponseDto reservationThemeResponseDto;
@@ -32,8 +41,8 @@ public class ReservationResponseDto {
             return this;
         }
 
-        public Builder name(String name) {
-            this.name = name;
+        public Builder memberResponseDto(MemberResponseDto memberResponseDto) {
+            this.memberResponseDto = memberResponseDto;
             return this;
         }
 
@@ -53,14 +62,16 @@ public class ReservationResponseDto {
         }
 
         public ReservationResponseDto build() {
-            return new ReservationResponseDto(id, name, date, reservationTimeResponseDto, reservationThemeResponseDto);
+            return new ReservationResponseDto(id, memberResponseDto, date, reservationTimeResponseDto, reservationThemeResponseDto);
         }
     }
 
-    public static ReservationResponseDto reservationResponseDtoFromReservation(Reservation reservation){
-        return new ReservationResponseDto.Builder()
+    public static ReservationResponseDto reservationResponseDtoFromReservation(Reservation reservation) {
+        return new Builder()
                 .id(reservation.getId())
-                .name(reservation.getName())
+                .memberResponseDto(new MemberResponseDto(
+                        reservation.getName()
+                ))
                 .date(reservation.getDate())
                 .reservationTimeResponseDto(new ReservationTimeResponseDto(
                         reservation.getReservationTime().getTimeId(),
@@ -77,9 +88,7 @@ public class ReservationResponseDto {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
+    public MemberResponseDto getMemberResponseDto() { return memberResponseDto; }
 
     public String getDate() {
         return date;
@@ -95,9 +104,9 @@ public class ReservationResponseDto {
 
     @Override
     public String toString() {
-        return "{ " +
+        return "ReservationResponseDto{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", memberResponseDto=" + memberResponseDto +
                 ", date='" + date + '\'' +
                 ", reservationTimeResponseDto=" + reservationTimeResponseDto +
                 ", reservationThemeResponseDto=" + reservationThemeResponseDto +
