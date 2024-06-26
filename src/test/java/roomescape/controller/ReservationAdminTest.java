@@ -1,15 +1,6 @@
 package roomescape.controller;
 
-import static org.hamcrest.Matchers.is;
-import static roomescape.fixture.AuthFixture.로그인;
-import static roomescape.fixture.MemberFixture.회원가입;
-import static roomescape.fixture.ReservationFixture.예약을_생성한다_관리자;
-import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
-import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
-
 import io.restassured.response.Response;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +8,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
+import roomescape.fixture.DateFixture;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.is;
+import static roomescape.fixture.AuthFixture.로그인;
+import static roomescape.fixture.MemberFixture.회원가입;
+import static roomescape.fixture.ReservationFixture.예약을_생성한다_관리자;
+import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
+import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
 
 @Sql("classpath:table_init.sql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -59,7 +61,7 @@ public class ReservationAdminTest {
                 .getLong("id");
 
         Map<String, Object> params = new HashMap<>();
-        params.put("date", "2024-06-25");
+        params.put("date", DateFixture.formatCurrentDate("yyyy-MM-dd"));
         params.put("timeId", 1L);
         params.put("themeId", 1L);
         params.put("memberId", memberId);
