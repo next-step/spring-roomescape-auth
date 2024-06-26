@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import roomescape.member.infra.AuthorizationException;
 import roomescape.member.application.AuthService;
 import roomescape.member.dto.LoginMemberRequestDto;
 import roomescape.member.dto.MemberResponseDto;
@@ -18,12 +17,12 @@ import static roomescape.member.infra.CommonMethod.extractTokenFromCookie;
 
 @RestController
 @RequestMapping("/login")
-public class MemberController {
+public class LoginMemberController {
 
-    private static final Logger log = LoggerFactory.getLogger(MemberController.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginMemberController.class);
     private final AuthService authService;
 
-    public MemberController(AuthService authService) {
+    public LoginMemberController(AuthService authService) {
         this.authService = authService;
     }
 
