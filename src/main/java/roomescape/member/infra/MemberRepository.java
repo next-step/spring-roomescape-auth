@@ -30,7 +30,7 @@ public class MemberRepository {
 
     public String findNameById(final Long id) {
         return MemberStorage.values().stream()
-                .filter(m -> m.getId().equals(id))
+                .filter(savedMember -> savedMember.getId().equals(id))
                 .map(Member::getName).findFirst().orElse(null);
     }
 }
