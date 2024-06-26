@@ -12,7 +12,8 @@ public class JwtTokenProvider {
     @Value("${security.token.secret-key}")
     private String secretKey;
 
-    private final long validTime = 1000 * 60 * 60 * 24;
+    @Value("${security.token.valid-time}")
+    private long validTime;
 
     public String createToken(Long id, String email, String name) {
         Date now = new Date();
