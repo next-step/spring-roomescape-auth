@@ -1,6 +1,7 @@
 package roomescape.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import roomescape.DataTimeFormatterUtils;
-import roomescape.web.controller.dto.ReservationAdminRequest;
-import roomescape.web.controller.dto.ReservationRequest;
 import roomescape.domain.LoginMember;
 import roomescape.domain.Member;
 import roomescape.domain.MemberRole;
@@ -21,10 +20,16 @@ import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
 import roomescape.repository.ReservationRepository;
 import roomescape.repository.ReservationTimeRepository;
+import roomescape.web.controller.dto.ReservationAdminRequest;
+import roomescape.web.controller.dto.ReservationRequest;
+import roomescape.web.controller.dto.ReservationResponse;
+import roomescape.web.controller.dto.ReservationSearchRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 class ReservationServiceTests {
@@ -176,6 +181,64 @@ class ReservationServiceTests {
 		// when, then
 		assertThatThrownBy(() -> this.reservationService.cancel(id)).isInstanceOf(RoomEscapeException.class)
 			.hasMessage(ErrorCode.NOT_FOUND_RESERVATION.getMessage());
+	}
+
+	@Test
+	void searchReservations() {
+		// given
+		long memberId = 1L;
+		long themeId = 1L;
+		String dateFrom = "2024-06-01";
+		String dateTo = "2024-06-30";
+
+		ReservationTime reservationTime = ReservationTime.builder().id(1L).startAt("10:00").build();
+		Theme theme = Theme.builder().id(1L).name("테마1").description("첫번째테마").thumbnail("테마이미지").build();
+
+		Reservation reservation = Reservation.builder()
+			.id(1L)
+			.name("tester")
+			.date("2024-06-06")
+			.time(reservationTime)
+			.theme(theme)
+			.build();
+
+		List<Reservation> reservations = List.of(reservation);
+
+		ReservationSearchRequest request = new ReservationSearchRequest(memberId, themeId, dateFrom, dateTo);
+		given(this.reservationRepository.findReservations(anyLong(), anyLong(), anyString(), anyString()))
+			.willReturn(reservations);
+
+		// when
+		List<ReservationResponse> searchReservations = this.reservationService.searchReservations(request);
+
+		// then
+		assertThat(searchReservations).hasSize(1);
+		assertThat(searchReservations).allSatisfy((resultReservation) -> {
+			assertThat(resultReservation.name()).isEqualTo("tester");
+			assertThat(resultReservation.theme().id()).isEqualTo(1L);
+			assertThat(resultReservation.date()).isBetween("2024-06-01", "2024-06-30");
+		});
+	}
+
+	@Test
+	void searchReservationsEmptyResult() {
+
+		// given
+		long memberId = 1L;
+		long themeId = 1L;
+		String dateFrom = "2024-06-01";
+		String dateTo = "2024-06-30";
+
+		ReservationSearchRequest request = new ReservationSearchRequest(memberId, themeId, dateFrom, dateTo);
+
+		given(this.reservationRepository.findReservations(anyLong(), anyLong(), anyString(), anyString()))
+				.willReturn(Collections.emptyList());
+
+		// when
+		List<ReservationResponse> searchReservations = this.reservationService.searchReservations(request);
+
+		// then
+		assertThat(searchReservations).isEmpty();
 	}
 
 }

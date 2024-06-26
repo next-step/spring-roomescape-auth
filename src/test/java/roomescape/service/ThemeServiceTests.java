@@ -3,6 +3,7 @@ package roomescape.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -74,11 +75,13 @@ class ThemeServiceTests {
 		var createdTheme = this.themeService.create(request);
 
 		// then
-		assertThat(createdTheme).isNotNull();
-		assertThat(createdTheme.id()).isEqualTo(1L);
-		assertThat(createdTheme.name()).isEqualTo("테마1");
-		assertThat(createdTheme.description()).isEqualTo("첫번째테마");
-		assertThat(createdTheme.thumbnail()).isEqualTo("썸네일이미지");
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(createdTheme).isNotNull();
+			softly.assertThat(createdTheme.id()).isEqualTo(1L);
+			softly.assertThat(createdTheme.name()).isEqualTo("테마1");
+			softly.assertThat(createdTheme.description()).isEqualTo("첫번째테마");
+			softly.assertThat(createdTheme.thumbnail()).isEqualTo("썸네일이미지");
+		});
 	}
 
 	@Test
@@ -102,11 +105,14 @@ class ThemeServiceTests {
 		var resultThemeById = this.themeService.getThemeById(1L);
 
 		// then
-		assertThat(resultThemeById).isNotNull();
-		assertThat(resultThemeById.getId()).isEqualTo(1L);
-		assertThat(resultThemeById.getName()).isEqualTo("테마1");
-		assertThat(resultThemeById.getDescription()).isEqualTo("첫번째테마");
-		assertThat(resultThemeById.getThumbnail()).isEqualTo("썸네일이미지");
+		SoftAssertions.assertSoftly((softly) -> {
+			softly.assertThat(resultThemeById).isNotNull();
+			softly.assertThat(resultThemeById.getId()).isEqualTo(1L);
+			softly.assertThat(resultThemeById.getName()).isEqualTo("테마1");
+			softly.assertThat(resultThemeById.getDescription()).isEqualTo("첫번째테마");
+			softly.assertThat(resultThemeById.getThumbnail()).isEqualTo("썸네일이미지");
+		});
+
 	}
 
 	@Test

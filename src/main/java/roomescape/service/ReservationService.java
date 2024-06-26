@@ -5,15 +5,16 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import roomescape.web.controller.dto.CreateReservationRequest;
-import roomescape.web.controller.dto.ReservationAdminRequest;
-import roomescape.web.controller.dto.ReservationRequest;
-import roomescape.web.controller.dto.ReservationResponse;
 import roomescape.domain.LoginMember;
 import roomescape.domain.Reservation;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
 import roomescape.repository.ReservationRepository;
+import roomescape.web.controller.dto.CreateReservationRequest;
+import roomescape.web.controller.dto.ReservationAdminRequest;
+import roomescape.web.controller.dto.ReservationRequest;
+import roomescape.web.controller.dto.ReservationResponse;
+import roomescape.web.controller.dto.ReservationSearchRequest;
 
 import org.springframework.stereotype.Service;
 
@@ -37,10 +38,7 @@ public class ReservationService {
 	}
 
 	public List<ReservationResponse> getReservations() {
-		return this.reservationRepository.findAll()
-			.stream()
-			.map((reservation) -> ReservationResponse.from(reservation, reservation.getTime(), reservation.getTheme()))
-			.toList();
+		return this.reservationRepository.findAll().stream().map(ReservationResponse::from).toList();
 	}
 
 	public ReservationResponse create(ReservationRequest request, LoginMember loginMember) {
@@ -54,12 +52,12 @@ public class ReservationService {
 	}
 
 	public ReservationResponse createByAdmin(ReservationAdminRequest request) {
-		var findedMember = this.memberService.findById(request.memberId());
+		var foundMember = this.memberService.findById(request.memberId());
 		var createReservationRequest = CreateReservationRequest.builder()
 			.date(request.date())
 			.timeId(request.timeId())
 			.themeId(request.themeId())
-			.memberName(findedMember.getName())
+			.memberName(foundMember.getName())
 			.build();
 		return createReservation(createReservationRequest);
 	}
@@ -101,6 +99,11 @@ public class ReservationService {
 		if (this.reservationRepository.isDuplicateReservation(date, themeId)) {
 			throw new RoomEscapeException(ErrorCode.DUPLICATE_RESERVATION);
 		}
+	}
+
+	public List<ReservationResponse> searchReservations(ReservationSearchRequest request) {
+		return ReservationResponse.from(this.reservationRepository.findReservations(request.memberId(),
+				request.themeId(), request.dateFrom(), request.dateTo()));
 	}
 
 }

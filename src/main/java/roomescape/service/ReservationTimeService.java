@@ -3,13 +3,13 @@ package roomescape.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import roomescape.web.controller.dto.AvailableReservationTimeResponse;
-import roomescape.web.controller.dto.ReservationTimeRequest;
-import roomescape.web.controller.dto.ReservationTimeResponse;
 import roomescape.domain.ReservationTime;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.RoomEscapeException;
 import roomescape.repository.ReservationTimeRepository;
+import roomescape.web.controller.dto.AvailableReservationTimeResponse;
+import roomescape.web.controller.dto.ReservationTimeRequest;
+import roomescape.web.controller.dto.ReservationTimeResponse;
 
 import org.springframework.stereotype.Service;
 
@@ -44,12 +44,12 @@ public class ReservationTimeService {
 	}
 
 	public ReservationTime getReservationTimeById(long id) {
-		var findedReservationTime = this.reservationTimeRepository.findById(id);
+		var foundReservationTime = this.reservationTimeRepository.findById(id);
 
-		if (findedReservationTime == null) {
+		if (foundReservationTime == null) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_RESERVATION_TIME);
 		}
-		return findedReservationTime;
+		return foundReservationTime;
 	}
 
 	public List<AvailableReservationTimeResponse> getAvailableReservationTimes(String date, long themeId) {

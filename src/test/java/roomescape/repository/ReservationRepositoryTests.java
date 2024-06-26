@@ -105,4 +105,41 @@ class ReservationRepositoryTests {
 		verify(this.jdbcTemplate).update(anyString(), eq(id));
 	}
 
+	@Test
+	void findReservations() {
+		// given
+		long memberId = 1L;
+		long themeId = 1L;
+		String dateFrom = "2024-06-01";
+		String dateTo = "2024-06-30";
+
+		ReservationTime reservationTime = ReservationTime.builder().id(1L).startAt("10:00").build();
+		Theme theme = Theme.builder().id(1L).name("테마1").description("첫번째테마").thumbnail("테마이미지").build();
+
+		Reservation reservation = Reservation.builder()
+				.id(1L)
+				.name("tester")
+				.date("2024-06-06")
+				.time(reservationTime)
+				.theme(theme)
+				.build();
+
+		List<Reservation> reservations = List.of(reservation);
+
+		given(this.jdbcTemplate.query(anyString(), any(RowMapper.class), eq(memberId), eq(themeId), eq(dateFrom), eq(dateTo)))
+				.willReturn(reservations);
+
+		// when
+		var foundReservations = this.reservationRepository.findReservations(memberId, themeId, dateFrom, dateTo);
+
+		// then
+		assertThat(foundReservations).isEqualTo(reservations);
+		assertThat(foundReservations).isEqualTo(reservations);
+		assertThat(foundReservations).allSatisfy((resultReservation) -> {
+			assertThat(resultReservation.getName()).isEqualTo("tester");
+			assertThat(resultReservation.getTheme().getId()).isEqualTo(1L);
+			assertThat(resultReservation.getDate()).isBetween("2024-06-01", "2024-06-30");
+		});
+	}
+
 }

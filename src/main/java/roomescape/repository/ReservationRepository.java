@@ -85,6 +85,33 @@ public class ReservationRepository {
 		this.jdbcTemplate.update(sql, id);
 	}
 
+	public List<Reservation> findReservations(long memberId, long themeId, String dateFrom, String dateTo) {
+		String sql = """
+					SELECT
+						r.id AS reservation_id,
+						r.name AS reservation_name,
+						r.date AS reservation_date,
+						rt.id AS time_id,
+						rt.start_at AS time_start_at,
+						t.id AS theme_id,
+						t.name AS theme_name,
+						t.description AS theme_description,
+						t.thumbnail AS theme_thumbnail,
+						m.id AS member_id,
+						m.name AS member_name,
+						m.email AS member_email
+					FROM reservation AS r
+					INNER JOIN reservation_time AS rt ON r.time_id = rt.id
+					INNER JOIN theme AS t ON r.theme_id = t.id
+					INNER JOIN member AS m ON r.name = m.name
+					WHERE m.id = ?
+					AND r.theme_id = ?
+					AND r.date BETWEEN ? AND ?
+				""";
+
+		return this.jdbcTemplate.query(sql, RESERVATION_ROW_MAPPER, memberId, themeId, dateFrom, dateTo);
+	}
+
 	static {
 		RESERVATION_ROW_MAPPER = (resultSet, rowNum) -> {
 			long timeId = resultSet.getLong("time_id");

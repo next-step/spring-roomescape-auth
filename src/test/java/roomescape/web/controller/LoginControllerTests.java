@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import roomescape.web.controller.LoginController;
 import roomescape.web.controller.dto.LoginResponse;
 import roomescape.web.controller.dto.LoginRequest;
 import roomescape.exception.ErrorCode;

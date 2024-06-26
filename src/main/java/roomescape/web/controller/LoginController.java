@@ -4,9 +4,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import roomescape.auth.JwtCookieManager;
-import roomescape.web.controller.dto.LoginResponse;
-import roomescape.web.controller.dto.LoginRequest;
 import roomescape.service.AuthService;
+import roomescape.web.controller.dto.LoginRequest;
+import roomescape.web.controller.dto.LoginResponse;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +31,7 @@ public class LoginController {
 		var token = this.authService.generateLoginToken(request);
 		var createCookie = JwtCookieManager.createCookie(token, COOKIE_MAX_AGE);
 		response.addCookie(createCookie);
-		var loginResponse = this.authService.findRoleByToken(new Cookie[] {createCookie});
+		var loginResponse = this.authService.findRoleByToken(new Cookie[] { createCookie });
 		return ResponseEntity.ok().body(loginResponse);
 	}
 

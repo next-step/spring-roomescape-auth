@@ -3,12 +3,14 @@ const RESERVATION_API_ENDPOINT = '/reservations';
 const TIME_API_ENDPOINT = '/times';
 const THEME_API_ENDPOINT = '/themes';
 const MEMBER_API_ENDPOINT = '/members';
+const SEARCH_API_ENDPOINT = '/admin/reservations/search';
 const timesOptions = [];
 const themesOptions = [];
 const membersOptions = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('add-button').addEventListener('click', addInputRow);
+  document.getElementById('filter-form').addEventListener('submit', applyFilter);
 
   requestRead(RESERVATION_API_ENDPOINT)
       .then(render)
@@ -27,7 +29,7 @@ function render(data) {
     const row = tableBody.insertRow();
 
     row.insertCell(0).textContent = item.id;              // 예약 id
-    row.insertCell(1).textContent = item.member.name;     // 사용자 name
+    row.insertCell(1).textContent = item.name;     // 사용자 name
     row.insertCell(2).textContent = item.theme.name;      // 테마 name
     row.insertCell(3).textContent = item.date;            // date
     row.insertCell(4).textContent = item.time.startAt;    // 예약 시간 startAt
@@ -214,4 +216,31 @@ function requestRead(endpoint) {
         if (response.status === 200) return response.json();
         throw new Error('Read failed');
       });
+}
+
+function applyFilter(event) {
+  event.preventDefault();
+
+  const themeId = document.getElementById('theme').value;
+  const memberId = document.getElementById('member').value;
+  const dateFrom = document.getElementById('date-from').value;
+  const dateTo = document.getElementById('date-to').value;
+
+  const encodedThemeId = encodeURIComponent(themeId);
+  const encodedMemberId = encodeURIComponent(memberId);
+  const encodedDateFrom = encodeURIComponent(dateFrom);
+  const encodedDateTo = encodeURIComponent(dateTo);
+
+  const searchApi = `${SEARCH_API_ENDPOINT}?dateFrom=${encodedDateFrom}&dateTo=${encodedDateTo}&themeId=${encodedThemeId}&memberId=${encodedMemberId}`;
+
+  fetch(searchApi, { // 예약 검색 API 호출
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  }).then(response => {
+    if (response.status === 200) return response.json();
+    throw new Error('Read failed');
+  }).then(render)
+      .catch(error => console.error("Error fetching available times:", error));
 }

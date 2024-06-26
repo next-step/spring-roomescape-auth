@@ -39,13 +39,13 @@ public class MemberService {
 	}
 
 	public MemberResponse findMemberByLoginRequest(LoginRequest request) {
-		var findedMember = this.memberRepository.findByEmail(request.email());
+		var foundMember = this.memberRepository.findByEmail(request.email());
 
-		if (findedMember == null) {
+		if (foundMember == null) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_MEMBER);
 		}
-		checkPassword(request.password(), findedMember.getPassword());
-		return MemberResponse.from(findedMember);
+		checkPassword(request.password(), foundMember.getPassword());
+		return MemberResponse.from(foundMember);
 	}
 
 	public List<MemberResponse> findAllMembersViaRoleUser() {
@@ -56,12 +56,12 @@ public class MemberService {
 	}
 
 	public Member findById(Long id) {
-		var findedMember = this.memberRepository.findById(id);
+		var foundMember = this.memberRepository.findById(id);
 
-		if (findedMember == null) {
+		if (foundMember == null) {
 			throw new RoomEscapeException(ErrorCode.NOT_FOUND_MEMBER);
 		}
-		return findedMember;
+		return foundMember;
 	}
 
 	private void checkPassword(String inputPassword, String storedPassword) {
