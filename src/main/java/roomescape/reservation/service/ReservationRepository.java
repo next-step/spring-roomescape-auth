@@ -26,8 +26,7 @@ public class ReservationRepository {
         String sql = """ 
             SELECT
                 r.id as reservation_id,
-                m.id as member_id,
-                m.name as member_name,
+                r.id as member_id,
                 r.date as reservation_date,
                 t.id as time_id,
                 t.start_at as time_start_at,
@@ -36,8 +35,6 @@ public class ReservationRepository {
                 th.description as theme_description,
                 th.thumbnail as theme_thumbnail
             FROM reservation as r
-            inner join member as m
-                on r.member_id = m.id
             inner join reservation_time as t
                 on r.time_id = t.id
             inner join theme as th
@@ -47,7 +44,6 @@ public class ReservationRepository {
         return jdbcTemplate.query(sql, (rs, rowNum) ->
             new Reservation(rs.getLong("reservation_id"),
                 rs.getLong("member_id"),
-                rs.getString("member_name"),
                 rs.getDate("reservation_date").toLocalDate(),
                 new ReservationTime(rs.getLong("time_id"),
                     rs.getTime("time_start_at").toLocalTime()),
@@ -89,7 +85,6 @@ public class ReservationRepository {
 
         return new Reservation(keyHolder.getKey().longValue(),
             reservation.getMemberId(),
-            reservation.getMemberName(),
             reservation.getDate(),
             reservation.getReservationTime(),
             reservation.getTheme());

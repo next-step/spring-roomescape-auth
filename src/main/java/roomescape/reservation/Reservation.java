@@ -12,28 +12,22 @@ public class Reservation {
 
     private Long memberId;
 
-    private String memberName;
-
     private LocalDate date;
 
     private ReservationTime reservationTime;
 
     private Theme theme;
 
-    public Reservation(Long id, Long memberId, String memberName, LocalDate date,
-        ReservationTime reservationTime,
-        Theme theme) {
+    public Reservation(Long id, Long memberId, LocalDate date, ReservationTime reservationTime, Theme theme) {
         this.id = id;
         this.memberId = memberId;
-        this.memberName = memberName;
         this.date = date;
         this.reservationTime = reservationTime;
         this.theme = theme;
     }
 
-    public Reservation(Long memberId, String memberName, String date,
-        ReservationTime reservationTime, Theme theme) {
-        this(null, memberId, memberName, LocalDate.parse(date), reservationTime, theme);
+    public Reservation(Long memberId, String date, ReservationTime reservationTime, Theme theme) {
+        this(null, memberId, LocalDate.parse(date), reservationTime, theme);
     }
 
     public boolean isBeforeThanNow() {
@@ -46,10 +40,6 @@ public class Reservation {
 
     public Long getMemberId() {
         return memberId;
-    }
-
-    public String getMemberName() {
-        return memberName;
     }
 
     public LocalDate getDate() {
