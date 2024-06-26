@@ -18,11 +18,9 @@ public class ReservationResponseDto {
         this.date = date;
         this.reservationTimeResponseDto = reservationTimeResponseDto;
         this.reservationThemeResponseDto = reservationThemeResponseDto;
-
     }
 
     public static class Builder {
-
         private Long id;
         private String name;
         private String date;
@@ -65,10 +63,10 @@ public class ReservationResponseDto {
                 .name(reservation.getName())
                 .date(reservation.getDate())
                 .reservationTimeResponseDto(new ReservationTimeResponseDto(
-                        reservation.getReservationTime().getId(),
+                        reservation.getReservationTime().getTimeId(),
                         reservation.getReservationTime().getStartAt()))
                 .reservationThemeResponseDto(new ReservationThemeResponseDto(
-                        reservation.getReservationTheme().getId(),
+                        reservation.getReservationTheme().getThemeId(),
                         reservation.getReservationTheme().getName(),
                         reservation.getReservationTheme().getDescription(),
                         reservation.getReservationTheme().getThumbnail()
