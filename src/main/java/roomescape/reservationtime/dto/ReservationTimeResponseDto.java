@@ -2,26 +2,25 @@ package roomescape.reservationtime.dto;
 
 public class ReservationTimeResponseDto {
 
-    private Long id;
+    private Long timeId;
     private String startAt;
 
-    public ReservationTimeResponseDto(Long id, String startAt) {
-        this.id = id;
+    public ReservationTimeResponseDto(Long timeId, String startAt) {
+        this.timeId = timeId;
         this.startAt = startAt;
     }
 
-    public Long getId() {
-        return id;
+    public Long getTimeId() {
+        return timeId;
     }
-
     public String getStartAt() {
         return startAt;
     }
 
     @Override
     public String toString() {
-        return "{ " +
-                "id=" + id +
+        return "{" +
+                " timeId=" + timeId +
                 ", startAt='" + startAt + '\'' +
                 '}';
     }

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class ReservationThemeRequestDto {
 
-    private Long id;
+    private Long themeId;
     @NotEmpty(message = "테마명을 입력 해주세요")
     private String name;
     @NotEmpty(message = "테마에 대한 설명을 입력해주세요")
@@ -17,23 +17,23 @@ public class ReservationThemeRequestDto {
     public ReservationThemeRequestDto() {
     }
 
-    public ReservationThemeRequestDto(Long id) {
-        this.id = id;
+    public ReservationThemeRequestDto(Long themeId) {
+        this.themeId = themeId;
     }
 
     public ReservationThemeRequestDto(String name, String description, String thumbnail) {
         this(null, name, description, thumbnail);
     }
 
-    public ReservationThemeRequestDto(Long id, String name, String description, String thumbnail) {
-        this.id = id;
+    public ReservationThemeRequestDto(Long themeId, String name, String description, String thumbnail) {
+        this.themeId = themeId;
         this.name = name;
         this.description = description;
         this.thumbnail = thumbnail;
     }
 
-    public Long getId() {
-        return id;
+    public Long getThemeId() {
+        return themeId;
     }
 
     public String getName() {
@@ -63,8 +63,9 @@ public class ReservationThemeRequestDto {
 
     @Override
     public String toString() {
-        return "ReservationThemeRequestDto{" +
-                "name='" + name + '\'' +
+        return "{ " +
+                "id=" + themeId +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", thumbnail='" + thumbnail + '\'' +
                 '}';

@@ -21,7 +21,7 @@ public class ReservationTimeService {
     public List<ReservationTimeResponseDto> getTimes() {
         final List<ReservationTime> reservationTimes = reservationTimeRepository.findAll();
         return reservationTimes.stream()
-                .map(time -> new ReservationTimeResponseDto(time.getId(), time.getStartAt())
+                .map(time -> new ReservationTimeResponseDto(time.getTimeId(), time.getStartAt())
                 ).toList();
     }
 

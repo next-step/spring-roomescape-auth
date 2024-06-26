@@ -6,11 +6,11 @@ public class ReservationTime {
 
     private final static ReservationTimePolicy reservationTimePolicy = new ReservationTimePolicy();
 
-    private Long id;
+    private Long timeId;
     private String startAt;
 
-    public ReservationTime(Long id) {
-        this.id = id;
+    public ReservationTime(Long timeId) {
+        this.timeId = timeId;
     }
 
     public ReservationTime(String startAt) {
@@ -20,16 +20,16 @@ public class ReservationTime {
         this.startAt = startAt;
     }
 
-    public ReservationTime(Long id, String startAt) {
-        this.id = id;
+    public ReservationTime(Long timeId, String startAt) {
+        this.timeId = timeId;
         if (reservationTimePolicy.validateStartAt(startAt)) {
             throw new IllegalArgumentException("예약 시간 형식이 올바르지 않습니다.");
         }
         this.startAt = startAt;
     }
 
-    public Long getId() {
-        return id;
+    public Long getTimeId() {
+        return timeId;
     }
 
     public String getStartAt() {
@@ -41,18 +41,18 @@ public class ReservationTime {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReservationTime that = (ReservationTime) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(timeId, that.timeId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(timeId);
     }
 
     @Override
     public String toString() {
         return "ReservationTime{" +
-                "id=" + id +
+                "id=" + timeId +
                 ", startAt='" + startAt + '\'' +
                 '}';
     }

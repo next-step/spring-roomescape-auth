@@ -80,7 +80,7 @@ class ReservationTimeRepositoryTest {
         final ReservationTime actual = reservationTimeRepository.findById(id);
 
         // then
-        assertThat(actual.getId()).isEqualTo(id);
+        assertThat(actual.getTimeId()).isEqualTo(id);
         assertThat(actual.getStartAt()).isEqualTo(request.getStartAt());
     }
 }

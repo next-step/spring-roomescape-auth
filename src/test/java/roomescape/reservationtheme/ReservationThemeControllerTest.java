@@ -76,7 +76,7 @@ class ReservationThemeControllerTest {
 
         //when
         final Response response2 = RestAssured.given().log().all()
-                .when().delete("/themes/" + reservationThemeResponseDto.getId())
+                .when().delete("/themes/" + reservationThemeResponseDto.getThemeId())
                 .then().log().all().extract().response();
 
         //then

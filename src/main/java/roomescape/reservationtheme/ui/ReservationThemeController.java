@@ -32,7 +32,7 @@ public class ReservationThemeController {
     @PostMapping
     public ResponseEntity<ReservationThemeResponseDto> createTheme(final @Valid @RequestBody ReservationThemeRequestDto requestDto) {
         final ReservationThemeResponseDto theme = reservationThemeService.createTheme(requestDto);
-        return ResponseEntity.created(URI.create("/theme/" + theme.getId())).body(theme);
+        return ResponseEntity.created(URI.create("/theme/" + theme.getThemeId())).body(theme);
     }
 
     @DeleteMapping("/{id}")

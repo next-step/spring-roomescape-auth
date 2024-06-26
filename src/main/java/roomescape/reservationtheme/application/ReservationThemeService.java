@@ -22,7 +22,7 @@ public class ReservationThemeService {
     public List<ReservationThemeResponseDto> getThemes() {
         final List<ReservationTheme> themes = reservationThemeRepository.findAll();
         return themes.stream()
-                .map(theme -> new ReservationThemeResponseDto(theme.getId(), theme.getName(), theme.getDescription(), theme.getThumbnail()))
+                .map(theme -> new ReservationThemeResponseDto(theme.getThemeId(), theme.getName(), theme.getDescription(), theme.getThumbnail()))
                 .collect(Collectors.toList());
     }
 
@@ -37,7 +37,7 @@ public class ReservationThemeService {
         final Long id = reservationThemeRepository.save(theme);
         final ReservationTheme savedTheme = reservationThemeRepository.findById(id);
 
-        return new ReservationThemeResponseDto(savedTheme.getId(), savedTheme.getName(), savedTheme.getDescription(), savedTheme.getThumbnail());
+        return new ReservationThemeResponseDto(savedTheme.getThemeId(), savedTheme.getName(), savedTheme.getDescription(), savedTheme.getThumbnail());
     }
 
     @Transactional

@@ -88,7 +88,7 @@ class ReservationTimeControllerTest {
 
         // when
         final Response response2 = RestAssured.given().log().all()
-                .when().delete("/times/" + responseDto.getId())
+                .when().delete("/times/" + responseDto.getTimeId())
                 .then().log().all().extract().response();
 
         // then

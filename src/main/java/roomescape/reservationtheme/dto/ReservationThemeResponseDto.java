@@ -2,20 +2,20 @@ package roomescape.reservationtheme.dto;
 
 public class ReservationThemeResponseDto {
 
-    private Long id;
+    private Long themeId;
     private String name;
     private String description;
     private String thumbnail;
 
-    public ReservationThemeResponseDto(Long id, String name, String description, String thumbnail) {
-        this.id = id;
+    public ReservationThemeResponseDto(Long themeId, String name, String description, String thumbnail) {
+        this.themeId = themeId;
         this.name = name;
         this.description = description;
         this.thumbnail = thumbnail;
     }
 
-    public Long getId() {
-        return id;
+    public Long getThemeId() {
+        return themeId;
     }
 
     public String getName() {
@@ -33,7 +33,7 @@ public class ReservationThemeResponseDto {
     @Override
     public String toString() {
         return "{" +
-                "id=" + id +
+                "themeId=" + themeId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", thumbnail='" + thumbnail + '\'' +
