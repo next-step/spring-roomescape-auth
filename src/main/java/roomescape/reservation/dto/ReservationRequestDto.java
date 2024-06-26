@@ -5,8 +5,6 @@ import roomescape.reservationtheme.dto.ReservationThemeRequestDto;
 import roomescape.reservationtime.dto.ReservationTimeRequestDto;
 
 public class ReservationRequestDto {
-
-    @NotBlank(message = "예약자 명 입력해주세요")
     private String name;
     @NotBlank(message = "예약일자를 입력해주세요")
     private String date;
@@ -21,7 +19,6 @@ public class ReservationRequestDto {
     }
 
     public static class Builder {
-
         private String name;
         private String date;
         private ReservationTimeRequestDto reservationTimeRequestDto;
@@ -67,5 +64,19 @@ public class ReservationRequestDto {
 
     public ReservationThemeRequestDto getReservationThemeRequestDto() {
         return reservationThemeRequestDto;
+    }
+
+    public void setName(@NotBlank(message = "예약자명을 입력해주세요") String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "{ " +
+                "name='" + name + '\'' +
+                ", date='" + date + '\'' +
+                ", reservationTimeRequestDto=" + reservationTimeRequestDto +
+                ", reservationThemeRequestDto=" + reservationThemeRequestDto +
+                '}';
     }
 }
