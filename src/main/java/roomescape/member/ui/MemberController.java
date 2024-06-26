@@ -14,6 +14,8 @@ import roomescape.member.dto.LoginMemberRequestDto;
 import roomescape.member.dto.MemberResponseDto;
 import roomescape.member.dto.TokenResponseDto;
 
+import static roomescape.member.infra.CommonMethod.extractTokenFromCookie;
+
 @RestController
 @RequestMapping("/login")
 public class MemberController {
@@ -46,14 +48,5 @@ public class MemberController {
         final MemberResponseDto memberResponseDto = authService.findMemberName(token);
         log.info("로그인 계정의 Name : {}", memberResponseDto.getName());
         return ResponseEntity.ok().body(memberResponseDto);
-    }
-
-    private String extractTokenFromCookie(final Cookie[] cookies) {
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("token")) {
-                return cookie.getValue();
-            }
-        }
-        throw new AuthorizationException("토큰 정보가 없습니다.");
     }
 }
