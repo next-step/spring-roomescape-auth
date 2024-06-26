@@ -6,11 +6,12 @@ import org.springframework.stereotype.Service;
 import roomescape.error.exception.MemberNotExistsException;
 import roomescape.error.exception.PasswordNotMatchedException;
 import roomescape.login.LoginMember;
+import roomescape.login.service.LoginMemberService;
 import roomescape.member.Member;
 import roomescape.member.dto.MemberResponse;
 
 @Service
-public class MemberService {
+public class MemberService implements LoginMemberService {
 
     private final MemberRepository memberRepository;
 
@@ -24,7 +25,8 @@ public class MemberService {
             .collect(Collectors.toList());
     }
 
-    public LoginMember getLoginMemberByEmailAndPassword(String email, String password) {
+    @Override
+    public LoginMember getLoginMember(String email, String password) {
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(MemberNotExistsException::new);
 
