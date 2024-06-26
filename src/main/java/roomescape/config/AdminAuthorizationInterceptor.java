@@ -14,6 +14,7 @@ import roomescape.util.JwtTokenProvider;
 @Component
 public class AdminAuthorizationInterceptor implements HandlerInterceptor {
     private static final String TOKEN = "token";
+    private static final String ROLE = "role";
     private final JwtTokenProvider jwtTokenProvider;
 
     public AdminAuthorizationInterceptor(JwtTokenProvider jwtTokenProvider) {
@@ -27,9 +28,9 @@ public class AdminAuthorizationInterceptor implements HandlerInterceptor {
         String token = CookieUtils.extractCookieValue(cookies, TOKEN);
 
         Claims claims = jwtTokenProvider.getClaimsFromToken(token);
-        String role = claims.get("role", String.class);
+        String role = claims.get(ROLE, String.class);
 
-        if (RoleType.fromName(role) != RoleType.ADMIN) {
+        if (!RoleType.fromName(role).isAdmin()) {
             throw new UnauthorizedAccessException();
         }
 

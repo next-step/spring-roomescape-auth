@@ -12,4 +12,8 @@ public enum RoleType {
                 .findFirst()
                 .orElseThrow(() -> new InvalidRoleTypeException());
     }
+
+    public boolean isAdmin() {
+        return this == RoleType.ADMIN;
+    }
 }
