@@ -27,8 +27,6 @@ public class ReservationRepository {
             SELECT
                 r.id as reservation_id,
                 m.id as member_id,
-                m.email as member_email,
-                m.password as member_password,
                 m.name as member_name,
                 r.date as reservation_date,
                 t.id as time_id,
@@ -48,10 +46,8 @@ public class ReservationRepository {
 
         return jdbcTemplate.query(sql, (rs, rowNum) ->
             new Reservation(rs.getLong("reservation_id"),
-                new Member(rs.getLong("member_id"),
-                    rs.getString("member_email"),
-                    rs.getString("member_password"),
-                    rs.getString("member_name")),
+                rs.getLong("member_id"),
+                rs.getString("member_name"),
                 rs.getDate("reservation_date").toLocalDate(),
                 new ReservationTime(rs.getLong("time_id"),
                     rs.getTime("time_start_at").toLocalTime()),
@@ -83,7 +79,7 @@ public class ReservationRepository {
             PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO reservation(member_id, date, time_id, theme_id) VALUES (?, ?, ?, ?)",
                 new String[]{"id"});
-            ps.setLong(1, reservation.getMember().getId());
+            ps.setLong(1, reservation.getMemberId());
             ps.setString(2, reservation.getDate().toString());
             ps.setLong(3, reservation.getReservationTime().getId());
             ps.setLong(4, reservation.getTheme().getId());
@@ -92,7 +88,8 @@ public class ReservationRepository {
         }, keyHolder);
 
         return new Reservation(keyHolder.getKey().longValue(),
-            reservation.getMember(),
+            reservation.getMemberId(),
+            reservation.getMemberName(),
             reservation.getDate(),
             reservation.getReservationTime(),
             reservation.getTheme());

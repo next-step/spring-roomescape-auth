@@ -45,13 +45,13 @@ public class ReservationService {
     public ReservationResponse saveReservation(Long memberId, ReservationRequest request) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(MemberNotExistsException::new);
-
         ReservationTime reservationTime = reservationTimeRepository.findById(request.getTimeId())
             .orElseThrow(ReservationTimeNotExistsException::new);
         Theme theme = themeRepository.findById(request.getThemeId())
             .orElseThrow(ThemeNotExistsException::new);
 
-        Reservation reservation = new Reservation(member, request.getDate(), reservationTime, theme);
+        Reservation reservation = new Reservation(member.getId(), member.getName(),
+            request.getDate(), reservationTime, theme);
 
         if (reservation.isBeforeThanNow()) {
             throw new PastDateTimeException();

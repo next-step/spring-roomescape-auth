@@ -24,7 +24,7 @@ public class ReservationResponse {
 
     public ReservationResponse(Reservation reservation) {
         this(reservation.getId(),
-            reservation.getMember().getName(),
+            reservation.getMemberName(),
             reservation.getDate().toString(),
             reservation.getReservationTime().getStartAt().toString(),
             reservation.getTheme().getName());
