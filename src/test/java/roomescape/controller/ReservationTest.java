@@ -1,8 +1,17 @@
 package roomescape.controller;
 
+import static org.hamcrest.Matchers.is;
+import static roomescape.fixture.AuthFixture.로그인;
+import static roomescape.fixture.MemberFixture.회원가입;
+import static roomescape.fixture.ReservationFixture.예약을_생성한다;
+import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
+import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,16 +23,6 @@ import roomescape.exception.custom.InvalidReservationThemeException;
 import roomescape.exception.custom.InvalidReservationTimeException;
 import roomescape.exception.custom.PastDateReservationException;
 import roomescape.fixture.DateFixture;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hamcrest.Matchers.is;
-import static roomescape.fixture.AuthFixture.로그인;
-import static roomescape.fixture.MemberFixture.회원가입;
-import static roomescape.fixture.ReservationFixture.예약을_생성한다;
-import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
-import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -58,7 +57,7 @@ public class ReservationTest {
     @DisplayName("예약을 생성한다.")
     void createReservation() {
         Map<String, Object> params = new HashMap<>();
-        params.put("date", DateFixture.formatCurrentDate("yyyy-MM-dd"));
+        params.put("date", DateFixture.formatDate("yyyy-MM-dd", 1));
         params.put("timeId", 1L);
         params.put("themeId", 1L);
 
@@ -131,7 +130,7 @@ public class ReservationTest {
     @DisplayName("예약을 생성할때 존재하지 않는 예약시간 아이디를 입력하면 에러가 발생한다.")
     void createReservationEmptyTimeId() {
         Map<String, Object> params = new HashMap<>();
-        params.put("date", "2024-06-25");
+        params.put("date", DateFixture.formatDate("yyyy-MM-dd", 1));
         params.put("timeId", 3L);
         params.put("themeId", 1L);
 
@@ -150,7 +149,7 @@ public class ReservationTest {
     @DisplayName("예약을 생성할때 존재하지 않는 예약테마 아이디를 입력하면 에러가 발생한다.")
     void createReservationEmptyThemeId() {
         Map<String, Object> params = new HashMap<>();
-        params.put("date", "2024-06-25");
+        params.put("date", DateFixture.formatDate("yyyy-MM-dd", 1));
         params.put("timeId", 1L);
         params.put("themeId", 3L);
 
@@ -169,7 +168,7 @@ public class ReservationTest {
     @DisplayName("예약을 생성할 때 중복된 날짜 및 시간인 경우 에러가 발생한다.")
     void createReservationDateAndTimeStartAtDuplicate() {
         Map<String, Object> params = new HashMap<>();
-        params.put("date", DateFixture.formatCurrentDate("yyyy-MM-dd"));
+        params.put("date", DateFixture.formatDate("yyyy-MM-dd", 1));
         params.put("timeId", 1L);
         params.put("themeId", 1L);
 
@@ -196,7 +195,7 @@ public class ReservationTest {
     @DisplayName("예약 목록을 조회한다.")
     void findAllReservations() {
         Map<String, Object> params = new HashMap<>();
-        params.put("date", DateFixture.formatCurrentDate("yyyy-MM-dd"));
+        params.put("date", DateFixture.formatDate("yyyy-MM-dd", 1));
         params.put("timeId", 1L);
         params.put("themeId", 1L);
 

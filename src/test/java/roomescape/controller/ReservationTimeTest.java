@@ -1,8 +1,17 @@
 package roomescape.controller;
 
+import static org.hamcrest.Matchers.is;
+import static roomescape.fixture.AuthFixture.로그인;
+import static roomescape.fixture.MemberFixture.회원가입;
+import static roomescape.fixture.ReservationFixture.예약을_생성한다;
+import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
+import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,16 +22,6 @@ import org.springframework.test.context.jdbc.Sql;
 import roomescape.exception.custom.DuplicateTimeException;
 import roomescape.exception.custom.ReservationTimeConflictException;
 import roomescape.fixture.DateFixture;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hamcrest.Matchers.is;
-import static roomescape.fixture.AuthFixture.로그인;
-import static roomescape.fixture.MemberFixture.회원가입;
-import static roomescape.fixture.ReservationFixture.예약을_생성한다;
-import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
-import static roomescape.fixture.ReservationTimeFixture.예약시간을_생성한다;
 
 @Sql("classpath:table_init.sql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -149,7 +148,7 @@ public class ReservationTimeTest {
 
         params.clear();
         params.put("name", "브라운");
-        params.put("date", DateFixture.formatCurrentDate("yyyy-MM-dd"));
+        params.put("date", DateFixture.formatDate("yyyy-MM-dd", 1));
         params.put("timeId", 1L);
         params.put("themeId", 1L);
         예약을_생성한다(params, token);
@@ -184,7 +183,7 @@ public class ReservationTimeTest {
 
         params.clear();
         params.put("name", "브라운");
-        String date = DateFixture.formatCurrentDate("yyyy-MM-dd");
+        String date = DateFixture.formatDate("yyyy-MM-dd", 1);
         params.put("date", date);
         params.put("timeId", 1L);
         params.put("themeId", 1L);
