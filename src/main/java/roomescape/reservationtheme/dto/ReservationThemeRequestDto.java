@@ -1,24 +1,28 @@
 package roomescape.reservationtheme.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Objects;
 
 public class ReservationThemeRequestDto {
 
+    @JsonProperty("themeId")
     private Long themeId;
+
     @NotEmpty(message = "테마명을 입력 해주세요")
+    @JsonProperty("name")
     private String name;
+
     @NotEmpty(message = "테마에 대한 설명을 입력해주세요")
+    @JsonProperty("description")
     private String description;
+
     @NotEmpty(message = "썸네일 url 을 입력해주세요")
+    @JsonProperty("thumbnail")
     private String thumbnail;
 
     public ReservationThemeRequestDto() {
-    }
-
-    public ReservationThemeRequestDto(Long themeId) {
-        this.themeId = themeId;
     }
 
     public ReservationThemeRequestDto(String name, String description, String thumbnail) {
