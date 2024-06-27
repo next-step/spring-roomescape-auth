@@ -9,3 +9,4 @@ spring:
 security:
   token:
     secret-key: springRoomEscapeAuthSecretKey
+    valid-time: 360000

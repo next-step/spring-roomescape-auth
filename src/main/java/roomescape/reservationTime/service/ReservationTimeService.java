@@ -1,7 +1,6 @@
 package roomescape.reservationTime.service;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import roomescape.error.exception.ReservationTimeReferenceException;
 import roomescape.error.exception.ThemeNotExistsException;
@@ -50,7 +49,7 @@ public class ReservationTimeService {
     }
 
     public List<ReservationTimeResponse> findAvailableReservationTimes(String date, Long themeId) {
-        Theme theme = Optional.ofNullable(themeRepository.findById(themeId))
+        Theme theme = themeRepository.findById(themeId)
             .orElseThrow(ThemeNotExistsException::new);
 
         return reservationTimeRepository.findAvailableTimesByDateAndTheme(LocalDate.parse(date),

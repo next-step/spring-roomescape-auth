@@ -23,6 +23,14 @@ public class Member {
         return StringUtils.equals(this.password, password);
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     public String getName() {
         return name;
     }

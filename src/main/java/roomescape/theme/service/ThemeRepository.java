@@ -1,5 +1,6 @@
 package roomescape.theme.service;
 
+import java.util.Optional;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,13 +30,15 @@ public class ThemeRepository {
                     rs.getString(4)));
     }
 
-    public Theme findById(Long id) {
-        RowMapper<Theme> rowMapper = (rs, rowNum) -> new Theme(rs.getLong(1), rs.getString(2),
-            rs.getString(3), rs.getString(4));
+    public Optional<Theme> findById(Long id) {
+        RowMapper<Theme> rowMapper = (rs, rowNum) ->
+            new Theme(rs.getLong(1), rs.getString(2),
+                rs.getString(3), rs.getString(4));
 
-        return DataAccessUtils.singleResult(
-            jdbcTemplate.query("SELECT id, name, description, thumbnail FROM theme where id = ?",
-                rowMapper, id));
+        return Optional.ofNullable(
+            DataAccessUtils.singleResult(jdbcTemplate.query(
+                "SELECT id, name, description, thumbnail FROM theme where id = ?",
+                rowMapper, id)));
     }
 
     public Long save(String name, String description, String thumbnail) {

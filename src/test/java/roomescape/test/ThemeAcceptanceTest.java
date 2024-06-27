@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.test;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -12,6 +12,8 @@ import roomescape.reservationTime.dto.ReservationTimeRequest;
 import roomescape.theme.dto.ThemeRequest;
 
 import static org.hamcrest.Matchers.is;
+import static roomescape.step.LoginStep.토큰_생성;
+import static roomescape.step.ReservationStep.예약_등록;
 
 @DisplayName("테마 관련 api 호출 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -64,14 +66,7 @@ public class ThemeAcceptanceTest {
             .then().log().all()
             .statusCode(201);
 
-        ReservationRequest reservationRequest = new ReservationRequest("hhhhhwi", "2025-08-05", 1L,
-            1L);
-        RestAssured.given().log().all()
-            .contentType(ContentType.JSON)
-            .body(reservationRequest)
-            .when().post("/reservations")
-            .then().log().all()
-            .statusCode(200);
+        예약_등록(new ReservationRequest("2025-08-05", 1L, 1L));
 
         RestAssured.given().log().all()
             .when().delete("/themes/1")

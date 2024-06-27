@@ -22,9 +22,9 @@ public class ReservationResponse {
         this.themeName = themeName;
     }
 
-    public ReservationResponse(Reservation reservation) {
+    public ReservationResponse(Reservation reservation, String memberName) {
         this(reservation.getId(),
-            reservation.getName(),
+            memberName,
             reservation.getDate().toString(),
             reservation.getReservationTime().getStartAt().toString(),
             reservation.getTheme().getName());

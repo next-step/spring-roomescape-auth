@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.error.RoomescapeErrorMessage;
-import roomescape.login.LoginRequest;
+import roomescape.login.dto.LoginRequest;
 
 @DisplayName("로그인 관련 api 호출 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)

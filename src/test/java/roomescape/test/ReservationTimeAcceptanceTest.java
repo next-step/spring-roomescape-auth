@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.test;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -14,6 +14,7 @@ import roomescape.theme.dto.ThemeRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static roomescape.step.ReservationStep.예약_등록;
 
 @DisplayName("예약 시간 관련 api 호출 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -73,14 +74,7 @@ public class ReservationTimeAcceptanceTest {
             .statusCode(201)
             .body("id", is(1));
 
-        ReservationRequest reservationRequest = new ReservationRequest("hhhhhwi", "2025-08-05", 1L,
-            1L);
-        RestAssured.given().log().all()
-            .contentType(ContentType.JSON)
-            .body(reservationRequest)
-            .when().post("/reservations")
-            .then().log().all()
-            .statusCode(200);
+        예약_등록(new ReservationRequest("2025-08-05", 1L, 1L));
 
         RestAssured.given().log().all()
             .when().delete("/times/1")
