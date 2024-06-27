@@ -74,10 +74,10 @@ public class ReservationResponseDto {
                 ))
                 .date(reservation.getDate())
                 .reservationTimeResponseDto(new ReservationTimeResponseDto(
-                        reservation.getReservationTime().getTimeId(),
+                        reservation.getReservationTime().getId(),
                         reservation.getReservationTime().getStartAt()))
                 .reservationThemeResponseDto(new ReservationThemeResponseDto(
-                        reservation.getReservationTheme().getThemeId(),
+                        reservation.getReservationTheme().getId(),
                         reservation.getReservationTheme().getName(),
                         reservation.getReservationTheme().getDescription(),
                         reservation.getReservationTheme().getThumbnail()

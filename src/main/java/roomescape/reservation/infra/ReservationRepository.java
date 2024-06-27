@@ -73,8 +73,8 @@ public class ReservationRepository {
         final Map<String, Object> parameters = new HashMap<>();
         parameters.put("name", reservation.getName());
         parameters.put("date", reservation.getDate());
-        parameters.put("time_id", reservation.getReservationTime().getTimeId());
-        parameters.put("theme_id", reservation.getReservationTheme().getThemeId());
+        parameters.put("time_id", reservation.getReservationTime().getId());
+        parameters.put("theme_id", reservation.getReservationTheme().getId());
         return simpleJdbcInsert.executeAndReturnKey(parameters).longValue();
     }
 

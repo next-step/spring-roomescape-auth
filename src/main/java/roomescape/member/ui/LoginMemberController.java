@@ -13,13 +13,13 @@ import roomescape.member.dto.LoginMemberRequestDto;
 import roomescape.member.dto.MemberResponseDto;
 import roomescape.member.dto.TokenResponseDto;
 
-import static roomescape.member.infra.CommonMethod.extractTokenFromCookie;
+import static roomescape.member.infra.TokenUtil.extractTokenFromCookie;
 
 @RestController
 @RequestMapping("/login")
 public class LoginMemberController {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginMemberController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginMemberController.class);
     private final AuthService authService;
 
     public LoginMemberController(AuthService authService) {
@@ -28,7 +28,7 @@ public class LoginMemberController {
 
     @PostMapping
     public ResponseEntity<Void> login(final @Valid @RequestBody LoginMemberRequestDto loginMemberRequestDto, final HttpServletResponse response) {
-        log.info("loginMemberID : {}", loginMemberRequestDto.getEmail());
+        LOGGER.info("loginMemberID : {}", loginMemberRequestDto.getEmail());
         final TokenResponseDto tokenResponseDto = authService.createToken(loginMemberRequestDto);
 
         final Cookie cookie = new Cookie("token", tokenResponseDto.getAccessToken());
@@ -45,7 +45,7 @@ public class LoginMemberController {
         final Cookie[] cookies = request.getCookies();
         final String token = extractTokenFromCookie(cookies);
         final MemberResponseDto memberResponseDto = authService.findMemberName(token);
-        log.info("로그인 계정의 Name : {}", memberResponseDto.getName());
+        LOGGER.info("로그인 계정의 Name : {}", memberResponseDto.getName());
         return ResponseEntity.ok().body(memberResponseDto);
     }
 }

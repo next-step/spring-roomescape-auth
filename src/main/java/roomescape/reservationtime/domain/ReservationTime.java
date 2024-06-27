@@ -4,32 +4,32 @@ import java.util.Objects;
 
 public class ReservationTime {
 
-    private final static ReservationTimePolicy reservationTimePolicy = new ReservationTimePolicy();
+    private final static ReservationTimePolicy RESERVATION_TIME_POLICY = new ReservationTimePolicy();
 
-    private Long timeId;
+    private Long id;
     private String startAt;
 
-    public ReservationTime(Long timeId) {
-        this.timeId = timeId;
+    public ReservationTime(Long id) {
+        this.id = id;
     }
 
     public ReservationTime(String startAt) {
-        if (reservationTimePolicy.validateStartAt(startAt)) {
+        if (RESERVATION_TIME_POLICY.validateStartAt(startAt)) {
             throw new IllegalArgumentException("예약 시간 형식이 올바르지 않습니다.");
         }
         this.startAt = startAt;
     }
 
-    public ReservationTime(Long timeId, String startAt) {
-        this.timeId = timeId;
-        if (reservationTimePolicy.validateStartAt(startAt)) {
+    public ReservationTime(Long id, String startAt) {
+        this.id = id;
+        if (RESERVATION_TIME_POLICY.validateStartAt(startAt)) {
             throw new IllegalArgumentException("예약 시간 형식이 올바르지 않습니다.");
         }
         this.startAt = startAt;
     }
 
-    public Long getTimeId() {
-        return timeId;
+    public Long getId() {
+        return id;
     }
 
     public String getStartAt() {
@@ -41,18 +41,18 @@ public class ReservationTime {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReservationTime that = (ReservationTime) o;
-        return Objects.equals(timeId, that.timeId);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(timeId);
+        return Objects.hashCode(id);
     }
 
     @Override
     public String toString() {
         return "ReservationTime{" +
-                "id=" + timeId +
+                "id=" + id +
                 ", startAt='" + startAt + '\'' +
                 '}';
     }

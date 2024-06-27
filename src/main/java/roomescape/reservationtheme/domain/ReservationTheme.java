@@ -4,21 +4,17 @@ import java.util.Objects;
 
 public class ReservationTheme {
 
-    private Long themeId;
+    private Long id;
     private String name;
     private String description;
     private String thumbnail;
 
-    public ReservationTheme(Long themeId) {
-        this.themeId = themeId;
+    public ReservationTheme(Long id) {
+        this.id = id;
     }
 
-    public ReservationTheme(String name, String description, String thumbnail) {
-        this(null, name, description, thumbnail);
-    }
-
-    public ReservationTheme(Long themeId, String name, String description, String thumbnail) {
-        this.themeId = themeId;
+    public ReservationTheme(Long id, String name, String description, String thumbnail) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.thumbnail = thumbnail;
@@ -57,8 +53,8 @@ public class ReservationTheme {
 
     }
 
-    public Long getThemeId() {
-        return themeId;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -78,18 +74,18 @@ public class ReservationTheme {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReservationTheme that = (ReservationTheme) o;
-        return Objects.equals(themeId, that.themeId);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(themeId);
+        return Objects.hashCode(id);
     }
 
     @Override
     public String toString() {
         return "ReservationTheme{" +
-                "id=" + themeId +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", thumbnail='" + thumbnail + '\'' +

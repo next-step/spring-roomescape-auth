@@ -1,7 +1,5 @@
 package roomescape.reservation.application;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.reservation.infra.ReservationRepository;
@@ -38,7 +36,7 @@ public class ReservationService {
                 .name(reservationRequestDto.getName())
                 .date(reservationRequestDto.getDate())
                 .reservationTime(new ReservationTime(
-                    reservationRequestDto.getReservationTimeRequestDto().getTimeId()))
+                    reservationRequestDto.getTimeDto().getTimeId()))
                 .reservationTheme(new ReservationTheme(
                     reservationRequestDto.getReservationThemeRequestDto().getThemeId()))
                 .build();
@@ -58,18 +56,11 @@ public class ReservationService {
         reservationRepository.deleteById(id);
     }
 
-
-    public ReservationResponseDto findById(final Long id) {
-        final Reservation reservation = reservationRepository.findById(id);
-        return reservationResponseDtoFromReservation(reservation);
-    }
-
-
-    public List<ReservationTimeResponseDto> findAvaliableTimes(final String date, final Long themeId) {
+    public List<ReservationTimeResponseDto> findAvailableTimes(final String date, final Long themeId) {
         final List<ReservationTime> availableReservationTimes = reservationRepository.getAvailableReservationTimes(date, themeId);
         return availableReservationTimes.stream()
                 .map(reservationTime -> new ReservationTimeResponseDto(
-                    reservationTime.getTimeId(),
+                    reservationTime.getId(),
                     reservationTime.getStartAt()
                 )).toList();
     }

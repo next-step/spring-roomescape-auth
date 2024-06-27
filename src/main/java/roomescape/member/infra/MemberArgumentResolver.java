@@ -14,12 +14,13 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import roomescape.member.application.AuthService;
 import roomescape.member.dto.MemberRequestDto;
 
-import static roomescape.member.infra.CommonMethod.extractTokenFromCookie;
+import static roomescape.member.infra.TokenUtil.extractTokenFromCookie;
 
 @Component
 public class MemberArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final Logger log = LoggerFactory.getLogger(MemberArgumentResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemberArgumentResolver.class);
+
     private final AuthService authService;
 
     public MemberArgumentResolver(AuthService authService) {
@@ -32,11 +33,12 @@ public class MemberArgumentResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         final Cookie[] cookies = request.getCookies();
         final String token = extractTokenFromCookie(cookies);
-        log.info("token : {}", token);
+        LOGGER.info("token : {}", token);
         return new MemberRequestDto(authService.findMemberName(token).getName());
     }
 }

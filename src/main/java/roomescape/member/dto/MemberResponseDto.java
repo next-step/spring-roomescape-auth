@@ -1,7 +1,5 @@
 package roomescape.member.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class MemberResponseDto {
 
     private String name;

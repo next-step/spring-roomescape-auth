@@ -11,7 +11,7 @@ public class MemberConfiguration implements WebMvcConfigurer {
 
     private final MemberArgumentResolver memberArgumentResolver;
 
-    public MemberConfiguration(MemberArgumentResolver memberArgumentResolver) {
+    public MemberConfiguration(final MemberArgumentResolver memberArgumentResolver) {
         this.memberArgumentResolver = memberArgumentResolver;
     }
 

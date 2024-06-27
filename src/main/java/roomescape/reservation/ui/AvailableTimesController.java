@@ -20,7 +20,7 @@ public class AvailableTimesController {
 
     @GetMapping("/times/available")
     public ResponseEntity<List<ReservationTimeResponseDto>> getAvaliableTimes(final @RequestParam String date, final @RequestParam Long themeId) {
-        final List<ReservationTimeResponseDto> reservationTimeResponseDtos = reservationService.findAvaliableTimes(date, themeId);
+        final List<ReservationTimeResponseDto> reservationTimeResponseDtos = reservationService.findAvailableTimes(date, themeId);
         return ResponseEntity.ok().body(reservationTimeResponseDtos);
     }
 }

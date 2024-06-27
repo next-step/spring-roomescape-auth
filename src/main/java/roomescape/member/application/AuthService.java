@@ -45,6 +45,4 @@ public class AuthService {
         final String nameById = memberRepository.findNameById(Long.parseLong(id));
         return new MemberResponseDto(nameById);
     }
-
-
 }
