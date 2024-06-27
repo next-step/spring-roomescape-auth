@@ -33,7 +33,7 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<ReservationResponseDto> createReservation(
             @Valid @RequestBody ReservationRequestDto reservationRequestDto, @LoginMember MemberRequestDto memberRequestDto) {
-        reservationRequestDto.setName(memberRequestDto.getName());
+        reservationRequestDto.assignName(memberRequestDto.getName());
         final ReservationResponseDto responseDto = reservationService.save(reservationRequestDto);
         return ResponseEntity.ok().body(responseDto);
     }
