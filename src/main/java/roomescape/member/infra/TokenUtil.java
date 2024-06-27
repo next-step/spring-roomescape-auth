@@ -2,7 +2,7 @@ package roomescape.member.infra;
 
 import jakarta.servlet.http.Cookie;
 
-public class CommonMethod {
+public class TokenUtil {
 
     public static String extractTokenFromCookie(final Cookie[] cookies) {
         for (Cookie cookie : cookies) {
