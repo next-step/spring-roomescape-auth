@@ -2,36 +2,47 @@ package roomescape.member;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import roomescape.member.dto.LoginMemberRequestDto;
 import roomescape.member.dto.MemberResponseDto;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(locations = "classpath:test-application.yml")
+@Sql(scripts = "/test-schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class MemberIntegrationTest {
 
-    private static final String EMAIL = "json@email.com";
-    private static final String PASSOWORD = "1234";
+    @LocalServerPort
+    private int port;
+
+    @BeforeEach
+    void setUp() {
+        RestAssured.port = port;
+    }
 
     @DisplayName("로그인을 하면 토큰을 응답받습니다.")
-    @Test
-    void basicLogin() {
+    @ParameterizedTest
+    @CsvSource(value = {"json@email.com, 1234"})
+    void basicLogin(final String email, final String password) {
         //given
-        final LoginMemberRequestDto loginMemberRequestDto = new LoginMemberRequestDto(EMAIL, PASSOWORD);
+        final LoginMemberRequestDto loginMemberRequestDto = new LoginMemberRequestDto(email, password);
 
-        // when
+        // when, then
         RestAssured
                 .given().log().all()
                 .body(loginMemberRequestDto)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/login")
                 .then().log().all()
                 .assertThat()
@@ -59,10 +70,11 @@ class MemberIntegrationTest {
     }
 
     @DisplayName("쿠키를 이용하여 로그인 사용자 이름을 응답받습니다.")
-    @Test
-    void getMemberNameUsingCookie() {
+    @ParameterizedTest
+    @CsvSource(value = {"json@email.com, 1234"})
+    void getMemberNameUsingCookie(final String email, final String password) {
         //given
-        final LoginMemberRequestDto loginMemberRequestDto = new LoginMemberRequestDto(EMAIL, PASSOWORD);
+        final LoginMemberRequestDto loginMemberRequestDto = new LoginMemberRequestDto(email, password);
         final Response response = RestAssured
                 .given().log().all()
                 .body(loginMemberRequestDto)
@@ -72,13 +84,13 @@ class MemberIntegrationTest {
         final String token = response.cookie("token");
 
         //when
-        final MemberResponseDto memberResponseDto = RestAssured
+        final Response actual = RestAssured
                 .given().log().all()
                 .cookie("token", token)
                 .when().get("/login/check")
-                .then().log().all().extract().as(MemberResponseDto.class);
+                .then().log().all().extract().response();
 
         //then
-        assertThat(memberResponseDto.getName()).isEqualTo("제이슨");
+        assertThat(actual.jsonPath().getString("name")).isEqualTo("제이슨");
     }
 }

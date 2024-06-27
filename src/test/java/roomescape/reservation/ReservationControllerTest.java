@@ -9,19 +9,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import roomescape.globalfixture.dto.ReservationDtoFixture;
-import roomescape.globalfixture.dto.ReservationThemeDtoFixture;
-import roomescape.globalfixture.dto.ReservationTimeDtoFixture;
+import roomescape.globalfixture.dto.*;
 import roomescape.reservation.dto.ReservationRequestDto;
-import roomescape.reservation.dto.ReservationResponseDto;
+import roomescape.reservation.dto.TimeDto;
 import roomescape.reservationtheme.dto.ReservationThemeRequestDto;
-import roomescape.reservationtime.dto.ReservationTimeRequestDto;
 import roomescape.reservationtime.dto.ReservationTimeResponseDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,9 +34,12 @@ class ReservationControllerTest {
     @LocalServerPort
     private int port;
 
+    private String token;
+
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
+        token = LoginMemberDtoFixture.getLoginMemberToken();
     }
 
     @DisplayName("예약을 생성합니다.")
@@ -51,19 +50,19 @@ class ReservationControllerTest {
 
         // when
         final Response response = RestAssured.given().log().all()
+                .cookie("token", token)
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when().post("/reservations")
-                .then().log().all().extract().response();
-        final ReservationResponseDto responseDto = response.as(ReservationResponseDto.class);
-
+                .then()
+                .log().all().extract().response();
         // then
         assertAll(
                 () -> assertEquals(HttpStatus.OK.value(), response.statusCode()),
-                () -> assertEquals(request.getName(), responseDto.getName()),
-                () -> assertEquals(request.getDate(), responseDto.getDate()),
-                () -> assertEquals(request.getReservationTimeRequestDto().getStartAt(),
-                        responseDto.getReservationTimeResponseDto().getStartAt())
+                () -> assertEquals("제이슨", response.jsonPath().getString("member.name")),
+                () -> assertEquals(request.getDate(), response.jsonPath().getString("date")),
+                () -> assertEquals(request.getTimeDto().getStartAt(),
+                        response.jsonPath().getString("time.startAt"))
         );
     }
 
@@ -79,7 +78,7 @@ class ReservationControllerTest {
         assertSoftly(
                 softAssertions -> {
                     assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-                    assertThat(response.jsonPath().getList(".", ReservationResponseDto.class)).hasSize(1);
+                    assertThat(response.jsonPath().getList("id").size()).isEqualTo(1);
                 }
         );
     }
@@ -89,10 +88,9 @@ class ReservationControllerTest {
     void deleteReservation() {
         // given
         final ReservationRequestDto request = ReservationDtoFixture.createReservationDto();
-
-        // when
         final Response response1 = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(request)
                 .when().post("/reservations")
                 .then().log().all().extract().response();
@@ -101,36 +99,11 @@ class ReservationControllerTest {
         final Response response2 = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .body(request)
-                .when().delete("/reservations/" + response1.as(ReservationResponseDto.class).getId())
+                .when().delete("/reservations/" + response1.jsonPath().getInt("id"))
                 .then().log().all().extract().response();
 
         // then
         assertThat(response2.statusCode()).isEqualTo(HttpStatus.OK.value());
-    }
-
-    @DisplayName("예약자 명이 null이거나 빈 문자열이면 예외가 발생합니다.")
-    @ParameterizedTest
-    @NullAndEmptySource
-    void createReservationEmptyName(final String name) {
-        // given
-        final ReservationTimeRequestDto reservationTimeRequestDto = ReservationTimeDtoFixture.createReservationTimeRequestDto();
-        final ReservationThemeRequestDto reservationThemeRequestDto = ReservationThemeDtoFixture.createReservationThemeDto();
-        final ReservationRequestDto request = new ReservationRequestDto(name, "2025-12-25", reservationTimeRequestDto, reservationThemeRequestDto);
-
-        // when
-        final Response response = RestAssured.given().log().all()
-                .contentType(ContentType.JSON)
-                .body(request)
-                .when().post("/reservations")
-                .then().log().all().extract().response();
-
-        // then
-        assertSoftly(
-                softAssertions -> {
-                    assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-                    assertThat(response.jsonPath().getString("name")).isEqualTo("예약자 명 입력해주세요");
-                }
-        );
     }
 
     @DisplayName("예약일자가 null이거나 빈 문자열이면 예외가 발생합니다.")
@@ -138,13 +111,14 @@ class ReservationControllerTest {
     @NullAndEmptySource
     void createReservationEmptyDate(final String date) {
         // given
-        final ReservationTimeRequestDto reservationTimeRequestDto = ReservationTimeDtoFixture.createReservationTimeRequestDto();
+        final TimeDto timeDto = TimeDtoFixture.timeDtoCreate();
         final ReservationThemeRequestDto reservationThemeRequestDto = ReservationThemeDtoFixture.createReservationThemeDto();
-        final ReservationRequestDto request = new ReservationRequestDto("김준성", date, reservationTimeRequestDto, reservationThemeRequestDto);
+        final ReservationRequestDto request = new ReservationRequestDto(null, date, timeDto, reservationThemeRequestDto);
 
         // when
         final Response response = RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(request)
                 .when().post("/reservations")
                 .then().log().all().extract().response();
@@ -176,4 +150,5 @@ class ReservationControllerTest {
                 }
         );
     }
+
 }
