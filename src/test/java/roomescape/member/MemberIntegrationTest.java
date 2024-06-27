@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,8 +12,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
+import roomescape.globalfixture.dto.LoginMemberDtoFixture;
 import roomescape.member.dto.LoginMemberRequestDto;
-import roomescape.member.dto.MemberResponseDto;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -32,11 +33,10 @@ class MemberIntegrationTest {
     }
 
     @DisplayName("로그인을 하면 토큰을 응답받습니다.")
-    @ParameterizedTest
-    @CsvSource(value = {"json@email.com, 1234"})
-    void basicLogin(final String email, final String password) {
+    @Test()
+    void basicLogin() {
         //given
-        final LoginMemberRequestDto loginMemberRequestDto = new LoginMemberRequestDto(email, password);
+        final LoginMemberRequestDto loginMemberRequestDto = LoginMemberDtoFixture.createLoginMember();
 
         // when, then
         RestAssured
