@@ -1,36 +1,39 @@
 package roomescape.member.infra;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import roomescape.member.domain.Member;
-
-import java.util.Map;
+import roomescape.reservationtime.domain.ReservationTime;
 
 @Repository
 public class MemberRepository {
-    private static final Member member1 = new Member("제이슨", "json@email.com", "1234");
-    private static final Member member2 = new Member("심슨", "simson@email.com", "1234");
-    private static final Map<Long, Member> MemberStorage = Map.of(member1.getId(), member1, member2.getId(), member2);
 
-    public boolean isExistByEmail(final Member member) {
-        return MemberStorage.values().stream()
-                .anyMatch(savedMember -> savedMember.getEmail().equals(member.getEmail()));
+    private final JdbcTemplate jdbcTemplate;
+    private final RowMapper<Member> rowMapper;
+
+    public MemberRepository(final JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = (resultSet, rowNum) -> new Member(
+                resultSet.getLong("id"),
+                resultSet.getString("name"),
+                resultSet.getString("email"),
+                resultSet.getString("password")
+        );
     }
 
     public boolean isExistMemBerByEmailAndPassword(final String email, final String password) {
-        return MemberStorage.values().stream()
-                .filter(savedMember -> savedMember.getEmail().equals(email))
-                .anyMatch(savedMember -> savedMember.getPassword().equals(password));
+        final String sql = "SELECT EXISTS(SELECT 1 FROM member WHERE email = ? and password = ?)";
+        return jdbcTemplate.queryForObject(sql, Boolean.class, email, password);
     }
 
     public Long findIdByEmail(final String email) {
-        return MemberStorage.values().stream()
-                .filter(savedMember -> savedMember.getEmail().equals(email))
-                .map(Member::getId).findFirst().orElse(null);
+        final String sql = "SELECT id FROM member WHERE email = ?";
+        return jdbcTemplate.queryForObject(sql, Long.class, email);
     }
 
     public String findNameById(final Long id) {
-        return MemberStorage.values().stream()
-                .filter(savedMember -> savedMember.getId().equals(id))
-                .map(Member::getName).findFirst().orElse(null);
+        final String sql = "SELECT name FROM member WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, String.class, id);
     }
 }
