@@ -25,6 +25,14 @@ public class ReservationRequest {
         return new ReservationRequest(memberName, date, timeId, themeId);
     }
 
+    public static ReservationRequest fromCookieRequest(String memberName, CookieReservationRequest request) {
+        return new ReservationRequest(
+                memberName,
+                request.date(),
+                request.timeId(),
+                request.themeId());
+    }
+
     public String getMemberName() {
         return memberName;
     }

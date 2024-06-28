@@ -32,12 +32,7 @@ public class ReservationController {
     public ResponseEntity<ReservationResponse> create(
             @RequestBody @Valid CookieReservationRequest cookieReservationRequest,
             @Authenticated LoginMember loginMember) {
-        ReservationRequest request = ReservationRequest.create(
-                loginMember.name(),
-                cookieReservationRequest.date(),
-                cookieReservationRequest.timeId(),
-                cookieReservationRequest.themeId()
-        );
+        ReservationRequest request = ReservationRequest.fromCookieRequest(loginMember.name(), cookieReservationRequest);
         Long reservationId = reservationService.make(request);
         ReservationResponse reservation = reservationService.findOne(reservationId);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
