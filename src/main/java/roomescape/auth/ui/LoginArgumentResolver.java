@@ -14,11 +14,11 @@ import roomescape.auth.ui.dto.LoginMember;
 import roomescape.exception.UnauthorizedException;
 
 
-public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
+public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieUtils cookieUtils;
 
-    public LoginMemberArgumentResolver(JwtTokenProvider jwtTokenProvider, CookieUtils cookieUtils) {
+    public LoginArgumentResolver(JwtTokenProvider jwtTokenProvider, CookieUtils cookieUtils) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.cookieUtils = cookieUtils;
     }
