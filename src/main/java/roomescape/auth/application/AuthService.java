@@ -12,13 +12,13 @@ import roomescape.member.domain.MemberRepository;
 import roomescape.member.domain.entity.Member;
 
 @Service
-public class LoginService {
+public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final CookieUtils cookieUtils;
 
-    public LoginService(
+    public AuthService(
             MemberRepository memberRepository,
             PasswordEncoder passwordEncoder,
             JwtTokenProvider jwtTokenProvider,
@@ -39,6 +39,22 @@ public class LoginService {
     }
 
     public Long getMemberIdFromCookies(Cookie[] cookies) {
+        String token = validateTokenFromCookies(cookies);
+        return jwtTokenProvider.extractMemberId(token);
+    }
+
+    public LoginCheckResponse findMemberById(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> NotFoundException.of("id에 일치하는 사용자를 찾을 수 없습니다."));
+        return new LoginCheckResponse(member.getName());
+    }
+
+    public Cookie logout(Cookie[] cookies) {
+        validateTokenFromCookies(cookies);
+        return cookieUtils.deleteCookie("token");
+    }
+
+    private String validateTokenFromCookies(Cookie[] cookies) {
         String token = cookieUtils
                 .getCookieByName(cookies, "token")
                 .orElseThrow(() -> UnauthorizedException.of("토큰이 없습니다."))
@@ -48,12 +64,6 @@ public class LoginService {
         if (isInvalidToken) {
             throw UnauthorizedException.of("토큰이 만료되었습니다.");
         }
-        return jwtTokenProvider.extractMemberId(token);
-    }
-
-    public LoginCheckResponse findMemberById(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> NotFoundException.of("id에 일치하는 사용자를 찾을 수 없습니다."));
-        return new LoginCheckResponse(member.getName());
+        return token;
     }
 }

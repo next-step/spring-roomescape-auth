@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.auth.application.LoginService;
+import roomescape.auth.application.AuthService;
 import roomescape.auth.ui.dto.LoginCheckResponse;
 import roomescape.auth.ui.dto.LoginRequest;
 import roomescape.member.application.SignUpService;
@@ -23,7 +23,7 @@ public class LoginTest {
     @Autowired
     private SignUpService signUpService;
     @Autowired
-    private LoginService loginService;
+    private AuthService loginService;
     private final String NAME = "yeeun";
     private final String EMAIL = "anna862700@gmail.com";
     private final String PASSWORD = "password";

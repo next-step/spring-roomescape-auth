@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import roomescape.auth.application.LoginService;
+import roomescape.auth.application.AuthService;
 import roomescape.auth.ui.dto.LoginCheckResponse;
 import roomescape.auth.ui.dto.LoginRequest;
 
 @RestController
 @RequestMapping("login")
 public class LoginController {
-    private final LoginService loginService;
+    private final AuthService loginService;
 
-    public LoginController(LoginService loginService) {
+    public LoginController(AuthService loginService) {
         this.loginService = loginService;
     }
 

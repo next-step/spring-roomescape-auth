@@ -6,20 +6,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import roomescape.auth.application.LogoutService;
+import roomescape.auth.application.AuthService;
 
 @RestController
 @RequestMapping("logout")
 public class LogoutController {
-    private final LogoutService logoutService;
+    private final AuthService authService;
 
-    public LogoutController(LogoutService logoutService) {
-        this.logoutService = logoutService;
+    public LogoutController(AuthService logoutService) {
+        this.authService = logoutService;
     }
 
     @PostMapping
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        Cookie token = logoutService.logout(request.getCookies());
+        Cookie token = authService.logout(request.getCookies());
         response.addCookie(token);
     }
 }
