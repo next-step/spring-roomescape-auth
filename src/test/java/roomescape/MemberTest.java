@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.member.ui.dto.MemberRequest;
+import roomescape.member.ui.dto.MemberResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,6 +36,9 @@ public class MemberTest {
                 .then().log().all().extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
+        MemberResponse body = response.body().as(MemberResponse.class);
+        assertThat(body.name()).isEqualTo(name);
+        assertThat(body.email()).isEqualTo(email);
     }
 
     @Test
