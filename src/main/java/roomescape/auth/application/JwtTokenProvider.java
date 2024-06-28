@@ -3,6 +3,7 @@ package roomescape.auth.application;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import roomescape.auth.ui.dto.LoginMember;
 import roomescape.exception.UnauthorizedException;
 import roomescape.member.domain.entity.Member;
 
@@ -35,6 +36,14 @@ public class JwtTokenProvider {
                 .getBody()
                 .getSubject();
         return Long.valueOf(memberId);
+    }
+
+    public String extractMemberName(String token) {
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .get("name", String.class);
     }
 
     public boolean validateToken(String token) {
