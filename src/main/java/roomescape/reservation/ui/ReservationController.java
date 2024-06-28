@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.auth.ui.annotation.Authenticated;
 import roomescape.auth.ui.dto.LoginMember;
+import roomescape.reservation.ui.dto.CookieReservationRequest;
 import roomescape.reservation.ui.dto.ReservationRequest;
 import roomescape.reservation.ui.dto.ReservationResponse;
 import roomescape.reservation.application.ReservationService;
@@ -29,9 +30,14 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<ReservationResponse> create(
-            @RequestBody @Valid ReservationRequest request,
+            @RequestBody @Valid CookieReservationRequest cookieReservationRequest,
             @Authenticated LoginMember loginMember) {
-        request.setMemberName(loginMember.name());
+        ReservationRequest request = ReservationRequest.create(
+                loginMember.name(),
+                cookieReservationRequest.date(),
+                cookieReservationRequest.timeId(),
+                cookieReservationRequest.themeId()
+        );
         Long reservationId = reservationService.make(request);
         ReservationResponse reservation = reservationService.findOne(reservationId);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservation);

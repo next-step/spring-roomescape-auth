@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class ReservationRequest {
-    @JsonProperty(value = "name")
-    private String memberName;
+    @NotBlank
+    private final String memberName;
     @NotBlank
     private final String date;
     @NotNull
@@ -14,15 +14,15 @@ public class ReservationRequest {
     @NotNull
     private final Long themeId;
 
-    private ReservationRequest(String name, String date, Long timeId, Long themeId) {
-        this.memberName = name;
+    private ReservationRequest(String memberName, String date, Long timeId, Long themeId) {
+        this.memberName = memberName;
         this.date = date;
         this.timeId = timeId;
         this.themeId = themeId;
     }
 
-    public static ReservationRequest create(String name, String date, Long timeId, Long themeId) {
-        return new ReservationRequest(name, date, timeId, themeId);
+    public static ReservationRequest create(String memberName, String date, Long timeId, Long themeId) {
+        return new ReservationRequest(memberName, date, timeId, themeId);
     }
 
     public String getMemberName() {
@@ -39,9 +39,5 @@ public class ReservationRequest {
 
     public Long getThemeId() {
         return themeId;
-    }
-
-    public void setMemberName(String memberName) {
-        this.memberName = memberName;
     }
 }
