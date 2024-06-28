@@ -38,32 +38,7 @@ public class AuthService {
         return cookieUtils.createCookie("token", token);
     }
 
-    public Long getMemberIdFromCookies(Cookie[] cookies) {
-        String token = validateTokenFromCookies(cookies);
-        return jwtTokenProvider.extractMemberId(token);
-    }
-
-    public LoginCheckResponse findMemberById(Long id) {
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> NotFoundException.of("id에 일치하는 사용자를 찾을 수 없습니다."));
-        return new LoginCheckResponse(member.getName());
-    }
-
-    public Cookie logout(Cookie[] cookies) {
-        validateTokenFromCookies(cookies);
+    public Cookie logout() {
         return cookieUtils.deleteCookie("token");
-    }
-
-    private String validateTokenFromCookies(Cookie[] cookies) {
-        String token = cookieUtils
-                .getCookieByName(cookies, "token")
-                .orElseThrow(() -> UnauthorizedException.of("토큰이 없습니다."))
-                .getValue();
-        boolean isInvalidToken = !jwtTokenProvider.validateToken(token);
-
-        if (isInvalidToken) {
-            throw UnauthorizedException.of("토큰이 만료되었습니다.");
-        }
-        return token;
     }
 }

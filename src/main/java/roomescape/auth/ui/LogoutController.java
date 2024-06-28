@@ -1,12 +1,13 @@
 package roomescape.auth.ui;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import roomescape.auth.application.AuthService;
+import roomescape.auth.ui.annotation.Login;
+import roomescape.auth.ui.dto.LoginMember;
 
 @RestController
 @RequestMapping("logout")
@@ -18,8 +19,8 @@ public class LogoutController {
     }
 
     @PostMapping
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        Cookie token = authService.logout(request.getCookies());
+    public void logout(@Login LoginMember loginMember, HttpServletResponse response) {
+        Cookie token = authService.logout();
         response.addCookie(token);
     }
 }
