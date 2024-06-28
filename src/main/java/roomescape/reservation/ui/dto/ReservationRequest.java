@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 public class ReservationRequest {
     @NotBlank
-    private final String name;
+    private final String memberName;
     @NotBlank
     private final String date;
     @NotNull
@@ -14,7 +14,7 @@ public class ReservationRequest {
     private final Long themeId;
 
     private ReservationRequest(String name, String date, Long timeId, Long themeId) {
-        this.name = name;
+        this.memberName = name;
         this.date = date;
         this.timeId = timeId;
         this.themeId = themeId;
@@ -24,8 +24,8 @@ public class ReservationRequest {
         return new ReservationRequest(name, date, timeId, themeId);
     }
 
-    public String getName() {
-        return name;
+    public String getMemberName() {
+        return memberName;
     }
 
     public String getDate() {

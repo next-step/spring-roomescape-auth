@@ -59,7 +59,7 @@ public class ReservationTest {
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
         ReservationResponse body = response.body().as(ReservationResponse.class);
-        assertThat(body.getName()).isEqualTo(name);
+        assertThat(body.getMemberName()).isEqualTo(name);
         assertThat(body.getDate()).isEqualTo(date);
     }
 

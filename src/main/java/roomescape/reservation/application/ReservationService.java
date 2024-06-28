@@ -35,7 +35,7 @@ public class ReservationService {
     public long make(ReservationRequest request) {
         reservationValidator.validateRequest(request);
         return reservationRepository.save(
-                request.getName(),
+                request.getMemberName(),
                 request.getDate(),
                 request.getTimeId(),
                 request.getThemeId()

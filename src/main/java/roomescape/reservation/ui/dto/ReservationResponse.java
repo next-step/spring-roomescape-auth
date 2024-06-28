@@ -1,5 +1,6 @@
 package roomescape.reservation.ui.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import roomescape.reservationtime.ui.dto.ReservationTimeResponse;
 import roomescape.theme.ui.dto.ThemeResponse;
 import roomescape.reservation.domain.entity.Reservation;
@@ -8,14 +9,15 @@ import java.util.List;
 
 public class ReservationResponse {
     private final Long id;
-    private final String name;
+    @JsonProperty(value = "name")
+    private final String memberName;
     private final String date;
     private final ReservationTimeResponse time;
     private final ThemeResponse theme;
 
     private ReservationResponse(Long id, String name, String date, ReservationTimeResponse time, ThemeResponse theme) {
         this.id = id;
-        this.name = name;
+        this.memberName = name;
         this.date = date;
         this.time = time;
         this.theme = theme;
@@ -39,8 +41,8 @@ public class ReservationResponse {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getMemberName() {
+        return memberName;
     }
 
     public String getDate() {
