@@ -5,20 +5,51 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.member.application.SignUpService;
 import roomescape.member.ui.dto.MemberRequest;
 import roomescape.member.ui.dto.MemberResponse;
+import roomescape.reservation.ui.dto.ReservationResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = {"server.port=8888"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class MemberTest {
+    @Autowired
+    private SignUpService signUpService;
+
     @BeforeEach
     public void setPort() {
         RestAssured.port = 8888;
+    }
+
+    @Test
+    @DisplayName("MemberController - read()")
+    void 전체_사용자_조회() {
+        signUpService.signUp(new MemberRequest("yeeun", "anna862700@gmail.com", "password"));
+        signUpService.signUp(new MemberRequest("asdf", "asdf@gmail.com", "password"));
+
+        var response = RestAssured
+                .given().log().all()
+                .when().get("/members")
+                .then().log().all().statusCode(HttpStatus.OK.value()).extract();
+
+        assertThat(response.jsonPath().getList("", MemberResponse.class)).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("MemberController - read() non-member")
+    void 사용자_없는_경우_전체_사용자_조회() {
+        var response = RestAssured
+                .given().log().all()
+                .when().get("/members")
+                .then().log().all().statusCode(HttpStatus.OK.value()).extract();
+
+        assertThat(response.jsonPath().getList("", ReservationResponse.class)).hasSize(0);
     }
 
     @Test
