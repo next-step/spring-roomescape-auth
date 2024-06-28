@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import roomescape.member.application.SignUpService;
 import roomescape.member.ui.dto.MemberRequest;
+import roomescape.member.ui.dto.MemberResponse;
 
 @Controller
 @RequestMapping("members")
@@ -20,8 +21,8 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid MemberRequest memberRequest) {
-        signUpService.signUp(memberRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<MemberResponse> create(@RequestBody @Valid MemberRequest memberRequest) {
+        MemberResponse memberResponse = signUpService.signUp(memberRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(memberResponse);
     }
 }

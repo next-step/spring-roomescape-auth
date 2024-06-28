@@ -79,7 +79,7 @@ public class MemberJdbcTemplateRepository implements MemberRepository {
     }
 
     @Override
-    public long save(String name, String email, String password) {
+    public long save(Member member) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             String sql = """
@@ -88,9 +88,9 @@ public class MemberJdbcTemplateRepository implements MemberRepository {
                     values (?, ?, ?)
                     """;
             PreparedStatement ps = connection.prepareStatement(sql, new String[] {"id"});
-            ps.setString(1, name);
-            ps.setString(2, email);
-            ps.setString(3, password);
+            ps.setString(1, member.getName());
+            ps.setString(2, member.getEmail());
+            ps.setString(3, member.getPassword());
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();

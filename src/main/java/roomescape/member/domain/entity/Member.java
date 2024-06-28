@@ -1,7 +1,9 @@
 package roomescape.member.domain.entity;
 
+import roomescape.member.ui.dto.MemberRequest;
+
 public class Member {
-    private final Long id;
+    private Long id;
     private final String name;
     private final String email;
     private final String password;
@@ -15,6 +17,10 @@ public class Member {
 
     public static Member of(Long id, String name, String email, String password) {
         return new Member(id, name, email, password);
+    }
+
+    public static Member of(MemberRequest request, String encodedPassword) {
+        return new Member(null, request.name(), request.email(), encodedPassword);
     }
 
     public Long getId() {
@@ -31,5 +37,9 @@ public class Member {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
