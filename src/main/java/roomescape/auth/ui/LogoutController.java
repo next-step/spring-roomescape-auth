@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import roomescape.auth.application.AuthService;
-import roomescape.auth.ui.annotation.Login;
+import roomescape.auth.ui.annotation.Authenticated;
 import roomescape.auth.ui.dto.LoginMember;
 
 @RestController
@@ -19,7 +19,7 @@ public class LogoutController {
     }
 
     @PostMapping
-    public void logout(@Login LoginMember loginMember, HttpServletResponse response) {
+    public void logout(@Authenticated LoginMember loginMember, HttpServletResponse response) {
         Cookie token = authService.logout();
         response.addCookie(token);
     }
