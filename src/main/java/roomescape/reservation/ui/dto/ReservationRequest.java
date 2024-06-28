@@ -1,11 +1,12 @@
 package roomescape.reservation.ui.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class ReservationRequest {
-    @NotBlank
-    private final String memberName;
+    @JsonProperty(value = "name")
+    private String memberName;
     @NotBlank
     private final String date;
     @NotNull
@@ -38,5 +39,9 @@ public class ReservationRequest {
 
     public Long getThemeId() {
         return themeId;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
 }
