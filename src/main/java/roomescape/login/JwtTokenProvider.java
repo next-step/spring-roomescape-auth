@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import roomescape.member.MemberRole;
 
 @Component
 public class JwtTokenProvider {
@@ -15,33 +16,34 @@ public class JwtTokenProvider {
     @Value("${security.token.valid-time}")
     private long validTime;
 
-    public String createToken(Long id, String email, String name) {
+    public String createToken(Long id, String name, MemberRole memberRole) {
         Date now = new Date();
         Date exp = new Date(now.getTime() + validTime);
 
         return Jwts.builder()
             .claim("id", id)
-            .claim("email", email)
             .claim("name", name)
+            .claim("role", memberRole.name())
             .setIssuedAt(now)
             .setExpiration(exp)
             .signWith(SignatureAlgorithm.HS256, secretKey)
             .compact();
     }
 
-    public Long getId(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("id", Long.class);
-    }
-
-    public String getEmail(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("email", String.class);
-    }
-
-    public String getName(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("name", String.class);
-    }
-
     public LoginMember getLoginMember(String token) {
-        return new LoginMember(getId(token), getEmail(token), getName(token));
+        Long id = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody()
+            .get("id", Long.class);
+
+        String name = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody()
+            .get("name", String.class);
+
+        return new LoginMember(id, name, getMemberRole(token));
+    }
+
+    public MemberRole getMemberRole(String token) {
+        String role = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody()
+            .get("role", String.class);
+
+        return MemberRole.of(role);
     }
 }

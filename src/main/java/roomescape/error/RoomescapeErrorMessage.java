@@ -10,4 +10,5 @@ public class RoomescapeErrorMessage {
     public static final String REFERENTIAL_EXCEPTION = "이/가 존재하여 데이터를 수정할 수 없습니다.";
     public static final String NOT_MATCHED_PASSWORD_EXCEPTION = "비밀번호가 일치하지 않습니다.";
     public static final String AUTHENTICATION_EXCEPTION = "인증정보가 유효하지 않습니다.";
+    public static final String ILLEGAL_MEMBER_ROLE_EXCEPTION = "권한 정보가 올바르지 않습니다.";
 }
