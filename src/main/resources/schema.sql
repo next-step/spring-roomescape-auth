@@ -20,6 +20,7 @@ CREATE TABLE member
     email VARCHAR(45) NOT NULL,
     password VARCHAR(45) NOT NULL,
     name VARCHAR(30) NOT NULL,
+    role VARCHAR(15) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -37,4 +38,5 @@ CREATE TABLE reservation
 );
 
 
-INSERT INTO member (email, password, name) VALUES ('test@test.com', 'password', 'test');
+INSERT INTO member (email, password, name, role) VALUES ('test@test.com', 'password', 'test', 'member');
+INSERT INTO member (email, password, name, role) VALUES ('admin@test.com', 'password', 'admin', 'admin');

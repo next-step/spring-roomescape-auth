@@ -12,11 +12,14 @@ public class Member {
 
     private String name;
 
-    public Member(Long id, String email, String password, String name) {
+    private MemberRole role;
+
+    public Member(Long id, String email, String password, String name, MemberRole role) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
+        this.role = role;
     }
 
     public boolean isMatchedPassword(String password) {
@@ -33,5 +36,9 @@ public class Member {
 
     public String getName() {
         return name;
+    }
+
+    public MemberRole getRole() {
+        return role;
     }
 }
