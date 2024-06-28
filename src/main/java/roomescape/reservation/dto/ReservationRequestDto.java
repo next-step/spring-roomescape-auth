@@ -1,30 +1,35 @@
 package roomescape.reservation.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
-import roomescape.reservationTheme.dto.ReservationThemeRequestDto;
-import roomescape.reservationTime.dto.ReservationTimeRequestDto;
+import roomescape.reservationtheme.dto.ReservationThemeRequestDto;
+import roomescape.reservationtime.dto.ReservationTimeRequestDto;
 
 public class ReservationRequestDto {
-
-    @NotBlank(message = "예약자 명 입력해주세요")
+    @JsonProperty("name")
     private String name;
+
     @NotBlank(message = "예약일자를 입력해주세요")
+    @JsonProperty("date")
     private String date;
-    private ReservationTimeRequestDto reservationTimeRequestDto;
+
+    @JsonProperty("time")
+    private TimeDto timeDto;
+    @JsonProperty("theme")
     private ReservationThemeRequestDto reservationThemeRequestDto;
 
-    public ReservationRequestDto(String name, String date, ReservationTimeRequestDto reservationTimeRequestDto, ReservationThemeRequestDto reservationThemeRequestDto) {
+    public ReservationRequestDto(String name, String date, TimeDto timeDto,
+                                 ReservationThemeRequestDto reservationThemeRequestDto) {
         this.name = name;
         this.date = date;
-        this.reservationTimeRequestDto = reservationTimeRequestDto;
+        this.timeDto = timeDto;
         this.reservationThemeRequestDto = reservationThemeRequestDto;
     }
 
     public static class Builder {
-
         private String name;
         private String date;
-        private ReservationTimeRequestDto reservationTimeRequestDto;
+        private TimeDto timeDto;
         private ReservationThemeRequestDto reservationThemeRequestDto;
 
         public Builder name(String name) {
@@ -37,8 +42,8 @@ public class ReservationRequestDto {
             return this;
         }
 
-        public Builder reservationTimeRequestDto(ReservationTimeRequestDto reservationTimeRequestDto) {
-            this.reservationTimeRequestDto = reservationTimeRequestDto;
+        public Builder timeDto(TimeDto timeDto) {
+            this.timeDto = timeDto;
             return this;
         }
 
@@ -48,9 +53,8 @@ public class ReservationRequestDto {
         }
 
         public ReservationRequestDto build() {
-            return new ReservationRequestDto(name, date, reservationTimeRequestDto, reservationThemeRequestDto);
+            return new ReservationRequestDto(name, date, timeDto, reservationThemeRequestDto);
         }
-
     }
 
     public String getName() {
@@ -61,11 +65,23 @@ public class ReservationRequestDto {
         return date;
     }
 
-    public ReservationTimeRequestDto getReservationTimeRequestDto() {
-        return reservationTimeRequestDto;
-    }
+    public TimeDto getTimeDto() { return timeDto; }
 
     public ReservationThemeRequestDto getReservationThemeRequestDto() {
         return reservationThemeRequestDto;
+    }
+
+    public void assignName(@NotBlank(message = "예약자명을 입력해주세요") String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "ReservationRequestDto{" +
+                "name='" + name + '\'' +
+                ", date='" + date + '\'' +
+                ", timeDto=" + timeDto +
+                ", reservationThemeRequestDto=" + reservationThemeRequestDto +
+                '}';
     }
 }

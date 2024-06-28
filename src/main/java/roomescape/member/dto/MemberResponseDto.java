@@ -4,9 +4,6 @@ public class MemberResponseDto {
 
     private String name;
 
-    public MemberResponseDto() {
-    }
-
     public MemberResponseDto(String name) {
         this.name = name;
     }

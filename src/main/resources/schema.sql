@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS reservation;
 DROP TABLE IF EXISTS theme;
 DROP TABLE IF EXISTS reservation_time;
+DROP TABLE IF EXISTS member;
 
 CREATE TABLE reservation_time
 (
@@ -29,3 +30,28 @@ CREATE TABLE reservation
     FOREIGN KEY (time_id) REFERENCES reservation_time (id),
     FOREIGN KEY (theme_id) REFERENCES theme (id)            -- 외래키 추가
 );
+
+CREATE TABLE member
+(
+    id BIGINT   NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+INSERT INTO reservation_time (start_at)
+VALUES ('10:00');
+INSERT INTO reservation_time (start_at)
+VALUES ('12:00');
+INSERT INTO reservation_time (start_at)
+VALUES ('14:00');
+
+INSERT INTO theme (name, description, thumbnail)
+VALUES ('테마1', '설명1', '썸네일1');
+INSERT INTO theme (name, description, thumbnail)
+VALUES ('테마2', '설명2', '썸네일2');
+
+INSERT INTO member (name, email, password)
+VALUES ('제이슨', 'json@email.com', '1234');
+INSERT INTO member (name, email, password)
+VALUES ('조던', 'jordon@email.com', '1234');

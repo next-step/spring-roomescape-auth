@@ -6,10 +6,9 @@ import roomescape.reservation.infra.ReservationRepository;
 import roomescape.reservation.dto.ReservationRequestDto;
 import roomescape.reservation.dto.ReservationResponseDto;
 import roomescape.reservation.domain.Reservation;
-import roomescape.reservationTheme.domain.ReservationTheme;
-import roomescape.reservationTheme.dto.ReservationThemeResponseDto;
-import roomescape.reservationTime.domain.ReservationTime;
-import roomescape.reservationTime.dto.ReservationTimeResponseDto;
+import roomescape.reservationtheme.domain.ReservationTheme;
+import roomescape.reservationtime.domain.ReservationTime;
+import roomescape.reservationtime.dto.ReservationTimeResponseDto;
 
 import java.util.List;
 
@@ -37,15 +36,10 @@ public class ReservationService {
                 .name(reservationRequestDto.getName())
                 .date(reservationRequestDto.getDate())
                 .reservationTime(new ReservationTime(
-                    reservationRequestDto.getReservationTimeRequestDto().getId(),
-                    reservationRequestDto.getReservationTimeRequestDto().getStartAt()))
+                    reservationRequestDto.getTimeDto().getTimeId()))
                 .reservationTheme(new ReservationTheme(
-                    reservationRequestDto.getReservationThemeRequestDto().getId(),
-                    reservationRequestDto.getReservationThemeRequestDto().getName(),
-                    reservationRequestDto.getReservationThemeRequestDto().getDescription(),
-                    reservationRequestDto.getReservationThemeRequestDto().getThumbnail()
-                )).build();
-
+                    reservationRequestDto.getReservationThemeRequestDto().getThemeId()))
+                .build();
         final Long savedId = reservationRepository.save(reservation);
         final Reservation savedReservation = reservationRepository.findById(savedId);
 
@@ -62,14 +56,7 @@ public class ReservationService {
         reservationRepository.deleteById(id);
     }
 
-
-    public ReservationResponseDto findById(final Long id) {
-        final Reservation reservation = reservationRepository.findById(id);
-        return reservationResponseDtoFromReservation(reservation);
-    }
-
-
-    public List<ReservationTimeResponseDto> findAvaliableTimes(final String date, final Long themeId) {
+    public List<ReservationTimeResponseDto> findAvailableTimes(final String date, final Long themeId) {
         final List<ReservationTime> availableReservationTimes = reservationRepository.getAvailableReservationTimes(date, themeId);
         return availableReservationTimes.stream()
                 .map(reservationTime -> new ReservationTimeResponseDto(

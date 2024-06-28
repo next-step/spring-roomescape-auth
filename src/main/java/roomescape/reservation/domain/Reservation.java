@@ -1,13 +1,12 @@
 package roomescape.reservation.domain;
 
-import roomescape.reservationTheme.domain.ReservationTheme;
-import roomescape.reservationTime.domain.ReservationTime;
+import roomescape.reservationtheme.domain.ReservationTheme;
+import roomescape.reservationtime.domain.ReservationTime;
 
 import java.util.Objects;
 
 public class Reservation {
-
-    private final static ReservationPolicy reservationPolicy = new ReservationPolicy();
+    private final static ReservationPolicy RESERVATION_POLICY = new ReservationPolicy();
 
     private Long id;
     private String name;
@@ -15,18 +14,14 @@ public class Reservation {
     private ReservationTime reservationTime;
     private ReservationTheme reservationTheme;
 
-    public Reservation(String name, String date, ReservationTime reservationTime, ReservationTheme reservationTheme) {
-        this(null, name, date, reservationTime, reservationTheme);
-    }
-
     public Reservation(Long id, String name, String date, ReservationTime reservationTime, ReservationTheme reservationTheme) {
         this.id = id;
-        if (reservationPolicy.validateName(name)) {
+        if (RESERVATION_POLICY.validateName(name)) {
             throw new IllegalArgumentException("예약자 이름에 특수문자가 포함되어 있습니다.");
         }
         this.name = name;
 
-        if (reservationPolicy.validateDate(date)) {
+        if (RESERVATION_POLICY.validateDate(date)) {
             throw new IllegalArgumentException("예약 날짜 형식이 올바르지 않습니다.");
         }
         this.date = date;
@@ -36,7 +31,6 @@ public class Reservation {
     }
 
     public static class Builder {
-
         private Long id;
         private String name;
         private String date;
@@ -85,9 +79,7 @@ public class Reservation {
         return date;
     }
 
-    public ReservationTime getReservationTime() {
-        return reservationTime;
-    }
+    public ReservationTime getReservationTime() { return reservationTime; }
 
     public ReservationTheme getReservationTheme() {
         return reservationTheme;
