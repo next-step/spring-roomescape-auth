@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import roomescape.member.domain.entity.Member;
 
 import java.sql.PreparedStatement;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,6 +26,15 @@ public class MemberJdbcTemplateRepository implements MemberRepository {
             resultSet.getString("email"),
             resultSet.getString("password")
     );
+
+    @Override
+    public List<Member> findAll() {
+        String sql = """
+                SELECT *
+                FROM member
+                """;
+        return jdbcTemplate.query(sql, rowMapper);
+    }
 
     @Override
     public Optional<Member> findById(Long id) {
