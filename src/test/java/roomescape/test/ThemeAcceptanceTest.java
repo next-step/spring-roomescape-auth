@@ -12,7 +12,6 @@ import roomescape.reservationTime.dto.ReservationTimeRequest;
 import roomescape.theme.dto.ThemeRequest;
 
 import static org.hamcrest.Matchers.is;
-import static roomescape.step.LoginStep.토큰_생성;
 import static roomescape.step.ReservationStep.예약_등록;
 
 @DisplayName("테마 관련 api 호출 테스트")

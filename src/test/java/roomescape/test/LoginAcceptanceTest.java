@@ -12,12 +12,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import roomescape.error.RoomescapeErrorMessage;
 import roomescape.login.dto.LoginRequest;
 
 @DisplayName("로그인 관련 api 호출 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Sql("/test.sql")
 public class LoginAcceptanceTest {
 
     private final String testEmail = "test@test.com";
@@ -50,6 +52,15 @@ public class LoginAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(401);
         assertThat(response.jsonPath().get("message").toString())
             .isEqualTo(RoomescapeErrorMessage.NOT_MATCHED_PASSWORD_EXCEPTION);
+    }
+
+    @Test
+    void 권한_정보가_올바르지_않으면_로그인_실패() {
+        ExtractableResponse<Response> response = 로그인("illegalRole@test.com", testPassword);
+
+        assertThat(response.statusCode()).isEqualTo(401);
+        assertThat(response.jsonPath().get("message").toString())
+            .isEqualTo(RoomescapeErrorMessage.ILLEGAL_MEMBER_ROLE_EXCEPTION);
     }
 
     @Test
