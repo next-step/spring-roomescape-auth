@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.auth;
 
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;

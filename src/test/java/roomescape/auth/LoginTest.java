@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.auth;
 
 import io.restassured.RestAssured;
 import jakarta.servlet.http.Cookie;
