@@ -3,7 +3,6 @@ package roomescape.auth.application;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import roomescape.auth.ui.dto.LoginMember;
 import roomescape.exception.UnauthorizedException;
 import roomescape.member.domain.entity.Member;
 
