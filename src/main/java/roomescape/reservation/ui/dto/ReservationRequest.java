@@ -1,6 +1,5 @@
 package roomescape.reservation.ui.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -26,6 +25,14 @@ public class ReservationRequest {
     }
 
     public static ReservationRequest fromCookieRequest(String memberName, CookieReservationRequest request) {
+        return new ReservationRequest(
+                memberName,
+                request.date(),
+                request.timeId(),
+                request.themeId());
+    }
+
+    public static ReservationRequest fromAdminRequest(String memberName, AdminReservationRequest request) {
         return new ReservationRequest(
                 memberName,
                 request.date(),
