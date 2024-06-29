@@ -100,4 +100,37 @@ public class ReservationReadTest {
 
         assertThat(response.jsonPath().getList("", ReservationResponse.class)).hasSize(0);
     }
+
+    @Test
+    @DisplayName("단일 예약 조회")
+    void 단일_예약_조회() {
+        String token = createToken();
+        String date = LocalDate.now().plusWeeks(1).toString();
+        makeDummyTimesAndThemes();
+        reservationService.make(ReservationRequest.create(NAME, date,1L, 1L));
+
+        var reservation = RestAssured
+                .given().log().all()
+                .cookie("token", token)
+                .when().get("/reservations/1")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(ReservationResponse.class);
+
+        assertThat(reservation.getMemberName()).isEqualTo(NAME);
+        assertThat(reservation.getDate()).isEqualTo(date);
+    }
+
+    @Test
+    @DisplayName("예외 - 존재하지 않는 id로 예약 조회")
+    void 존재하지_않는_예약_단일_조회() {
+        String token = createToken();
+
+        RestAssured
+                .given().log().all()
+                .cookie("token", token)
+                .when().get("/reservations/1")
+                .then().log().all()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
 }

@@ -55,4 +55,34 @@ public class ThemeReadTest {
 
         assertThat(response.jsonPath().getList("", ThemeResponse.class)).hasSize(0);
     }
+
+    @Test
+    @DisplayName("테마 하나 조회")
+    void 단일_테마_조회() {
+        String name = "수키도키";
+        String description = "흐르는 대로 살자 해파리처럼🪼";
+        String thumbnail = "https://pbs.twimg.com/media/GApx6fjagAAkFsX.jpg";
+        themeService.add(ThemeRequest.create(name, description, thumbnail));
+
+        var reservationTime = RestAssured
+                .given().log().all()
+                .when().get("/themes/1")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(ThemeResponse.class);
+
+        assertThat(reservationTime.getName()).isEqualTo(name);
+        assertThat(reservationTime.getDescription()).isEqualTo(description);
+        assertThat(reservationTime.getThumbnail()).isEqualTo(thumbnail);
+    }
+
+    @Test
+    @DisplayName("예외 - 존재하지 않는 id로 테마 하나 조회")
+    void 존재하지_않는_테마_단일_조회() {
+        RestAssured
+                .given().log().all()
+                .when().get("/themes/1")
+                .then().log().all()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
 }

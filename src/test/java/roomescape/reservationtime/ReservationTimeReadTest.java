@@ -96,4 +96,30 @@ public class ReservationTimeReadTest {
 
         assertThat(response2.jsonPath().getList("", ReservationTimeResponse.class)).hasSize(1);
     }
+
+    @Test
+    @DisplayName("예약시간 하나 조회")
+    void 단일_예약_시간_조회() {
+        String startAt = "13:00";
+        reservationTimeService.add(ReservationTimeRequest.create(startAt));
+
+        var reservationTime = RestAssured
+                .given().log().all()
+                .when().get("/times/1")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(ReservationTimeResponse.class);
+
+        assertThat(reservationTime.getStartAt()).isEqualTo(startAt);
+    }
+
+    @Test
+    @DisplayName("예외 - 존재하지 않는 id로 예약시간 하나 조회")
+    void 존재하지_않는_예약_시간_단일_조회() {
+        RestAssured
+                .given().log().all()
+                .when().get("/times/1")
+                .then().log().all()
+                .statusCode(HttpStatus.NOT_FOUND.value());
+    }
 }
