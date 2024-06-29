@@ -64,12 +64,21 @@ public class MemberTest {
                 .body(new MemberRequest(name, email, password))
                 .contentType(ContentType.JSON)
                 .when().post("/members")
-                .then().log().all().extract();
+                .then().log().all().statusCode(HttpStatus.CREATED.value()).extract();
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
         MemberResponse body = response.body().as(MemberResponse.class);
         assertThat(body.name()).isEqualTo(name);
         assertThat(body.email()).isEqualTo(email);
+        String location = response.header("location");
+        assertThat(location).isEqualTo("/members/" + body.id());
+
+        MemberResponse member = RestAssured
+                .given().log().all()
+                .when().get(location)
+                .then().log().all().statusCode(HttpStatus.OK.value()).extract().as(MemberResponse.class);
+
+        assertThat(member.name()).isEqualTo(name);
+        assertThat(member.email()).isEqualTo(email);
     }
 
     @Test
