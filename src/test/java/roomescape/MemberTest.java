@@ -28,7 +28,7 @@ public class MemberTest {
     }
 
     @Test
-    @DisplayName("MemberController - read()")
+    @DisplayName("MemberController - readAll()")
     void 전체_사용자_조회() {
         signUpService.signUp(new MemberRequest("yeeun", "anna862700@gmail.com", "password"));
         signUpService.signUp(new MemberRequest("asdf", "asdf@gmail.com", "password"));
@@ -42,7 +42,7 @@ public class MemberTest {
     }
 
     @Test
-    @DisplayName("MemberController - read() non-member")
+    @DisplayName("MemberController - readAll() non-member")
     void 사용자_없는_경우_전체_사용자_조회() {
         var response = RestAssured
                 .given().log().all()
@@ -50,6 +50,34 @@ public class MemberTest {
                 .then().log().all().statusCode(HttpStatus.OK.value()).extract();
 
         assertThat(response.jsonPath().getList("", ReservationResponse.class)).hasSize(0);
+    }
+
+
+    @Test
+    @DisplayName("MemberController - readOne()")
+    void 단일_사용자_조회() {
+        signUpService.signUp(new MemberRequest("yeeun", "anna862700@gmail.com", "password"));
+        signUpService.signUp(new MemberRequest("asdf", "asdf@gmail.com", "password"));
+
+        var response = RestAssured
+                .given().log().all()
+                .when().get("/members/2")
+                .then().log().all().statusCode(HttpStatus.OK.value())
+                .extract().as(MemberResponse.class);
+
+        assertThat(response.name()).isEqualTo("asdf");
+        assertThat(response.email()).isEqualTo("asdf@gmail.com");
+    }
+
+    @Test
+    @DisplayName("MemberController - readOne() non-existent member")
+    void 존재하지_않는_단일_사용자_조회() {
+        signUpService.signUp(new MemberRequest("yeeun", "anna862700@gmail.com", "password"));
+        signUpService.signUp(new MemberRequest("asdf", "asdf@gmail.com", "password"));
+
+        RestAssured.given().log().all()
+                .when().get("/members/3")
+                .then().log().all().statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
