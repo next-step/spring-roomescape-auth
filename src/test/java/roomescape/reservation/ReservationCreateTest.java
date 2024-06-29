@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.reservation;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = {"server.port=8888"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class ReservationTest {
+public class ReservationCreateTest {
     @Autowired
     private ReservationService reservationService;
     @Autowired
@@ -41,7 +41,7 @@ public class ReservationTest {
         RestAssured.port = 8888;
     }
 
-    public String createToken() {
+    private String createToken() {
         String email = "anna862700@gmail.com";
         String password = "password";
 
@@ -49,13 +49,15 @@ public class ReservationTest {
                 .contentType(ContentType.JSON)
                 .body(new MemberRequest(NAME, email, password))
                 .when().post("/members")
-                .then().log().all().extract().body().as(MemberResponse.class);
+                .then().log().all()
+                .extract().body().as(MemberResponse.class);
         return RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON)
                 .body(new LoginRequest(email, password))
                 .when().post("/login")
-                .then().log().all().extract().cookie("token");
+                .then().log().all()
+                .extract().cookie("token");
     }
 
     private void makeDummyTimesAndThemes() {
@@ -66,178 +68,109 @@ public class ReservationTest {
     }
 
     @Test
-    @DisplayName("ReservationController - create()")
+    @DisplayName("예약 생성")
     void 예약() {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         makeDummyTimesAndThemes();
 
-        var response = RestAssured
+        var body = RestAssured
                 .given().log().all()
                 .cookie("token", token)
                 .body(new CookieReservationRequest(date, 1L, 1L))
                 .contentType(ContentType.JSON)
                 .when().post("/reservations")
-                .then().log().all().extract();
+                .then().log().all()
+                .statusCode((HttpStatus.CREATED.value()))
+                .extract().as(ReservationResponse.class);
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        ReservationResponse body = response.body().as(ReservationResponse.class);
         assertThat(body.getMemberName()).isEqualTo(NAME);
         assertThat(body.getDate()).isEqualTo(date);
     }
 
     @Test
-    @DisplayName("ReservationController - create() date already past")
-    void 과거_날짜_시간_예약() {
+    @DisplayName("예외 - 과거 날짜로 예약")
+    void 과거_날짜_예약() {
         String date = LocalDate.now().minusWeeks(1).toString();
         String token = createToken();
         makeDummyTimesAndThemes();
 
-        var response = RestAssured
+        RestAssured
                 .given().log().all()
                 .cookie("token", token)
                 .body(new CookieReservationRequest(date, 1L, 1L))
                 .contentType(ContentType.JSON)
                 .when().post("/reservations")
-                .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+                .then().log().all()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
-    @DisplayName("ReservationController - create() same-day")
+    @DisplayName("예외 - 당일 예약")
     void 당일_예약() {
         String date = LocalDate.now().toString();
         String token = createToken();
         makeDummyTimesAndThemes();
 
-        var response = RestAssured
+        RestAssured
                 .given().log().all()
                 .cookie("token", token)
                 .body(new CookieReservationRequest(date, 1L, 1L))
                 .contentType(ContentType.JSON)
                 .when().post("/reservations")
-                .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+                .then().log().all()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
-    @DisplayName("ReservationController - create() not existent time")
+    @DisplayName("예외 - 존재하지 않은 시간id로 예약")
     void 존재하지_않는_시간_예약() {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         themeService.add(ThemeRequest.create("a", "b", "c"));
 
-        var response = RestAssured
+        RestAssured
                 .given().log().all()
                 .cookie("token", token)
                 .body(new CookieReservationRequest(date, 1L, 1L))
                 .contentType(ContentType.JSON)
                 .when().post("/reservations")
-                .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+                .then().log().all()
+                .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
-    @DisplayName("ReservationController - create() not existent theme")
+    @DisplayName("예외 - 존재하지 않은 테마id로 예약")
     void 존재하지_않는_테마_예약() {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         reservationTimeService.add(ReservationTimeRequest.create("13:00"));
 
-        var response = RestAssured
+        RestAssured
                 .given().log().all()
                 .cookie("token", token)
                 .body(new CookieReservationRequest(date, 1L, 1L))
                 .contentType(ContentType.JSON)
                 .when().post("/reservations")
-                .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+                .then().log().all()
+                .statusCode((HttpStatus.NOT_FOUND.value()));
     }
 
     @Test
-    @DisplayName("ReservationController - create() duplicated date, time and theme")
+    @DisplayName("예외 - 중복 예약")
     void 중복_예약() {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         makeDummyTimesAndThemes();
-        reservationService.make(ReservationRequest.create("yeeun", date, 1L, 1L));
+        reservationService.make(ReservationRequest.create(NAME, date, 1L, 1L));
 
-        var response = RestAssured
+        RestAssured
                 .given().log().all()
                 .cookie("token", token)
                 .body(new CookieReservationRequest(date, 1L, 1L))
                 .contentType(ContentType.JSON)
                 .when().post("/reservations")
-                .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    }
-
-    @Test
-    @DisplayName("ReservationController - read()")
-    void 젼체_예약_조회() {
-        String token = createToken();
-        String date = LocalDate.now().plusWeeks(1).toString();
-        makeDummyTimesAndThemes();
-        reservationService.make(ReservationRequest.create("yeeun", date, 1L, 1L));
-
-        var response = RestAssured
-                .given().log().all()
-                .cookie("token", token)
-                .when().get("/reservations")
-                .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.jsonPath().getList("", ReservationResponse.class)).hasSize(1);
-    }
-
-    @Test
-    @DisplayName("ReservationController - read() not existent reservation")
-    void 예약이_없는_경우_예약_조회() {
-        String token = createToken();
-
-        var response = RestAssured
-                .given().log().all()
-                .cookie("token", token)
-                .when().get("/reservations")
-                .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.jsonPath().getList("", ReservationResponse.class)).hasSize(0);
-    }
-
-    @Test
-    @DisplayName("ReservationController - delete()")
-    void 예약_취소() {
-        String token = createToken();
-        String date = LocalDate.now().plusWeeks(1).toString();
-        makeDummyTimesAndThemes();
-        reservationService.make(ReservationRequest.create("yeeun", date, 1L, 1L));
-
-        var response = RestAssured
-                .given().log().all()
-                .cookie("token", token)
-                .when().delete("/reservations/1")
-                .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-    }
-
-    @Test
-    @DisplayName("ReservationController - delete() : not existent reservation")
-    void 존재하지_않는_예약_취소() {
-        String token = createToken();
-
-        var response = RestAssured
-                .given().log().all()
-                .cookie("token", token)
-                .when().delete("/reservations/1")
-                .then().log().all().extract();
-
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+                .then().log().all()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 }

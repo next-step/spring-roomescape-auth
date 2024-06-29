@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.reservation;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -43,7 +43,7 @@ public class AdminReservationTest {
     }
 
     @Test
-    @DisplayName("AdminReservationController - create()")
+    @DisplayName("관리자 페이지에서 예약 생성")
     void 관리자_예약() {
         String name = "yeeun";
         signUpService.signUp(new MemberRequest(name, "email@email", "password"));
@@ -55,7 +55,9 @@ public class AdminReservationTest {
                 .contentType(ContentType.JSON)
                 .body(new AdminReservationRequest(date, 1L, 1L, 1L))
                 .when().post("/admin/reservations")
-                .then().log().all().statusCode(HttpStatus.CREATED.value()).extract().as(ReservationResponse.class);
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().as(ReservationResponse.class);
 
         assertThat(response.getMemberName()).isEqualTo(name);
     }
