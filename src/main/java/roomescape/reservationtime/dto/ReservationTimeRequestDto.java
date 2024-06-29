@@ -10,10 +10,6 @@ public class ReservationTimeRequestDto {
     public ReservationTimeRequestDto() {
     }
 
-    public ReservationTimeRequestDto(Long id) {
-        this.id = id;
-    }
-
     public ReservationTimeRequestDto(String startAt) {
         this.startAt = startAt;
     }
