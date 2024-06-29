@@ -31,7 +31,7 @@ public class MemberController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<MemberResponse> read(@PathVariable Long id) {
+    public ResponseEntity<MemberResponse> readOne(@PathVariable Long id) {
         MemberResponse memberResponse = memberService.findOne(id);
         return ResponseEntity.status(HttpStatus.OK).body(memberResponse);
     }
