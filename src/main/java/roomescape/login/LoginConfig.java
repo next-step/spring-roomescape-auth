@@ -22,6 +22,6 @@ public class LoginConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new MemberRoleInterceptor(jwtTokenProvider))
-            .addPathPatterns("/admin/**");
+            .addPathPatterns("/admin/**", "/themes/**", "/times/**");
     }
 }
