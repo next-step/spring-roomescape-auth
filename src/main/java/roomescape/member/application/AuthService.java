@@ -45,4 +45,14 @@ public class AuthService {
         final String nameById = memberRepository.findNameById(Long.parseLong(id));
         return new MemberResponseDto(nameById);
     }
+
+    public MemberResponseDto findMember(final String token){
+        final boolean isTokenExpired = jwtTokenProvide.validateToken(token);
+        if (!isTokenExpired) {
+            throw new AuthorizationException("만료된 토큰입니다.");
+        }
+        final String id = jwtTokenProvide.extractMemberIdFromToken(token);
+        final Member foundMember = memberRepository.findMemberById(Long.parseLong(id));
+        return new MemberResponseDto(foundMember.getId(), foundMember.getName(), foundMember.getEmail(), foundMember.getRole());
+    }
 }

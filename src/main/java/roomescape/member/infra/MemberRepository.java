@@ -18,7 +18,8 @@ public class MemberRepository {
                 resultSet.getLong("id"),
                 resultSet.getString("name"),
                 resultSet.getString("email"),
-                resultSet.getString("password")
+                resultSet.getString("password"),
+                resultSet.getString("role")
         );
     }
 
@@ -35,5 +36,10 @@ public class MemberRepository {
     public String findNameById(final Long id) {
         final String sql = "SELECT name FROM member WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, String.class, id);
+    }
+
+    public Member findMemberById(final long id) {
+        final String sql = "SELECT * FROm member WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, rowMapper, id);
     }
 }
