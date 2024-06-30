@@ -43,7 +43,7 @@ public class ThemeDeleteTest {
 
     @Test
     @DisplayName("테마 삭제")
-    void 테마_삭제() {
+    void deleteTheme() {
         String name = "수키도키";
         String description = "흐르는 대로 살자 해파리처럼🪼";
         String thumbnail = "https://pbs.twimg.com/media/GApx6fjagAAkFsX.jpg";
@@ -59,7 +59,7 @@ public class ThemeDeleteTest {
 
     @Test
     @DisplayName("예외 - 존재하지 않는 테마 삭제")
-    void 존재하지_않는_테마_삭제() {
+    void failToDeleteNotExistentTheme() {
         RestAssured
                 .given().log().all()
                 .when().delete("/themes/1")
@@ -70,7 +70,7 @@ public class ThemeDeleteTest {
 
     @Test
     @DisplayName("예외 - 예약이 되어있는 테마 삭제")
-    void 예약_존재하는_테마_삭제() {
+    void failToDeleteIfReservationWithThemeExist() {
         long reservationId = makeDummyReservation();
 
         RestAssured

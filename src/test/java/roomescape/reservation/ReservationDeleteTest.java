@@ -58,7 +58,7 @@ public class ReservationDeleteTest {
 
     @Test
     @DisplayName("예약 취소")
-    void 예약_취소() {
+    void cancelReservation() {
         String token = createToken();
         String date = LocalDate.now().plusWeeks(1).toString();
         reservationTimeService.add(ReservationTimeRequest.create("15:00"));
@@ -75,7 +75,7 @@ public class ReservationDeleteTest {
 
     @Test
     @DisplayName("예외 - 존재하지 않는 예약 취소")
-    void 존재하지_않는_예약_취소() {
+    void failToCancelNonExistentReservation() {
         String token = createToken();
 
         RestAssured

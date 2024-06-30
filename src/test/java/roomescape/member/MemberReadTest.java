@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = {"server.port=8888"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class MemberTest {
+public class MemberReadTest {
     @Autowired
     private SignUpService signUpService;
 
@@ -27,8 +27,8 @@ public class MemberTest {
     }
 
     @Test
-    @DisplayName("전체 사용자 조회")
-    void 전체_사용자_조회() {
+    @DisplayName("전체 회원 조회")
+    void readAllMembers() {
         signUpService.signUp(new MemberRequest("yeeun", "anna862700@gmail.com", "password"));
         signUpService.signUp(new MemberRequest("asdf", "asdf@gmail.com", "password"));
 
@@ -43,8 +43,8 @@ public class MemberTest {
     }
 
     @Test
-    @DisplayName("사용자 하나도 없는 경우 전체 사용자 조회")
-    void 사용자_없는_경우_전체_사용자_조회() {
+    @DisplayName("회원 하나도 없는 경우 전체 회원 조회")
+    void readAllMembersIfNoMembers() {
         var response = RestAssured
                 .given().log().all()
                 .when().get("/members")
@@ -56,8 +56,8 @@ public class MemberTest {
     }
 
     @Test
-    @DisplayName("id로 특정 사용자 조회")
-    void 단일_사용자_조회() {
+    @DisplayName("id로 특정 회원 조회")
+    void readMemberIfMemberMatchWithIdExist() {
         String name = "yeeun";
         String email = "anna862700@gmail.com";
         signUpService.signUp(new MemberRequest(name, email, "password"));
@@ -74,8 +74,8 @@ public class MemberTest {
     }
 
     @Test
-    @DisplayName("예외 - 존재하지 않는 id로 사용자 조회")
-    void 존재하지_않는_단일_사용자_조회() {
+    @DisplayName("예외 - 존재하지 않는 id로 회원 조회")
+    void failToReadMemberIfMemberMatchWithIdNotExist() {
         String name = "yeeun";
         String email = "anna862700@gmail.com";
         signUpService.signUp(new MemberRequest(name, email, "password"));

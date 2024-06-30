@@ -37,7 +37,7 @@ public class ReservationTimeReadTest {
 
     @Test
     @DisplayName("전체 예약 시간 조회")
-    void 전체_예약_시간_조회() {
+    void readAllReservationTimes() {
         reservationTimeService.add(ReservationTimeRequest.create("13:00"));
         reservationTimeService.add(ReservationTimeRequest.create("15:00"));
 
@@ -53,7 +53,7 @@ public class ReservationTimeReadTest {
 
     @Test
     @DisplayName("예약_시간_하나도_없는_경우_전체_예약_시간_조회")
-    void 등록된_예약_시간_없는_경우_예약_시간_조회() {
+    void readAllReservationsIfNoReservationTimes() {
         var response = RestAssured
                 .given().log().all()
                 .when().get("/times")
@@ -66,7 +66,7 @@ public class ReservationTimeReadTest {
 
     @Test
     @DisplayName("예약 가능 시간 조회")
-    void 예약_가능한_시간_조회() {
+    void readBookableReservationTime() {
         themeService.add(ThemeRequest.create("theme1", "b", "c"));
         themeService.add(ThemeRequest.create("theme2", "b", "c"));
         reservationTimeService.add(ReservationTimeRequest.create("12:00"));
@@ -99,7 +99,7 @@ public class ReservationTimeReadTest {
 
     @Test
     @DisplayName("예약시간 하나 조회")
-    void 단일_예약_시간_조회() {
+    void readReservationTime() {
         String startAt = "13:00";
         reservationTimeService.add(ReservationTimeRequest.create(startAt));
 
@@ -115,7 +115,7 @@ public class ReservationTimeReadTest {
 
     @Test
     @DisplayName("예외 - 존재하지 않는 id로 예약시간 하나 조회")
-    void 존재하지_않는_예약_시간_단일_조회() {
+    void failToReadNonExistentReservationTime() {
         RestAssured
                 .given().log().all()
                 .when().get("/times/1")

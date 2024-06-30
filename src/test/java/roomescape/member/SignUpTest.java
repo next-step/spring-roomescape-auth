@@ -28,7 +28,7 @@ public class SignUpTest {
 
     @Test
     @DisplayName("회원가입 및 location 헤더로 자원 접근 확인")
-    void 사용자_생성() {
+    void signupAndReadMemberByLocationHeader() {
         String name = "yeeun";
         String email = "anna862700@gmail.com";
         String password = "password";
@@ -48,7 +48,6 @@ public class SignUpTest {
         String location = response.header("location");
         assertThat(location).isEqualTo("/members/" + body.id());
 
-//        location 헤더 확인
         MemberResponse member = RestAssured
                 .given().log().all()
                 .when().get(location)
@@ -62,7 +61,7 @@ public class SignUpTest {
 
     @Test
     @DisplayName("예외 - 중복 이메일로 회원가입")
-    void 이미_사용하고_있는_이메일로_사용자_생성() {
+    void failToSignupIfMemberWithEmailExist() {
         String name = "yeeun";
         String email = "anna862700@gmail.com";
         String password = "password";

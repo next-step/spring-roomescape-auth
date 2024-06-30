@@ -69,7 +69,7 @@ public class ReservationCreateTest {
 
     @Test
     @DisplayName("예약 생성")
-    void 예약() {
+    void reserve() {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         makeDummyTimesAndThemes();
@@ -90,7 +90,7 @@ public class ReservationCreateTest {
 
     @Test
     @DisplayName("예외 - 과거 날짜로 예약")
-    void 과거_날짜_예약() {
+    void failToReserveIfDateIsPassed() {
         String date = LocalDate.now().minusWeeks(1).toString();
         String token = createToken();
         makeDummyTimesAndThemes();
@@ -107,7 +107,7 @@ public class ReservationCreateTest {
 
     @Test
     @DisplayName("예외 - 당일 예약")
-    void 당일_예약() {
+    void failToReserveIfDateIsToday() {
         String date = LocalDate.now().toString();
         String token = createToken();
         makeDummyTimesAndThemes();
@@ -124,7 +124,7 @@ public class ReservationCreateTest {
 
     @Test
     @DisplayName("예외 - 존재하지 않은 시간id로 예약")
-    void 존재하지_않는_시간_예약() {
+    void failToReserveIfReservationTimeMatchWithIdNotExist() {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         themeService.add(ThemeRequest.create("a", "b", "c"));
@@ -141,7 +141,7 @@ public class ReservationCreateTest {
 
     @Test
     @DisplayName("예외 - 존재하지 않은 테마id로 예약")
-    void 존재하지_않는_테마_예약() {
+    void failToReserveIfThemeMatchWithIdNotExist() {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         reservationTimeService.add(ReservationTimeRequest.create("13:00"));
@@ -158,7 +158,7 @@ public class ReservationCreateTest {
 
     @Test
     @DisplayName("예외 - 중복 예약")
-    void 중복_예약() {
+    void failToReserveIfAlreadyScheduled() {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         makeDummyTimesAndThemes();

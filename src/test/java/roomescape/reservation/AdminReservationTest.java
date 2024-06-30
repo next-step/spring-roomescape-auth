@@ -44,7 +44,7 @@ public class AdminReservationTest {
 
     @Test
     @DisplayName("관리자 페이지에서 예약 생성")
-    void 관리자_예약() {
+    void reserveInAdminPage() {
         String name = "yeeun";
         signUpService.signUp(new MemberRequest(name, "email@email", "password"));
         makeDummyTimeAndTheme();

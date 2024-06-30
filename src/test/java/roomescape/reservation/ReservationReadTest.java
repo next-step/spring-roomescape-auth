@@ -68,7 +68,7 @@ public class ReservationReadTest {
 
     @Test
     @DisplayName("전체 예약 조회")
-    void 젼체_예약_조회() {
+    void readAllReservations() {
         String token = createToken();
         String date = LocalDate.now().plusWeeks(1).toString();
         makeDummyTimesAndThemes();
@@ -87,7 +87,7 @@ public class ReservationReadTest {
 
     @Test
     @DisplayName("예약이 하나도 없는 경우 전체 예약 조회")
-    void 예약이_없는_경우_예약_조회() {
+    void readAllReservationsIfNoReservations() {
         String token = createToken();
 
         var response = RestAssured
@@ -103,7 +103,7 @@ public class ReservationReadTest {
 
     @Test
     @DisplayName("단일 예약 조회")
-    void 단일_예약_조회() {
+    void readReservation() {
         String token = createToken();
         String date = LocalDate.now().plusWeeks(1).toString();
         makeDummyTimesAndThemes();
@@ -123,7 +123,7 @@ public class ReservationReadTest {
 
     @Test
     @DisplayName("예외 - 존재하지 않는 id로 예약 조회")
-    void 존재하지_않는_예약_단일_조회() {
+    void failToReadNonExistentReservation() {
         String token = createToken();
 
         RestAssured

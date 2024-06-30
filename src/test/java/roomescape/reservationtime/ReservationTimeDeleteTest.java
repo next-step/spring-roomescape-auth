@@ -41,7 +41,7 @@ public class ReservationTimeDeleteTest {
 
     @Test
     @DisplayName("예약 시간 삭제")
-    void 예약_시간_삭제() {
+    void deleteReservationTime() {
         reservationTimeService.add(ReservationTimeRequest.create("13:00"));
 
         RestAssured
@@ -53,7 +53,7 @@ public class ReservationTimeDeleteTest {
 
     @Test
     @DisplayName("예외 - 존재하지 않는 예약 시간 삭제")
-    void 존재하지_않는_예약_시간_삭제() {
+    void failToDeleteNonExistentReservationTime() {
         RestAssured
                 .given().log().all()
                 .when().delete("/times/1")
@@ -63,7 +63,7 @@ public class ReservationTimeDeleteTest {
 
     @Test
     @DisplayName("에외 - 예약이 되어있는 예약 시간 삭제")
-    void 예약_존재하는_시간_삭제() {
+    void failToDeleteIfReservationWithTimeExist() {
         long reservationId = makeDummyReservation();
 
         RestAssured

@@ -28,7 +28,7 @@ public class ThemeCreateTest {
 
     @Test
     @DisplayName("테마 생성")
-    void 테마_생성() {
+    void createTheme() {
         String name = "수키도키";
         String description = "흐르는 대로 살자 해파리처럼🪼";
         String thumbnail = "https://pbs.twimg.com/media/GApx6fjagAAkFsX.jpg";
@@ -49,7 +49,7 @@ public class ThemeCreateTest {
 
     @Test
     @DisplayName("예외 - 이미 존재하는 이름의 테마 생성")
-    void 중복_이름_테마_생성() {
+    void failToCreateIfThemeNameAlreadyExist() {
         String name = "수키도키";
         String description = "흐르는 대로 살자 해파리처럼🪼";
         String thumbnail = "https://pbs.twimg.com/media/GApx6fjagAAkFsX.jpg";

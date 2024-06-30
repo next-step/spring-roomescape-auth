@@ -34,8 +34,8 @@ public class LoginTest {
     }
 
     @Test
-    @DisplayName("LoginController - login()")
-    void 로그인() {
+    @DisplayName("로그인")
+    void login() {
         signUpService.signUp(new MemberRequest(NAME, EMAIL, PASSWORD));
 
         var response = RestAssured
@@ -51,8 +51,8 @@ public class LoginTest {
     }
 
     @Test
-    @DisplayName("LoginController - readMemberName()")
-    void 로그인_후_받은_토큰_통해_사용자_이름_얻기() {
+    @DisplayName("로그인 성공 후 얻은 토큰 통해서 회원 이름 얻기")
+    void getMemberNameThroughTokenAfterLoginSuccess() {
         signUpService.signUp(new MemberRequest(NAME, EMAIL, PASSWORD));
         Cookie token = loginService.login(new LoginRequest(EMAIL, PASSWORD));
 

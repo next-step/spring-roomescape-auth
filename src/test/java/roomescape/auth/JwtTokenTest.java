@@ -17,8 +17,8 @@ public class JwtTokenTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @Test
-    @DisplayName("JwtTokenProvider - createToken() and extractMemberId()")
-    void 토큰_생성_및_id_반환() {
+    @DisplayName("jwt 토큰 생성 후 회원 id 확인")
+    void createJwtTokenAndCheckMemberId() {
         Member member = Member.of(1L, "yeeun", "anna862700@gmail.com", "password");
 
         String token = jwtTokenProvider.createToken(member);
@@ -28,8 +28,8 @@ public class JwtTokenTest {
     }
 
     @Test
-    @DisplayName("JwtTokenProvider - validateToken()")
-    void 토큰_유효성_검증() {
+    @DisplayName("토큰의 유효성 검증")
+    void validateToken() {
         Member member = Member.of(1L, "yeeun", "anna862700@gmail.com", "password");
         String token = jwtTokenProvider.createToken(member);
 

@@ -30,7 +30,7 @@ public class ReservationTimeCreateTest {
 
     @Test
     @DisplayName("예약 시간 생성")
-    void 예약_시간_생성() {
+    void createReservationTime() {
         String startAt = "13:00";
 
         var body = RestAssured
@@ -47,7 +47,7 @@ public class ReservationTimeCreateTest {
 
     @Test
     @DisplayName("예외 - 이미 존재하는 예약 시간 생성")
-    void 중복_예약_시간_생성() {
+    void failToCreateIfTimeAlreadyExist() {
         String startAt = "13:00";
         reservationTimeService.add(ReservationTimeRequest.create(startAt));
 
@@ -64,7 +64,7 @@ public class ReservationTimeCreateTest {
     @ParameterizedTest
     @DisplayName("예외 - 유효하지 않은 시작 시간으로 예약 시간 생성")
     @ValueSource(strings = {"asdf", "24:24", "", "24:00"})
-    void 유효하지_않은_예약_시간_생성(String startAt) {
+    void failToCreateIfStartTimeIsInvalid(String startAt) {
         RestAssured
                 .given().log().all()
                 .body(ReservationTimeRequest.create(startAt))
