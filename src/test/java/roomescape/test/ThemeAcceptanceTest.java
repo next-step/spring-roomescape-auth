@@ -12,6 +12,8 @@ import roomescape.reservationTime.dto.ReservationTimeRequest;
 import roomescape.theme.dto.ThemeRequest;
 
 import static org.hamcrest.Matchers.is;
+import static roomescape.step.LoginStep.관리자_토큰_생성;
+import static roomescape.step.LoginStep.회원_토큰_생성;
 import static roomescape.step.ReservationStep.예약_등록;
 
 @DisplayName("테마 관련 api 호출 테스트")
@@ -19,12 +21,16 @@ import static roomescape.step.ReservationStep.예약_등록;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class ThemeAcceptanceTest {
 
+    private String adminToken;
+
     @BeforeEach
     void 테마_등록() {
+        adminToken = 관리자_토큰_생성();
         ThemeRequest request = new ThemeRequest("테스트 테마", "이것은 테스트용 테마 입니다.", "thumbailName");
 
         RestAssured.given().log().all()
             .contentType(ContentType.JSON)
+            .cookie("token", adminToken)
             .body(request)
             .when().post("/themes")
             .then().log().all()
@@ -42,17 +48,34 @@ public class ThemeAcceptanceTest {
     }
 
     @Test
+    void 회원_테마_등록_실패() {
+        ThemeRequest request = new ThemeRequest("테스트 테마", "이것은 테스트용 테마 입니다.", "thumbailName");
+
+        RestAssured.given().log().all()
+            .contentType(ContentType.JSON)
+            .cookie("token", 회원_토큰_생성())
+            .body(request)
+            .when().post("/themes")
+            .then().log().all()
+            .statusCode(401);
+    }
+
+    @Test
     void 테마_삭제_성공() {
         RestAssured.given().log().all()
+            .cookie("token", adminToken)
             .when().delete("/themes/1")
             .then().log().all()
             .statusCode(204);
+    }
 
+    @Test
+    void 회원_테마_삭제_실패() {
         RestAssured.given().log().all()
-            .when().get("/themes")
+            .cookie("token", 회원_토큰_생성())
+            .when().delete("/themes/1")
             .then().log().all()
-            .statusCode(200)
-            .body("size()", is(0));
+            .statusCode(401);
     }
 
     @Test
@@ -68,6 +91,7 @@ public class ThemeAcceptanceTest {
         예약_등록(new ReservationRequest("2025-08-05", 1L, 1L));
 
         RestAssured.given().log().all()
+            .cookie("token", adminToken)
             .when().delete("/themes/1")
             .then().log().all()
             .statusCode(409);
