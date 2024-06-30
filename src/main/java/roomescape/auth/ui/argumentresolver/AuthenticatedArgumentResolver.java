@@ -30,14 +30,18 @@ public class AuthenticatedArgumentResolver implements HandlerMethodArgumentResol
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(
+            MethodParameter parameter,
+            ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest,
+            WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         Cookie[] cookies = request.getCookies();
-
         String token = cookieUtils
                 .getCookieByName(cookies, "token")
                 .orElseThrow(() -> UnauthorizedException.of("토큰이 없습니다."))
                 .getValue();
+
         return new LoginMember(
                 jwtTokenProvider.extractMemberId(token),
                 jwtTokenProvider.extractMemberName(token)
