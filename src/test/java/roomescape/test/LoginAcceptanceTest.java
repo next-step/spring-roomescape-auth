@@ -2,8 +2,8 @@ package roomescape.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static roomescape.step.LoginStep.회원_비밀번호;
-import static roomescape.step.LoginStep.회원_이메일;
+import static roomescape.member.initializer.MemberInitializer.DUMMY_USER_EMAIL;
+import static roomescape.member.initializer.MemberInitializer.DUMMY_USER_PASSWORD;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -28,7 +28,7 @@ public class LoginAcceptanceTest {
 
     @Test
     void 로그인_성공() {
-        ExtractableResponse<Response> response = 로그인(회원_이메일, 회원_비밀번호);
+        ExtractableResponse<Response> response = 로그인(DUMMY_USER_EMAIL, DUMMY_USER_PASSWORD);
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.cookie("token")).isNotBlank();
@@ -36,7 +36,7 @@ public class LoginAcceptanceTest {
 
     @Test
     void 등록되지_않은_이메일을_입력할경우_로그인_실패() {
-        ExtractableResponse<Response> response = 로그인("new@email.com", 회원_비밀번호);
+        ExtractableResponse<Response> response = 로그인("new@email.com", DUMMY_USER_PASSWORD);
 
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(response.jsonPath().get("message").toString())
@@ -45,7 +45,7 @@ public class LoginAcceptanceTest {
 
     @Test
     void 일치하지_않는_비밀번호를_입력할_경우_로그인_실패() {
-        ExtractableResponse<Response> response = 로그인(회원_이메일, "newPassword");
+        ExtractableResponse<Response> response = 로그인(DUMMY_USER_EMAIL, "newPassword");
 
         assertThat(response.statusCode()).isEqualTo(401);
         assertThat(response.jsonPath().get("message").toString())
@@ -54,7 +54,7 @@ public class LoginAcceptanceTest {
 
     @Test
     void 권한_정보가_올바르지_않으면_로그인_실패() {
-        ExtractableResponse<Response> response = 로그인("illegalRole@test.com", 회원_비밀번호);
+        ExtractableResponse<Response> response = 로그인("illegalRole@test.com", DUMMY_USER_PASSWORD);
 
         assertThat(response.statusCode()).isEqualTo(401);
         assertThat(response.jsonPath().get("message").toString())
@@ -63,7 +63,7 @@ public class LoginAcceptanceTest {
 
     @Test
     void 로그인_후_정보_조회_성공() {
-        ExtractableResponse<Response> response = 로그인(회원_이메일, 회원_비밀번호);
+        ExtractableResponse<Response> response = 로그인(DUMMY_USER_EMAIL, DUMMY_USER_PASSWORD);
 
         RestAssured.given().log().all()
             .contentType(ContentType.JSON)

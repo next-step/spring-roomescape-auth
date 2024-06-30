@@ -1,22 +1,22 @@
 package roomescape.step;
 
+import static roomescape.member.initializer.MemberInitializer.DUMMY_ADMIN_EMAIL;
+import static roomescape.member.initializer.MemberInitializer.DUMMY_ADMIN_PASSWORD;
+import static roomescape.member.initializer.MemberInitializer.DUMMY_USER_EMAIL;
+import static roomescape.member.initializer.MemberInitializer.DUMMY_USER_PASSWORD;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import roomescape.login.dto.LoginRequest;
 
 public class LoginStep {
 
-    public static String 회원_이메일 = "test@test.com";
-    public static String 회원_비밀번호 = "password";
-    public static String 관리자_이메일 = "admin@test.com";
-    public static String 관리자_비밀번호 = "password";
-
     public static String 회원_토큰_생성() {
-        return 토큰_생성(회원_이메일, 회원_비밀번호);
+        return 토큰_생성(DUMMY_USER_EMAIL, DUMMY_USER_PASSWORD);
     }
 
     public static String 관리자_토큰_생성() {
-        return 토큰_생성(관리자_이메일, 관리자_비밀번호);
+        return 토큰_생성(DUMMY_ADMIN_EMAIL, DUMMY_ADMIN_PASSWORD);
     }
 
     public static String 토큰_생성(String email, String password) {

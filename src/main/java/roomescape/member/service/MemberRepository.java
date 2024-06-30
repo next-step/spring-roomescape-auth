@@ -45,4 +45,10 @@ public class MemberRepository {
         return Optional.ofNullable(
             DataAccessUtils.singleResult(jdbcTemplate.query(sql, rowMapper, email)));
     }
+
+    public void save(Member member) {
+        jdbcTemplate.update("INSERT INTO member (email, password, name, role) VALUES (?, ?, ?, ?)",
+            member.getEmail(), member.getPassword(), member.getName(), member.getRole().name());
+
+    }
 }

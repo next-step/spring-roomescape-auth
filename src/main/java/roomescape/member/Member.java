@@ -22,6 +22,10 @@ public class Member {
         this.role = role;
     }
 
+    public Member(String email, String password, String name, MemberRole role) {
+        this(null, email, password, name, role);
+    }
+
     public boolean isMatchedPassword(String password) {
         return StringUtils.equals(this.password, password);
     }
@@ -32,6 +36,10 @@ public class Member {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getName() {
