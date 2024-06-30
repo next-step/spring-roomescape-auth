@@ -10,6 +10,10 @@ public class Role {
         this.name = name;
     }
 
+    public Role(RoleType roleType) {
+        this.name = roleType;
+    }
+
     public Long getId() {
         return id;
     }

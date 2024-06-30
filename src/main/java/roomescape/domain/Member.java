@@ -8,14 +8,14 @@ public class Member {
     private String name;
     private String email;
     private String password;
-    private RoleType roleType;
+    private Role role;
 
-    public Member(Long id, String name, String email, String password, RoleType roleType) {
+    public Member(Long id, String name, String email, String password, Role role) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.roleType = roleType;
+        this.role = role;
     }
 
     public Member(Long id, String name, String email, String password) {
@@ -30,10 +30,11 @@ public class Member {
         this.name = name;
     }
 
-    public Member(String name, String email, String password) {
+    public Member(String name, String email, String password, Role role) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public Long getId() {
@@ -52,8 +53,8 @@ public class Member {
         return password;
     }
 
-    public RoleType getRoleType() {
-        return roleType;
+    public Role getRole() {
+        return role;
     }
 
     public Member toEntity(Member member, Long id) {
@@ -61,7 +62,7 @@ public class Member {
                 , member.getName()
                 , member.getName()
                 , member.getPassword()
-                , member.getRoleType());
+                , member.getRole());
     }
 
     @Override
