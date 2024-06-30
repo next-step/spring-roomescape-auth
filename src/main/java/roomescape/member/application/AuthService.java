@@ -12,11 +12,11 @@ import roomescape.member.infra.JwtTokenProvider;
 @Service
 public class AuthService {
 
-    private final JwtTokenProvider jwtTokenProvide;
+    private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
 
-    public AuthService(final JwtTokenProvider jwtTokenProvide, final MemberRepository memberRepository) {
-        this.jwtTokenProvide = jwtTokenProvide;
+    public AuthService(final JwtTokenProvider jwtTokenProvider, final MemberRepository memberRepository) {
+        this.jwtTokenProvider = jwtTokenProvider;
         this.memberRepository = memberRepository;
     }
 
@@ -25,7 +25,7 @@ public class AuthService {
         checkMember(loginMember);
         final Long id = memberRepository.findIdByEmail(loginMember.getEmail());
 
-        String accessToken = jwtTokenProvide.createToken(String.valueOf(id));
+        String accessToken = jwtTokenProvider.createToken(String.valueOf(id));
         return new TokenResponseDto(accessToken);
     }
 
@@ -37,21 +37,21 @@ public class AuthService {
     }
 
     public MemberResponseDto findMemberName(final String token) {
-        final boolean isTokenExpired = jwtTokenProvide.validateToken(token);
+        final boolean isTokenExpired = jwtTokenProvider.validateToken(token);
         if (!isTokenExpired) {
             throw new AuthorizationException("만료된 토큰입니다.");
         }
-        final String id = jwtTokenProvide.extractMemberIdFromToken(token);
+        final String id = jwtTokenProvider.extractMemberIdFromToken(token);
         final String nameById = memberRepository.findNameById(Long.parseLong(id));
         return new MemberResponseDto(nameById);
     }
 
     public MemberResponseDto findMember(final String token){
-        final boolean isTokenExpired = jwtTokenProvide.validateToken(token);
-        if (!isTokenExpired) {
+        final boolean isTokenValid = jwtTokenProvider.validateToken(token);
+        if (!isTokenValid) {
             throw new AuthorizationException("만료된 토큰입니다.");
         }
-        final String id = jwtTokenProvide.extractMemberIdFromToken(token);
+        final String id = jwtTokenProvider.extractMemberIdFromToken(token);
         final Member foundMember = memberRepository.findMemberById(Long.parseLong(id));
         return new MemberResponseDto(foundMember.getId(), foundMember.getName(), foundMember.getEmail(), foundMember.getRole());
     }

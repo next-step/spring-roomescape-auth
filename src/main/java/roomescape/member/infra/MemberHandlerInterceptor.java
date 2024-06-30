@@ -10,8 +10,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import roomescape.member.application.AuthService;
 import roomescape.member.dto.MemberResponseDto;
 
-import java.io.IOException;
-
 import static roomescape.member.infra.TokenUtil.extractTokenFromCookie;
 
 @Component
@@ -25,14 +23,14 @@ public class MemberHandlerInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         final Cookie[] cookies = request.getCookies();
         final String token = extractTokenFromCookie(cookies);
         final MemberResponseDto member = authService.findMember(token);
 
         LOGGER.info("check role of member : {}", member);
 
-        if (member == null || !member.getRole().equals("ADMIN")) {
+        if (member == null || !"ADMIN".equals(member.getRole())) {
             response.setStatus(401);
             return false;
         }
