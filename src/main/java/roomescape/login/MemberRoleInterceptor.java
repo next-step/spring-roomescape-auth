@@ -1,6 +1,7 @@
 package roomescape.login;
 
-import jakarta.servlet.http.Cookie;
+import static roomescape.util.CookieUtils.getCookie;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -20,21 +21,13 @@ public class MemberRoleInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
         Object handler) throws Exception {
-        Cookie[] cookies = request.getCookies();
-
-        if (cookies == null || cookies.length == 0) {
-            throw new AuthenticationException();
-        }
-
-        String token = Arrays.stream(cookies)
-            .filter(cookie -> "token".equals(cookie.getName()))
-            .findFirst()
+        String token = getCookie(request, "token")
             .orElseThrow(AuthenticationException::new)
             .getValue();
 
         MemberRole role = jwtTokenProvider.getMemberRole(token);
 
-        if(!role.equals(MemberRole.ADMIN)) {
+        if (!role.equals(MemberRole.ADMIN)) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return false;
         }
