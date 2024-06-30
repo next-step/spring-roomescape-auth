@@ -36,7 +36,8 @@ CREATE TABLE member
     id BIGINT   NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(255)
 );
 
 INSERT INTO reservation_time (start_at)
@@ -51,7 +52,7 @@ VALUES ('테마1', '설명1', '썸네일1');
 INSERT INTO theme (name, description, thumbnail)
 VALUES ('테마2', '설명2', '썸네일2');
 
-INSERT INTO member (name, email, password)
-VALUES ('제이슨', 'json@email.com', '1234');
-INSERT INTO member (name, email, password)
-VALUES ('조던', 'jordon@email.com', '1234');
+INSERT INTO member (name, email, password, role)
+VALUES ('제이슨', 'json@email.com', '1234', 'ADMIN');
+INSERT INTO member (name, email, password, role)
+VALUES ('조던', 'jordon@email.com', '1234', 'MEMBER');

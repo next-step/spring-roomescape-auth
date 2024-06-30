@@ -176,8 +176,8 @@ function onReservationButtonClick() {
     }
     const reservationData = {
       date: selectedDate,
-      reservationTimeRequestDto: timeData,
-      reservationThemeRequestDto: themeData
+      time: timeData,
+      theme: themeData
   //    name: name
     };
     const token = getCookie('token');
