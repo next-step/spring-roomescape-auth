@@ -19,7 +19,7 @@ public class LogoutController {
     }
 
     @PostMapping
-    public void logout(@Authenticated LoginMember loginMember, HttpServletResponse response) {
+    public void logout(HttpServletResponse response) {
         Cookie token = authService.logout();
         response.addCookie(token);
     }
