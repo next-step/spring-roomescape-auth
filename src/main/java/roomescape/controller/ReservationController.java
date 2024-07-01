@@ -1,6 +1,7 @@
 package roomescape.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +19,7 @@ import roomescape.domain.theme.ThemeService;
 import roomescape.entities.Reservation;
 import roomescape.entities.ReservationTime;
 import roomescape.entities.Theme;
+import roomescape.util.TokenUtil;
 
 import java.util.List;
 
@@ -37,7 +39,9 @@ public class ReservationController {
 
   @PostMapping
   public ResponseEntity<Reservation> saveReservation(
-    @RequestBody ReservationAddRequestDto reservationAddRequestDto) {
+    @RequestBody ReservationAddRequestDto reservationAddRequestDto, HttpServletRequest httpServletRequest) {
+    String token = TokenUtil.extractTokenFromCookie(httpServletRequest.getCookies());
+    String email = TokenUtil.getEmailFromToken(token);
     Reservation reservation = reservationService.saveReservation(
       reservationAddRequestDto);
 

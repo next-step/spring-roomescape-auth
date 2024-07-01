@@ -22,6 +22,8 @@ import roomescape.util.TokenUtil;
 
 import java.util.Date;
 
+import static roomescape.util.TokenUtil.secretKey;
+
 @RequiredArgsConstructor
 @PropertySource("classpath:application.yml")
 @Controller
@@ -30,8 +32,6 @@ public class SignController {
 
   private final MemberService memberService;
 
-  @Value("${jwt.secret}")
-  private String secretKey;
 
   @GetMapping("/login")
   public String login() {
@@ -44,7 +44,7 @@ public class SignController {
     String accessToken = Jwts.builder()
       .setSubject(loginRequest.getEmail())
       .claim("email", loginRequest.getEmail())
-      .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+      .signWith(Keys.hmacShaKeyFor(TokenUtil.getSecretKey().getBytes()))
       .setIssuedAt(new Date())
       .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간
       .compact();
@@ -59,7 +59,7 @@ public class SignController {
     Cookie[] cookies = request.getCookies();
     String token = TokenUtil.extractTokenFromCookie(cookies);
     String email = Jwts.parserBuilder()
-      .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+      .setSigningKey(Keys.hmacShaKeyFor(TokenUtil.getSecretKey().getBytes()))
       .build()
       .parseClaimsJws(token)
       .getBody()
