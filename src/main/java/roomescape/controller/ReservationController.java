@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import roomescape.auth.LoginUserEmail;
+import roomescape.auth.UserEmail;
 import roomescape.domain.reservation.ReservationService;
 import roomescape.dto.ReservationAddRequestDto;
 import roomescape.dto.ReservationResponseDto;
@@ -39,9 +41,9 @@ public class ReservationController {
 
   @PostMapping
   public ResponseEntity<Reservation> saveReservation(
-    @RequestBody ReservationAddRequestDto reservationAddRequestDto, HttpServletRequest httpServletRequest) {
-    String token = TokenUtil.extractTokenFromCookie(httpServletRequest.getCookies());
-    String email = TokenUtil.getEmailFromToken(token);
+    @RequestBody ReservationAddRequestDto reservationAddRequestDto,
+    @UserEmail LoginUserEmail loginUserEmail) {
+    String email = TokenUtil.getEmailFromToken(loginUserEmail.getToken());
     Reservation reservation = reservationService.saveReservation(
       reservationAddRequestDto);
 

@@ -3,6 +3,7 @@ package roomescape.domain.reservation;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import roomescape.auth.UserEmail;
 import roomescape.domain.reservationtime.ReservationTimeService;
 import roomescape.domain.theme.ThemeService;
 import roomescape.dto.ReservationAddRequestDto;
@@ -31,6 +32,7 @@ public class ReservationService {
   }
 
   public Reservation saveReservation(ReservationAddRequestDto reservationAddRequestDto) {
+
     ReservationTime reservationTime = reservationTimeService.findById(
       reservationAddRequestDto.getTimeId());
 
