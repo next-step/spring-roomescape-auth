@@ -1,5 +1,6 @@
 package roomescape.entities;
 
+import lombok.Builder;
 import roomescape.errors.ErrorCode;
 import roomescape.exceptions.RoomEscapeException;
 
@@ -7,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Builder
 public class Reservation {
   private Long id;
   private String name;

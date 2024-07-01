@@ -37,15 +37,8 @@ public class ReservationController {
   @PostMapping
   public ResponseEntity<Reservation> saveReservation(
     @RequestBody ReservationAddRequestDto reservationAddRequestDto) {
-    ReservationTime reservationTime = reservationTimeService.findById(
-      reservationAddRequestDto.getTimeId());
-    Theme theme = themeService.findById(reservationAddRequestDto.getThemeId());
-
     Reservation reservation = reservationService.saveReservation(
-      new Reservation(reservationAddRequestDto.getName(),
-        reservationAddRequestDto.getDate(),
-        reservationTime,
-        theme));
+      reservationAddRequestDto);
 
     return ResponseEntity.ok().body(reservation);
   }
