@@ -51,7 +51,7 @@ public class ReservationTimeController {
         ReservationTimeResponse reservationTime = reservationTimeService.findOne(id);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .location(URI.create("/times/" + reservationTime.getId()))
+                .location(URI.create("/times/" + reservationTime.id()))
                 .body(reservationTime);
     }
 

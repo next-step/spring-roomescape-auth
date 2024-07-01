@@ -39,7 +39,7 @@ public class AdminReservationTest {
 
     private void makeDummyTimeAndTheme() {
         reservationTimeService.add(ReservationTimeRequest.create("13:00"));
-        themeService.add(ThemeRequest.create("theme1", "bla", "thumbnail"));
+        themeService.add(ThemeRequest.of("theme1", "bla", "thumbnail"));
     }
 
     @Test
@@ -59,6 +59,6 @@ public class AdminReservationTest {
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().as(ReservationResponse.class);
 
-        assertThat(response.getMemberName()).isEqualTo(name);
+        assertThat(response.memberName()).isEqualTo(name);
     }
 }

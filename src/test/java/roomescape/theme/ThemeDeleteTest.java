@@ -36,9 +36,9 @@ public class ThemeDeleteTest {
     
     private long makeDummyReservation() {
         long timeId = reservationTimeService.add(ReservationTimeRequest.create("13:00"));
-        long themeId = themeService.add(ThemeRequest.create("a", "b", "c"));
+        long themeId = themeService.add(ThemeRequest.of("a", "b", "c"));
         String date = LocalDate.now().plusWeeks(1).toString();
-        return reservationService.make(ReservationRequest.create("yeeun", date, timeId, themeId));
+        return reservationService.make(ReservationRequest.of("yeeun", date, timeId, themeId));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class ThemeDeleteTest {
         String name = "수키도키";
         String description = "흐르는 대로 살자 해파리처럼🪼";
         String thumbnail = "https://pbs.twimg.com/media/GApx6fjagAAkFsX.jpg";
-        themeService.add(ThemeRequest.create(name, description, thumbnail));
+        themeService.add(ThemeRequest.of(name, description, thumbnail));
 
         RestAssured
                 .given().log().all()

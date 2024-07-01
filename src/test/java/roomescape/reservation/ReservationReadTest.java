@@ -62,8 +62,8 @@ public class ReservationReadTest {
     private void makeDummyTimesAndThemes() {
         reservationTimeService.add(ReservationTimeRequest.create("13:00"));
         reservationTimeService.add(ReservationTimeRequest.create("15:00"));
-        themeService.add(ThemeRequest.create("theme1", "bla", ""));
-        themeService.add(ThemeRequest.create("theme2", "fun", ""));
+        themeService.add(ThemeRequest.of("theme1", "bla", ""));
+        themeService.add(ThemeRequest.of("theme2", "fun", ""));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ReservationReadTest {
         String token = createToken();
         String date = LocalDate.now().plusWeeks(1).toString();
         makeDummyTimesAndThemes();
-        reservationService.make(ReservationRequest.create(NAME, date, 1L, 1L));
+        reservationService.make(ReservationRequest.of(NAME, date, 1L, 1L));
 
         var response = RestAssured
                 .given().log().all()
@@ -107,7 +107,7 @@ public class ReservationReadTest {
         String token = createToken();
         String date = LocalDate.now().plusWeeks(1).toString();
         makeDummyTimesAndThemes();
-        reservationService.make(ReservationRequest.create(NAME, date,1L, 1L));
+        reservationService.make(ReservationRequest.of(NAME, date,1L, 1L));
 
         var reservation = RestAssured
                 .given().log().all()
@@ -117,8 +117,8 @@ public class ReservationReadTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(ReservationResponse.class);
 
-        assertThat(reservation.getMemberName()).isEqualTo(NAME);
-        assertThat(reservation.getDate()).isEqualTo(date);
+        assertThat(reservation.memberName()).isEqualTo(NAME);
+        assertThat(reservation.date()).isEqualTo(date);
     }
 
     @Test

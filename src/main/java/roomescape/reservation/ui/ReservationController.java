@@ -50,7 +50,7 @@ public class ReservationController {
         ReservationResponse reservation = reservationService.findOne(reservationId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .location(URI.create("/reservations/" + reservation.getId()))
+                .location(URI.create("/reservations/" + reservation.id()))
                 .body(reservation);
     }
 

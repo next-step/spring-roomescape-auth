@@ -7,22 +7,14 @@ import roomescape.reservation.domain.entity.Reservation;
 
 import java.util.List;
 
-public class ReservationResponse {
-    private final Long id;
+public record ReservationResponse(
+    Long id,
     @JsonProperty(value = "name")
-    private final String memberName;
-    private final String date;
-    private final ReservationTimeResponse time;
-    private final ThemeResponse theme;
-
-    private ReservationResponse(Long id, String name, String date, ReservationTimeResponse time, ThemeResponse theme) {
-        this.id = id;
-        this.memberName = name;
-        this.date = date;
-        this.time = time;
-        this.theme = theme;
-    }
-
+    String memberName,
+    String date,
+    ReservationTimeResponse time,
+    ThemeResponse theme
+){
     public static ReservationResponse from(Reservation reservation) {
         return new ReservationResponse(
                 reservation.getId(),
@@ -35,25 +27,5 @@ public class ReservationResponse {
 
     public static List<ReservationResponse> fromReservations(List<Reservation> reservations) {
         return reservations.stream().map(ReservationResponse::from).toList();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getMemberName() {
-        return memberName;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public ReservationTimeResponse getTime() {
-        return time;
-    }
-
-    public ThemeResponse getTheme() {
-        return theme;
     }
 }

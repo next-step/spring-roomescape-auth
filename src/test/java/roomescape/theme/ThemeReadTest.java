@@ -31,7 +31,7 @@ public class ThemeReadTest {
         String name = "수키도키";
         String description = "흐르는 대로 살자 해파리처럼🪼";
         String thumbnail = "https://pbs.twimg.com/media/GApx6fjagAAkFsX.jpg";
-        themeService.add(ThemeRequest.create(name, description, thumbnail));
+        themeService.add(ThemeRequest.of(name, description, thumbnail));
 
         var response = RestAssured
                 .given().log().all()
@@ -62,7 +62,7 @@ public class ThemeReadTest {
         String name = "수키도키";
         String description = "흐르는 대로 살자 해파리처럼🪼";
         String thumbnail = "https://pbs.twimg.com/media/GApx6fjagAAkFsX.jpg";
-        themeService.add(ThemeRequest.create(name, description, thumbnail));
+        themeService.add(ThemeRequest.of(name, description, thumbnail));
 
         var reservationTime = RestAssured
                 .given().log().all()
@@ -71,9 +71,9 @@ public class ThemeReadTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(ThemeResponse.class);
 
-        assertThat(reservationTime.getName()).isEqualTo(name);
-        assertThat(reservationTime.getDescription()).isEqualTo(description);
-        assertThat(reservationTime.getThumbnail()).isEqualTo(thumbnail);
+        assertThat(reservationTime.name()).isEqualTo(name);
+        assertThat(reservationTime.description()).isEqualTo(description);
+        assertThat(reservationTime.thumbnail()).isEqualTo(thumbnail);
     }
 
     @Test

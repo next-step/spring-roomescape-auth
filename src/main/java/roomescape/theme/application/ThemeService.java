@@ -36,9 +36,9 @@ public class ThemeService {
     public long add(ThemeRequest request) {
         themeValidator.validateRequest(request);
         return themeRepository.save(
-                request.getName(),
-                request.getDescription(),
-                request.getThumbnail()
+                request.name(),
+                request.description(),
+                request.thumbnail()
         );
     }
 

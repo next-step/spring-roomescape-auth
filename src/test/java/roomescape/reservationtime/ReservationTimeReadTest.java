@@ -67,16 +67,16 @@ public class ReservationTimeReadTest {
     @Test
     @DisplayName("예약 가능 시간 조회")
     void readBookableReservationTime() {
-        themeService.add(ThemeRequest.create("theme1", "b", "c"));
-        themeService.add(ThemeRequest.create("theme2", "b", "c"));
+        themeService.add(ThemeRequest.of("theme1", "b", "c"));
+        themeService.add(ThemeRequest.of("theme2", "b", "c"));
         reservationTimeService.add(ReservationTimeRequest.create("12:00"));
         reservationTimeService.add(ReservationTimeRequest.create("14:00"));
         reservationTimeService.add(ReservationTimeRequest.create("16:00"));
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        reservationService.make(ReservationRequest.create("yeeun", tomorrow.toString(), 1L, 1L));
-        reservationService.make(ReservationRequest.create("red", tomorrow.toString(), 2L, 2L));
-        reservationService.make(ReservationRequest.create("joy", tomorrow.toString(), 3L, 2L));
-        reservationService.make(ReservationRequest.create("pobi", tomorrow.plusDays(1).toString(), 1L, 1L));
+        reservationService.make(ReservationRequest.of("yeeun", tomorrow.toString(), 1L, 1L));
+        reservationService.make(ReservationRequest.of("red", tomorrow.toString(), 2L, 2L));
+        reservationService.make(ReservationRequest.of("joy", tomorrow.toString(), 3L, 2L));
+        reservationService.make(ReservationRequest.of("pobi", tomorrow.plusDays(1).toString(), 1L, 1L));
 
         var response1 = RestAssured
                 .given().log().all()
@@ -110,7 +110,7 @@ public class ReservationTimeReadTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(ReservationTimeResponse.class);
 
-        assertThat(reservationTime.getStartAt()).isEqualTo(startAt);
+        assertThat(reservationTime.startAt()).isEqualTo(startAt);
     }
 
     @Test

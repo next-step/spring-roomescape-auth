@@ -35,16 +35,16 @@ public class ThemeCreateTest {
 
         var body = RestAssured
                 .given().log().all()
-                .body(ThemeRequest.create(name, description, thumbnail))
+                .body(ThemeRequest.of(name, description, thumbnail))
                 .contentType(ContentType.JSON)
                 .when().post("/themes")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().as(ThemeResponse.class);
 
-        assertThat(body.getName()).isEqualTo(name);
-        assertThat(body.getDescription()).isEqualTo(description);
-        assertThat(body.getThumbnail()).isEqualTo(thumbnail);
+        assertThat(body.name()).isEqualTo(name);
+        assertThat(body.description()).isEqualTo(description);
+        assertThat(body.thumbnail()).isEqualTo(thumbnail);
     }
 
     @Test
@@ -53,11 +53,11 @@ public class ThemeCreateTest {
         String name = "수키도키";
         String description = "흐르는 대로 살자 해파리처럼🪼";
         String thumbnail = "https://pbs.twimg.com/media/GApx6fjagAAkFsX.jpg";
-        themeService.add(ThemeRequest.create(name, description, thumbnail));
+        themeService.add(ThemeRequest.of(name, description, thumbnail));
 
         RestAssured
                 .given().log().all()
-                .body(ThemeRequest.create(name, description, thumbnail))
+                .body(ThemeRequest.of(name, description, thumbnail))
                 .contentType(ContentType.JSON)
                 .when().post("/themes")
                 .then().log().all()

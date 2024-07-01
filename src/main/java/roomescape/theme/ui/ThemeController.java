@@ -44,7 +44,7 @@ public class ThemeController {
         ThemeResponse theme = themeService.findOne(themeId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .location(URI.create("/themes/" + theme.getId()))
+                .location(URI.create("/themes/" + theme.id()))
                 .body(theme);
     }
 

@@ -35,10 +35,10 @@ public class ReservationService {
     public long make(ReservationRequest request) {
         reservationValidator.validateRequest(request);
         return reservationRepository.save(
-                request.getMemberName(),
-                request.getDate(),
-                request.getTimeId(),
-                request.getThemeId()
+                request.memberName(),
+                request.date(),
+                request.timeId(),
+                request.themeId()
         );
     }
 

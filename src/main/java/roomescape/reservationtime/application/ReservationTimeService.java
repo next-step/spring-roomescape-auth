@@ -40,7 +40,7 @@ public class ReservationTimeService {
 
     public long add(ReservationTimeRequest request) {
         reservationTimeValidator.validateRequest(request);
-        return reservationTimeRepository.save(request.getStartAt());
+        return reservationTimeRepository.save(request.startAt());
     }
 
     public void delete(Long id) {

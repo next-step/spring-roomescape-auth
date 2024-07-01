@@ -42,7 +42,7 @@ public class ReservationTimeCreateTest {
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().as(ReservationTimeResponse.class);
 
-        assertThat(body.getStartAt()).isEqualTo(startAt);
+        assertThat(body.startAt()).isEqualTo(startAt);
     }
 
     @Test

@@ -63,8 +63,8 @@ public class ReservationCreateTest {
     private void makeDummyTimesAndThemes() {
         reservationTimeService.add(ReservationTimeRequest.create("13:00"));
         reservationTimeService.add(ReservationTimeRequest.create("15:00"));
-        themeService.add(ThemeRequest.create("theme1", "bla", ""));
-        themeService.add(ThemeRequest.create("theme2", "fun", ""));
+        themeService.add(ThemeRequest.of("theme1", "bla", ""));
+        themeService.add(ThemeRequest.of("theme2", "fun", ""));
     }
 
     @Test
@@ -84,8 +84,8 @@ public class ReservationCreateTest {
                 .statusCode((HttpStatus.CREATED.value()))
                 .extract().as(ReservationResponse.class);
 
-        assertThat(body.getMemberName()).isEqualTo(NAME);
-        assertThat(body.getDate()).isEqualTo(date);
+        assertThat(body.memberName()).isEqualTo(NAME);
+        assertThat(body.date()).isEqualTo(date);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ReservationCreateTest {
     void failToReserveIfReservationTimeMatchWithIdNotExist() {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
-        themeService.add(ThemeRequest.create("a", "b", "c"));
+        themeService.add(ThemeRequest.of("a", "b", "c"));
 
         RestAssured
                 .given().log().all()
@@ -162,7 +162,7 @@ public class ReservationCreateTest {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         makeDummyTimesAndThemes();
-        reservationService.make(ReservationRequest.create(NAME, date, 1L, 1L));
+        reservationService.make(ReservationRequest.of(NAME, date, 1L, 1L));
 
         RestAssured
                 .given().log().all()

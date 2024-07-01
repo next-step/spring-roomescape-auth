@@ -34,9 +34,9 @@ public class ReservationTimeDeleteTest {
 
     private long makeDummyReservation() {
         long timeId = reservationTimeService.add(ReservationTimeRequest.create("13:00"));
-        long themeId = themeService.add(ThemeRequest.create("a", "b", "c"));
+        long themeId = themeService.add(ThemeRequest.of("a", "b", "c"));
         String date = LocalDate.now().plusWeeks(1).toString();
-        return reservationService.make(ReservationRequest.create("yeeun", date, timeId, themeId));
+        return reservationService.make(ReservationRequest.of("yeeun", date, timeId, themeId));
     }
 
     @Test

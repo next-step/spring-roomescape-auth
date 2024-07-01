@@ -62,8 +62,8 @@ public class ReservationDeleteTest {
         String token = createToken();
         String date = LocalDate.now().plusWeeks(1).toString();
         reservationTimeService.add(ReservationTimeRequest.create("15:00"));
-        themeService.add(ThemeRequest.create("theme1", "bla", ""));
-        reservationService.make(ReservationRequest.create(NAME, date, 1L, 1L));
+        themeService.add(ThemeRequest.of("theme1", "bla", ""));
+        reservationService.make(ReservationRequest.of(NAME, date, 1L, 1L));
 
         RestAssured
                 .given().log().all()
