@@ -10,7 +10,6 @@ public class TokenUtil {
         return cookie.getValue();
       }
     }
-
-    return null;
+    throw new IllegalArgumentException("토큰이 존재하지 않습니다.");
   }
 }
