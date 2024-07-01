@@ -40,8 +40,7 @@ public class ThemeController {
 
     @PostMapping
     public ResponseEntity<ThemeResponse> create(@RequestBody @Valid ThemeRequest request) {
-        long themeId = themeService.add(request);
-        ThemeResponse theme = themeService.findOne(themeId);
+        ThemeResponse theme = themeService.add(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .location(URI.create("/themes/" + theme.id()))
