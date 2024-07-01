@@ -1,8 +1,8 @@
 package roomescape.login;
 
-import jakarta.servlet.http.Cookie;
+import static roomescape.util.CookieUtils.getCookie;
+
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -30,17 +30,10 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         if (servletRequest == null) {
             throw new AuthenticationException();
         }
-        Cookie[] cookies = servletRequest.getCookies();
 
-        if (cookies == null || cookies.length == 0) {
-            throw new AuthenticationException();
-        }
-
-        String token = Arrays.stream(cookies)
-                            .filter(cookie -> "token".equals(cookie.getName()))
-                            .findFirst()
-                            .orElseThrow(AuthenticationException::new)
-                            .getValue();
+        String token = getCookie(servletRequest, "token")
+            .orElseThrow(AuthenticationException::new)
+            .getValue();
 
         return jwtTokenProvider.getLoginMember(token);
     }

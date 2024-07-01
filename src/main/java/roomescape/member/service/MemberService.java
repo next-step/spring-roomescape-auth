@@ -34,6 +34,6 @@ public class MemberService implements LoginMemberService {
             throw new PasswordNotMatchedException();
         }
 
-        return new LoginMember(member.getId(), member.getEmail(), member.getName());
+        return new LoginMember(member.getId(), member.getName(), member.getRole());
     }
 }

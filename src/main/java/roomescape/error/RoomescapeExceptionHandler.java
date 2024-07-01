@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.format.DateTimeParseException;
 import roomescape.error.exception.AuthenticationException;
+import roomescape.error.exception. IllegalMemberRoleException;
 import roomescape.error.exception.NotExistsException;
 import roomescape.error.exception.PasswordNotMatchedException;
 import roomescape.error.exception.PastDateTimeException;
@@ -78,10 +79,17 @@ public class RoomescapeExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<RoomescapeExceptionResponse> hadleAuthenticationException(
+    public ResponseEntity<RoomescapeExceptionResponse> handleAuthenticationException(
         AuthenticationException e) {
         return new ResponseEntity<>(RoomescapeExceptionResponse.of(e.getMessage()),
                                     HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(IllegalMemberRoleException.class)
+    public ResponseEntity<RoomescapeExceptionResponse> handleIllegalMemberRoleException(
+        IllegalMemberRoleException e) {
+        return new ResponseEntity<>(RoomescapeExceptionResponse.of(e.getMessage()),
+            HttpStatus.UNAUTHORIZED);
     }
 
 }

@@ -20,6 +20,7 @@ CREATE TABLE member
     email VARCHAR(45) NOT NULL,
     password VARCHAR(45) NOT NULL,
     name VARCHAR(30) NOT NULL,
+    role VARCHAR(15) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -35,6 +36,3 @@ CREATE TABLE reservation
     FOREIGN KEY (time_id) REFERENCES reservation_time (id),
     FOREIGN KEY (theme_id) REFERENCES theme (id)
 );
-
-
-INSERT INTO member (email, password, name) VALUES ('test@test.com', 'password', 'test');

@@ -15,8 +15,10 @@ import roomescape.reservationTime.dto.ReservationTimeRequest;
 import roomescape.theme.dto.ThemeRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
+import static roomescape.step.LoginStep.관리자_토큰_생성;
 import static roomescape.step.ReservationStep.예약_등록;
+import static roomescape.step.ReservationTimeStep.예약_시간_등록;
+import static roomescape.step.ThemeStep.테마_등록;
 
 @DisplayName("예약 관련 api 호출 테스트")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -27,23 +29,8 @@ public class ReservationAcceptanceTest {
 
     @BeforeEach
     void 예약_시간_및_테마_등록() {
-        ReservationTimeRequest reservationTimeRequest = new ReservationTimeRequest("12:00");
-        ThemeRequest themeRequest = new ThemeRequest("탈출 미션", "탈출하는 내용입니다.", "thumbnail.jpg");
-
-        RestAssured.given().log().all()
-            .contentType(ContentType.JSON)
-            .body(reservationTimeRequest)
-            .when().post("/times")
-            .then().log().all()
-            .statusCode(201);
-
-        RestAssured.given().log().all()
-            .contentType(ContentType.JSON)
-            .body(themeRequest)
-            .when().post("/themes")
-            .then().log().all()
-            .statusCode(201)
-            .body("id", is(1));
+        예약_시간_등록(new ReservationTimeRequest("12:00"));
+        테마_등록(new ThemeRequest("탈출 미션", "탈출하는 내용입니다.", "thumbnail.jpg"));
     }
 
     @Test
@@ -57,6 +44,7 @@ public class ReservationAcceptanceTest {
     void 관리자용_예약_등록_성공() {
         RestAssured.given().log().all()
             .contentType(ContentType.JSON)
+            .cookie("token", 관리자_토큰_생성())
             .body(new AdminReservationRequest(1L, "2025-08-05", 1L, 1L))
             .when().post("/admin/reservations")
             .then().log().all()
