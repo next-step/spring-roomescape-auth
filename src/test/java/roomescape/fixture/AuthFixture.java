@@ -7,7 +7,7 @@ import roomescape.dto.request.LoginRequest;
 
 public class AuthFixture {
 
-    public static Response 사용자_로그인(String email, String password) {
+    public static Response 로그인(String email, String password) {
         return RestAssured
                 .given().log().all()
                 .body(new LoginRequest(email, password))

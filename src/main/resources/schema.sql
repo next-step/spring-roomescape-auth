@@ -26,11 +26,22 @@ CREATE TABLE reservation
     FOREIGN KEY (theme_id) REFERENCES theme (id)
 );
 
+CREATE TABLE role
+(
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE member
 (
     id BIGINT NOT NULL AUTO_INCREMENT,
     email VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    PRIMARY KEY (id)
+    role_id BIGINT,
+    PRIMARY KEY (id),
+    FOREIGN KEY (role_id) REFERENCES role (id)
 );
+
+

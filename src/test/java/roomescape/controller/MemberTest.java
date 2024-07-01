@@ -11,13 +11,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import roomescape.exception.custom.DuplicateMemberException;
 
+@Sql("classpath:table_init.sql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @DisplayName("사용자 테스트")
 public class MemberTest {
 
+    private static final int DEFAULT_ACCOUNT_SIZE = 2;
     private static final String EMAIL = "test@email.com";
     private static final String PASSWORD = "1234";
     private static final String NAME = "테스트";
@@ -68,6 +71,6 @@ public class MemberTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().get("/members")
                 .then().log().all()
-                .body("size()", is(5));
+                .body("size()", is(5 + DEFAULT_ACCOUNT_SIZE));
     }
 }

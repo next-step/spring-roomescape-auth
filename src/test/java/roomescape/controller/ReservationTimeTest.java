@@ -1,7 +1,7 @@
 package roomescape.controller;
 
 import static org.hamcrest.Matchers.is;
-import static roomescape.fixture.AuthFixture.사용자_로그인;
+import static roomescape.fixture.AuthFixture.로그인;
 import static roomescape.fixture.MemberFixture.회원가입;
 import static roomescape.fixture.ReservationFixture.예약을_생성한다;
 import static roomescape.fixture.ReservationThemeFixture.예약테마를_생성한다;
@@ -18,9 +18,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import roomescape.exception.custom.DuplicateTimeException;
 import roomescape.exception.custom.ReservationTimeConflictException;
+import roomescape.fixture.DateFixture;
 
+@Sql("classpath:table_init.sql")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @DisplayName("예약시간 테스트")
@@ -35,7 +38,7 @@ public class ReservationTimeTest {
     void init() {
         회원가입(EMAIL, PASSWORD, NAME);
 
-        Response response = 사용자_로그인(EMAIL, PASSWORD);
+        Response response = 로그인(EMAIL, PASSWORD);
         token = response.getCookie("token");
     }
 
@@ -145,7 +148,7 @@ public class ReservationTimeTest {
 
         params.clear();
         params.put("name", "브라운");
-        params.put("date", "2024-06-25");
+        params.put("date", DateFixture.formatDate("yyyy-MM-dd", 1));
         params.put("timeId", 1L);
         params.put("themeId", 1L);
         예약을_생성한다(params, token);
@@ -180,14 +183,15 @@ public class ReservationTimeTest {
 
         params.clear();
         params.put("name", "브라운");
-        params.put("date", "2024-06-25");
+        String date = DateFixture.formatDate("yyyy-MM-dd", 1);
+        params.put("date", date);
         params.put("timeId", 1L);
         params.put("themeId", 1L);
         예약을_생성한다(params, token);
 
         RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
-                .when().get("/times/available?date=2024-06-25&themeId=1")
+                .when().get("/times/available?date=" + date + "&themeId=1")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .body("size()", is(1));
