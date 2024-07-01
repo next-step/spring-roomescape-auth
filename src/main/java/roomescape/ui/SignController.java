@@ -46,7 +46,7 @@ public class SignController {
       .claim("email", loginRequest.getEmail())
       .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
       .setIssuedAt(new Date())
-      .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+      .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간
       .compact();
     Cookie cookie = new Cookie("token", accessToken);
     response.addCookie(cookie);
