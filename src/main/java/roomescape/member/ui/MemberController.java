@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import roomescape.member.application.MemberService;
+import roomescape.member.application.FindMemberService;
 import roomescape.member.application.SignUpService;
 import roomescape.member.ui.dto.MemberRequest;
 import roomescape.member.ui.dto.MemberResponse;
@@ -20,23 +20,23 @@ import java.util.List;
 @Controller
 @RequestMapping("members")
 public class MemberController {
-    private final MemberService memberService;
+    private final FindMemberService findMemberService;
     private final SignUpService signUpService;
 
-    public MemberController(MemberService memberService, SignUpService signUpService) {
-        this.memberService = memberService;
+    public MemberController(FindMemberService findMemberService, SignUpService signUpService) {
+        this.findMemberService = findMemberService;
         this.signUpService = signUpService;
     }
 
     @GetMapping
     public ResponseEntity<List<MemberResponse>> readAll() {
-        List<MemberResponse> memberResponses = memberService.findAll();
+        List<MemberResponse> memberResponses = findMemberService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(memberResponses);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<MemberResponse> readOne(@PathVariable Long id) {
-        MemberResponse memberResponse = memberService.findOne(id);
+        MemberResponse memberResponse = findMemberService.findOne(id);
         return ResponseEntity.status(HttpStatus.OK).body(memberResponse);
     }
 

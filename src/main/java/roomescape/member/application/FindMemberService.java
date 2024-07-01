@@ -9,10 +9,10 @@ import roomescape.member.ui.dto.MemberResponse;
 import java.util.List;
 
 @Service
-public class MemberService {
+public class FindMemberService {
     private final MemberRepository memberRepository;
 
-    public MemberService(MemberRepository memberRepository) {
+    public FindMemberService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
