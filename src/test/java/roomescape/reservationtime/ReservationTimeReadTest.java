@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.member.application.SignUpService;
+import roomescape.member.ui.dto.MemberRequest;
 import roomescape.reservation.application.ReservationService;
 import roomescape.reservation.ui.dto.ReservationRequest;
 import roomescape.reservationtime.application.ReservationTimeService;
@@ -29,6 +31,8 @@ public class ReservationTimeReadTest {
     private ReservationTimeService reservationTimeService;
     @Autowired
     private ThemeService themeService;
+    @Autowired
+    private SignUpService signUpService;
 
     @BeforeEach
     public void setPort() {
@@ -72,11 +76,12 @@ public class ReservationTimeReadTest {
         reservationTimeService.add(ReservationTimeRequest.create("12:00"));
         reservationTimeService.add(ReservationTimeRequest.create("14:00"));
         reservationTimeService.add(ReservationTimeRequest.create("16:00"));
+        signUpService.signUp(new MemberRequest("yeeun", "asdf@asdf", "password"));
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        reservationService.make(ReservationRequest.of("yeeun", tomorrow.toString(), 1L, 1L));
-        reservationService.make(ReservationRequest.of("red", tomorrow.toString(), 2L, 2L));
-        reservationService.make(ReservationRequest.of("joy", tomorrow.toString(), 3L, 2L));
-        reservationService.make(ReservationRequest.of("pobi", tomorrow.plusDays(1).toString(), 1L, 1L));
+        reservationService.make(ReservationRequest.of(1L, tomorrow.toString(), 1L, 1L));
+        reservationService.make(ReservationRequest.of(1L, tomorrow.toString(), 2L, 2L));
+        reservationService.make(ReservationRequest.of(1L, tomorrow.toString(), 3L, 2L));
+        reservationService.make(ReservationRequest.of(1L, tomorrow.plusDays(1).toString(), 1L, 1L));
 
         var response1 = RestAssured
                 .given().log().all()

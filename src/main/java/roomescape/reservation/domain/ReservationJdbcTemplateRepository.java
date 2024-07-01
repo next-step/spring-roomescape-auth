@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import roomescape.member.domain.entity.Member;
 import roomescape.reservation.domain.entity.Reservation;
 import roomescape.reservationtime.domain.entity.ReservationTime;
 import roomescape.theme.domain.entity.Theme;
@@ -23,6 +24,12 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
     }
 
     private final RowMapper<Reservation> rowMapper = (resultSet, rowNum) -> {
+        Member member = Member.of(
+                resultSet.getLong("member_id"),
+                resultSet.getString("member_name"),
+                resultSet.getString("member_email"),
+                null
+        );
         ReservationTime reservationTime = ReservationTime.of(
                 resultSet.getLong("time_id"),
                 resultSet.getString("time_start_at")
@@ -35,7 +42,7 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
         );
         return Reservation.of(
                 resultSet.getLong("reservation_id"),
-                resultSet.getString("reservation_name"),
+                member,
                 resultSet.getString("reservation_date"),
                 reservationTime,
                 theme
@@ -47,7 +54,9 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
         String sql = """
                 SELECT
                     r.id as reservation_id,
-                    r.name as reservation_name,
+                    m.id as member_id,
+                    m.name as member_name,
+                    m.email as member_email,
                     r.date as reservation_date,
                     t.id as time_id,
                     t.start_at as time_start_at,
@@ -56,6 +65,8 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
                     th.description as theme_description,
                     th.thumbnail as theme_thumbnail
                 FROM reservation as r
+                INNER JOIN member as m
+                    ON r.member_id = m.id
                 INNER JOIN reservation_time as t
                     ON r.time_id = t.id
                 INNER JOIN theme as th
@@ -69,7 +80,9 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
         String sql = """
                     SELECT
                         r.id as reservation_id,
-                        r.name as reservation_name,
+                        m.id as member_id,
+                        m.name as member_name,
+                        m.email as member_email,
                         r.date as reservation_date,
                         t.id as time_id,
                         t.start_at as time_start_at,
@@ -78,6 +91,8 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
                         th.description as theme_description,
                         th.thumbnail as theme_thumbnail
                     FROM reservation as r
+                    INNER JOIN member as m
+                        ON r.member_id = m.id
                     INNER JOIN reservation_time as t
                         ON r.time_id = t.id
                     INNER JOIN theme as th
@@ -108,16 +123,16 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
     }
 
     @Override
-    public long save(String name, String date, Long timeId, Long themeId) {
+    public long save(Long memberId, String date, Long timeId, Long themeId) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             String sql = """
                         insert into reservation
-                        (name, date, time_id, theme_id)
+                        (member_id, date, time_id, theme_id)
                         values (?, ?, ?, ?)
                         """;
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-            ps.setString(1, name);
+            ps.setLong(1, memberId);
             ps.setString(2, date);
             ps.setLong(3, timeId);
             ps.setLong(4, themeId);

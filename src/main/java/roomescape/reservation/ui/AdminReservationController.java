@@ -27,8 +27,8 @@ public class AdminReservationController {
 
     @PostMapping
     public ResponseEntity<ReservationResponse> create(@RequestBody @Valid AdminReservationRequest adminReservationRequest) {
-        String memberName = findMemberService.findOne(adminReservationRequest.memberId()).name();
-        ReservationRequest request = ReservationRequest.fromAdminRequest(memberName, adminReservationRequest);
+        Long memberId = findMemberService.findOne(adminReservationRequest.memberId()).id();
+        ReservationRequest request = ReservationRequest.fromAdminRequest(memberId, adminReservationRequest);
         ReservationResponse reservationResponse = reservationService.make(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservationResponse);
     }

@@ -63,7 +63,7 @@ public class ReservationDeleteTest {
         String date = LocalDate.now().plusWeeks(1).toString();
         reservationTimeService.add(ReservationTimeRequest.create("15:00"));
         themeService.add(ThemeRequest.of("theme1", "bla", ""));
-        reservationService.make(ReservationRequest.of(NAME, date, 1L, 1L));
+        reservationService.make(ReservationRequest.of(1L, date, 1L, 1L));
 
         RestAssured
                 .given().log().all()

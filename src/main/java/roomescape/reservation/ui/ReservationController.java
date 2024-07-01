@@ -45,7 +45,7 @@ public class ReservationController {
     public ResponseEntity<ReservationResponse> create(
             @RequestBody @Valid CookieReservationRequest cookieReservationRequest,
             @Authenticated LoginMember loginMember) {
-        ReservationRequest request = ReservationRequest.fromCookieRequest(loginMember.name(), cookieReservationRequest);
+        ReservationRequest request = ReservationRequest.fromCookieRequest(loginMember.id(), cookieReservationRequest);
         ReservationResponse reservation = reservationService.make(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

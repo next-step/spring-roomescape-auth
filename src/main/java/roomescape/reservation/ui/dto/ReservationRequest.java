@@ -4,26 +4,26 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ReservationRequest(
-    @NotBlank String memberName,
+    @NotNull Long memberId,
     @NotBlank String date,
     @NotNull Long timeId,
     @NotNull Long themeId
 ) {
-    public static ReservationRequest of(String memberName, String date, Long timeId, Long themeId) {
-        return new ReservationRequest(memberName, date, timeId, themeId);
+    public static ReservationRequest of(Long memberId, String date, Long timeId, Long themeId) {
+        return new ReservationRequest(memberId, date, timeId, themeId);
     }
 
-    public static ReservationRequest fromCookieRequest(String memberName, CookieReservationRequest request) {
+    public static ReservationRequest fromCookieRequest(Long memberId, CookieReservationRequest request) {
         return new ReservationRequest(
-                memberName,
+                memberId,
                 request.date(),
                 request.timeId(),
                 request.themeId());
     }
 
-    public static ReservationRequest fromAdminRequest(String memberName, AdminReservationRequest request) {
+    public static ReservationRequest fromAdminRequest(Long memberId, AdminReservationRequest request) {
         return new ReservationRequest(
-                memberName,
+                memberId,
                 request.date(),
                 request.timeId(),
                 request.themeId());

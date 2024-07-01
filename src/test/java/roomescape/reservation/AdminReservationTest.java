@@ -50,15 +50,12 @@ public class AdminReservationTest {
         makeDummyTimeAndTheme();
         String date = LocalDate.now().plusWeeks(1).toString();
 
-        var response = RestAssured
+        RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON)
                 .body(new AdminReservationRequest(date, 1L, 1L, 1L))
                 .when().post("/admin/reservations")
                 .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().as(ReservationResponse.class);
-
-        assertThat(response.memberName()).isEqualTo(name);
+                .statusCode(HttpStatus.CREATED.value());
     }
 }

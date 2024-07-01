@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.member.application.SignUpService;
+import roomescape.member.ui.dto.MemberRequest;
 import roomescape.reservation.application.ReservationService;
 import roomescape.reservation.ui.dto.ReservationRequest;
 import roomescape.reservationtime.application.ReservationTimeService;
@@ -26,6 +28,8 @@ public class ReservationTimeDeleteTest {
     private ReservationTimeService reservationTimeService;
     @Autowired
     private ThemeService themeService;
+    @Autowired
+    private SignUpService signUpService;
 
     @BeforeEach
     public void setPort() {
@@ -33,10 +37,11 @@ public class ReservationTimeDeleteTest {
     }
 
     private long makeDummyReservation() {
+        long memberId = signUpService.signUp(new MemberRequest("yeeun", "asdf@asdf", "password")).id();
         long timeId = reservationTimeService.add(ReservationTimeRequest.create("13:00")).id();
         long themeId = themeService.add(ThemeRequest.of("a", "b", "c")).id();
         String date = LocalDate.now().plusWeeks(1).toString();
-        return reservationService.make(ReservationRequest.of("yeeun", date, timeId, themeId)).id();
+        return reservationService.make(ReservationRequest.of(memberId, date, timeId, themeId)).id();
     }
 
     @Test

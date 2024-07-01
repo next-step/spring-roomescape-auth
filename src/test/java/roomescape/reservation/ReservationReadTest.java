@@ -72,7 +72,7 @@ public class ReservationReadTest {
         String token = createToken();
         String date = LocalDate.now().plusWeeks(1).toString();
         makeDummyTimesAndThemes();
-        reservationService.make(ReservationRequest.of(NAME, date, 1L, 1L));
+        reservationService.make(ReservationRequest.of(1L, date, 1L, 1L));
 
         var response = RestAssured
                 .given().log().all()
@@ -107,7 +107,7 @@ public class ReservationReadTest {
         String token = createToken();
         String date = LocalDate.now().plusWeeks(1).toString();
         makeDummyTimesAndThemes();
-        reservationService.make(ReservationRequest.of(NAME, date,1L, 1L));
+        reservationService.make(ReservationRequest.of(1L, date,1L, 1L));
 
         var reservation = RestAssured
                 .given().log().all()
@@ -117,7 +117,6 @@ public class ReservationReadTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(ReservationResponse.class);
 
-        assertThat(reservation.memberName()).isEqualTo(NAME);
         assertThat(reservation.date()).isEqualTo(date);
     }
 

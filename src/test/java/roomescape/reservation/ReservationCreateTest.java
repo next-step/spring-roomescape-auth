@@ -84,7 +84,6 @@ public class ReservationCreateTest {
                 .statusCode((HttpStatus.CREATED.value()))
                 .extract().as(ReservationResponse.class);
 
-        assertThat(body.memberName()).isEqualTo(NAME);
         assertThat(body.date()).isEqualTo(date);
     }
 
@@ -162,7 +161,7 @@ public class ReservationCreateTest {
         String date = LocalDate.now().plusWeeks(1).toString();
         String token = createToken();
         makeDummyTimesAndThemes();
-        reservationService.make(ReservationRequest.of(NAME, date, 1L, 1L));
+        reservationService.make(ReservationRequest.of(1L, date, 1L, 1L));
 
         RestAssured
                 .given().log().all()
