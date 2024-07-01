@@ -7,8 +7,8 @@ import roomescape.errors.ErrorCode;
 import roomescape.exceptions.RoomEscapeException;
 import roomescape.repositories.ReservationRepository;
 import roomescape.repositories.ReservationTimeRepository;
-import roomescape.domain.reservationtime.data.AvailableTimeResponse;
-import roomescape.domain.reservationtime.data.ReservationTimeAddRequestDto;
+import roomescape.dto.AvailableTimeResponse;
+import roomescape.dto.ReservationTimeAddRequestDto;
 
 import java.util.List;
 

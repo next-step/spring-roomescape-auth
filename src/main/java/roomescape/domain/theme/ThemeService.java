@@ -2,7 +2,7 @@ package roomescape.domain.theme;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import roomescape.domain.theme.data.ThemeAddRequestDto;
+import roomescape.dto.ThemeAddRequestDto;
 import roomescape.entities.Theme;
 import roomescape.repositories.ThemeRepository;
 

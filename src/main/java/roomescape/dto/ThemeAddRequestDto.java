@@ -1,4 +1,4 @@
-package roomescape.domain.theme.data;
+package roomescape.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
