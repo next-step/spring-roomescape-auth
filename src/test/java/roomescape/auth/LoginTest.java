@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.auth;
 
 import io.restassured.RestAssured;
 import jakarta.servlet.http.Cookie;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.auth.application.LoginService;
+import roomescape.auth.application.AuthService;
 import roomescape.auth.ui.dto.LoginCheckResponse;
 import roomescape.auth.ui.dto.LoginRequest;
 import roomescape.member.application.SignUpService;
@@ -23,7 +23,7 @@ public class LoginTest {
     @Autowired
     private SignUpService signUpService;
     @Autowired
-    private LoginService loginService;
+    private AuthService loginService;
     private final String NAME = "yeeun";
     private final String EMAIL = "anna862700@gmail.com";
     private final String PASSWORD = "password";
@@ -34,8 +34,8 @@ public class LoginTest {
     }
 
     @Test
-    @DisplayName("LoginController - login()")
-    void 로그인() {
+    @DisplayName("로그인")
+    void login() {
         signUpService.signUp(new MemberRequest(NAME, EMAIL, PASSWORD));
 
         var response = RestAssured
@@ -51,8 +51,8 @@ public class LoginTest {
     }
 
     @Test
-    @DisplayName("LoginController - readMemberName()")
-    void 로그인_후_받은_토큰_통해_사용자_이름_얻기() {
+    @DisplayName("로그인 성공 후 얻은 토큰 통해서 회원 이름 얻기")
+    void getMemberNameThroughTokenAfterLoginSuccess() {
         signUpService.signUp(new MemberRequest(NAME, EMAIL, PASSWORD));
         Cookie token = loginService.login(new LoginRequest(EMAIL, PASSWORD));
 

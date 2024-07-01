@@ -11,6 +11,6 @@ public interface ReservationTimeRepository {
     Optional<ReservationTime> findById(Long id);
     Optional<ReservationTime> findByStartAt(String startAt);
     Long countReservationMatchWith(Long id);
-    long save(String startAt);
+    long save(ReservationTime reservationTime);
     long deleteById(Long id);
 }

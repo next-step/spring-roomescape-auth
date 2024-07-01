@@ -83,7 +83,7 @@ public class ThemeJdbcTemplateRepository implements ThemeRepository {
     }
 
     @Override
-    public long save(String name, String description, String thumbnail) {
+    public long save(Theme theme) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             String sql = """
@@ -92,9 +92,9 @@ public class ThemeJdbcTemplateRepository implements ThemeRepository {
                         values (?, ?, ?)
                         """;
             PreparedStatement ps = connection.prepareStatement(sql, new String[] {"id"});
-            ps.setString(1, name);
-            ps.setString(2, description);
-            ps.setString(3, thumbnail);
+            ps.setString(1, theme.getName());
+            ps.setString(2, theme.getDescription());
+            ps.setString(3, theme.getThumbnail());
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();

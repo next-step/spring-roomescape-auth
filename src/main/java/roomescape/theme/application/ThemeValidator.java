@@ -21,7 +21,7 @@ public class ThemeValidator {
     }
 
     public void validateRequest(ThemeRequest themeRequest) {
-        checkDuplicated(themeRequest.getName());
+        checkDuplicated(themeRequest.name());
     }
 
     private void checkDuplicated(String name) {

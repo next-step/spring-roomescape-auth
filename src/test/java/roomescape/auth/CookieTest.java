@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.auth;
 
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +26,8 @@ public class CookieTest {
     }
 
     @Test
-    @DisplayName("cookieUtils - createCookie()")
-    void 쿠키_생성하기() {
+    @DisplayName("쿠키 생성")
+    void createCookie() {
         String name = "name";
         String value = "yeeun";
 
@@ -38,8 +38,8 @@ public class CookieTest {
     }
 
     @Test
-    @DisplayName("cookieUtils - getCookieByName()")
-    void 쿠키_배열에서_특정_쿠키_가져오기() {
+    @DisplayName("쿠키 배열로부터 특정 쿠키 가져오기")
+    void getCookieFromCookies() {
         Cookie[] cookies = makeDummyCookies();
 
         Cookie cookie = cookieUtils.getCookieByName(cookies, "1").get();

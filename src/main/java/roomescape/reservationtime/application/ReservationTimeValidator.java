@@ -24,7 +24,7 @@ public class ReservationTimeValidator {
     }
 
     public void validateRequest(ReservationTimeRequest reservationTimeRequest) {
-        String startAt = reservationTimeRequest.getStartAt();
+        String startAt = reservationTimeRequest.startAt();
 
         checkValidTime(startAt);
         checkDuplicated(startAt);

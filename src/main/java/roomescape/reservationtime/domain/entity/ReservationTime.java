@@ -1,11 +1,10 @@
 package roomescape.reservationtime.domain.entity;
 
+import roomescape.reservationtime.ui.dto.ReservationTimeRequest;
+
 public class ReservationTime {
     private Long id;
-    private String startAt;
-
-    private ReservationTime() {
-    }
+    private final String startAt;
 
     private ReservationTime(Long id, String startAt) {
         this.id = id;
@@ -16,11 +15,19 @@ public class ReservationTime {
         return new ReservationTime(id, startAt);
     }
 
+    public static ReservationTime from(ReservationTimeRequest request) {
+        return new ReservationTime(null, request.startAt());
+    }
+
     public Long getId() {
         return id;
     }
 
     public String getStartAt() {
         return startAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import roomescape.member.domain.entity.Member;
 
 import java.sql.PreparedStatement;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,6 +26,15 @@ public class MemberJdbcTemplateRepository implements MemberRepository {
             resultSet.getString("email"),
             resultSet.getString("password")
     );
+
+    @Override
+    public List<Member> findAll() {
+        String sql = """
+                SELECT *
+                FROM member
+                """;
+        return jdbcTemplate.query(sql, rowMapper);
+    }
 
     @Override
     public Optional<Member> findById(Long id) {
@@ -79,7 +89,7 @@ public class MemberJdbcTemplateRepository implements MemberRepository {
     }
 
     @Override
-    public long save(String name, String email, String password) {
+    public long save(Member member) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             String sql = """
@@ -88,9 +98,9 @@ public class MemberJdbcTemplateRepository implements MemberRepository {
                     values (?, ?, ?)
                     """;
             PreparedStatement ps = connection.prepareStatement(sql, new String[] {"id"});
-            ps.setString(1, name);
-            ps.setString(2, email);
-            ps.setString(3, password);
+            ps.setString(1, member.getName());
+            ps.setString(2, member.getEmail());
+            ps.setString(3, member.getPassword());
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();

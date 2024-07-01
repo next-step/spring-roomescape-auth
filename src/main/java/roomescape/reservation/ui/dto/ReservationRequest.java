@@ -3,43 +3,29 @@ package roomescape.reservation.ui.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class ReservationRequest {
-    @NotBlank
-    private String name;
-    @NotBlank
-    private String date;
-    @NotNull
-    private Long timeId;
-    @NotNull
-    private Long themeId;
-
-    private ReservationRequest() {
+public record ReservationRequest(
+    @NotNull Long memberId,
+    @NotBlank String date,
+    @NotNull Long timeId,
+    @NotNull Long themeId
+) {
+    public static ReservationRequest of(Long memberId, String date, Long timeId, Long themeId) {
+        return new ReservationRequest(memberId, date, timeId, themeId);
     }
 
-    private ReservationRequest(String name, String date, Long timeId, Long themeId) {
-        this.name = name;
-        this.date = date;
-        this.timeId = timeId;
-        this.themeId = themeId;
+    public static ReservationRequest fromCookieRequest(Long memberId, CookieReservationRequest request) {
+        return new ReservationRequest(
+                memberId,
+                request.date(),
+                request.timeId(),
+                request.themeId());
     }
 
-    public static ReservationRequest create(String name, String date, Long timeId, Long themeId) {
-        return new ReservationRequest(name, date, timeId, themeId);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public Long getTimeId() {
-        return timeId;
-    }
-
-    public Long getThemeId() {
-        return themeId;
+    public static ReservationRequest fromAdminRequest(Long memberId, AdminReservationRequest request) {
+        return new ReservationRequest(
+                memberId,
+                request.date(),
+                request.timeId(),
+                request.themeId());
     }
 }

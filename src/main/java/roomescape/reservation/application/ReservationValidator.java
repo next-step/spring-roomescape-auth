@@ -26,9 +26,9 @@ public class ReservationValidator {
     }
 
     public void validateRequest(ReservationRequest reservationRequest) {
-        String date = reservationRequest.getDate();
-        Long timeId = reservationRequest.getTimeId();
-        Long themeId = reservationRequest.getThemeId();
+        String date = reservationRequest.date();
+        Long timeId = reservationRequest.timeId();
+        Long themeId = reservationRequest.themeId();
 
         checkDate(date);
         reservationTimeValidator.checkPresent(timeId);

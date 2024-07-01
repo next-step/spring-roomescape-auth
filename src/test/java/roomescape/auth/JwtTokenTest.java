@@ -1,4 +1,4 @@
-package roomescape;
+package roomescape.auth;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import roomescape.auth.application.JwtTokenProvider;
+import roomescape.member.domain.entity.Member;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,20 +17,21 @@ public class JwtTokenTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @Test
-    @DisplayName("JwtTokenProvider - createToken() and extractMemberId()")
-    void 토큰_생성_및_id_반환() {
-        Long memberId = 1L;
+    @DisplayName("jwt 토큰 생성 후 회원 id 확인")
+    void createJwtTokenAndCheckMemberId() {
+        Member member = Member.of(1L, "yeeun", "anna862700@gmail.com", "password");
 
-        String token = jwtTokenProvider.createToken(memberId);
+        String token = jwtTokenProvider.createToken(member);
         Long memberIdFromToken = jwtTokenProvider.extractMemberId(token);
 
-        assertThat(memberIdFromToken).isEqualTo(memberId);
+        assertThat(memberIdFromToken).isEqualTo(member.getId());
     }
 
     @Test
-    @DisplayName("JwtTokenProvider - validateToken()")
-    void 토큰_유효성_검증() {
-        String token = jwtTokenProvider.createToken(1L);
+    @DisplayName("토큰의 유효성 검증")
+    void validateToken() {
+        Member member = Member.of(1L, "yeeun", "anna862700@gmail.com", "password");
+        String token = jwtTokenProvider.createToken(member);
 
         boolean isValidOrNot = jwtTokenProvider.validateToken(token);
 

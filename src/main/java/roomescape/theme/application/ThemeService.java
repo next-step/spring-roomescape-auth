@@ -33,13 +33,12 @@ public class ThemeService {
         return ThemeResponse.from(theme);
     }
 
-    public long add(ThemeRequest request) {
+    public ThemeResponse add(ThemeRequest request) {
         themeValidator.validateRequest(request);
-        return themeRepository.save(
-                request.getName(),
-                request.getDescription(),
-                request.getThumbnail()
-        );
+        Theme theme = Theme.from(request);
+        long themeId = themeRepository.save(theme);
+        theme.setId(themeId);
+        return ThemeResponse.from(theme);
     }
 
     public void delete(Long id) {
