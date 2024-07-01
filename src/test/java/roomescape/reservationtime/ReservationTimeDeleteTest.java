@@ -36,7 +36,7 @@ public class ReservationTimeDeleteTest {
         long timeId = reservationTimeService.add(ReservationTimeRequest.create("13:00")).id();
         long themeId = themeService.add(ThemeRequest.of("a", "b", "c")).id();
         String date = LocalDate.now().plusWeeks(1).toString();
-        return reservationService.make(ReservationRequest.of("yeeun", date, timeId, themeId));
+        return reservationService.make(ReservationRequest.of("yeeun", date, timeId, themeId)).id();
     }
 
     @Test

@@ -32,14 +32,15 @@ public class ReservationService {
         return ReservationResponse.from(reservation);
     }
 
-    public long make(ReservationRequest request) {
+    public ReservationResponse make(ReservationRequest request) {
         reservationValidator.validateRequest(request);
-        return reservationRepository.save(
+        long reservationId = reservationRepository.save(
                 request.memberName(),
                 request.date(),
                 request.timeId(),
                 request.themeId()
         );
+        return findOne(reservationId);
     }
 
     public void cancel(Long id) {

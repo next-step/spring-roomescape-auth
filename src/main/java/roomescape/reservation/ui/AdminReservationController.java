@@ -29,8 +29,7 @@ public class AdminReservationController {
     public ResponseEntity<ReservationResponse> create(@RequestBody @Valid AdminReservationRequest adminReservationRequest) {
         String memberName = findMemberService.findOne(adminReservationRequest.memberId()).name();
         ReservationRequest request = ReservationRequest.fromAdminRequest(memberName, adminReservationRequest);
-        Long reservationId = reservationService.make(request);
-        ReservationResponse reservationResponse = reservationService.findOne(reservationId);
+        ReservationResponse reservationResponse = reservationService.make(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservationResponse);
     }
 }

@@ -46,8 +46,7 @@ public class ReservationController {
             @RequestBody @Valid CookieReservationRequest cookieReservationRequest,
             @Authenticated LoginMember loginMember) {
         ReservationRequest request = ReservationRequest.fromCookieRequest(loginMember.name(), cookieReservationRequest);
-        Long reservationId = reservationService.make(request);
-        ReservationResponse reservation = reservationService.findOne(reservationId);
+        ReservationResponse reservation = reservationService.make(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .location(URI.create("/reservations/" + reservation.id()))
