@@ -99,7 +99,7 @@ public class ReservationTimeJdbcTemplateRepository implements ReservationTimeRep
     }
 
     @Override
-    public long save(String startAt) {
+    public long save(ReservationTime reservationTime) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connect -> {
             String sql = """
@@ -108,7 +108,7 @@ public class ReservationTimeJdbcTemplateRepository implements ReservationTimeRep
                         values (?)
                         """;
             PreparedStatement ps = connect.prepareStatement(sql, new String[]{"id"});
-            ps.setString(1, startAt);
+            ps.setString(1, reservationTime.getStartAt());
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();

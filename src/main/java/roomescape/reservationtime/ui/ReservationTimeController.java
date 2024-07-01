@@ -47,8 +47,7 @@ public class ReservationTimeController {
 
     @PostMapping
     public ResponseEntity<ReservationTimeResponse> create(@RequestBody @Valid ReservationTimeRequest request) {
-        long id = reservationTimeService.add(request);
-        ReservationTimeResponse reservationTime = reservationTimeService.findOne(id);
+        ReservationTimeResponse reservationTime = reservationTimeService.add(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .location(URI.create("/times/" + reservationTime.id()))

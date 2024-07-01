@@ -38,9 +38,12 @@ public class ReservationTimeService {
         return ReservationTimeResponse.fromReservationTimes(reservationTimes);
     }
 
-    public long add(ReservationTimeRequest request) {
+    public ReservationTimeResponse add(ReservationTimeRequest request) {
         reservationTimeValidator.validateRequest(request);
-        return reservationTimeRepository.save(request.startAt());
+        ReservationTime reservationTime = ReservationTime.from(request);
+        Long reservationTimeId = reservationTimeRepository.save(reservationTime);
+        reservationTime.setId(reservationTimeId);
+        return ReservationTimeResponse.from(reservationTime);
     }
 
     public void delete(Long id) {
