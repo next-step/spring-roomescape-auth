@@ -8,7 +8,7 @@ import roomescape.dto.ReservationResponseDto;
 import roomescape.entities.Reservation;
 import roomescape.entities.ReservationTime;
 import roomescape.entities.Theme;
-import roomescape.errors.ErrorCode;
+import roomescape.exceptions.ErrorCode;
 import roomescape.exceptions.RoomEscapeException;
 import roomescape.repositories.ReservationRepository;
 

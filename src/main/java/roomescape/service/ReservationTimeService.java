@@ -3,7 +3,7 @@ package roomescape.service;
 
 import org.springframework.stereotype.Service;
 import roomescape.entities.ReservationTime;
-import roomescape.errors.ErrorCode;
+import roomescape.exceptions.ErrorCode;
 import roomescape.exceptions.RoomEscapeException;
 import roomescape.repositories.ReservationRepository;
 import roomescape.repositories.ReservationTimeRepository;

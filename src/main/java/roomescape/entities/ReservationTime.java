@@ -1,6 +1,6 @@
 package roomescape.entities;
 
-import roomescape.errors.ErrorCode;
+import roomescape.exceptions.ErrorCode;
 import roomescape.exceptions.RoomEscapeException;
 
 public class ReservationTime {

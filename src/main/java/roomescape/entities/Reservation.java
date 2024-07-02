@@ -1,7 +1,7 @@
 package roomescape.entities;
 
 import lombok.Builder;
-import roomescape.errors.ErrorCode;
+import roomescape.exceptions.ErrorCode;
 import roomescape.exceptions.RoomEscapeException;
 
 import java.time.LocalDate;
