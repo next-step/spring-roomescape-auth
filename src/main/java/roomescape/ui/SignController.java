@@ -6,7 +6,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,8 +20,6 @@ import roomescape.ui.data.SignupRequest;
 import roomescape.util.TokenUtil;
 
 import java.util.Date;
-
-import static roomescape.util.TokenUtil.secretKey;
 
 @RequiredArgsConstructor
 @PropertySource("classpath:application.yml")
