@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import roomescape.config.TokenPropertiesConfig;
 import roomescape.domain.member.MemberService;
 import roomescape.ui.data.LoginCheckResponse;
 import roomescape.ui.data.LoginRequest;
@@ -28,7 +29,7 @@ import java.util.Date;
 public class SignController {
 
   private final MemberService memberService;
-
+  private final TokenPropertiesConfig tokenPropertiesConfig;
 
   @GetMapping("/login")
   public String login() {
@@ -38,10 +39,11 @@ public class SignController {
   @PostMapping("/login")
   public ResponseEntity<Cookie> login(
     @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+
     String accessToken = Jwts.builder()
       .setSubject(loginRequest.getEmail())
       .claim("email", loginRequest.getEmail())
-      .signWith(Keys.hmacShaKeyFor(TokenUtil.getSecretKey().getBytes()))
+      .signWith(Keys.hmacShaKeyFor(tokenPropertiesConfig.getSecretKey().getBytes()))
       .setIssuedAt(new Date())
       .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간
       .compact();
@@ -56,7 +58,7 @@ public class SignController {
     Cookie[] cookies = request.getCookies();
     String token = TokenUtil.extractTokenFromCookie(cookies);
     String email = Jwts.parserBuilder()
-      .setSigningKey(Keys.hmacShaKeyFor(TokenUtil.getSecretKey().getBytes()))
+      .setSigningKey(Keys.hmacShaKeyFor(tokenPropertiesConfig.getSecretKey().getBytes()))
       .build()
       .parseClaimsJws(token)
       .getBody()

@@ -38,4 +38,4 @@ sql:
     mode: always
 
 jwt:
-  secret: Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=
+  secretKey: Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=

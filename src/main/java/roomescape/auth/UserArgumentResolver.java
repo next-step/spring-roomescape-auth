@@ -6,9 +6,11 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import roomescape.config.TokenPropertiesConfig;
 import roomescape.util.TokenUtil;
 
 public class UserArgumentResolver implements HandlerMethodArgumentResolver {
+
   @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterType().equals(LoginUserEmail.class);
@@ -20,8 +22,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     HttpServletRequest httpServletRequest = (HttpServletRequest) webRequest.getNativeRequest();
 
     String token = TokenUtil.extractTokenFromCookie(httpServletRequest.getCookies());
-
-    String email = TokenUtil.getEmailFromToken(token);
+    String email = TokenUtil.getEmailFromToken(token, new TokenPropertiesConfig());
 
     return new LoginUserEmail(email, token);
   }

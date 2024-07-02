@@ -1,7 +1,6 @@
 package roomescape.controller;
 
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,14 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import roomescape.auth.LoginUserEmail;
 import roomescape.auth.UserEmail;
+import roomescape.config.TokenPropertiesConfig;
 import roomescape.domain.reservation.ReservationService;
-import roomescape.dto.ReservationAddRequestDto;
-import roomescape.dto.ReservationResponseDto;
 import roomescape.domain.reservationtime.ReservationTimeService;
 import roomescape.domain.theme.ThemeService;
+import roomescape.dto.ReservationAddRequestDto;
+import roomescape.dto.ReservationResponseDto;
 import roomescape.entities.Reservation;
-import roomescape.entities.ReservationTime;
-import roomescape.entities.Theme;
 import roomescape.util.TokenUtil;
 
 import java.util.List;
@@ -32,6 +30,7 @@ public class ReservationController {
   private final ReservationService reservationService;
   private final ReservationTimeService reservationTimeService;
   private final ThemeService themeService;
+  private final TokenPropertiesConfig tokenPropertiesConfig;
 
   @GetMapping
   public ResponseEntity<List<ReservationResponseDto>> findAllReservations(){
@@ -43,7 +42,7 @@ public class ReservationController {
   public ResponseEntity<Reservation> saveReservation(
     @RequestBody ReservationAddRequestDto reservationAddRequestDto,
     @UserEmail LoginUserEmail loginUserEmail) {
-    String email = TokenUtil.getEmailFromToken(loginUserEmail.getToken());
+    String email = TokenUtil.getEmailFromToken(loginUserEmail.getToken(), tokenPropertiesConfig);
     Reservation reservation = reservationService.saveReservation(
       reservationAddRequestDto);
 
