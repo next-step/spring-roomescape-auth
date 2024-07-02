@@ -1,4 +1,4 @@
-package roomescape.domain.member;
+package roomescape.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

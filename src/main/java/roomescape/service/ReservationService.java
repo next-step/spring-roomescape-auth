@@ -1,11 +1,8 @@
-package roomescape.domain.reservation;
+package roomescape.service;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import roomescape.auth.UserEmail;
-import roomescape.domain.reservationtime.ReservationTimeService;
-import roomescape.domain.theme.ThemeService;
 import roomescape.dto.ReservationAddRequestDto;
 import roomescape.dto.ReservationResponseDto;
 import roomescape.entities.Reservation;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import roomescape.config.TokenPropertiesConfig;
-import roomescape.domain.member.MemberService;
+import roomescape.service.MemberService;
 import roomescape.ui.data.LoginCheckResponse;
 import roomescape.ui.data.LoginRequest;
 import roomescape.ui.data.SignupRequest;
