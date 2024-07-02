@@ -10,16 +10,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import roomescape.auth.LoginUserEmail;
-import roomescape.auth.UserEmail;
+import roomescape.auth.LoginMember;
+import roomescape.auth.MemberEmail;
 import roomescape.config.TokenPropertiesConfig;
-import roomescape.service.ReservationService;
-import roomescape.service.ReservationTimeService;
-import roomescape.service.ThemeService;
 import roomescape.dto.ReservationAddRequestDto;
 import roomescape.dto.ReservationResponseDto;
 import roomescape.entities.Reservation;
-import roomescape.util.TokenUtil;
+import roomescape.service.ReservationService;
+import roomescape.service.ReservationTimeService;
+import roomescape.service.ThemeService;
 
 import java.util.List;
 
@@ -41,8 +40,8 @@ public class ReservationController {
   @PostMapping
   public ResponseEntity<Reservation> saveReservation(
     @RequestBody ReservationAddRequestDto reservationAddRequestDto,
-    @UserEmail LoginUserEmail loginUserEmail) {
-    String email = TokenUtil.getEmailFromToken(loginUserEmail.getToken(), tokenPropertiesConfig);
+    @MemberEmail LoginMember loginMemberEmail) {
+    String email = tokenPropertiesConfig.getEmailFromToken(loginMemberEmail.getToken());
     Reservation reservation = reservationService.saveReservation(
       reservationAddRequestDto);
 

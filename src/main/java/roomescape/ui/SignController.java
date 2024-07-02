@@ -18,7 +18,6 @@ import roomescape.service.MemberService;
 import roomescape.ui.data.LoginCheckResponse;
 import roomescape.ui.data.LoginRequest;
 import roomescape.ui.data.SignupRequest;
-import roomescape.util.TokenUtil;
 
 import java.util.Date;
 
@@ -39,7 +38,7 @@ public class SignController {
   @PostMapping("/login")
   public ResponseEntity<Cookie> login(
     @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-
+    System.out.println(tokenPropertiesConfig.getSecretKey());
     String accessToken = Jwts.builder()
       .setSubject(loginRequest.getEmail())
       .claim("email", loginRequest.getEmail())
@@ -56,7 +55,7 @@ public class SignController {
   @GetMapping("/login/check")
   public ResponseEntity<LoginCheckResponse> check(HttpServletRequest request) {
     Cookie[] cookies = request.getCookies();
-    String token = TokenUtil.extractTokenFromCookie(cookies);
+    String token = tokenPropertiesConfig.extractTokenFromCookie(cookies);
     String email = Jwts.parserBuilder()
       .setSigningKey(Keys.hmacShaKeyFor(tokenPropertiesConfig.getSecretKey().getBytes()))
       .build()
