@@ -1,0 +1,52 @@
+package roomescape.service;
+
+
+import org.springframework.stereotype.Service;
+import roomescape.entities.ReservationTime;
+import roomescape.exceptions.ErrorCode;
+import roomescape.exceptions.RoomEscapeException;
+import roomescape.repositories.ReservationRepository;
+import roomescape.repositories.ReservationTimeRepository;
+import roomescape.dto.AvailableTimeResponse;
+import roomescape.dto.ReservationTimeAddRequestDto;
+
+import java.util.List;
+
+@Service
+public class ReservationTimeService {
+    private final ReservationRepository reservationRepository;
+    private final ReservationTimeRepository reservationTimeRepository;
+
+    public ReservationTimeService(ReservationRepository reservationRepository, ReservationTimeRepository reservationTimeRepository) {
+        this.reservationRepository = reservationRepository;
+        this.reservationTimeRepository = reservationTimeRepository;
+    }
+
+    public ReservationTime saveTime(ReservationTimeAddRequestDto reservationTimeAddRequestDto){
+        ReservationTime reservationTime = new ReservationTime(reservationTimeAddRequestDto.getStartAt());
+        return reservationTimeRepository.save(reservationTime);
+    }
+
+    public ReservationTime findById(Long id){
+        return reservationTimeRepository.findById(id);
+    }
+
+    public List<ReservationTime> findAllTimes(){
+        return reservationTimeRepository.findAll();
+    }
+
+    public void cancelReservationTime(Long id){
+        if (reservationRepository.findByReservationTimeId(id).isPresent()) {
+            throw new RoomEscapeException(
+              ErrorCode.RESERVATION_TIME_CANNOT_BE_DELETED,
+              "Reservation time cannot be deleted because it is used in a reservation"
+            );
+        }
+        reservationTimeRepository.deleteById(id);
+    }
+
+    public List<AvailableTimeResponse> findAvailableTimes(String date, Long themeId){
+        return AvailableTimeResponse.listOf(
+          reservationTimeRepository.findAvailableTimes(date, themeId));
+    }
+}
