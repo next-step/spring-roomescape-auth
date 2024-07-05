@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import roomescape.auth.ui.dto.LoginRequest;
+import roomescape.member.ui.dto.MemberRequest;
+import roomescape.member.ui.dto.MemberResponse;
 import roomescape.reservationtime.application.ReservationTimeService;
 import roomescape.reservationtime.ui.dto.ReservationTimeRequest;
 import roomescape.reservationtime.ui.dto.ReservationTimeResponse;
@@ -28,13 +31,32 @@ public class ReservationTimeCreateTest {
         RestAssured.port = 8888;
     }
 
+    private String createToken() {
+        String name = "yeeun";
+        String email = "anna862700@gmail.com";
+        String password = "password";
+
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(new MemberRequest(name, email, password))
+                .when().post("/members")
+                .then().extract().body().as(MemberResponse.class);
+        return RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(new LoginRequest(email, password))
+                .when().post("/login")
+                .then().extract().cookie("token");
+    }
+
     @Test
     @DisplayName("예약 시간 생성")
     void createReservationTime() {
+        String token = createToken();
         String startAt = "13:00";
 
         var body = RestAssured
                 .given().log().all()
+                .cookie("token", token)
                 .body(ReservationTimeRequest.create(startAt))
                 .contentType(ContentType.JSON)
                 .when().post("/times")
@@ -48,11 +70,13 @@ public class ReservationTimeCreateTest {
     @Test
     @DisplayName("예외 - 이미 존재하는 예약 시간 생성")
     void failToCreateIfTimeAlreadyExist() {
+        String token = createToken();
         String startAt = "13:00";
         reservationTimeService.add(ReservationTimeRequest.create(startAt));
 
         var response = RestAssured
                 .given().log().all()
+                .cookie("token", token)
                 .body(ReservationTimeRequest.create(startAt))
                 .contentType(ContentType.JSON)
                 .when().post("/times")
@@ -65,8 +89,11 @@ public class ReservationTimeCreateTest {
     @DisplayName("예외 - 유효하지 않은 시작 시간으로 예약 시간 생성")
     @ValueSource(strings = {"asdf", "24:24", "", "24:00"})
     void failToCreateIfStartTimeIsInvalid(String startAt) {
+        String token = createToken();
+
         RestAssured
                 .given().log().all()
+                .cookie("token", token)
                 .body(ReservationTimeRequest.create(startAt))
                 .contentType(ContentType.JSON)
                 .when().post("/times")

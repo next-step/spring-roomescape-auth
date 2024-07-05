@@ -29,8 +29,8 @@ public class MemberReadTest {
     @Test
     @DisplayName("전체 회원 조회")
     void readAllMembers() {
-        signUpService.signUp(new MemberRequest("yeeun", "anna862700@gmail.com", "password"));
-        signUpService.signUp(new MemberRequest("asdf", "asdf@gmail.com", "password"));
+        signUpService.signUp(new MemberRequest("yeeun", "anna862700@gmail.com", "password"), "GUEST");
+        signUpService.signUp(new MemberRequest("asdf", "asdf@gmail.com", "password"), "GUEST");
 
         var response = RestAssured
                 .given().log().all()
@@ -60,7 +60,7 @@ public class MemberReadTest {
     void readMemberIfMemberMatchWithIdExist() {
         String name = "yeeun";
         String email = "anna862700@gmail.com";
-        signUpService.signUp(new MemberRequest(name, email, "password"));
+        signUpService.signUp(new MemberRequest(name, email, "password"), "GUEST");
 
         var response = RestAssured
                 .given().log().all()
@@ -78,7 +78,7 @@ public class MemberReadTest {
     void failToReadMemberIfMemberMatchWithIdNotExist() {
         String name = "yeeun";
         String email = "anna862700@gmail.com";
-        signUpService.signUp(new MemberRequest(name, email, "password"));
+        signUpService.signUp(new MemberRequest(name, email, "password"), "GUEST");
 
         RestAssured.given().log().all()
                 .when().get("/members/2")

@@ -19,7 +19,7 @@ public class JwtTokenTest {
     @Test
     @DisplayName("jwt 토큰 생성 후 회원 id 확인")
     void createJwtTokenAndCheckMemberId() {
-        Member member = Member.of(1L, "yeeun", "anna862700@gmail.com", "password");
+        Member member = Member.of(1L, "yeeun", "GUEST", "anna862700@gmail.com", "password");
 
         String token = jwtTokenProvider.createToken(member);
         Long memberIdFromToken = jwtTokenProvider.extractMemberId(token);
@@ -28,9 +28,31 @@ public class JwtTokenTest {
     }
 
     @Test
+    @DisplayName("jwt 토큰 생성 후 회원 이름 확인")
+    void createJwtTokenAndCheckMemberName() {
+        Member member = Member.of(1L, "yeeun", "GUEST", "anna862700@gmail.com", "password");
+
+        String token = jwtTokenProvider.createToken(member);
+        String memberNameFromToken = jwtTokenProvider.extractMemberName(token);
+
+        assertThat(memberNameFromToken).isEqualTo(member.getName());
+    }
+
+    @Test
+    @DisplayName("jwt 토큰 생성 후 회원 role 확인")
+    void createJwtTokenAndCheckMemberRole() {
+        Member member = Member.of(1L, "yeeun", "GUEST", "anna862700@gmail.com", "password");
+
+        String token = jwtTokenProvider.createToken(member);
+        String memberRoleFromToken = jwtTokenProvider.extractMemberRole(token);
+
+        assertThat(memberRoleFromToken).isEqualTo(member.getRoleName());
+    }
+
+    @Test
     @DisplayName("토큰의 유효성 검증")
     void validateToken() {
-        Member member = Member.of(1L, "yeeun", "anna862700@gmail.com", "password");
+        Member member = Member.of(1L, "yeeun", "GUEST","anna862700@gmail.com", "password");
         String token = jwtTokenProvider.createToken(member);
 
         boolean isValidOrNot = jwtTokenProvider.validateToken(token);

@@ -36,7 +36,7 @@ public class LoginTest {
     @Test
     @DisplayName("로그인")
     void login() {
-        signUpService.signUp(new MemberRequest(NAME, EMAIL, PASSWORD));
+        signUpService.signUp(new MemberRequest(NAME, EMAIL, PASSWORD), "GUEST");
 
         var response = RestAssured
                 .given().log().all()
@@ -53,7 +53,7 @@ public class LoginTest {
     @Test
     @DisplayName("로그인 성공 후 얻은 토큰 통해서 회원 이름 얻기")
     void getMemberNameThroughTokenAfterLoginSuccess() {
-        signUpService.signUp(new MemberRequest(NAME, EMAIL, PASSWORD));
+        signUpService.signUp(new MemberRequest(NAME, EMAIL, PASSWORD), "GUEST");
         Cookie token = loginService.login(new LoginRequest(EMAIL, PASSWORD));
 
         var response = RestAssured

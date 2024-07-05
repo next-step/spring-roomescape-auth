@@ -45,19 +45,16 @@ public class ReservationCreateTest {
         String email = "anna862700@gmail.com";
         String password = "password";
 
-        RestAssured.given().log().all()
+        RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(new MemberRequest(NAME, email, password))
                 .when().post("/members")
-                .then().log().all()
-                .extract().body().as(MemberResponse.class);
-        return RestAssured
-                .given().log().all()
+                .then().extract().body().as(MemberResponse.class);
+        return RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(new LoginRequest(email, password))
                 .when().post("/login")
-                .then().log().all()
-                .extract().cookie("token");
+                .then().extract().cookie("token");
     }
 
     private void makeDummyTimesAndThemes() {

@@ -27,6 +27,7 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
         Member member = Member.of(
                 resultSet.getLong("member_id"),
                 resultSet.getString("member_name"),
+                resultSet.getString("member_role"),
                 resultSet.getString("member_email"),
                 null
         );
@@ -56,6 +57,7 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
                     r.id as reservation_id,
                     m.id as member_id,
                     m.name as member_name,
+                    m.role as member_role,
                     m.email as member_email,
                     r.date as reservation_date,
                     t.id as time_id,
@@ -82,6 +84,7 @@ public class ReservationJdbcTemplateRepository implements ReservationRepository 
                         r.id as reservation_id,
                         m.id as member_id,
                         m.name as member_name,
+                        m.role as member_role,
                         m.email as member_email,
                         r.date as reservation_date,
                         t.id as time_id,

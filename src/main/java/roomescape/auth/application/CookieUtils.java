@@ -9,14 +9,14 @@ import java.util.Optional;
 
 @Component
 public class CookieUtils {
-    @Value("${security.jwt.token.expire-length.hour}")
+    @Value("${cookie.max-age.millisecond}")
     private int maxAge;
 
     public Cookie createCookie(String name, String value) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setMaxAge(maxAge * 60 * 60);
+        cookie.setMaxAge(maxAge);
         return cookie;
     }
 
@@ -36,7 +36,7 @@ public class CookieUtils {
         Cookie cookie = new Cookie(name, null);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setMaxAge(maxAge * 60 * 60);
+        cookie.setMaxAge(maxAge);
         return cookie;
     }
 }

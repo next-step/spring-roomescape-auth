@@ -23,6 +23,7 @@ public class MemberJdbcTemplateRepository implements MemberRepository {
     private final RowMapper<Member> rowMapper = (resultSet, rowNum) -> Member.of(
             resultSet.getLong("id"),
             resultSet.getString("name"),
+            resultSet.getString("role"),
             resultSet.getString("email"),
             resultSet.getString("password")
     );
@@ -94,13 +95,14 @@ public class MemberJdbcTemplateRepository implements MemberRepository {
         jdbcTemplate.update(connection -> {
             String sql = """
                     insert into member
-                    (name, email, password)
-                    values (?, ?, ?)
+                    (name, role, email, password)
+                    values (?, ?, ?, ?)
                     """;
             PreparedStatement ps = connection.prepareStatement(sql, new String[] {"id"});
             ps.setString(1, member.getName());
-            ps.setString(2, member.getEmail());
-            ps.setString(3, member.getPassword());
+            ps.setString(2, member.getRoleName());
+            ps.setString(3, member.getEmail());
+            ps.setString(4, member.getPassword());
             return ps;
         }, keyHolder);
         return keyHolder.getKey().longValue();

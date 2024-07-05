@@ -9,18 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.member.application.SignUpService;
+import roomescape.auth.ui.dto.LoginRequest;
 import roomescape.member.ui.dto.MemberRequest;
+import roomescape.member.ui.dto.MemberResponse;
 import roomescape.reservation.ui.dto.AdminReservationRequest;
-import roomescape.reservation.ui.dto.ReservationResponse;
+
 import roomescape.reservationtime.application.ReservationTimeService;
 import roomescape.reservationtime.ui.dto.ReservationTimeRequest;
 import roomescape.theme.application.ThemeService;
 import roomescape.theme.ui.dto.ThemeRequest;
 
 import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = {"server.port=8888"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -29,12 +28,27 @@ public class AdminReservationTest {
     private ReservationTimeService reservationTimeService;
     @Autowired
     private ThemeService themeService;
-    @Autowired
-    private SignUpService signUpService;
 
     @BeforeEach
     public void setPort() {
         RestAssured.port = 8888;
+    }
+
+    private String createAdminToken() {
+        String name = "admin";
+        String email = "admin@gmail.com";
+        String password = "password";
+
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(new MemberRequest(name, email, password))
+                .when().post("/members?role=ADMIN")
+                .then().extract().body().as(MemberResponse.class);
+        return RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(new LoginRequest(email, password))
+                .when().post("/login")
+                .then().extract().cookie("token");
     }
 
     private void makeDummyTimeAndTheme() {
@@ -45,14 +59,14 @@ public class AdminReservationTest {
     @Test
     @DisplayName("관리자 페이지에서 예약 생성")
     void reserveInAdminPage() {
-        String name = "yeeun";
-        signUpService.signUp(new MemberRequest(name, "email@email", "password"));
+        String token = createAdminToken();
         makeDummyTimeAndTheme();
         String date = LocalDate.now().plusWeeks(1).toString();
 
         RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON)
+                .cookie("token", token)
                 .body(new AdminReservationRequest(date, 1L, 1L, 1L))
                 .when().post("/admin/reservations")
                 .then().log().all()

@@ -44,6 +44,7 @@ public class SignUpTest {
 
         MemberResponse body = response.body().as(MemberResponse.class);
         assertThat(body.name()).isEqualTo(name);
+        assertThat(body.role()).isEqualTo("GUEST");
         assertThat(body.email()).isEqualTo(email);
         String location = response.header("location");
         assertThat(location).isEqualTo("/members/" + body.id());
@@ -65,7 +66,7 @@ public class SignUpTest {
         String name = "yeeun";
         String email = "anna862700@gmail.com";
         String password = "password";
-        signUpService.signUp(new MemberRequest(name, email, password));
+        signUpService.signUp(new MemberRequest(name, email, password), "GUEST");
 
         RestAssured
                 .given().log().all()
@@ -74,5 +75,26 @@ public class SignUpTest {
                 .when().post("/members")
                 .then().log().all()
                 .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    @DisplayName("관리자 회원 생성")
+    void signupAdminMember() {
+        String name = "admin";
+        String email = "admin@gmail.com";
+        String password = "password";
+
+        MemberResponse admin = RestAssured
+                .given().log().all()
+                .contentType(ContentType.JSON)
+                .body(new MemberRequest(name, email, password))
+                .when().post("/members?role=ADMIN")
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().as(MemberResponse.class);
+
+        assertThat(admin.name()).isEqualTo(name);
+        assertThat(admin.email()).isEqualTo(email);
+        assertThat(admin.role()).isEqualTo("ADMIN");
     }
 }
