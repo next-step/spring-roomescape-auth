@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':core:core-domain:roomescape-reservation-domain')
+
+    implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
