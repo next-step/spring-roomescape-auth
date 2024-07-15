@@ -2,6 +2,7 @@ package roomescape.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import roomescape.entities.Member;
 import roomescape.repositories.MemberRepository;
 import roomescape.ui.data.SignupRequest;
 
@@ -13,6 +14,10 @@ public class MemberService {
 
   public void save(SignupRequest signupRequest){
     memberRepository.save(
-      signupRequest.getName(), signupRequest.getEmail(), signupRequest.getEmail());
+      signupRequest.getName(), signupRequest.getEmail(), signupRequest.getEmail(), signupRequest.getRole());
+  }
+
+  public Member findMemberByEmail(String email){
+    return memberRepository.findByEmail(email);
   }
 }

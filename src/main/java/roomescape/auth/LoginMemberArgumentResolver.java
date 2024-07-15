@@ -1,7 +1,6 @@
 package roomescape.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -9,12 +8,13 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import roomescape.config.TokenPropertiesConfig;
+import roomescape.enums.Role;
 import roomescape.service.MemberService;
 
 @Component
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
-  private MemberService memberService;
-  private TokenPropertiesConfig tokenProperties;
+  private final MemberService memberService;
+  private final TokenPropertiesConfig tokenProperties;
 
   public LoginMemberArgumentResolver(MemberService memberService, TokenPropertiesConfig tokenPropertiesConfig) {
     this.memberService = memberService;
@@ -34,7 +34,8 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     String token = tokenProperties.extractTokenFromCookie(httpServletRequest.getCookies());
     String email = tokenProperties.getEmailFromToken(token);
+    Role role = Role.valueOf(memberService.findMemberByEmail(email).getRole());
 
-    return new LoginMember(email, token);
+    return new LoginMember(email, token, role);
   }
 }

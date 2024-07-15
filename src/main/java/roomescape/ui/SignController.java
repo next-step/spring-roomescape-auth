@@ -38,7 +38,7 @@ public class SignController {
   @PostMapping("/login")
   public ResponseEntity<Cookie> login(
     @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-    System.out.println(tokenPropertiesConfig.getSecretKey());
+
     String accessToken = Jwts.builder()
       .setSubject(loginRequest.getEmail())
       .claim("email", loginRequest.getEmail())
