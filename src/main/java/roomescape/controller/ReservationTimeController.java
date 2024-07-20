@@ -40,7 +40,7 @@ public class ReservationTimeController {
         reservationTimeService.deleteTime(id);
         return ResponseEntity.ok().build();
     }
-
+    
     //예약 가능시간 조회
     @GetMapping("/available")
     public ResponseEntity<List<ReservationTimeAvailableResponse>> availableTime(@RequestParam String date,

@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
+import roomescape.domain.User;
 import roomescape.dto.auth.AuthCheckResponse;
 import roomescape.dto.auth.AuthLoginRequest;
 import roomescape.exception.custom.AuthorizationException;
@@ -39,7 +40,7 @@ class AuthServiceTest {
         String email = "modric@gmail.com";
         String token = authService.authLogin(new AuthLoginRequest(email, "asdf1234"));
         String findEmail = jwtTokenProvider.getEmailByToken(token);
-        AuthCheckResponse response = authService.findUserFromToken(token);
+        User response = authService.findUserFromToken(token);
         org.junit.jupiter.api.Assertions.assertEquals(email, findEmail, "똑같은 이메일");
         assertThat(token).isNotEmpty();
     }

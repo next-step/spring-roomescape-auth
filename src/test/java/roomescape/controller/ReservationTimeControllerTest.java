@@ -9,14 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.dto.reservation.create.ReservationCreateRequest;
 import roomescape.dto.theme.create.ThemeCreateRequest;
 import roomescape.dto.time.ReservationTimeRequest;
-import roomescape.service.ReservationService;
 import roomescape.service.ReservationTimeService;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ReservationTimeControllerTest {
@@ -24,16 +20,11 @@ class ReservationTimeControllerTest {
     @Autowired
     ReservationTimeService reservationTimeService;
 
-    @BeforeEach
-    void init() {
-        reservationTimeService.createTime(new ReservationTimeRequest("12:00"));
-    }
-
     @Test
     void create() {
         var response = RestAssured
                 .given().log().all()
-                .body(new ReservationTimeRequest("13:00"))
+                .body(new ReservationTimeRequest("19:00"))
                 .contentType(ContentType.JSON)
                 .when().post("/times")
                 .then().log().all().extract();

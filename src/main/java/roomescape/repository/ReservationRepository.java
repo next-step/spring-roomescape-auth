@@ -3,6 +3,7 @@ package roomescape.repository;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
+import roomescape.domain.User;
 import roomescape.dto.reservation.create.ReservationCreateRequest;
 
 import java.util.List;

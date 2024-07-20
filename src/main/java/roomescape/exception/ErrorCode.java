@@ -11,6 +11,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND),
 
     UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED_ADMIN(HttpStatus.UNAUTHORIZED),
 
     INVALID_THEME_NAME(HttpStatus.BAD_REQUEST),
 

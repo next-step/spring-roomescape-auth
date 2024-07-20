@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import roomescape.domain.ReservationTime;
 import roomescape.dto.reservation.create.ReservationCreateRequest;
 import roomescape.dto.theme.create.ThemeCreateRequest;
 import roomescape.dto.theme.create.ThemeCreateResponse;
@@ -40,13 +38,6 @@ class ReservationTimeServiceTest {
     @Autowired
     ReservationService reservationService;
 
-    @BeforeEach
-    void init() {
-        reservationTimeService.createTime(new ReservationTimeRequest("12:00"));
-        reservationTimeService.createTime(new ReservationTimeRequest("13:00"));
-    }
-
-
     @Test
     @DisplayName("예약 시간 리스트 테스트")
     void findTimes() {
@@ -54,18 +45,18 @@ class ReservationTimeServiceTest {
                 .map(t -> t.getStartAt().toString())
                 .collect(Collectors.toList());
 
-        assertThat(collect.size()).isEqualTo(2);
-        assertThat(collect).contains("12:00", "13:00");
+        //더미 데이터 3개
+        assertThat(collect.size()).isEqualTo(3);
     }
 
     @Test
     @DisplayName("예약 시간 추가")
     void createTime() {
         //given
-        ReservationTimeRequest createTime = new ReservationTimeRequest("14:00");
+        ReservationTimeRequest createTime = new ReservationTimeRequest("16:00");
         ReservationTimeRequest createTime2 = new ReservationTimeRequest("15:00");
 
-        //when @BeforeEach init 메서드는 주석 처리
+        //기존의 더미 데이터 3개
         //현재 두개의 예약시간만 등록한다는 가정
         ReservationTimeCreateResponse time = reservationTimeService.createTime(createTime);
         ReservationTimeCreateResponse time2 = reservationTimeService.createTime(createTime2);
@@ -73,8 +64,8 @@ class ReservationTimeServiceTest {
         //then
         List<ReservationTimeResponse> list = reservationTimeService.findTimes();
 
-        assertThat(list.size()).isEqualTo(4);
-        assertThat(list.get(2).getStartAt()).isEqualTo(createTime.getStartAt());
+        assertThat(list.size()).isEqualTo(5);
+        assertThat(list.get(3).getStartAt()).isEqualTo(createTime.getStartAt());
     }
 
     @Test
@@ -83,8 +74,7 @@ class ReservationTimeServiceTest {
 
         reservationTimeService.deleteTime(1L);
         List<ReservationTimeResponse> times = reservationTimeService.findTimes();
-        assertThat(times.size()).isEqualTo(1);
-        assertThat(times).isNotEqualTo(2);
+        assertThat(times.size()).isEqualTo(2);
     }
 
     @Test
@@ -110,7 +100,7 @@ class ReservationTimeServiceTest {
                 reservationTimeService.findAvailableReservationTime(date, theme.getId());
 
         //then
-        assertThat(response.size()).isEqualTo(2);
+        assertThat(response.size()).isEqualTo(3);
         assertThat(response.get(0).getStartAt()).isEqualTo("12:00");
     }
 
@@ -120,15 +110,14 @@ class ReservationTimeServiceTest {
         //given
         String date = "2024-09-24";
         Long themeId = 1L;
-        themeService.createTheme(new ThemeCreateRequest("무서운 이야기",
-                "너무 무서움ㄷㄷ너무 무서움ㄷㄷ너무 무서움ㄷㄷ너무 무서움ㄷㄷ너무 무서움ㄷㄷ너무 무서움ㄷㄷ", "GOOD"));
         reservationService.createReservation(new ReservationCreateRequest(date, "brown", 1L, 1L));
         reservationService.createReservation(new ReservationCreateRequest(date, "brown", 2L, 1L));
+        reservationService.createReservation(new ReservationCreateRequest(date, "brown", 3L, 1L));
 
         //이미 예약이 차서 가능한 시간대 미존재
         //when
         List<ReservationTimeAvailableResponse> response =
-                reservationTimeService.findAvailableReservationTime(date, 1L);
+                reservationTimeService.findAvailableReservationTime(date, themeId);
 
         //then
         assertThat(response.size()).isEqualTo(0);

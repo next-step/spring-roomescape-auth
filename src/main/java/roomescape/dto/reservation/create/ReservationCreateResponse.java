@@ -1,6 +1,7 @@
 package roomescape.dto.reservation.create;
 
 import roomescape.domain.Reservation;
+import roomescape.domain.User;
 import roomescape.dto.theme.ThemeResponse;
 import roomescape.dto.time.ReservationTimeResponse;
 
@@ -12,15 +13,16 @@ public class ReservationCreateResponse {
     private LocalDate date;
     private String name;
     private ReservationTimeResponse time;
+
     private ThemeResponse theme;
 
     public ReservationCreateResponse() {
     }
 
-    public ReservationCreateResponse(Long id, LocalDate date, String name, ReservationTimeResponse time, ThemeResponse theme) {
+    public ReservationCreateResponse(Long id, LocalDate date, String userName, ReservationTimeResponse time, ThemeResponse theme) {
         this.id = id;
         this.date = date;
-        this.name = name;
+        this.name = userName;
         this.time = time;
         this.theme = theme;
     }

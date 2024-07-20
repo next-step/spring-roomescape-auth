@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import roomescape.domain.Reservation;
 import roomescape.dto.reservation.create.ReservationCreateRequest;
 import roomescape.dto.theme.create.ThemeCreateRequest;
 import roomescape.dto.time.ReservationTimeRequest;
@@ -31,9 +30,6 @@ class ReservationControllerTest {
 
     @BeforeEach
     void init() {
-        themeService.createTheme(new ThemeCreateRequest("엄청 무서운 이야기",
-                "설명은 없습니다.설명은 없습니다.설명은 없습니다.설명은 없습니다.설명은 없습니다.설명은 없습니다.", "https://gg"));
-        reservationTimeService.createTime(new ReservationTimeRequest("12:00"));
         reservationService.createReservation(new ReservationCreateRequest("2024-07-23", "brown", 1L, 1L));
     }
 

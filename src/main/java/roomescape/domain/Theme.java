@@ -1,6 +1,5 @@
 package roomescape.domain;
 
-import roomescape.dto.theme.create.ThemeCreateRequest;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.custom.InvalidInputException;
 

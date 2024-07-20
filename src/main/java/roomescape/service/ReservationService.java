@@ -1,24 +1,21 @@
 package roomescape.service;
 
 import org.springframework.stereotype.Service;
-import roomescape.domain.Reservation;
-import roomescape.domain.ReservationTime;
-import roomescape.domain.Theme;
+import roomescape.domain.*;
 import roomescape.dto.reservation.ReservationsResponse;
 import roomescape.dto.reservation.create.ReservationCreateRequest;
 import roomescape.dto.reservation.create.ReservationCreateResponse;
-import roomescape.dto.time.ReservationTimeResponse;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.custom.InvalidReservationTimeException;
 import roomescape.exception.custom.ThemeNotFoundException;
+import roomescape.exception.custom.UserNotFoundException;
+import roomescape.repository.AuthRepository;
 import roomescape.repository.ReservationRepository;
 import roomescape.repository.ReservationTimeRepository;
 import roomescape.repository.ThemeRepository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
@@ -26,12 +23,14 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ReservationTimeRepository reservationTimeRepository;
     private final ThemeRepository themeRepository;
+    private final AuthRepository authRepository;
 
     public ReservationService(ReservationRepository reservationRepository, ReservationTimeRepository reservationTimeRepository,
-                              ThemeRepository themeRepository) {
+                              ThemeRepository themeRepository, AuthRepository authRepository) {
         this.reservationRepository = reservationRepository;
         this.reservationTimeRepository = reservationTimeRepository;
         this.themeRepository = themeRepository;
+        this.authRepository = authRepository;
     }
 
     public List<ReservationsResponse> findReservations() {
@@ -46,6 +45,12 @@ public class ReservationService {
         ReservationTime time = reservationTimeRepository.findReservationTimeById(request.getTimeId());
         Theme theme = themeRepository.findThemeById(request.getThemeId())
                 .orElseThrow(() -> new ThemeNotFoundException(ErrorCode.THEME_NOT_FOUND, "해당 테마가 존재하지 않습니다."));
+
+//        if(user.getRole() == Role.ADMIN) {
+//            User user = authRepository.findById(request.getUserId())
+//                    .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND, "해당 회원이 존재하지 않습니다."));
+//        }
+
         Reservation reservation = reservationRepository.createReservation(request, time, theme);
         return ReservationCreateResponse.fromEntity(reservation);
     }

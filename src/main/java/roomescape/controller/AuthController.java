@@ -7,8 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import roomescape.argumentresolver.LoginUser;
+import roomescape.domain.User;
 import roomescape.dto.auth.AuthCheckResponse;
 import roomescape.dto.auth.AuthLoginRequest;
+import roomescape.dto.auth.AuthUserResponse;
+import roomescape.dto.auth.UserResponse;
 import roomescape.exception.ErrorCode;
 import roomescape.exception.custom.AuthorizationException;
 import roomescape.exception.custom.CookieNotFoundException;
@@ -16,6 +20,7 @@ import roomescape.service.AuthService;
 import roomescape.util.CookieUtil;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,11 +33,15 @@ public class AuthController {
         this.authService = authService;
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> findUsers() {
+        return ResponseEntity.ok().body(authService.findUsers());
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Void> authLogin(@RequestBody AuthLoginRequest request,
                                           HttpServletResponse response) {
         String token = authService.authLogin(request);
-        System.out.println(token);
         Cookie cookie = CookieUtil.createCookie(token);
         response.addCookie(cookie);
         return ResponseEntity.ok().build();
@@ -40,24 +49,16 @@ public class AuthController {
     }
 
     @GetMapping("/login/check")
-    public ResponseEntity<AuthCheckResponse> checkLogin(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String accessToken = CookieUtil.extractTokenFromCookie(cookies)
-                .orElseThrow(() -> new AuthorizationException(ErrorCode.UNAUTHORIZED_USER, "다시 로그인 해주세요."));
-        AuthCheckResponse userResponse = authService.findUserFromToken(accessToken);
-        return ResponseEntity.ok(userResponse);
+    public ResponseEntity<AuthCheckResponse> checkLogin(@LoginUser User user) {
+        return ResponseEntity.ok(authService.checkUser(user));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Cookie> logout(HttpServletRequest request, HttpServletResponse response) {
-        Cookie findCookie = Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals("token"))
-                .findFirst()
-                .orElseThrow(()-> new CookieNotFoundException(ErrorCode.COOKIE_NOT_FOUND, "로그인이 되어 있지 않습니다."));
-
-        findCookie.setMaxAge(0);
-        response.addCookie(findCookie);
-        return ResponseEntity.ok(findCookie);
+    public ResponseEntity<Cookie> logout(@LoginUser User user, HttpServletResponse response) {
+        Cookie cookie = CookieUtil.createCookie("");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return ResponseEntity.ok().build();
     }
 
 }

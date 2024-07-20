@@ -23,6 +23,12 @@ public class ThemeController {
         this.themeService = themeService;
     }
 
+    /**
+     * 테마 관리 페이지의 테마
+     * 순서 제목 설명 썸네일URL
+     *
+     * @return
+     */
     @GetMapping
     public ResponseEntity<List<ThemeResponse>> findThemes() {
         return ResponseEntity.ok().body(themeService.findThemes());

@@ -2,8 +2,10 @@ package roomescape.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import roomescape.domain.Role;
 import roomescape.domain.User;
 
+import java.util.List;
 import java.util.Optional;
 @Repository
 public class AuthRepositoryImpl implements AuthRepository{
@@ -35,5 +37,20 @@ public class AuthRepositoryImpl implements AuthRepository{
                         rs.getString("email"),
                         rs.getString("password")
                 ), userId));
+    }
+
+    @Override
+    public List<User> findUsers() {
+        String sql = "select id, name, email, role from users";
+        return jdbcTemplate.query(
+                sql, (rs, rowNum) -> {
+                    User user = new User(
+                            rs.getLong("id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            Role.valueOf(rs.getString("role"))
+                    );
+                    return user;
+                });
     }
 }

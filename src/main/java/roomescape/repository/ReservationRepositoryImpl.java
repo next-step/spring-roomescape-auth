@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
+import roomescape.domain.User;
 import roomescape.dto.reservation.create.ReservationCreateRequest;
 
 import java.sql.PreparedStatement;
@@ -45,7 +46,7 @@ public class ReservationRepositoryImpl implements ReservationRepository{
 
     @Override
     public Reservation createReservation(ReservationCreateRequest dto, ReservationTime time, Theme theme) {
-        String sql = "insert into reservation(name, date, time_id, theme_Id) values(?,?,?,?)";
+        String sql = "insert into reservation(name, date, time_id, theme_id) values(?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(
