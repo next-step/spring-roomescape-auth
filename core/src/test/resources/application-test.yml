@@ -1,0 +1,35 @@
+server.port: 8081
+spring.config.activate.on-profile: test
+
+spring:
+  # console color
+  output:
+    ansi:
+      enabled: always
+
+  # datasource
+  datasource:
+    url: jdbc:h2:mem:database
+
+  # sql init
+  sql:
+    init:
+      mode: embedded
+      schema-locations: classpath:sql/schema.sql
+
+security:
+  jwt:
+    token:
+      secret-key: "this_is_a_test_secret_key_with_32_bytes_or_more"
+      expiration-time: 10000 # 10 seconds
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc:
+          core:
+            JdbcTemplate: trace
+            StatementCreatorUtils: trace
+          datasource:
+            init: trace

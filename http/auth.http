@@ -1,0 +1,14 @@
+### Login
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "email@email.com",
+  "password": "password"
+}
+
+> {% client.global.set("auth_token", response.headers.valueOf("Set-Cookie").match(/accessToken=(.*?);/)[1]) %}
+
+### Check Login Status
+GET http://localhost:8080/api/login/check
+Cookie: accessToken={{auth_token}}
